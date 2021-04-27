@@ -1,0 +1,27 @@
+FROM ubuntu:18.04
+
+COPY ext/01_nodoc /etc/dpkg/dpkg.cfg.d/01_nodoc
+
+RUN apt-get -y update && \
+    apt-get -y install \
+        locales \
+        python \
+        python-pip \
+        unixodbc \
+        unixodbc-dev \
+        curl && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LC_ALL=en_US.UTF-8 && \
+    apt-get -y clean && \
+    apt-get -y autoremove && \
+    ldconfig
+
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+
+RUN curl -s https://www.exasol.com/support/secure/attachment/65437/EXASOL_ODBC-6.0.11.tar.gz | tar -C downloads/ODBC --strip-components 1 -zxf -
+RUN curl -s https://www.exasol.com/support/secure/attachment/63966/EXAplus-6.0.10.tar.gz | tar -C downloads/EXAplus --strip-components 1 -zxf -
+COPY ext/virtualschema-jdbc-adapter.jar downloads/virtualschema-jdbc-adapter
+ENV EXAPLUS=/downloads/EXAplus/exaplus
+
+COPY requirements.txt requirements.txt
+RUN pip install -r "requirements.txt"

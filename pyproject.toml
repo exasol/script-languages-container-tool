@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "exasol-script-languages-container-tool"
+version = "0.2.0"
+description = "Script Languages Container Tool"
+
+license = "MIT"
+
+authors = [
+    "Torsten Kilias <torsten.kilias@exasol.com>"
+]
+
+readme = 'README.md'  # Markdown files are supported
+
+repository = "https://github.com/exasol/script-languages-container-tool"
+homepage = "https://github.com/exasol/script-languages-container-tool"
+
+keywords = ['exasol', 'udf', 'script-languages']
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+exasol-integration-test-docker-environment = {git = "https://github.com/exasol/integration-test-docker-environment.git", branch = "0.2.0"}
+
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
