@@ -24,7 +24,7 @@ jobs:
       - name: "Run installer/tests/test_installer_current_ref_default_environment.sh"
         run: "bash installer/tests/run_tests.sh"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   test-all:
     strategy:
