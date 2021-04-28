@@ -15,3 +15,4 @@ cp "$INSTALLER_DIRECTORY/install_or_update_exaslct.sh" "$MYTMPDIR/install_or_upd
 pushd "$MYTMPDIR" &> /dev/null
 
 bash install_or_update_exaslct.sh "$GIT_REF"
+bash -x ./exaslct --help
