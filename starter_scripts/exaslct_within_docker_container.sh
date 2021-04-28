@@ -7,6 +7,8 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 RUNNER_IMAGE_NAME="$1"
 shift 1
 
+docker pull "$RUNNER_IMAGE_NAME" || bash "$SCRIPT_DIR/build_docker_runner_image.sh"
+
 if [[ -t 1 ]]; then
   terminal_parameter=-it
 else
@@ -18,8 +20,6 @@ for argument in "${@}"; do
   argument="${argument//\\/\\\\}"
   quoted_arguments="$quoted_arguments \"${argument//\"/\\\"}\""
 done
-
-docker pull "$RUNNER_IMAGE_NAME" || bash "$SCRIPT_DIR/build_docker_runner_image.sh"
 
 RUN_COMMAND="/script-languages-container-tool/starter_scripts/exaslct_without_poetry.sh $quoted_arguments; RETURN_CODE=\$?; chown -R $(id -u):$(id -g) .build_output &> /dev/null; exit \$RETURN_CODE"
 

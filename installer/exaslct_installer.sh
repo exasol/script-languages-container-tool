@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-
 die() {
   echo "$*" 1>&2
   exit 1
@@ -42,20 +40,17 @@ main() {
   local exaslct_git_ref="$1"
   local repo="exasol/script-languages-container-tool"
 
-  if [ -z "${EXASLCT_INSTALL_DIRECTORY-}" ]
-  then
+  if [ -z "${EXASLCT_INSTALL_DIRECTORY-}" ]; then
     EXASLCT_INSTALL_DIRECTORY=$PWD/exaslct_scripts
   fi
 
-  if [ -e "$EXASLCT_INSTALL_DIRECTORY" ]
-  then
+  if [ -e "$EXASLCT_INSTALL_DIRECTORY" ]; then
     echo "The installation directory for exaslct at '$EXASLCT_INSTALL_DIRECTORY' already exists."
     echo "Do you want to remove it and continue with installation?"
     echo -n "yes/no: "
     local answer
-    read answer
-    if [ "$answer" == "yes" ]
-    then
+    read -r answer
+    if [ "$answer" == "yes" ]; then
       rm -r "$EXASLCT_INSTALL_DIRECTORY"
     else
       echo "Can't continue with the installation, because the installation directory already exists."
@@ -67,7 +62,7 @@ main() {
   mkdir "$EXASLCT_INSTALL_DIRECTORY"
   pushd "$EXASLCT_INSTALL_DIRECTORY"
 
-  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container.sh"
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container_without_container_build.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/construct_docker_runner_image_name.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "installer/exaslct_install_template.sh"
 
@@ -77,20 +72,17 @@ main() {
 
   popd
 
-  if [ -z "${EXASLCT_SYM_LINK_PATH-}" ]
-  then
+  if [ -z "${EXASLCT_SYM_LINK_PATH-}" ]; then
     EXASLCT_SYM_LINK_PATH=$PWD/exaslct
   fi
 
-  if [ -e $EXASLCT_SYM_LINK_PATH ]
-  then
+  if [ -e "$EXASLCT_SYM_LINK_PATH" ]; then
     echo "The path for the symlink to exaslct at '$EXASLCT_SYM_LINK_PATH' already exists."
     echo "Do you want to remove it and continue with installation?"
     echo -n "yes/no: "
     local answer
-    read answer
-    if [ "$answer" == "yes" ]
-    then
+    read -r answer
+    if [ "$answer" == "yes" ]; then
       rm -r "$EXASLCT_SYM_LINK_PATH"
     else
       echo "Can't continue with the installation, because the path to exaslct symlink already exists."
