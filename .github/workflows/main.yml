@@ -1,6 +1,7 @@
 name: CI
 
-on: [push]
+on:
+  push:
 
 jobs:
   test-docker-starter:
@@ -20,8 +21,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run installer/tests/test_installer_current_ref_default_environment.sh
-      run: bash installer/tests/run_tests.sh
+    - name: "Run installer/tests/test_installer_current_ref_default_environment.sh"
+      run: "bash installer/tests/run_tests.sh"
 
   test-all:
     strategy:
@@ -55,12 +56,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build new Docker image
-      run: bash starter_scripts/build_docker_runner_image.sh
+      run: "bash starter_scripts/build_docker_runner_image.sh"
     - name: Docker login
-      run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
+      run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin 
       env: # Set the secret as an input
         SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
         SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
     - name: Push new Docker image
-      run: bash starter_scripts/push_docker_runner_image.sh
+      run: "bash starter_scripts/push_docker_runner_image.sh"
 
