@@ -3,8 +3,8 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = "script-languages-container-tool"
   config.vm.network :forwarded_port, guest: 8888, host: 8888
   config.vm.network :forwarded_port, guest: 6666, host: 6666
-  config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
-  config.vm.synced_folder "..", "/project", type: "rsync", rsync__exclude: ".git/"
+  config.vm.synced_folder ".", "/vagrant", type: "rsync"
+  config.vm.synced_folder "..", "/project", type: "rsync"
 
   config.vm.provider :libvirt do |v|
     v.qemu_use_session = true
