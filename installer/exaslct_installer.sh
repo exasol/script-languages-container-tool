@@ -67,11 +67,11 @@ main() {
   mkdir "$EXASLCT_INSTALL_DIRECTORY"
   pushd "$EXASLCT_INSTALL_DIRECTORY"
 
-  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "exaslct-within-docker-container"
-  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "construct_docker_runner_image_name.sh"
-  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "installer/exaslct-install-template.sh"
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container.sh"
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/construct_docker_runner_image_name.sh"
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "installer/exaslct_install_template.sh"
 
-  mv exaslct-install-template.sh exaslct.sh
+  mv exaslct_install_template.sh exaslct.sh
 
   sed "s/<<<<RUNNER_IMAGE_NAME>>>>/$exaslct_git_ref/g" exaslct.sh
 

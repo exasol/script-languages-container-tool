@@ -48,19 +48,19 @@ jobs:
     - name: Test ./exaslct-with-poetry 
       run: ./exaslct-with-poetry --help
 
-#  publish:
-#    if: github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    environment: publish
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Build new Docker image
-#      run: bash build_docker_runner_image.sh
-#    - name: Docker login
-#      run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
-#      env: # Set the secret as an input
-#        SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
-#        SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-#    - name: Push new Docker image
-#      run: bash push_docker_runner_image.sh
-#
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: publish
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build new Docker image
+      run: bash starter_scripts/build_docker_runner_image.sh
+    - name: Docker login
+      run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
+      env: # Set the secret as an input
+        SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
+        SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+    - name: Push new Docker image
+      run: bash starter_scripts/push_docker_runner_image.sh
+
