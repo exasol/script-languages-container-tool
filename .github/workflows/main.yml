@@ -45,11 +45,11 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2.0.0
 
+      - name: Test starter_scripts/exaslct_with_poetry
+        run: starter_scripts/exaslct_with_poetry --help
+
       - name: Run all tests
         run: ./run_all_tests.sh
-
-      - name: Test ./exaslct-with-poetry
-        run: ./exaslct-with-poetry --help
 
   publish:
     if: github.ref == 'refs/heads/main'
