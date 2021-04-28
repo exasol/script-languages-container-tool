@@ -46,7 +46,7 @@ jobs:
         uses: abatilo/actions-poetry@v2.0.0
 
       - name: Test starter_scripts/exaslct_with_poetry
-        run: starter_scripts/exaslct_with_poetry --help
+        run: starter_scripts/exaslct_with_poetry.sh --help
 
       - name: Run all tests
         run: ./run_all_tests.sh
