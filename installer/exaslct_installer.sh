@@ -40,6 +40,7 @@ download_and_verify_raw_file_from_github() {
 
 main() {
   local exaslct_git_ref="$1"
+  local repo="exasol/script-languages-container-tool"
 
   if [ -z "${EXASLCT_INSTALL_DIRECTORY-}" ]
   then
