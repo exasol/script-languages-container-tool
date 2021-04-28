@@ -4,7 +4,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-RUNNER_IMAGE_NAME="<<<<RUNNER_IMAGE_NAME>>>>"
+EXASLCT_GIT_REF="<<<<EXASLCT_GIT_REF>>>>"
+RUNNER_IMAGE_NAME="$("$SCRIPT_DIR/construct_docker_runner_image_name.sh" "$EXASLCT_GIT_REF")"
 
 bash $SCRIPT_DIR/exaslct_within_docker_container_without_container_build.sh "$RUNNER_IMAGE_NAME" "${@}"
 
