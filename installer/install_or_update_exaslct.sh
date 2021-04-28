@@ -54,7 +54,7 @@ main() {
 
   popd &>/dev/null
 
-  bash -x "$tmp_directory_for_installer/$installer_file_name" "$exaslct_git_ref"
+  bash "$tmp_directory_for_installer/$installer_file_name" "$exaslct_git_ref"
 
 }
 
