@@ -2,36 +2,62 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+die() {
+  echo "$*" 1>&2
+  exit 1
+}
+download_raw_file_from_github() {
+  local repo=$1
+  local ref=$2
+  local remote_file_path=$3
+  local local_file_path=$4
+  local url="https://api.github.com/repos/$repo/contents/$remote_file_path?ref=$ref"
+  local arguments=(-s -H 'Accept: application/vnd.github.v3.raw' -L "$url" -o "$local_file_path")
+  if [ -z "${GITHUB_TOKEN-}" ]; then
+    curl "${arguments[@]}"
+  else
+    curl -H "Authorization: token $GITHUB_TOKEN" "${arguments[@]}"
+  fi
+}
+download_and_verify_raw_file_from_github() {
+  local repo=$1
+  local ref=$2
+  local remote_file_path=$3
+  local file_name=${remote_file_path##*/}
+  local dir_path=${remote_file_path%$file_name}
+  local checksum_file_name="${file_name}.sha512sum"
+  local remote_checksum_file_path="${dir_path}checksums/$checksum_file_name"
 
-die() { echo "$*" 1>&2 ; exit 1; }
+  download_raw_file_from_github "$repo" "$ref" "$remote_file_path" "$file_name" ||
+    die "ERROR: Could not download '$remote_file_path' from the github repository '$repo' at ref '$ref'."
+  download_raw_file_from_github "$repo" "$ref" "$remote_checksum_file_path" "$checksum_file_name" ||
+    die "ERROR: Could not download the checksum for '$remote_file_path' from the github repository '$repo' at ref '$ref'."
+  sha512sum --check "${checksum_file_name}" ||
+    die "ERROR: Could not verify the checksum for '$remote_file_path' from the github repository '$repo' at ref '$ref'."
 
-if [ -z "${1-}" ]
-then
-  SLCT_GIT_REF="main"
-else
-  SLCT_GIT_REF="$1"
-fi
+}
 
-DOWNLOAD_URL="https://raw.githubusercontent.com/exasol/script-languages-container-tool/$SLCT_GIT_REF/installer/"
+main() {
+  local exaslct_git_ref="main"
+  if [ -n "${1-}" ]; then
+    exaslct_git_ref="$1"
+  fi
 
-TMP_DIRECTORY_FOR_INSTALLER="$(mktemp -d)"
-trap 'rm -rf -- "$TMP_DIRECTORY_FOR_INSTALLER"' EXIT
+  local repo="exasol/script-languages-container-tool"
+  local tmp_directory_for_installer
+  tmp_directory_for_installer="$(mktemp -d)"
+  trap 'rm -rf -- "$tmp_directory_for_installer"' EXIT
 
-INSTALLER_FILE_NAME="exaslct_installer.sh"
-INSTALLER_CHECKSUM_FILE_NAME="exaslct_installer.sh.sha512sum"
+  local installer_file_name="exaslct_installer.sh"
 
-pushd $TMP_DIRECTORY_FOR_INSTALLER &> /dev/null
+  pushd "$tmp_directory_for_installer" &>/dev/null
 
-curl -s -L "$DOWNLOAD_URL/$INSTALLER_FILE_NAME" -o "$INSTALLER_FILE_NAME" \
- || die "ERROR: Could not download the installer."
-curl -s -L "$DOWNLOAD_URL/checksums/$INSTALLER_CHECKSUM_FILE_NAME" -o "$INSTALLER_CHECKSUM_FILE_NAME" \
- || die "ERROR: Could not download the checksum of the installer."
-sha512sum --check "$INSTALLER_CHECKSUM_FILE_NAME" \
- || die "ERROR: Could not verify the checksum of the installer."
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "installer/$installer_file_name"
 
-echo "test"
+  popd &>/dev/null
 
-popd &> /dev/null
+  bash "$tmp_directory_for_installer/$installer_file_name" "$exaslct_git_ref"
 
-bash "$TMP_DIRECTORY_FOR_INSTALLER/$INSTALLER_FILE_NAME"
+}
+
+main "${@}"

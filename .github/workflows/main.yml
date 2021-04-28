@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   test-docker-starter:
@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Run installer/tests/test_installer_current_ref_default_environment.sh
-      run: installer/tests/test_installer_current_ref_default_environment.sh
+      run: bash installer/tests/run_tests.sh
 
   test-all:
     strategy:
