@@ -77,7 +77,7 @@ main() {
 
   popd
 
-  if [ -z "${$EXASLCT_SYM_LINK_PATH-}" ]
+  if [ -z "${EXASLCT_SYM_LINK_PATH-}" ]
   then
     EXASLCT_SYM_LINK_PATH=$PWD/exaslct
   fi
