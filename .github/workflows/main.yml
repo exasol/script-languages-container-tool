@@ -1,6 +1,7 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
 
 jobs:
   test-docker-starter:
@@ -8,49 +9,61 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Test ./exaslct 
-      run: ./exaslct --help
+      - name: Test ./exaslct
+        run: ./exaslct --help
+
+  test-installer:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Run install tests"
+        run: "bash installer/tests/run_tests.sh"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   test-all:
     strategy:
       fail-fast: false
       matrix:
         exasol_version:
-        - "default"
+          - "default"
         python_version:
-        - 3.6
+          - 3.6
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup Python 3.6 for integration-test-docker-environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.6
-    - name: Install Poetry
-      uses: abatilo/actions-poetry@v2.0.0
+      - name: Setup Python 3.6 for integration-test-docker-environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.0.0
 
-    - name: Run all tests
-      run: ./run_all_tests.sh
+      - name: Test starter_scripts/exaslct_with_poetry
+        run: starter_scripts/exaslct_with_poetry.sh --help
 
-    - name: Test ./exaslct-with-poetry 
-      run: ./exaslct-with-poetry --help
+      - name: Run all tests
+        run: ./run_all_tests.sh
 
-#  publish:
-#    if: github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    environment: publish
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Build new Docker image
-#      run: bash build_docker_runner_image.sh
-#    - name: Docker login
-#      run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
-#      env: # Set the secret as an input
-#        SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
-#        SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-#    - name: Push new Docker image
-#      run: bash push_docker_runner_image.sh
-#
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: publish
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build new Docker image
+        run: "bash starter_scripts/build_docker_runner_image.sh"
+      - name: Docker login
+        run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
+        env: # Set the secret as an input
+          SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
+          SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      - name: Push new Docker image
+        run: "bash starter_scripts/push_docker_runner_image.sh"
+
