@@ -73,7 +73,7 @@ main() {
 
   mv exaslct_install_template.sh exaslct.sh
 
-  sed "s/<<<<RUNNER_IMAGE_NAME>>>>/$exaslct_git_ref/g" exaslct.sh
+  sed -i "s/<<<<RUNNER_IMAGE_NAME>>>>/$exaslct_git_ref/g" exaslct.sh
 
   popd
 
