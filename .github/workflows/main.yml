@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Build new Docker image (required for the test)
+        run: "bash starter_scripts/build_docker_runner_image.sh"
+
       - name: "Run installer/tests/test_installer_current_ref_default_environment.sh"
         run: "bash installer/tests/run_tests.sh"
         env:
