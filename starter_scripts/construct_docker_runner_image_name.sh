@@ -8,4 +8,4 @@ else
   VERSION="$1"
 fi
 
-echo "exasol/script-languages:container-tool-runner-$VERSION"
+echo "exasol/script-language-container:container-tool-runner-$VERSION"
