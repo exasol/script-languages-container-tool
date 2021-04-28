@@ -60,7 +60,7 @@ main() {
   fi
 
   mkdir "$EXASLCT_INSTALL_DIRECTORY"
-  pushd "$EXASLCT_INSTALL_DIRECTORY"
+  pushd "$EXASLCT_INSTALL_DIRECTORY" &> /dev/null
 
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container_without_container_build.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container.sh"
