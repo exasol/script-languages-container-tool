@@ -21,6 +21,7 @@ fi
 
 #pushd "$ROOT_DIR" > /dev/null
 pushd "$ROOT_DIR"
+
 echo -e "Generate setup.py ${grey}(pre-commit hook)${no_color}"
 if [ -d "dist" ]
 then
@@ -35,10 +36,15 @@ cp "$extracted_dir/setup.py" ../setup.py
 rm -r "$extracted_dir"
 popd > /dev/null
 
+echo -e "Generate installer checksums ${grey}(pre-commit hook)${no_color}"
+pushd installer > /dev/null
+bash create_checksums.sh
+popd > /dev/null
+
 if [ "$NO_GIT" == "FALSE" ]
 then
   echo -e "Add generated files ${grey}(pre-commit hook)${no_color}"
-  git add setup.py
+  git add setup.py installer/checksums
 fi
 
 popd > /dev/null
