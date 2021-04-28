@@ -3,6 +3,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
 # define colors for use in output
 green='\033[0;32m'
 no_color='\033[0m'
@@ -38,13 +40,16 @@ popd > /dev/null
 
 echo -e "Generate installer checksums ${grey}(pre-commit hook)${no_color}"
 pushd installer > /dev/null
-bash create_checksums.sh
+bash "$SCRIPT_DIR/create_checksums.sh"
+popd > /dev/null
+pushd starter_scripts > /dev/null
+bash "$SCRIPT_DIR/create_checksums.sh"
 popd > /dev/null
 
 if [ "$NO_GIT" == "FALSE" ]
 then
   echo -e "Add generated files ${grey}(pre-commit hook)${no_color}"
-  git add setup.py installer/checksums
+  git add setup.py installer/checksums starter_scripts/checksums
 fi
 
 popd > /dev/null
