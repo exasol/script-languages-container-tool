@@ -4,6 +4,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
+bash "$SCRIPT_DIR/../../starter_scripts/build_docker_runner_image.sh"
+
 INSTALLER_DIRECTORY="$SCRIPT_DIR/.."
 
 MYTMPDIR="$(mktemp -d)"

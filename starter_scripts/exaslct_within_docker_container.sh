@@ -2,12 +2,8 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-
 RUNNER_IMAGE_NAME="$1"
 shift 1
-
-docker pull "$RUNNER_IMAGE_NAME" || bash "$SCRIPT_DIR/build_docker_runner_image.sh"
 
 if [[ -t 1 ]]; then
   terminal_parameter=-it
