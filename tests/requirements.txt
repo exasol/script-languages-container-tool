@@ -1,0 +1,5 @@
+pyodbc<=4.0.24
+pytz
+lxml
+docker
+scipy
