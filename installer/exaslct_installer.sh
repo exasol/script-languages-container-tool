@@ -99,3 +99,5 @@ main() {
   fi
   ln -s "$EXASLCT_INSTALL_DIRECTORY/exaslct.sh" "$EXASLCT_SYM_LINK_PATH"
 }
+
+main "${@}"

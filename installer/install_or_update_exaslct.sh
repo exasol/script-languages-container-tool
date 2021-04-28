@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 die() {
@@ -44,7 +43,6 @@ main() {
   fi
 
   local repo="exasol/script-languages-container-tool"
-  local tmp_directory_for_installer
   tmp_directory_for_installer="$(mktemp -d)"
   trap 'rm -rf -- "$tmp_directory_for_installer"' EXIT
 
@@ -56,7 +54,7 @@ main() {
 
   popd &>/dev/null
 
-  bash "$tmp_directory_for_installer/$installer_file_name" "$exaslct_git_ref"
+  bash -x "$tmp_directory_for_installer/$installer_file_name" "$exaslct_git_ref"
 
 }
 
