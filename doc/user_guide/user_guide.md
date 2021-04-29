@@ -11,7 +11,7 @@
 7. [Cleaning up after your are finished](#cleaning-up-after-your-are-finished)
 
 
-#### How to build an existing flavor?
+## How to build an existing flavor?
 
 Create the language container and export it to the local file system
 

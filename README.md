@@ -68,8 +68,8 @@ If the checksums are identical you can continue with the installation.
 Per default, the script installs exaslct into the current working directory.
 It creates a script directory `exaslct_scripts` and the symlink `exaslct`
 to the starter script. If you want to change the path to the script directoy 
-you can set the environment variable EXASLCT_INSTALL_DIRECTORY and 
-if you want to create the symlink somewhere else you can set $EXASLCT_SYM_LINK_PATH.  
+you can set the environment variable `EXASLCT_INSTALL_DIRECTORY` and 
+if you want to create the symlink somewhere else you can set `EXASLCT_SYM_LINK_PATH`.  
 
 ```
 bash install_or_update_exaslct.sh [version|git-commit-id|branch|tag] 
@@ -78,7 +78,7 @@ bash install_or_update_exaslct.sh [version|git-commit-id|branch|tag]
 You can use the same script to change the version of your current installation.
 You only need to provide a different version, git-commit-id, branch or tag. 
 
-### Using exalsct
+### Usage
 
 #### How to build an existing flavor?
 
