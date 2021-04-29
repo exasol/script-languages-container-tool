@@ -1,14 +1,13 @@
 # Script-Languages-Container-Tool Developer Guide
 
 EXASLCT is the build tool for the script language container. 
-Its usage is described [here](../README.md). 
-This readme is about the inner working of EXASLCT.
+This document is about the inner working of EXASLCT.
 
 ## About the Script Language Containers
 The Script Language Containers are getting build 
 from several Dockerfiles which depend on each other. 
 These Dockerfiles need to install all necessary 
-dependencies for the [script client](../src), 
+dependencies for the [script client](https://github.com/exasol/script-languages/tree/master/exaudfclient/base), 
 compile the script client and install all necessary dependencies 
 for the flavor and the customizations of the user.
 
@@ -22,7 +21,7 @@ It was actual unclear which of the dependencies were essential
 and which were not. For some flavors it was impossible to run 
 the build on travis, because it exceeded the maximum runtime 
 per job of 50 minutes. 
-The build system and the test runner were bash script 
+The build system and the test runner were both bash scripts 
 which were messy and difficult to maintain. 
 They worked with background jobs to do things in parallel 
 which convoluted the logs which made error analysis difficult.
@@ -56,7 +55,7 @@ Most of these tasks produce some kind of output, for example:
 - docker image
 - a running docker container
 
-Often, other tasks than depend either on the output or 
+Often, other tasks then depend either on the output, or 
 the action of one or more other tasks.
 These dependencies build a direct acyclic graph of tasks, 
 also known as workflow.
@@ -74,7 +73,7 @@ but is suitable for other scenarios, too.
 Luigi describes tasks as subclasses of Luigi.Task 
 which implements the following methods:
 
-```python
+```
 class TaskC(luigi.Task):
 
     def output(self):
@@ -86,20 +85,19 @@ class TaskC(luigi.Task):
         
     def requires(self):
         return [TaskA(),TaskB()]
-
 ```
 
-Here we describe a TaskC which depends of TaskA and TaskB 
-defined in the requires() method. 
+Here we describe a TaskC which depends on TaskA and TaskB 
+defined in the `requires()` method. 
 It does something which is specified in the run() method. 
-Futher, it produces Target() as output. 
-Luigi provides the dependency resolution, scheduling and parallelisation.
+Further, it produces Target() as output. 
+Luigi provides the dependency resolution, scheduling and parallelization.
 
-Besides this static way of describing the dependencies between tasks, 
+Besides, this static way of describing the dependencies between tasks, 
 Luigi also provides so called 
 [dynamic dependencies](https://luigi.readthedocs.io/en/stable/tasks.html#dynamic-dependencies), 
 which allow more flexible patterns in special case. 
-Especially, if the order of execution of dependencies is important or 
+Especially, if the order of execution of dependencies is important, or 
 the dependencies depend on some calculation. The dynamic dependencies 
 allow the implementation of a fork-join pattern.
 
@@ -110,7 +108,7 @@ stops if any other StoppableTask failed in the workflow.
 
 ## Build Steps and their Dependencies
 
-We compose the language container from several different Dockerfiles.
+We compose the language container from several Dockerfiles.
 Each Dockerfile installs dependencies for one specific purpose.
 We also added a separate Dockerfile flavor-customization for user specific changes.
 The user specific changes will be merged on filesystem basis 
@@ -120,7 +118,7 @@ that could prevent the script client from working properly.
 
 The following graph shows the default build steps and their dependencies.
 
-![](docs/image-dependencies.png)
+![](images/image-dependencies.png)
 
 A dependency between build steps can be either a FROM or 
 COPY dependencies. A FROM dependency means that 
@@ -131,7 +129,7 @@ of the source of the arrow.
 
 All steps with the string "build_run" in their name, 
 either run the build for the script client or 
-at least inherit from a images which had build it. 
+at least inherit from an image which had built it. 
 As such these images contain all necessary tools to rebuild 
 the script client for debugging purposes.
 
@@ -179,9 +177,9 @@ class AnalyzeBuildRun(DockerFlavorAnalyzeImageTask):
 ## How does caching work
 
 Exaslct was built with caching in mind, 
-because building a flavor might take very long and 
+because building a flavor might take very long, and 
 many build steps don't change that often.
-Furthermore, a end user most likely only changes the build-step 
+Furthermore, an end user most likely only changes the build-step 
 flavor-customization which is designed to have a minimal impact 
 on all other build steps.
 
@@ -192,11 +190,11 @@ EXASLCT provides three types of caching:
 - file system cache with saved docker images
 - docker registry as a remote cache
 
-All caches can work together, the analyzes phase checks 
-in which cache a images is available. 
+All caches can work together, the analysis phase checks 
+in which cache an images is available. 
 The different type of caches have different precedence 
 which might you override by command line parameters. 
-The precedence is derived by how fast is a image available.
+The precedence is derived by how fast is an image available.
 Docker images managed by the docker daemon are instantaneously available.
 Saved docker images on the filesystem follow next, 
 they need to be loaded by the daemon, 
@@ -212,9 +210,9 @@ Responsible for hashing the build context is the `BuildContextHasher`
 which uses the `FileDirectoryListHasher`.
 
 The `BuildContextHasher` combines the hash values of all directories, 
-files and their executable rights of the build context, 
+files and their executable permissions of the build context, 
 such as the hash values of all images
-the current images depends on and the image changing build arguments 
+the current images depends on, and the image changing build arguments 
 to one hash value for the image.
  
 Other build arguments which only influence the resources 
