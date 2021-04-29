@@ -1,4 +1,5 @@
-# EXASLCT (Script Langauge Container Tool)
+# Script-Languages-Container-Tool Developer Guide
+
 EXASLCT is the build tool for the script language container. 
 Its usage is described [here](../README.md). 
 This readme is about the inner working of EXASLCT.
