@@ -37,7 +37,7 @@ download_and_verify_raw_file_from_github() {
 }
 
 main() {
-  local exaslct_git_ref="main"
+  local exaslct_git_ref="latest"
   if [ -n "${1-}" ]; then
     exaslct_git_ref="$1"
   fi
