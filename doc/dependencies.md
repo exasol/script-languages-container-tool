@@ -3,16 +3,15 @@
  
 ## Compile Dependencies
 
-TBD
- 
-## Test Dependencies
- 
-TBD
- 
+|Package|Version|
+|---|---|
+|poetry|1.1.6|
+
 ## Runtime Dependencies
 
-|package|version|
+|Package|Version|
 |---|---|
+|Python|>=3.6|
 |certifi|2020.12.5|
 |chardet|4.0.0|
 |click|7.1.2|
