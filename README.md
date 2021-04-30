@@ -138,4 +138,4 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 ## Information for Developers
 
 * [Developer Guide](doc/developer_guide/developer_guide.md)
-* [Design](doc/design.md)
+* [Dependencies](doc/dependencies.md)
