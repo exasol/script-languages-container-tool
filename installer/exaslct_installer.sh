@@ -41,7 +41,7 @@ main() {
   local repo="exasol/script-languages-container-tool"
 
   if [ -z "${EXASLCT_INSTALL_DIRECTORY-}" ]; then
-    EXASLCT_INSTALL_DIRECTORY=$PWD/exaslct_scripts
+    EXASLCT_INSTALL_DIRECTORY=exaslct_scripts
   fi
 
   if [ -e "$EXASLCT_INSTALL_DIRECTORY" ]; then
