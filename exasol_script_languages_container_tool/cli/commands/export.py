@@ -11,8 +11,9 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import create_docker_build_creator, \
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
     get_log_path
+
 
 @cli.command()
 @add_options(flavor_options)
@@ -63,11 +64,11 @@ def export(flavor_path: Tuple[str, ...],
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
     set_job_id(ExportContainers.__name__)
-    task_creator = create_docker_build_creator(lambda: ExportContainers(flavor_paths=list(flavor_path),
-                                            release_goals=list(release_goal),
-                                            export_path=export_path,
-                                            release_name=release_name
-                                            ))
+    task_creator = log_redirector_task_creator_wrapper(lambda: ExportContainers(flavor_paths=list(flavor_path),
+                                                                                release_goals=list(release_goal),
+                                                                                export_path=export_path,
+                                                                                release_name=release_name
+                                                                                ))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 

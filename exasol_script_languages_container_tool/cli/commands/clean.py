@@ -11,8 +11,9 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import CleanExaslcAllImages, \
     CleanExaslcFlavorsImages
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import create_docker_build_creator, \
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
     get_log_path
+
 
 @cli.command()
 @add_options(flavor_options)
@@ -60,7 +61,7 @@ def clean_all_images(
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "target")
     set_job_id(CleanExaslcAllImages.__name__)
-    task_creator = create_docker_build_creator(lambda: CleanExaslcAllImages())
+    task_creator = log_redirector_task_creator_wrapper(lambda: CleanExaslcAllImages())
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
     print(f'Clean log can be found at:{get_log_path(task)}')
     if not success:

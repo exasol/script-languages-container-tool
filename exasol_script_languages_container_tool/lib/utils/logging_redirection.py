@@ -4,7 +4,7 @@ from exasol_integration_test_docker_environment.lib.base.base_task import BaseTa
 
 
 class _Tee(object):
-    # Helper object which redirects calls to stdout/stderr to itself, prints to a give file and to real stdout/stderr
+    # Helper object which redirects calls to stdout/stderr to itself, prints to a given file and to real stdout/stderr
     def __init__(self, name, mode):
         self.file = open(name, mode)
         self.stdout = sys.stdout
@@ -28,7 +28,7 @@ class _Tee(object):
         self.file.flush()
 
 
-def create_docker_build_creator(task_creator):
+def log_redirector_task_creator_wrapper(task_creator):
     # Provides redirection of ALL logs to exaslct.log in the tasks job directory
 
     # Parameters:
