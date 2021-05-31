@@ -14,6 +14,8 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import create_docker_build_creator, \
+    get_log_path
 
 
 @cli.command()
@@ -151,39 +153,41 @@ def run_db_test(flavor_path: Tuple[str, ...],
             handle_commandline_error("Commandline parameter --external-exasol-bucketfs-port not set")
     set_job_id(TestContainer.__name__)
     task_creator = \
-        lambda: TestContainer(
-            flavor_paths=list(flavor_path),
-            release_goals=list(release_goal),
-            generic_language_tests=list(generic_language_test),
-            test_folders=list(test_folder),
-            test_files=list(test_file),
-            test_restrictions=list(test),
-            languages=list(test_language),
-            test_environment_vars=json.loads(test_environment_vars),
-            test_log_level=test_log_level,
-            reuse_uploaded_container=reuse_uploaded_container,
-            environment_type=EnvironmentType[environment_type],
-            reuse_database_setup=reuse_database_setup,
-            reuse_test_container=reuse_test_container,
-            reuse_database=reuse_database,
-            no_test_container_cleanup_after_success=reuse_test_container,
-            no_test_container_cleanup_after_failure=reuse_test_container,
-            no_database_cleanup_after_success=reuse_database,
-            no_database_cleanup_after_failure=reuse_database,
-            docker_db_image_name=docker_db_image_name,
-            docker_db_image_version=docker_db_image_version,
-            max_start_attempts=max_start_attempts,
-            external_exasol_db_host=external_exasol_db_host,
-            external_exasol_db_port=external_exasol_db_port,
-            external_exasol_bucketfs_port=external_exasol_bucketfs_port,
-            external_exasol_db_user=external_exasol_db_user,
-            external_exasol_db_password=external_exasol_db_password,
-            external_exasol_bucketfs_write_password=external_exasol_bucketfs_write_password,
-            external_exasol_xmlrpc_host=external_exasol_xmlrpc_host,
-            external_exasol_xmlrpc_port=external_exasol_xmlrpc_port,
-            external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
-            external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
-            external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name
+        create_docker_build_creator(
+            lambda: TestContainer(
+                flavor_paths=list(flavor_path),
+                release_goals=list(release_goal),
+                generic_language_tests=list(generic_language_test),
+                test_folders=list(test_folder),
+                test_files=list(test_file),
+                test_restrictions=list(test),
+                languages=list(test_language),
+                test_environment_vars=json.loads(test_environment_vars),
+                test_log_level=test_log_level,
+                reuse_uploaded_container=reuse_uploaded_container,
+                environment_type=EnvironmentType[environment_type],
+                reuse_database_setup=reuse_database_setup,
+                reuse_test_container=reuse_test_container,
+                reuse_database=reuse_database,
+                no_test_container_cleanup_after_success=reuse_test_container,
+                no_test_container_cleanup_after_failure=reuse_test_container,
+                no_database_cleanup_after_success=reuse_database,
+                no_database_cleanup_after_failure=reuse_database,
+                docker_db_image_name=docker_db_image_name,
+                docker_db_image_version=docker_db_image_version,
+                max_start_attempts=max_start_attempts,
+                external_exasol_db_host=external_exasol_db_host,
+                external_exasol_db_port=external_exasol_db_port,
+                external_exasol_bucketfs_port=external_exasol_bucketfs_port,
+                external_exasol_db_user=external_exasol_db_user,
+                external_exasol_db_password=external_exasol_db_password,
+                external_exasol_bucketfs_write_password=external_exasol_bucketfs_write_password,
+                external_exasol_xmlrpc_host=external_exasol_xmlrpc_host,
+                external_exasol_xmlrpc_port=external_exasol_xmlrpc_port,
+                external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
+                external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
+                external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name
+            )
         )
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 
@@ -191,6 +195,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
     if task.command_line_output_target.exists():
         with task.command_line_output_target.open("r") as f:
             print(f.read())
+    print(f'Test logs can be found at:{get_log_path(task)}')
     if not success:
         exit(1)
 
