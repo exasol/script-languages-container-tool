@@ -1,5 +1,7 @@
 import sys
 
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
+
 
 class _Tee(object):
     # Helper object which redirects calls to stdout/stderr to itself, prints to a give file and to real stdout/stderr
@@ -33,8 +35,11 @@ def create_docker_build_creator(task_creator):
     #   task_creator (function): creator function of the task
     def create_docker_build():
         task = task_creator()
-        tee = _Tee(f'{task.get_log_path()}/exaslct.log', "w")
-        print(f'Logging to :{tee.get_file().name}')
+        tee = _Tee(get_log_path(task), "w")
         return task
 
     return create_docker_build
+
+
+def get_log_path(task: BaseTask):
+    return f'{task.get_log_path()}/exaslct.log'

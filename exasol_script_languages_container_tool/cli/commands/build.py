@@ -12,7 +12,8 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import create_docker_build_creator
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import create_docker_build_creator, \
+    get_log_path
 
 
 @cli.command()
@@ -76,5 +77,7 @@ def build(flavor_path: Tuple[str, ...],
                                                                    goals=list(goal), shortcut_build=shortcut_build))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+    print(f'Build log can be found at:{get_log_path(task)}')
+
     if not success:
         exit(1)
