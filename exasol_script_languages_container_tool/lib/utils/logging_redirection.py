@@ -32,13 +32,13 @@ def log_redirector_task_creator_wrapper(task_creator):
     # Provides redirection of ALL logs to exaslct.log in the tasks job directory
 
     # Parameters:
-    #   task_creator (function): creator function of the task
-    def create_docker_build():
+    #   task_creator (function): creator function which creates task
+    def create_task_creator_wrapper():
         task = task_creator()
         tee = _Tee(get_log_path(task), "w")
         return task
 
-    return create_docker_build
+    return create_task_creator_wrapper
 
 
 def get_log_path(task: BaseTask):
