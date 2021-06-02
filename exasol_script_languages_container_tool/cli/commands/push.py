@@ -11,6 +11,8 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib.tasks.push.docker_push import DockerFlavorsPush
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
+    get_log_path
 
 
 @cli.command()
@@ -60,10 +62,12 @@ def push(flavor_path: Tuple[str, ...],
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
     set_job_id(DockerFlavorsPush.__name__)
-    task_creator = lambda: DockerFlavorsPush(force_push=force_push,
-                                             push_all=push_all,
-                                             goals=list(goal),
-                                             flavor_paths=list(flavor_path))
+    task_creator = log_redirector_task_creator_wrapper(lambda: DockerFlavorsPush(force_push=force_push,
+                                                                                 push_all=push_all,
+                                                                                 goals=list(goal),
+                                                                                 flavor_paths=list(flavor_path)))
+
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+    print(f'Push log can be found at:{get_log_path(task)}')
     if not success:
         exit(1)
