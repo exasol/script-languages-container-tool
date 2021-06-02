@@ -16,7 +16,6 @@ else
   terminal_parameter=""
 fi
 
-
 declare -A relevant_mount_point_arguments
 relevant_mount_point_arguments["--flavor-path"]=in_path
 relevant_mount_point_arguments["--export-path"]=out_path
@@ -39,50 +38,46 @@ function _get_mount_point_argument() {
   #  temp="${next_arg%\"}" NEED TO CHECK IF I NEED ARGUMENTS WITH/WITHOUT QUOTES
   #  temp="${temp#\"}"
   case $arg_type in
-    in_path)
-      if [[ -d $next_arg ]]; then
-        local dir_name=$(readlink -f $next_arg)
-        mount_point_arguments+="-v"
-        mount_point_arguments+="$dir_name:$dir_name:ro" #MOUNT READONLY!!!
-      else
-        echo "Input directory $next_arg for parameter $current_arg does not exist."
-        exit 1
-      fi
-      ;;
-    in_file)
-      if [[ -f $next_arg ]]; then
-        local rel_dir_name="$(dirname "${next_arg}")"
-        local dir_name=$(readlink -f rel_dir_name)
-        mount_point_arguments+="-v"
-        mount_point_arguments+="$dir_name:$dir_name:ro" #MOUNT READONLY!!!
-      else
-        echo "Input file $next_arg for parameter $current_arg does not exist."
-        exit 1
-      fi
-      ;;
-    out_path)
-      #Create out directories if necessary
-      if [[ ! -d $next_arg ]]; then
-        mkdir -p "$next_arg"
-      fi
+  in_path)
+    if [[ -d $next_arg ]]; then
       local dir_name=$(readlink -f $next_arg)
-      mount_point_arguments+="-v"
-      mount_point_arguments+="$dir_name:$dir_name"
-      ;;
-    out_file)
-      local rel_dir_name="$(dirname "${next_arg}")"
-      #Create out directories if necessary
-      if [[ ! -d $next_arg ]]; then
-        mkdir -p "$rel_dir_name"
-      fi
-      local dir_name=$(readlink -f rel_dir_name)
-      mount_point_arguments+="-v"
-      mount_point_arguments+="$dir_name:$dir_name"
-      ;;
-    *)
-      echo "INVALID ARGUMENT. Please adjust variable relevant_mount_point_arguments in $0!"
+      mount_point_arguments+="-v $dir_name:$dir_name:ro " #MOUNT READONLY!!!
+    else
+      echo "Input directory $next_arg for parameter $current_arg does not exist."
       exit 1
-      ;;
+    fi
+    ;;
+  in_file)
+    if [[ -f $next_arg ]]; then
+      local rel_dir_name="$(dirname "${next_arg}")"
+      local dir_name=$(readlink -f rel_dir_name)
+      mount_point_arguments+="-v $dir_name:$dir_name:ro " #MOUNT READONLY!!!
+    else
+      echo "Input file $next_arg for parameter $current_arg does not exist."
+      exit 1
+    fi
+    ;;
+  out_path)
+    #Create out directories if necessary
+    if [[ ! -d $next_arg ]]; then
+      mkdir -p "$next_arg"
+    fi
+    local dir_name=$(readlink -f $next_arg)
+    mount_point_arguments+="-v $dir_name:$dir_name "
+    ;;
+  out_file)
+    local rel_dir_name="$(dirname "${next_arg}")"
+    #Create out directories if necessary
+    if [[ ! -d $next_arg ]]; then
+      mkdir -p "$rel_dir_name"
+    fi
+    local dir_name=$(readlink -f rel_dir_name)
+    mount_point_arguments+="-v $dir_name:$dir_name "
+    ;;
+  *)
+    echo "INVALID ARGUMENT. Please adjust variable relevant_mount_point_arguments in $0!"
+    exit 1
+    ;;
   esac
 }
 
@@ -101,7 +96,6 @@ function _get_mount_point_arguments() {
 mount_point_arguments=''
 _get_mount_point_arguments ${@}
 echo "MountPoint args:$mount_point_arguments"
-
 
 quoted_arguments=''
 for argument in "${@}"; do
@@ -148,10 +142,6 @@ tmpfile_env=$(mktemp)
 trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
-if [[ -z $mount_point_arguments ]]; then
-  docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
-else
-  docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_arguments[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
-fi
+docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_arguments[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
 
 umask "$old_umask"
