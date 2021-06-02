@@ -17,40 +17,85 @@ else
 fi
 
 
-relevant_mount_point_arguments=("--flavor-path" "--export-path" "--output-directory" "--temporary-base-directory"
-                                "--cache-directory" "--save-directory" "--task-dependencies-dot-file" "--test-folder"
-                                "--test-file" "--temporary-base-directory")
+declare -A relevant_mount_point_arguments
+relevant_mount_point_arguments["--flavor-path"]=in_path
+relevant_mount_point_arguments["--export-path"]=out_path
+relevant_mount_point_arguments["--output-directory"]=out_path
+relevant_mount_point_arguments["--temporary-base-directory"]=out_path
+relevant_mount_point_arguments["--cache-directory"]=in_path
+relevant_mount_point_arguments["--save-directory"]=out_path
+relevant_mount_point_arguments["--task-dependencies-dot-file"]=out_file
+relevant_mount_point_arguments["--test-folder"]=in_path
+relevant_mount_point_arguments["--test-file"]=in_file
 
+function _get_mount_point_docker_arg() {
+  mount_point_path=
+
+}
 function _get_mount_point_argument() {
   current_arg=$1
   next_arg=$2
-#  temp="${next_arg%\"}" NEED TO CHECK IF I NEED ARGUMENTS WITH/WITHOUT QUOTES
-#  temp="${temp#\"}"
-  if [ -d  $next_arg ]; then
-    mount_point_arguments+=$next_arg
-  elif [ -f $next_arg ]; then
-    mount_point_arguments+="$(dirname "${next_arg}")"
-  else
-    echo "Invalid argument for $current_arg: $next_arg needs to be a directory"
-    exit -1
-  fi
+  arg_type=$3
+  #  temp="${next_arg%\"}" NEED TO CHECK IF I NEED ARGUMENTS WITH/WITHOUT QUOTES
+  #  temp="${temp#\"}"
+  case $arg_type in
+    in_path)
+      if [[ -d $next_arg ]]; then
+        local dir_name=$(readlink -f $next_arg)
+        mount_point_arguments+="-v"
+        mount_point_arguments+="$dir_name:$dir_name:ro" #MOUNT READONLY!!!
+      else
+        echo "Input directory $next_arg for parameter $current_arg does not exist."
+        exit 1
+      fi
+      ;;
+    in_file)
+      if [[ -f $next_arg ]]; then
+        local rel_dir_name="$(dirname "${next_arg}")"
+        local dir_name=$(readlink -f rel_dir_name)
+        mount_point_arguments+="-v"
+        mount_point_arguments+="$dir_name:$dir_name:ro" #MOUNT READONLY!!!
+      else
+        echo "Input file $next_arg for parameter $current_arg does not exist."
+        exit 1
+      fi
+      ;;
+    out_path)
+      #Create out directories if necessary
+      if [[ ! -d $next_arg ]]; then
+        mkdir -p "$next_arg"
+      fi
+      local dir_name=$(readlink -f $next_arg)
+      mount_point_arguments+="-v"
+      mount_point_arguments+="$dir_name:$dir_name"
+      ;;
+    out_file)
+      local rel_dir_name="$(dirname "${next_arg}")"
+      #Create out directories if necessary
+      if [[ ! -d $next_arg ]]; then
+        mkdir -p "$rel_dir_name"
+      fi
+      local dir_name=$(readlink -f rel_dir_name)
+      mount_point_arguments+="-v"
+      mount_point_arguments+="$dir_name:$dir_name"
+      ;;
+    *)
+      echo "INVALID ARGUMENT. Please adjust variable relevant_mount_point_arguments in $0!"
+      exit 1
+      ;;
+  esac
 }
 
 function _get_mount_point_arguments() {
   lenArgs="$#"
-  retVal=()
-  echo "Len Args: $lenArgs"
-  for ((idxArg=1; idxArg < $lenArgs; idxArg++))
-    do
+  for ((idxArg = 1; idxArg < $lenArgs; idxArg++)); do
     current_arg=${!idxArg}
-    next_arg_idx=$((idxArg+1))
+    next_arg_idx=$((idxArg + 1))
     next_arg=${!next_arg_idx}
-    echo "Check $current_arg"
-    if [[ " ${relevant_mount_point_arguments[@]} " =~ " ${current_arg} " ]]; then
-      echo "Found:$next_arg"
-      _get_mount_point_argument $current_arg $next_arg
+    if [ -v relevant_mount_point_arguments[$current_arg] ]; then
+      _get_mount_point_argument $current_arg $next_arg ${relevant_mount_point_arguments[$current_arg]}
     fi
-    done
+  done
 }
 
 mount_point_arguments=''
@@ -103,7 +148,10 @@ tmpfile_env=$(mktemp)
 trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
-
-docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" "$mount_point_arguments" -w "$PWD" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+if [[ -z $mount_point_arguments ]]; then
+  docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+else
+  docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_arguments[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+fi
 
 umask "$old_umask"
