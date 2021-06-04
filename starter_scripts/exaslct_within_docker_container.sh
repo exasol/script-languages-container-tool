@@ -27,12 +27,8 @@ relevant_mount_point_arguments["--task-dependencies-dot-file"]=out_file
 relevant_mount_point_arguments["--test-folder"]=in_path
 relevant_mount_point_arguments["--test-file"]=in_file
 
-function _get_mount_point_docker_arg() {
-  mount_point_path=
 
-}
-
-function _get_mount_point_argument() {
+function _get_mount_point_path() {
   current_arg=$1
   next_arg=$2
   arg_type=$3
@@ -41,7 +37,7 @@ function _get_mount_point_argument() {
   case $arg_type in
   in_path)
     if [[ -d $next_arg ]]; then
-      mount_point_arguments+=("$next_arg")
+      mount_point_paths+=("$next_arg")
     else
       echo "Input directory $next_arg for parameter $current_arg does not exist."
       exit 1
@@ -50,7 +46,7 @@ function _get_mount_point_argument() {
   in_file)
     if [[ -f $next_arg ]]; then
       local rel_dir_name="$(dirname "${next_arg}")"
-      mount_point_arguments+=("$rel_dir_name")
+      mount_point_paths+=("$rel_dir_name")
     else
       echo "Input file $next_arg for parameter $current_arg does not exist."
       exit 1
@@ -61,7 +57,7 @@ function _get_mount_point_argument() {
     if [[ ! -d $next_arg ]]; then
       mkdir -p "$next_arg"
     fi
-    mount_point_arguments+=("$next_arg")
+    mount_point_paths+=("$next_arg")
     ;;
   out_file)
     local rel_dir_name="$(dirname "${next_arg}")"
@@ -69,7 +65,7 @@ function _get_mount_point_argument() {
     if [[ ! -d $next_arg ]]; then
       mkdir -p "$rel_dir_name"
     fi
-    mount_point_arguments+=("$rel_dir_name")
+    mount_point_paths+=("$rel_dir_name")
     ;;
   *)
     echo "INVALID ARGUMENT. Please adjust variable relevant_mount_point_arguments in $0!"
@@ -78,20 +74,20 @@ function _get_mount_point_argument() {
   esac
 }
 
-function _get_mount_point_arguments() {
+function _get_mount_point_paths() {
   lenArgs="$#"
   for ((idxArg = 1; idxArg < $lenArgs; idxArg++)); do
     current_arg=${!idxArg}
     next_arg_idx=$((idxArg + 1))
     next_arg=${!next_arg_idx}
     if [ -v relevant_mount_point_arguments[$current_arg] ]; then
-      _get_mount_point_argument $current_arg $next_arg ${relevant_mount_point_arguments[$current_arg]}
+      _get_mount_point_path $current_arg $next_arg ${relevant_mount_point_arguments[$current_arg]}
     fi
   done
 }
 
-declare -a mount_point_arguments
-_get_mount_point_arguments ${@}
+declare -a mount_point_paths
+_get_mount_point_paths ${@}
 
 quoted_arguments=''
 for argument in "${@}"; do
@@ -99,19 +95,23 @@ for argument in "${@}"; do
   quoted_arguments="$quoted_arguments \"${argument//\"/\\\"}\""
 done
 
-chown_parameter=${mount_point_arguments[@]}
 
-echo "chown_parameter:$chown_parameter"
+chown_directories=''
+for mount_point in "${mount_point_paths[@]}"; do
+  mount_point="${mount_point//\\/\\\\}"
+  chown_directories="$chown_directories \"${mount_point//\"/\\\"}\""
+done
 
 mount_point_parameter=''
-for i in "${mount_point_arguments[@]}"; do
-  mount_point_argument=mount_point_arguments[i]
-  host_dir_name=$(readlink -f "${mount_point_argument}")
-  container_dir_name=$(realpath -s "${mount_point_argument}")
+for mount_point in "${mount_point_paths[@]}"; do
+  host_dir_name=$(readlink -f "${mount_point}")
+  container_dir_name=$(realpath -s "${mount_point}")
   mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
 done
 
-RUN_COMMAND="/script-languages-container-tool/starter_scripts/exaslct_without_poetry.sh $quoted_arguments; RETURN_CODE=\$?; chown -R $(id -u):$(id -g) .build_output chown_parameter &> /dev/null; exit \$RETURN_CODE"
+# Still need to "CHOWN" .build_output
+# because it is a default value for --output-path, and hence might not be part of $chown_directories
+RUN_COMMAND="/script-languages-container-tool/starter_scripts/exaslct_without_poetry.sh $quoted_arguments; RETURN_CODE=\$?; chown -R $(id -u):$(id -g) $chown_directories; chown -R $(id -u):$(id -g) .build_output &> /dev/null; exit \$RETURN_CODE"
 
 HOST_DOCKER_SOCKER_PATH="/var/run/docker.sock"
 CONTAINER_DOCKER_SOCKER_PATH="/var/run/docker.sock"
