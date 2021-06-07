@@ -12,7 +12,7 @@ class AnalyzeUDFClientDeps(DockerFlavorAnalyzeImageTask):
         return {}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeLanguageDeps(DockerFlavorAnalyzeImageTask):
@@ -39,7 +39,7 @@ class AnalyzeBuildDeps(DockerFlavorAnalyzeImageTask):
         return {}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeBuildRun(DockerFlavorAnalyzeImageTask):
@@ -55,7 +55,7 @@ class AnalyzeBuildRun(DockerFlavorAnalyzeImageTask):
         return {}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeBaseTestDeps(DockerFlavorAnalyzeImageTask):
@@ -67,7 +67,7 @@ class AnalyzeBaseTestDeps(DockerFlavorAnalyzeImageTask):
         return {"build_deps": AnalyzeBuildDeps}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeBaseTestBuildRun(DockerFlavorAnalyzeImageTask):
@@ -83,7 +83,7 @@ class AnalyzeBaseTestBuildRun(DockerFlavorAnalyzeImageTask):
         return {}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeFlavorBaseDeps(DockerFlavorAnalyzeImageTask):
@@ -98,7 +98,7 @@ class AnalyzeFlavorBaseDeps(DockerFlavorAnalyzeImageTask):
         return {}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeFlavorCustomization(DockerFlavorAnalyzeImageTask):
@@ -120,7 +120,7 @@ class AnalyzeFlavorTestBuildRun(DockerFlavorAnalyzeImageTask):
                 "base_test_build_run": AnalyzeBaseTestBuildRun}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeRelease(DockerFlavorAnalyzeImageTask):
@@ -133,4 +133,4 @@ class AnalyzeRelease(DockerFlavorAnalyzeImageTask):
                 "language_deps": AnalyzeLanguageDeps}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
