@@ -27,45 +27,68 @@ relevant_mount_point_arguments["--task-dependencies-dot-file"]=out_file
 relevant_mount_point_arguments["--test-folder"]=in_path
 relevant_mount_point_arguments["--test-file"]=in_file
 
+function _get_mount_point_path_for_in_dir() {
+  local current_arg=$1
+  local dir_path=$2
+
+  if [[ -d $dir_path ]]; then
+    mount_point_paths+=("$dir_path")
+  else
+    echo "Input directory $dir_path for parameter $current_arg does not exist."
+    exit 1
+  fi
+}
+
+function _get_mount_point_path_for_in_file() {
+  local current_arg=$1
+  local file_path=$2
+  if [[ -f $file_path ]]; then
+    local rel_dir_name=''
+    rel_dir_name="$(dirname "${file_path}")"
+    mount_point_paths+=("$rel_dir_name")
+  else
+    echo "Input file $file_path for parameter $current_arg does not exist."
+    exit 1
+  fi
+}
+
+function _get_mount_point_path_for_out_path() {
+  local dir_path=$1
+  #Create out directories if necessary
+  if [[ ! -d $dir_path ]]; then
+    mkdir -p "$dir_path"
+  fi
+  mount_point_paths+=("$dir_path")
+}
+
+function _get_mount_point_path_for_out_file() {
+  local file_path=$1
+  local rel_dir_name=''
+  rel_dir_name="$(dirname "${file_path}")"
+  #Create out directories if necessary
+  if [[ ! -d $file_path ]]; then
+    mkdir -p "$rel_dir_name"
+  fi
+  mount_point_paths+=("$rel_dir_name")
+}
 
 function _get_mount_point_path() {
-  current_arg=$1
-  next_arg=$2
-  arg_type=$3
-  #  temp="${next_arg%\"}" NEED TO CHECK IF I NEED ARGUMENTS WITH/WITHOUT QUOTES
-  #  temp="${temp#\"}"
+  local current_arg=$1
+  local next_arg=$2
+  local arg_type=$3
+
   case $arg_type in
   in_path)
-    if [[ -d $next_arg ]]; then
-      mount_point_paths+=("$next_arg")
-    else
-      echo "Input directory $next_arg for parameter $current_arg does not exist."
-      exit 1
-    fi
+    _get_mount_point_path_for_in_dir "${current_arg}" "${next_arg}"
     ;;
   in_file)
-    if [[ -f $next_arg ]]; then
-      local rel_dir_name="$(dirname "${next_arg}")"
-      mount_point_paths+=("$rel_dir_name")
-    else
-      echo "Input file $next_arg for parameter $current_arg does not exist."
-      exit 1
-    fi
+    _get_mount_point_path_for_in_file "${current_arg}" "${next_arg}"
     ;;
   out_path)
-    #Create out directories if necessary
-    if [[ ! -d $next_arg ]]; then
-      mkdir -p "$next_arg"
-    fi
-    mount_point_paths+=("$next_arg")
+    _get_mount_point_path_for_out_path "${next_arg}"
     ;;
   out_file)
-    local rel_dir_name="$(dirname "${next_arg}")"
-    #Create out directories if necessary
-    if [[ ! -d $next_arg ]]; then
-      mkdir -p "$rel_dir_name"
-    fi
-    mount_point_paths+=("$rel_dir_name")
+    _get_mount_point_path_for_out_file "${next_arg}"
     ;;
   *)
     echo "INVALID ARGUMENT. Please adjust variable relevant_mount_point_arguments in $0!"
@@ -75,8 +98,8 @@ function _get_mount_point_path() {
 }
 
 function _get_mount_point_paths() {
-  lenArgs="$#"
-  for ((idxArg = 1; idxArg < $lenArgs; idxArg++)); do
+  local lenArgs="$#"
+  for ((idxArg = 1; idxArg < lenArgs; idxArg++)); do
     current_arg=${!idxArg}
     next_arg_idx=$((idxArg + 1))
     next_arg=${!next_arg_idx}
@@ -87,7 +110,7 @@ function _get_mount_point_paths() {
 }
 
 declare -a mount_point_paths
-_get_mount_point_paths ${@}
+_get_mount_point_paths "${@}"
 
 quoted_arguments=''
 for argument in "${@}"; do
@@ -95,13 +118,18 @@ for argument in "${@}"; do
   quoted_arguments="$quoted_arguments \"${argument//\"/\\\"}\""
 done
 
-
+#After finalizing docker run we need to change owner (current user) of all directories which were mounted again
+#For that we call chown with a list of the respective directories
+#In order to avoid syntax errors we need to encapsulate all those directories with quotes here
 chown_directories=''
 for mount_point in "${mount_point_paths[@]}"; do
   mount_point="${mount_point//\\/\\\\}"
   chown_directories="$chown_directories \"${mount_point//\"/\\\"}\""
 done
 
+#For all mount pounts (directories in argument list) we need
+# 1. For the host argument: Resolve relative paths and resolve symbolic links
+# 2. For the container argument: Resolve relative paths, but keep symbolic links
 mount_point_parameter=''
 for mount_point in "${mount_point_paths[@]}"; do
   host_dir_name=$(readlink -f "${mount_point}")
