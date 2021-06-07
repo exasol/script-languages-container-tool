@@ -27,7 +27,7 @@ class AnalyzeLanguageDeps(DockerFlavorAnalyzeImageTask):
         return {"udfclient_deps": AnalyzeUDFClientDeps}
 
     def get_path_in_flavor(self):
-        return "real_flavor_base"
+        return "flavor_base"
 
 
 class AnalyzeBuildDeps(DockerFlavorAnalyzeImageTask):
