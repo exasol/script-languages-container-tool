@@ -34,6 +34,7 @@ In order to use this tool, your system needs to fulfill the following prerequisi
     * [bash](https://www.gnu.org/software/bash/)
     * [coreutils](https://www.gnu.org/software/coreutils/)
       * readlink with -f option (the readlink version of macOS doesn't support -f)
+      * realpath  
       * dirname
     * [Docker](https://docs.docker.com/) >= 17.05 
       * with support for [multi-stage builds required](https://docs.docker.com/develop/develop-images/multistage-build/)
@@ -128,6 +129,15 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 * Can push Docker images to Docker registries
 * Run tests for you container against an Exasol DB (docker-db or external db)
 
+## Limitations
+
+* Caution with symbolic links inside flavor path: 
+  If you use symbolic links inside the flavor path (--flavor-path)
+  they must not point to directories outside the root of the flavor path. 
+  Background: Local directories paths must be mounted manually to the docker container. 
+  We currently support only the mounting of the given command line arguments, but we do not analyze
+  the content of those directories.
+  
 ## Table of Contents
 
 ### Information for Users
