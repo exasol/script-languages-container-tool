@@ -131,12 +131,15 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 
 ## Limitations
 
-* Caution with symbolic links inside flavor path: 
-  If you use symbolic links inside the flavor path (--flavor-path)
-  they must not point to directories outside the root of the flavor path. 
+* Caution with symbolic links: 
+  If you use symbolic links inside any directory of the command line arguments
+  they must not point to files or directories outside the root of the path of the 
+  command line argument (i.e. --flavor-path ./flavors/my_flavor/ => There must be no symbolic
+  link inside ./flavors/my_flavor point to anywhere outside of ./flavors/my_flavor).
   Background: Local directories paths must be mounted manually to the docker container. 
   We currently support only the mounting of the given command line arguments, but we do not analyze
   the content of those directories.
+  Plan is to fix this limitation with [#35](https://github.com/exasol/script-languages-container-tool/issues/35)
   
 ## Table of Contents
 
