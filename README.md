@@ -1,6 +1,6 @@
 # Script-Languages-Container-Tool
 
-# Overview
+## Overview
 
 The Script-Languages-Container-Tool (exaslct) is the build tool for the script language container.
 You can build, export and upload script-language container from so-called flavors 
@@ -34,6 +34,7 @@ In order to use this tool, your system needs to fulfill the following prerequisi
     * [bash](https://www.gnu.org/software/bash/)
     * [coreutils](https://www.gnu.org/software/coreutils/)
       * readlink with -f option (the readlink version of macOS doesn't support -f)
+      * realpath  
       * dirname
     * [Docker](https://docs.docker.com/) >= 17.05 
       * with support for [multi-stage builds required](https://docs.docker.com/develop/develop-images/multistage-build/)
@@ -128,6 +129,18 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 * Can push Docker images to Docker registries
 * Run tests for you container against an Exasol DB (docker-db or external db)
 
+## Limitations
+
+* Caution with symbolic links: 
+  If you use symbolic links inside any directory of the command line arguments
+  they must not point to files or directories outside the root of the path of the 
+  command line argument (i.e. --flavor-path ./flavors/my_flavor/ => There must be no symbolic
+  link inside ./flavors/my_flavor point to anywhere outside of ./flavors/my_flavor).
+  Background: Local directories paths must be mounted manually to the docker container. 
+  We currently support only the mounting of the given command line arguments, but we do not analyze
+  the content of those directories.
+  Plan is to fix this limitation with [#35](https://github.com/exasol/script-languages-container-tool/issues/35)
+  
 ## Table of Contents
 
 ### Information for Users
