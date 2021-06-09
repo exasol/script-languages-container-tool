@@ -24,8 +24,8 @@ relevant_mount_point_arguments["--temporary-base-directory"]=out_path
 relevant_mount_point_arguments["--cache-directory"]=in_path
 relevant_mount_point_arguments["--save-directory"]=out_path
 relevant_mount_point_arguments["--task-dependencies-dot-file"]=out_file
-relevant_mount_point_arguments["--test-folder"]=in_path
-relevant_mount_point_arguments["--test-file"]=in_file
+#relevant_mount_point_arguments["--test-folder"]=in_path # TODO reactive in #37
+#relevant_mount_point_arguments["--test-file"]=in_file # TODO reactive in #37
 
 function _get_mount_point_path_for_in_dir() {
   local current_arg=$1
@@ -176,6 +176,6 @@ tmpfile_env=$(mktemp)
 trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
-docker run --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
 
 umask "$old_umask"
