@@ -24,8 +24,8 @@ relevant_mount_point_arguments["--temporary-base-directory"]=out_path
 relevant_mount_point_arguments["--cache-directory"]=in_path
 relevant_mount_point_arguments["--save-directory"]=out_path
 relevant_mount_point_arguments["--task-dependencies-dot-file"]=out_file
-relevant_mount_point_arguments["--test-folder"]=in_path
-relevant_mount_point_arguments["--test-file"]=in_file
+#relevant_mount_point_arguments["--test-folder"]=in_path # TODO reactive in #37
+#relevant_mount_point_arguments["--test-file"]=in_file # TODO reactive in #37
 
 function _get_mount_point_path_for_in_dir() {
   local current_arg=$1
