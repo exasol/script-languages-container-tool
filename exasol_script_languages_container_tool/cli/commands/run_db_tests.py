@@ -49,6 +49,10 @@ from exasol_script_languages_container_tool.lib.utils.logging_redirection import
 @add_options(test_environment_options)
 @add_options(docker_db_options)
 @add_options(external_db_options)
+@click.option('--db-mem-size', type=str, default="2 GiB", show_default=True,
+              help="The main memory used by the database. Format <number> <unit>, e.g. 1 GiB. The minimum size is 1 GB, below that the database will not start.")
+@click.option('--db-disk-size', type=str, default="2 GiB", show_default=True,
+              help="The disk size available for the database. Format <number> <unit>, e.g. 1 GiB. The minimum size is 100 MiB. However, the setup creates volume files with at least 2 GB larger size, because the database needs at least so much more disk.")
 @click.option('--test-environment-vars', type=str, default="""{"TRAVIS": ""}""",
               show_default=True,
               help="""Specifies the environment variables for the test runner as a json 
@@ -93,6 +97,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 external_exasol_xmlrpc_user: str,
                 external_exasol_xmlrpc_password: str,
                 external_exasol_xmlrpc_cluster_name: str,
+                db_mem_size: str,
+                db_disk_size: str,
                 test_environment_vars: str,
                 test_log_level: str,
                 reuse_database: bool,
@@ -162,6 +168,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 test_files=list(test_file),
                 test_restrictions=list(test),
                 languages=list(test_language),
+                db_mem_size=db_mem_size,
+                db_disk_size=db_disk_size,
                 test_environment_vars=json.loads(test_environment_vars),
                 test_log_level=test_log_level,
                 reuse_uploaded_container=reuse_uploaded_container,
