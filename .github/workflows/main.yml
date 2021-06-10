@@ -51,7 +51,7 @@ jobs:
       - name: Run all tests
         run: ./run_all_tests.sh
 
-  publish:
+  publish-main:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: publish
@@ -65,5 +65,4 @@ jobs:
           SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       - name: Push new Docker image
-        run: "bash starter_scripts/push_docker_runner_image.sh"
-
+        run: "bash starter_scripts/push_docker_runner_image.sh main"
