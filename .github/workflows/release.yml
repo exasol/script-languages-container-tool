@@ -2,28 +2,11 @@ name: Release
 
 on:
   release:
-    types: [published]
+    types: [published, created]
 
 jobs:
 
-  publish-tag:
-    runs-on: ubuntu-latest
-    environment: publish
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build new Docker image
-        run: "bash starter_scripts/build_docker_runner_image.sh"
-      - name: Docker login
-        run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
-        env: # Set the secret as an input
-          SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
-          SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      - name: Push new Docker Release image
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }} #Details here https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#release
-        run: "bash starter_scripts/push_docker_runner_image.sh $RELEASE_TAG"
-
-  publish-latest:
+  publish-release:
     runs-on: ubuntu-latest
     environment: publish
     steps:
@@ -37,3 +20,5 @@ jobs:
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       - name: Push new Docker latest image
         run: "bash starter_scripts/push_docker_runner_image.sh latest"
+      - name: Push new Docker Release image
+        run: "bash starter_scripts/push_docker_runner_image.sh ${{ github.event.release.tag_name }}" #Details here https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#release
