@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# If there is at least one argument, we create one docker tag with suffix=$argument per argument
+# If there is no argument given we create one docker tag with suffix "latest"
 if [ -n "${1-}" ]; then
   image_suffixes=("$@")
 else
