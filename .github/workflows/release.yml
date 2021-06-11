@@ -18,7 +18,5 @@ jobs:
         env: # Set the secret as an input
           SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      - name: Push new Docker latest image
-        run: "bash starter_scripts/push_docker_runner_image.sh latest"
-      - name: Push new Docker Release image
-        run: "bash starter_scripts/push_docker_runner_image.sh ${{ github.event.release.tag_name }}" #Details here https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#release
+      - name: Push new Docker images
+        run: "bash starter_scripts/push_docker_runner_image.sh latest ${{ github.event.release.tag_name }}"
