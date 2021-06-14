@@ -54,10 +54,12 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         utils.remove_docker_container([env_info.test_container_info.container_name,
                                        env_info.database_info.container_info.container_name])
         volumes_to_remove = \
-            [v for v in [env_info.test_container_info.volume_name, env_info.database_info.container_info.volume_name]
+            [v for v in
+             [env_info.test_container_info.volume_name,
+              env_info.database_info.container_info.volume_name]
              if v is not None]
         utils.remove_docker_volumes(volumes_to_remove)
-        self._remove_docker_networks([f"{env_info.network_info.network_name}"])
+        self._remove_docker_networks([env_info.network_info.network_name])
 
     def _remove_docker_networks(self, networks):
         for network in networks:
