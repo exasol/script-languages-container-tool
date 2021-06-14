@@ -1,4 +1,4 @@
-# Script-Languages-Container-Tool 0.1.0, released 2021-06-11
+# Script-Languages-Container-Tool 0.1.0, released 2021-06-15
 
 Code name: Extraction from Script-Languages Repository
 
@@ -8,7 +8,7 @@ Code name: Extraction from Script-Languages Repository
 - #3: Add installer scripts which download and install the scripts to run exaslct from a prebuild docker container
 - #19: Forward the docker registry password environment variables to the docker runner
 - #10: Improve exaslct starter script to mount all path which are used by the command line parameter
-- #33: Integrate integration-test-environment to version 0.3
+- #33: Integrate integration-test-environment to version 0.3.1
 
 ## Bug Fixes
 
