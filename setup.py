@@ -22,7 +22,7 @@ package_data = \
 
 install_requires = \
 ['exasol-integration-test-docker-environment @ '
- 'git+https://github.com/exasol/integration-test-docker-environment.git@master']
+ 'git+https://github.com/exasol/integration-test-docker-environment.git@0.3.1']
 
 setup_kwargs = {
     'name': 'exasol-script-languages-container-tool',

@@ -69,7 +69,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "0.2.0"
+version = "0.3.1"
 description = "Integration Test Docker Environment for Exasol"
 category = "main"
 optional = false
@@ -94,8 +94,8 @@ simplejson = ">=3.16.0"
 [package.source]
 type = "git"
 url = "https://github.com/exasol/integration-test-docker-environment.git"
-reference = "master"
-resolved_reference = "a66ebf7efbf7703cdb86876440ecaba23d21e2d4"
+reference = "0.3.1"
+resolved_reference = "948ed9bb5e356c78057f92a8512353d107a1d085"
 
 [[package]]
 name = "gitdb"
@@ -445,7 +445,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.6"
-content-hash = "2562a6a57e6bc867b6a5d5ec4b3a19c6fc663b46fa3edc77a479a6562025cd44"
+content-hash = "920230e55e2beeae69b4250f9a433b0ff4cbdebeb622dcf315793113814ec7fa"
 
 [metadata.files]
 certifi = [
