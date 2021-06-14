@@ -36,7 +36,7 @@ class TestRunnerDBTestTask(FlavorBaseTask,
 
     def register_required(self):
         self.register_export_container()
-        self.register_spawn_test_environment()
+        #self.register_spawn_test_environment()
 
     def register_export_container(self):
         export_container_task = self.create_child_task(ExportFlavorContainer,
@@ -52,10 +52,11 @@ class TestRunnerDBTestTask(FlavorBaseTask,
             self.create_child_task_with_common_params(
                 SpawnTestEnvironment,
                 environment_name=test_environment_name)
-        self._test_environment_info_future = self.register_dependency(
+        self._test_environment_info_future = yield from self.run_dependencies(
             spawn_test_environment_task)
 
     def run_task(self):
+        yield from self.register_spawn_test_environment()
         export_infos = self.get_values_from_future(
             self._export_infos_future)  # type: Dict[str,ExportInfo]
         export_info = export_infos[self.release_goal]
