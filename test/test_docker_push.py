@@ -9,7 +9,7 @@ class DockerPushTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = utils.ExaslctTestEnvironment(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
         self.registry_container, self.registry_host, self.registry_port = self.test_environment.create_registry()
         print("registry:", utils.request_registry_repositories(self.registry_host, self.registry_port))
         self.test_environment.clean_images()

@@ -9,7 +9,7 @@ class DockerRunDBTestDockerDBTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = utils.ExaslctTestEnvironment(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
         self.test_environment.clean_images()
 
     def tearDown(self):
