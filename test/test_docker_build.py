@@ -1,7 +1,7 @@
 import unittest
 
 import docker
-from exasol_integration_test_docker_environment.test import utils
+from exasol_integration_test_docker_environment.testing import utils
 
 from exasol_script_languages_container_tool.lib.utils.docker_utils import find_images_by_tag
 

@@ -2,8 +2,7 @@ import unittest
 from pathlib import Path
 
 import docker
-import os.path
-from exasol_integration_test_docker_environment.test import utils
+from exasol_integration_test_docker_environment.testing import utils
 from exasol_integration_test_docker_environment.lib.data.environment_info import EnvironmentInfo
 
 import utils as exaslct_utils
