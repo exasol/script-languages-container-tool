@@ -18,13 +18,12 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.client = docker.from_env()
 
     def tearDown(self):
-        self.remove_docker_runtime()
+        self.remove_docker_environment()
         self.test_environment.close()
         self.client.close()
 
     def _getEnvironmentInfo(self):
         test_environment_name = f"""{self.test_environment.flavor_path.name}_release"""
-        env_path = os.path.join(self.test_environment.temp_dir, "cache", "environments", test_environment_name, "")
         environment_info_json_path = Path(self.test_environment.temp_dir,
                                           f"cache/environments/{test_environment_name}/environment_info.json")
         if environment_info_json_path.exists():
@@ -33,15 +32,16 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
 
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
         env_info = self._getEnvironmentInfo()
+
         containers = \
             [c.name for c in
              self.client.containers.list()
-             if env_info.database_info.container_info.container_name in c.name]
-        db_container = [c for c in containers if "db_container" in c]
-        exit_result = self.client.containers.get(db_container[0]).exec_run("cat /exa/etc/EXAConf")
+             if env_info.database_info.container_info.container_name == c.name]
+        self.assertEqual(len(containers), 1)
+        exit_result = self.client.containers.get(containers[0]).exec_run("cat /exa/etc/EXAConf")
         output = exit_result[1].decode("UTF-8")
         if output == '':
-            exit_result = self.client.containers.get(db_container[0]).exec_run("cat /exa/etc/EXAConf")
+            exit_result = self.client.containers.get(containers[0]).exec_run("cat /exa/etc/EXAConf")
             output = exit_result[1].decode("UTF-8")
             return_code = exit_result[0]
         return_code = exit_result[0]
@@ -49,7 +49,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.assertIn(f"MemSize = {mem_size}", output)
         self.assertIn(f" Size = {disk_size}", output)
 
-    def remove_docker_runtime(self):
+    def remove_docker_environment(self):
         env_info = self._getEnvironmentInfo()
         utils.remove_docker_container([env_info.test_container_info.container_name,
                                        env_info.database_info.container_info.container_name])
