@@ -19,4 +19,4 @@ jobs:
           SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       - name: Push new Docker images
-        run: "bash starter_scripts/push_docker_runner_image.sh latest ${{ github.event.release.tag_name }}"
+        run: bash starter_scripts/push_docker_runner_image.sh latest "${{ github.event.release.tag_name }}"
