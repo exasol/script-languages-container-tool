@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import docker
-
 from exasol_integration_test_docker_environment.testing import utils
 
 EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
