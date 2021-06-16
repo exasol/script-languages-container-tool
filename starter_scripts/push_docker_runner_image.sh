@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
+# If there is at least one argument, we create one docker tag with suffix=$argument per argument
+# If there is no argument given we create one docker tag with suffix "latest"
 if [ -n "${1-}" ]; then
-  image_suffix="$1"
+  image_suffixes=("$@")
 else
-  image_suffix="latest"
+  image_suffixes="latest"
 fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
@@ -14,8 +16,12 @@ GIT_IMAGE_NAME="$("$SCRIPT_DIR/build_docker_runner_image.sh")"
 
 docker push "$GIT_IMAGE_NAME"
 
-RENAMED_IMAGE_NAME="$("$SCRIPT_DIR/construct_docker_runner_image_name.sh" "$image_suffix")"
+for image_suffix in "${image_suffixes[@]}"; do
 
-docker tag "$GIT_IMAGE_NAME" "$RENAMED_IMAGE_NAME"
+  RENAMED_IMAGE_NAME="$("$SCRIPT_DIR/construct_docker_runner_image_name.sh" "$image_suffix")"
 
-docker push "$RENAMED_IMAGE_NAME"
+  docker tag "$GIT_IMAGE_NAME" "$RENAMED_IMAGE_NAME"
+
+  docker push "$RENAMED_IMAGE_NAME"
+
+done
