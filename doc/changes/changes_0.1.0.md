@@ -2,6 +2,11 @@
 
 Code name: Extraction from Script-Languages Repository
 
+## Summary 
+
+This is the initial release of the script-language-container-tool which was extracted from the script-language project. 
+The goal is to provide a build tool together with a test environment for the script-language container.
+
 ## Features / Enhancements
 
 - #1: Add initial version
