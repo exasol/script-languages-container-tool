@@ -1,15 +1,13 @@
 import os
 import unittest
 
-from exasol_integration_test_docker_environment.test import utils
-
 import utils as exaslct_utils
 
 
 class DockerExportTest(unittest.TestCase):
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = utils.ExaslctTestEnvironment(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
         self.export_path = self.test_environment.temp_dir + "/export_dir"
         self.test_environment.clean_images()
 

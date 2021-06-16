@@ -26,7 +26,19 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+  prep-testbed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          sudo apt-get install jq
+          echo "::set-output name=matrix::$(bash ./get_all_tests.sh)"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
   test-all:
+    needs: prep-testbed
     strategy:
       fail-fast: false
       matrix:
@@ -34,6 +46,7 @@ jobs:
           - "default"
         python_version:
           - 3.6
+        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +62,7 @@ jobs:
         run: starter_scripts/exaslct_with_poetry.sh --help
 
       - name: Run all tests
-        run: ./run_all_tests.sh
+        run: ./run_test.sh ${{ matrix.test-path }}
 
   publish:
     if: github.ref == 'refs/heads/main'

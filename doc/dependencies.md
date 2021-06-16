@@ -18,7 +18,7 @@
 |decorator|4.4.2|
 |docker|5.0.0|
 |docutils|0.17.1|
-|exasol-integration-test-docker-environment @ git+https://github.com/exasol/integration-test-docker-environment.git@0.2.0 |
+|exasol-integration-test-docker-environment @ git+https://github.com/exasol/integration-test-docker-environment.git@0.3.1 |
 |gitdb|4.0.7|
 |gitpython|3.1.15|
 |humanfriendly|9.1|

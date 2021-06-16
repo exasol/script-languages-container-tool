@@ -1,8 +1,6 @@
 import os
 import unittest
 
-from exasol_integration_test_docker_environment.test import utils
-
 import utils as exaslct_utils
 
 
@@ -10,7 +8,7 @@ class DockerUploadTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = utils.ExaslctTestEnvironment(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
         self.test_environment.clean_images()
         self.docker_environment_name = self.__class__.__name__
         self.on_host_docker_environment, self.google_cloud_docker_environment = \
