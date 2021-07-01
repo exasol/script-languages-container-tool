@@ -103,16 +103,14 @@ function _get_mount_point_paths() {
     current_arg=${!idxArg}
     next_arg_idx=$((idxArg + 1))
     next_arg=${!next_arg_idx}
-    if [[ -n "${relevant_mount_point_arguments[${current_arg}]}" ]]; then
+    if [[ -n "${relevant_mount_point_arguments[${current_arg}]-}" ]]; then
       _get_mount_point_path $current_arg $next_arg "${relevant_mount_point_arguments[${current_arg}]}"
     fi
   done
 }
 
 declare -a mount_point_paths
-set +u
 _get_mount_point_paths "${@}"
-set -u
 
 quoted_arguments=''
 for argument in "${@}"; do
