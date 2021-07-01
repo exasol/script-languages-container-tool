@@ -12,6 +12,9 @@ There we also described how you could customize these flavors to your needs.
 
 ### Prerequisites
 
+* Docker 
+* Bash v4.2+
+
 #### For installation
 
 In order to install this tool, your system needs to provide 
