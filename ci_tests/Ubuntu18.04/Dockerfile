@@ -1,0 +1,24 @@
+FROM ubuntu:18.04
+
+RUN apt-get -y update && \
+    apt-get -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    locales \
+    gnupg \
+    lsb-release && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LC_ALL=en_US.UTF-8
+
+
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+RUN echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+RUN apt-get -y update && apt-get -y install docker-ce docker-ce-cli containerd.io
+
+COPY run_ci_test_within_docker.sh /run_ci_test_within_docker.sh
+ENTRYPOINT ["/run_ci_test_within_docker.sh"]
