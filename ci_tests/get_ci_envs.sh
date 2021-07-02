@@ -2,5 +2,6 @@
 
 set -e
 
-CI_ENVS=("CentOs7" "CentOs8" "Ubuntu18.04" "Ubuntu20.04")
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+CI_ENVS=$(basename -a $(ls -d "${SCRIPT_DIR}"/*/))
 printf '%s\n' ${CI_ENVS[@]} | jq -R . | jq -cs .
