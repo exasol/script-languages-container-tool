@@ -2,5 +2,5 @@
 
 set -e
 
-cd /working_dir
+cd $1
 ./exaslct export --flavor-path ./test/resources/test-flavor --export-path ./out
