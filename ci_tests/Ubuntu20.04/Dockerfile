@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update && \
     apt-get -y install \
+    --no-install-recommends \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -11,7 +12,10 @@ RUN apt-get -y update && \
     gnupg \
     lsb-release && \
     locale-gen en_US.UTF-8 && \
-    update-locale LC_ALL=en_US.UTF-8
+    update-locale LC_ALL=en_US.UTF-8 && \
+    apt-get -y clean && \
+    apt-get -y autoremove
+
 
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
