@@ -12,9 +12,6 @@ There we also described how you could customize these flavors to your needs.
 
 ### Prerequisites
 
-* Docker 
-* Bash v4.2+
-
 #### For installation
 
 In order to install this tool, your system needs to provide 
@@ -22,7 +19,7 @@ the following prerequisites:
 
 * Software
     * Linux
-    * [bash](https://www.gnu.org/software/bash/)
+    * [bash](https://www.gnu.org/software/bash/) >= 4.2
     * [coreutils](https://www.gnu.org/software/coreutils/)
       * sha512sum
       * sed
@@ -34,7 +31,7 @@ In order to use this tool, your system needs to fulfill the following prerequisi
 
 * Software
     * Linux
-    * [bash](https://www.gnu.org/software/bash/)
+    * [bash](https://www.gnu.org/software/bash/) >= 4.2
     * [coreutils](https://www.gnu.org/software/coreutils/)
       * readlink with -f option (the readlink version of macOS doesn't support -f)
       * realpath  

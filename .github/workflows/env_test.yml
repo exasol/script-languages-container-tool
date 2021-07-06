@@ -1,0 +1,29 @@
+name: CI_Env_Test
+
+on:
+  push:
+
+jobs:
+  prep-testbed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          sudo apt-get install jq
+          echo "::set-output name=matrix::$(bash ./ci_tests/get_ci_envs.sh)"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  test-envs:
+    needs: prep-testbed
+    strategy:
+      fail-fast: false
+      matrix:
+        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run all env tests
+        run: ./ci_tests/run_ci_test.sh ${{ matrix.test-path }}
