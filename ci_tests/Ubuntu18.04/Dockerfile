@@ -22,7 +22,7 @@ RUN echo \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 RUN apt-get -y update && apt-get -y install --no-install-recommends \
-    docker-ce docker-ce-cli containerd.io \
+    docker-ce docker-ce-cli containerd.io && \
     apt-get -y clean && \
     apt-get -y autoremove
 
