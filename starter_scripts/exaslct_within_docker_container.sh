@@ -112,7 +112,7 @@ function _get_mount_point_paths() {
 }
 
 declare -a mount_point_paths
-_get_mount_point_paths "${@}"
+_get_mount_point_paths ${@//=/ }
 
 quoted_arguments=''
 for argument in "${@}"; do
