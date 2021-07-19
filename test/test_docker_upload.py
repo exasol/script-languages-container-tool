@@ -1,6 +1,8 @@
 import os
 import unittest
 
+import requests.exceptions
+
 import utils as exaslct_utils
 
 
@@ -65,6 +67,29 @@ class DockerUploadTest(unittest.TestCase):
         command = f"{self.test_environment.executable} upload {arguments}"
 
         self.test_environment.run_command(command, track_task_dependencies=True)
+
+    def test_docker_upload_fail_path_in_bucket(self):
+        self.release_name = "TEST"
+        self.bucketfs_name = "bfsdefault"
+        self.bucket_name = "default"
+        arguments = " ".join([
+            f"--database-host {self.docker_environment.database_host}",
+            f"--bucketfs-port {self.docker_environment.bucketfs_port}",
+            f"--bucketfs-username {self.docker_environment.bucketfs_username}",
+            f"--bucketfs-password invalid",
+            f"--bucketfs-name {self.bucketfs_name}",
+            f"--bucket-name {self.bucket_name}",
+            f"--no-bucketfs-https",
+            f"--release-name {self.release_name}",
+        ])
+        command = f"{self.test_environment.executable} upload {arguments}"
+
+        exception_thrown = False
+        try:
+            self.test_environment.run_command(command, track_task_dependencies=True)
+        except:
+            exception_thrown = True
+        assert exception_thrown
 
 
 if __name__ == '__main__':
