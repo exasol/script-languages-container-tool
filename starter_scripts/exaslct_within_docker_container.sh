@@ -129,6 +129,11 @@ for mount_point in "${mount_point_paths[@]}"; do
   chown_directories="$chown_directories \"${mount_point//\"/\\\"}\""
 done
 
+chown_directories_cmd=''
+if [[ -n "$chown_directories" ]]; then
+  chown_directories_cmd="chown -R $(id -u):$(id -g) $chown_directories;"
+fi
+
 #For all mount pounts (directories in argument list) we need
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
@@ -141,7 +146,7 @@ done
 
 # Still need to "CHOWN" .build_output
 # because it is a default value for --output-path, and hence might not be part of $chown_directories
-RUN_COMMAND="/script-languages-container-tool/starter_scripts/exaslct_without_poetry.sh $quoted_arguments; RETURN_CODE=\$?; chown -R $(id -u):$(id -g) $chown_directories; chown -R $(id -u):$(id -g) .build_output &> /dev/null; exit \$RETURN_CODE"
+RUN_COMMAND="/script-languages-container-tool/starter_scripts/exaslct_without_poetry.sh $quoted_arguments; RETURN_CODE=\$?; $chown_directories_cmd chown -R $(id -u):$(id -g) .build_output &> /dev/null; exit \$RETURN_CODE"
 
 HOST_DOCKER_SOCKER_PATH="/var/run/docker.sock"
 CONTAINER_DOCKER_SOCKER_PATH="/var/run/docker.sock"
