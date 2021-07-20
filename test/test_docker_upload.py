@@ -66,7 +66,11 @@ class DockerUploadTest(unittest.TestCase):
         ])
         command = f"{self.test_environment.executable} upload {arguments}"
 
-        self.test_environment.run_command(command, track_task_dependencies=True)
+        completed_process = self.test_environment.run_command(command, track_task_dependencies=True, capture_output=True)
+
+        self.assertIn(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}?lang=python#buckets/{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}/exaudf/exaudfclient_py3",
+            completed_process.stdout.decode("UTF-8"))
 
     def test_docker_upload_fail_path_in_bucket(self):
         self.release_name = "TEST"
