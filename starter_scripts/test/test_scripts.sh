@@ -27,4 +27,4 @@ trap "rm -rf $flavorDirA $exportDirA" EXIT
 
 testStr=$("$SCRIPT_DIR/mount_point_parsing.sh" --flavor-path="$flavorDirA" --export-path "$exportDirA" dummy)
 
-assert "$testStr" "$flavorDirA" "$exportDirA"
+assert "$testStr" "$flavorDirA" "$exportDirA" TEST_FAIL
