@@ -25,6 +25,6 @@ exportDirA="$SCRIPT_DIR/test/exportdir=xyz"
 mkdir "$flavorDirA" || true
 trap "rm -rf $flavorDirA $exportDirA" EXIT
 
-testStr=$("$SCRIPT_DIR/mount_point_parsing.sh" --flavor-path="$flavorDirA" --export-path "$exportDirA" dummy)
+testStr=$(bash "$SCRIPT_DIR/mount_point_parsing.sh" --flavor-path="$flavorDirA" --export-path "$exportDirA" dummy)
 
 assert "$testStr" "$flavorDirA" "$exportDirA"
