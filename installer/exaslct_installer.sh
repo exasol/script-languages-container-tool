@@ -62,9 +62,12 @@ main() {
   mkdir "$EXASLCT_INSTALL_DIRECTORY"
   pushd "$EXASLCT_INSTALL_DIRECTORY" &> /dev/null
 
+#Here we copy the same files as in tests/test_exaslct_install_template_with_current_ref.sh
+#Take care and make sure list of files is identical!!!
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container_without_container_build.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/exaslct_within_docker_container.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/construct_docker_runner_image_name.sh"
+  download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "starter_scripts/mount_point_parsing.sh"
   download_and_verify_raw_file_from_github "$repo" "$exaslct_git_ref" "installer/exaslct_install_template.sh"
 
   mv exaslct_install_template.sh exaslct.sh
