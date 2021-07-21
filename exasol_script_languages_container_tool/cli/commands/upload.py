@@ -26,7 +26,7 @@ from exasol_script_languages_container_tool.lib.utils.logging_redirection import
 @click.option('--bucketfs-https/--no-bucketfs-https', default=False)
 @click.option('--bucketfs-name', type=str, required=True)
 @click.option('--bucket-name', type=str, required=True)
-@click.option('--path-in-bucket', type=str, required=False)
+@click.option('--path-in-bucket', type=str, required=False, default='')
 @click.option('--release-name', type=str, default=None)
 @add_options(build_options)
 @add_options(docker_repository_options)
