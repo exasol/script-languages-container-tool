@@ -19,7 +19,7 @@ class LanguageDefinition:
         self.add_missing_builtin = add_missing_builtin
 
     def generate_definition(self):
-        path_in_bucket = self.path_in_bucket
+        path_in_bucket = self.path_in_bucket if self.path_in_bucket is not None else ""
         if path_in_bucket != "" and not path_in_bucket.endswith("/"):
             path_in_bucket = path_in_bucket + "/"
         language_definition_path = Path(
