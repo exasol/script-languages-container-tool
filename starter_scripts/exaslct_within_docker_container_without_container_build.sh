@@ -24,7 +24,7 @@ if [ -z "$FIND_IMAGE_LOCALLY" ]; then
 fi
 
 EXEC_SCRIPT=exaslct_within_docker_container.sh
-if[[ "$(uname)" = Darwin ]]; then
+if [[ "$(uname)" = Darwin ]]; then
   EXEC_SCRIPT=exaslct_within_docker_container_slim.sh
 fi
 
