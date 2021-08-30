@@ -19,11 +19,14 @@ the following prerequisites:
 
 * Software
     * Linux
-    * [bash](https://www.gnu.org/software/bash/) >= 4.2
+      * [bash](https://www.gnu.org/software/bash/) >= 4.2
+    * MacOsX
+      * [bash](https://www.gnu.org/software/bash/) > 3.2
     * [coreutils](https://www.gnu.org/software/coreutils/)
       * sha512sum
       * sed
     * [curl](https://curl.se/)
+
 
 #### For running
 
@@ -31,11 +34,17 @@ In order to use this tool, your system needs to fulfill the following prerequisi
 
 * Software
     * Linux
-    * [bash](https://www.gnu.org/software/bash/) >= 4.2
-    * [coreutils](https://www.gnu.org/software/coreutils/)
-      * readlink with -f option (the readlink version of macOS doesn't support -f)
-      * realpath  
-      * dirname
+      * [bash](https://www.gnu.org/software/bash/) >= 4.2
+      * [coreutils](https://www.gnu.org/software/coreutils/)
+        * readlink with -f option
+        * realpath  
+        * dirname
+    * MacOsX (Please see limitations on [MacOsX](#macosx-limitations))
+      * [bash](https://www.gnu.org/software/bash/) >= 3.2
+      * [coreutils](https://www.gnu.org/software/coreutils/)
+        * greadlink with -f option
+        * realpath  
+        * dirname
     * [Docker](https://docs.docker.com/) >= 17.05 
       * with support for [multi-stage builds required](https://docs.docker.com/develop/develop-images/multistage-build/)
       * host volume mounts need to be allowed
@@ -140,7 +149,11 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
   We currently support only the mounting of the given command line arguments, but we do not analyze
   the content of those directories.
   Plan is to fix this limitation with [#35](https://github.com/exasol/script-languages-container-tool/issues/35)
+
+### MacOsX Limitations
   
+* On MacOsX all arguments (flavors path, output directory, etc.) must point to locations within the current directory (background is that the MacOsX version does not support mount binding additional directories).
+
 ## Table of Contents
 
 ### Information for Users

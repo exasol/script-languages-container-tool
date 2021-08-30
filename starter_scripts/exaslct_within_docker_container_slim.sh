@@ -18,7 +18,7 @@ else
 fi
 
 RED='\033[0;31m'
-printf "${RED} Using slim version of exaslct. Please note that all input/output artifacts (input flavor directories, output, log, etc.) needs to be within the current working directory.\n"
+printf "${RED} Using slim version of exaslct. Please note that all input/output arguments (input flavor directories, output, log, etc.) needs to point to directories within the current directory.\n"
 
 rl=readlink
 if [[ "$(uname)" = Darwin ]]; then
