@@ -20,9 +20,10 @@ fi
 RED='\033[0;31m'
 printf "${RED} Using slim version of exaslct. Please note that all input/output artifacts (input flavor directories, output, log, etc.) needs to be within the current working directory.\n"
 
-
-
-[[ "$(uname)" = Darwin ]] && rl=greadlink || rl=readlink
+rl=readlink
+if [[ "$(uname)" = Darwin ]]; then
+  rl=greadlink
+fi
 
 if [[ ! "$(command -v $rl)" ]]; then
   echo readlink not available! Please install coreutils: On Linux \"apt-get install coreutils\" or similar. On MacOsX \"brew install coreutils\".

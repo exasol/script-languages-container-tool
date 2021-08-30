@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
-
-[[ "$(uname)" = Darwin ]] && rl=greadlink || rl=readlink
+rl=readlink
+if [[ "$(uname)" = Darwin ]]; then
+  rl=greadlink
+fi
 
 if [[ ! "$(command -v $rl)" ]]; then
   echo readlink not available! Please install coreutils: On Linux \"apt-get install coreutils\" or similar. On MacOsX \"brew install coreutils\".

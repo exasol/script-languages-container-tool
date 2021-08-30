@@ -2,7 +2,10 @@
 
 set -euo pipefail
 
-[[ "$(uname)" = Darwin ]] && rl=greadlink || rl=readlink
+rl=readlink
+if [[ "$(uname)" = Darwin ]]; then
+  rl=greadlink
+fi
 
 if [[ ! "$(command -v $rl)" ]]; then
   echo readlink not available! Please install coreutils: On Linux \"apt-get install coreutils\" or similar. On MacOsX \"brew install coreutils\".
@@ -20,5 +23,9 @@ if [ -z "$FIND_IMAGE_LOCALLY" ]; then
   docker pull "$RUNNER_IMAGE_NAME"
 fi
 
-[[ "$(uname)" = Darwin ]] && EXEC_SCRIPT=exaslct_within_docker_container_slim.sh || EXEC_SCRIPT=exaslct_within_docker_container.sh
+EXEC_SCRIPT=exaslct_within_docker_container.sh
+if[[ "$(uname)" = Darwin ]]; then
+  EXEC_SCRIPT=exaslct_within_docker_container_slim.sh
+fi
+
 bash "$SCRIPT_DIR/$EXEC_SCRIPT" "$RUNNER_IMAGE_NAME" "${@}"
