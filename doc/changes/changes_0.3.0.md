@@ -16,4 +16,4 @@ n/a
 
 ## Documentation
 
-n/a
+ - #73: Prepared changelog for version 0.3.0
