@@ -1,4 +1,4 @@
-# Script-Languages-Container-Tool 0.4.0, released t.b.d.
+# Script-Languages-Container-Tool 0.4.0, released 2021-10-08
 
 Code name: Using integration-test-docker-environment 0.5.0
 
