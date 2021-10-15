@@ -97,6 +97,6 @@ class RunDBTest(FlavorBaseTask,
                          environment,
                          language,
                          test_restrictions])
-        cmd = f'cd /tests/test/; python -tt {args}'
+        cmd = f'cd /tests/test/; python3 {args}'
         bash_cmd = f"""bash -c "{cmd}" """
         return bash_cmd
