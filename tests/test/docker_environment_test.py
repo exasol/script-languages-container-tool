@@ -26,7 +26,7 @@ class DockerDBEnvironmentTest(udf.TestCase):
             container = env.run(name="netcat", image="busybox:1", command="nc -v -l -s 0.0.0.0 -p 7777", )
             host = env.get_ip_address_of_container(container)
             self.query("select connect_container('%s',%s)" % (host, 7777))
-            self.assertTrue("connect" in container.logs())
+            self.assertTrue("connect" in container.logs().decode('utf-8'))
         finally:
             try:
                 self.query(udf.fixindent("DROP SCHEMA %s CASCADE" % schema))
