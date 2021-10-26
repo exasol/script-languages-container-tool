@@ -3,3 +3,4 @@ pytz
 lxml
 docker
 scipy
+git+https://github.com/exasol/exasol-python-test-framework.git@test
