@@ -1,11 +1,7 @@
-#!/usr/bin/env python2.7
-import os
-import sys
+#!/usr/bin/env python3
 
-sys.path.append(os.path.realpath(__file__ + '/../../lib'))
-
-import udf
-import docker_db_environment
+from exasol_python_test_framework import udf
+from exasol_python_test_framework import docker_db_environment
 
 
 class EmptyTest(udf.TestCase):

@@ -84,6 +84,7 @@ class RunDBTest(FlavorBaseTask,
         environment = "--driver=/downloads/ODBC/lib/linux/x86_64/libexaodbc-uo2214lv2.so  " \
                       "--jdbc-path /downloads/JDBC/exajdbc.jar"
         language_definition = f"--script-languages '{self.language_definition}'"
+        language_path = f"--lang-path /tests/lang"
         language = ""
         if self.language is not None:
             language = "--lang %s" % self.language
@@ -93,10 +94,11 @@ class RunDBTest(FlavorBaseTask,
                          server,
                          credentials,
                          language_definition,
+                         language_path,
                          log_level,
                          environment,
                          language,
                          test_restrictions])
-        cmd = f'cd /tests/test/; python -tt {args}'
+        cmd = f'cd /tests/test/; python3 {args}'
         bash_cmd = f"""bash -c "{cmd}" """
         return bash_cmd
