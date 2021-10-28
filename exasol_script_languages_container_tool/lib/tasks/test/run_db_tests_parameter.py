@@ -5,7 +5,7 @@ from exasol_integration_test_docker_environment.lib.data.environment_info import
 
 class GeneralRunDBTestParameter:
     test_restrictions = luigi.ListParameter([])
-    test_environment_vars = luigi.DictParameter({"TRAVIS": ""}, significant=False)
+    test_environment_vars = luigi.DictParameter({}, significant=False)
     test_log_level = luigi.Parameter("critical", significant=False)
 
 
