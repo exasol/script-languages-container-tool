@@ -7,7 +7,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import rele
 from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers import UploadContainers
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.common import add_options, import_build_steps, set_build_config, \
-    set_docker_repository_config, set_job_id, run_task
+    set_docker_repository_config, generate_root_task, run_task
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
@@ -82,18 +82,18 @@ def upload(flavor_path: Tuple[str, ...],
         bucketfs_password = getpass.getpass(
             "BucketFS Password for BucketFS %s and User %s:" % (bucketfs_name, bucketfs_username))
 
-    set_job_id(UploadContainers.__name__)
-    task_creator = log_redirector_task_creator_wrapper(lambda: UploadContainers(flavor_paths=list(flavor_path),
-                                                                                release_goals=list(release_goal),
-                                                                                database_host=database_host,
-                                                                                bucketfs_port=bucketfs_port,
-                                                                                bucketfs_username=bucketfs_username,
-                                                                                bucketfs_password=bucketfs_password,
-                                                                                bucket_name=bucket_name,
-                                                                                path_in_bucket=path_in_bucket,
-                                                                                bucketfs_https=bucketfs_https,
-                                                                                release_name=release_name,
-                                                                                bucketfs_name=bucketfs_name))
+    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=UploadContainers,
+                                                                                  flavor_paths=list(flavor_path),
+                                                                                  release_goals=list(release_goal),
+                                                                                  database_host=database_host,
+                                                                                  bucketfs_port=bucketfs_port,
+                                                                                  bucketfs_username=bucketfs_username,
+                                                                                  bucketfs_password=bucketfs_password,
+                                                                                  bucket_name=bucket_name,
+                                                                                  path_in_bucket=path_in_bucket,
+                                                                                  bucketfs_https=bucketfs_https,
+                                                                                  release_name=release_name,
+                                                                                  bucketfs_name=bucketfs_name))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 

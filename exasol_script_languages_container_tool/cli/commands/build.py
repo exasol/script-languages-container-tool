@@ -3,7 +3,7 @@ from typing import Tuple
 import click
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.common import add_options, import_build_steps, set_build_config, \
-    set_docker_repository_config, set_job_id, run_task
+    set_docker_repository_config, run_task, generate_root_task
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
@@ -71,10 +71,10 @@ def build(flavor_path: Tuple[str, ...],
                                  source_docker_tag_prefix, "source")
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
-    set_job_id(DockerBuild.__name__)
-    task_creator = log_redirector_task_creator_wrapper(lambda: DockerBuild(flavor_paths=list(flavor_path),
-                                                                           goals=list(goal),
-                                                                           shortcut_build=shortcut_build))
+    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=DockerBuild,
+                                                                                  flavor_paths=list(flavor_path),
+                                                                                  goals=list(goal),
+                                                                                  shortcut_build=shortcut_build))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
     print(f'Build log can be found at:{get_log_path(task)}')
