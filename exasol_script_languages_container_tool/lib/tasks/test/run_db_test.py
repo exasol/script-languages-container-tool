@@ -32,10 +32,11 @@ class RunDBTest(FlavorBaseTask,
 
     def run_task(self):
         self.logger.info("Running db tests")
-        test_container = self._client.containers.get(self._test_container_info.container_name)
-        bash_cmd = self.generate_test_command()
-        environment, exit_code, output = self.run_test_command(bash_cmd, test_container)
-        self.handle_test_result(bash_cmd, environment, exit_code, output)
+        with self._get_docker_client() as docker_client:
+            test_container = docker_client.containers.get(self._test_container_info.container_name)
+            bash_cmd = self.generate_test_command()
+            environment, exit_code, output = self.run_test_command(bash_cmd, test_container)
+            self.handle_test_result(bash_cmd, environment, exit_code, output)
 
     def handle_test_result(self, bash_cmd, environment, exit_code, output):
         test_output = "command: " + bash_cmd + "\n" + \
