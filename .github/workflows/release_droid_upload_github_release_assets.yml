@@ -98,11 +98,12 @@ jobs:
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: 1.1.6
-    - name: Build Release
-      run: |
-        bash ./scripts/build/build_release.sh
-    - name: Upload assets to the GitHub release draft
-      uses: shogo82148/actions-upload-release-asset@v1
-      with:
-        upload_url: ${{ github.event.inputs.upload_url }}
-        asset_path: dist/*
+
+      - name: Build Release
+        run: |
+          bash ./scripts/build/build_release.sh
+      - name: Upload assets to the GitHub release draft
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.inputs.upload_url }}
+          asset_path: dist/*
