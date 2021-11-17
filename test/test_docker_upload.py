@@ -1,9 +1,8 @@
 import os
 import unittest
 
-import requests.exceptions
-
 import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class DockerUploadTest(unittest.TestCase):
@@ -13,22 +12,15 @@ class DockerUploadTest(unittest.TestCase):
         self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
         self.test_environment.clean_images()
         self.docker_environment_name = self.__class__.__name__
-        self.on_host_docker_environment, self.google_cloud_docker_environment = \
-            self.test_environment.spawn_docker_test_environment(self.docker_environment_name)
+        self.docker_environments = \
+            self.test_environment.spawn_docker_test_environments(self.docker_environment_name)
         if "GOOGLE_CLOUD_BUILD" in os.environ:
-            self.docker_environment = self.google_cloud_docker_environment
+            self.docker_environment = self.docker_environments.google_cloud_environment
         else:
-            self.docker_environment = self.on_host_docker_environment
+            self.docker_environment = self.docker_environments.on_host_docker_environment
 
     def tearDown(self):
-        try:
-            self.docker_environment.close()
-        except Exception as e:
-            print(e)
-        try:
-            self.test_environment.close()
-        except Exception as e:
-            print(e)
+        utils.close_environments(self.docker_environments, self.test_environment)
 
     def test_docker_upload_with_path_in_bucket(self):
         self.path_in_bucket = "test"
