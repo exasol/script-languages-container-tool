@@ -20,8 +20,7 @@ class ExportContainerTask(ExportContainerBaseTask):
     def get_release_task(self):
         module = importlib.import_module(self.required_task_info.module_name)
         class_ = getattr(module, self.required_task_info.class_name)
-        instance = class_(**self.required_task_info.params)
-        return instance
+        return self.create_child_task(task_class=class_, **self.required_task_info.params)
 
     def get_release_goal(self):
         return self.release_goal

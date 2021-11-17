@@ -33,7 +33,8 @@ class ExportContainerBaseTask(FlavorBaseTask):
         super().__init__(*args, **kwargs)
 
     def register_required(self):
-        self._export_directory_future = self.register_dependency(CreateExportDirectory())
+        self._export_directory_future = \
+            self.register_dependency(self.create_child_task(task_class=CreateExportDirectory))
         self._release_task_future = self.register_dependency(self.get_release_task())
 
     def get_release_task(self) -> BaseTask:
