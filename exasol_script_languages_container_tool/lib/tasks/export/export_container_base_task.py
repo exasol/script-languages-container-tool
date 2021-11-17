@@ -33,7 +33,8 @@ class ExportContainerBaseTask(FlavorBaseTask):
         super().__init__(*args, **kwargs)
 
     def register_required(self):
-        self._export_directory_future = self.register_dependency(CreateExportDirectory())
+        self._export_directory_future = \
+            self.register_dependency(self.create_child_task(task_class=CreateExportDirectory))
         self._release_task_future = self.register_dependency(self.get_release_task())
 
     def get_release_task(self) -> BaseTask:
@@ -131,11 +132,12 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _create_and_export_container(self, release_image_name: str, temp_directory: str):
         self.logger.info("Export container %s", release_image_name)
-        container = self._client.containers.create(image=release_image_name)
-        try:
-            return self._export_container(container, release_image_name, temp_directory)
-        finally:
-            container.remove(force=True)
+        with self._get_docker_client() as docker_client:
+            container = docker_client.containers.create(image=release_image_name)
+            try:
+                return self._export_container(container, release_image_name, temp_directory)
+            finally:
+                container.remove(force=True)
 
     def _export_container(self, container, release_image_name: str, temp_directory: str):
         generator = container.export(chunk_size=humanfriendly.parse_size("10mb"))

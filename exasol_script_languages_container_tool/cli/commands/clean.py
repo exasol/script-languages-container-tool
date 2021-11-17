@@ -2,7 +2,7 @@ from typing import Tuple
 
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.common import add_options, set_output_directory, \
-    set_docker_repository_config, set_job_id, run_task, import_build_steps
+    set_docker_repository_config, generate_root_task, run_task, import_build_steps
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import \
     simple_docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import output_directory_option, \
@@ -35,9 +35,8 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "target")
-    set_job_id(CleanExaslcFlavorsImages.__name__)
     task_creator = log_redirector_task_creator_wrapper(
-        lambda: CleanExaslcFlavorsImages(flavor_paths=list(flavor_path)))
+        lambda: generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path)))
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
     print(f'Clean flavor images log can be found at:{get_log_path(task)}')
     if not success:
@@ -62,8 +61,7 @@ def clean_all_images(
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "target")
-    set_job_id(CleanExaslcAllImages.__name__)
-    task_creator = log_redirector_task_creator_wrapper(lambda: CleanExaslcAllImages())
+    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=CleanExaslcAllImages))
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
     print(f'Clean log can be found at:{get_log_path(task)}')
     if not success:

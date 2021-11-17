@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from exasol_integration_test_docker_environment.testing import utils
+from exasol_integration_test_docker_environment.testing import exaslct_test_environment
 
 EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
 
 
-class ExaslctTestEnvironmentWithCleanUp(utils.ExaslctTestEnvironment):
+class ExaslctTestEnvironmentWithCleanUp(exaslct_test_environment.ExaslctTestEnvironment):
 
     def close(self):
         try:

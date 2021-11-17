@@ -42,13 +42,14 @@ class RunDBTestsInDirectory(FlavorBaseTask,
 
     def create_test_tasks_from_directory(
             self, directory: str):
-        test_container = self._client.containers.get(self._test_container_info.container_name)
-        exit_code, ls_output = test_container.exec_run(cmd="ls /tests/test/%s/" % directory)
-        test_files = ls_output.decode("utf-8").split("\n")
-        tasks = [self.create_test_task(directory, test_file)
-                 for test_file in test_files
-                 if test_file != "" and test_file.endswith(".py")]
-        return tasks
+        with self._get_docker_client() as docker_client:
+            test_container = docker_client.containers.get(self._test_container_info.container_name)
+            exit_code, ls_output = test_container.exec_run(cmd="ls /tests/test/%s/" % directory)
+            test_files = ls_output.decode("utf-8").split("\n")
+            tasks = [self.create_test_task(directory, test_file)
+                     for test_file in test_files
+                     if test_file != "" and test_file.endswith(".py")]
+            return tasks
 
     def create_test_task(self, directory: str, test_file: str):
         task = self.create_child_task_with_common_params(
