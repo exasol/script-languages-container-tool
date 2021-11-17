@@ -72,12 +72,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "0.5.0"
+version = "0.6.0"
 description = "Integration Test Docker Environment for Exasol"
 category = "main"
 optional = false
-python-versions = ">=3.6"
-develop = false
+python-versions = ">=3.6,<4"
 
 [package.dependencies]
 click = ">=7.0"
@@ -95,11 +94,8 @@ simplejson = ">=3.16.0"
 "stopwatch.py" = ">=1.0.0"
 
 [package.source]
-type = "git"
-url = "https://github.com/exasol/integration-test-docker-environment.git"
-reference = "0.5.0"
-resolved_reference = "0e240365cf81e112d47291aa0acdc5ac5d2105aa"
-
+type = "url"
+url = "https://github.com/exasol/integration-test-docker-environment/releases/download/0.6.0/exasol_integration_test_docker_environment-0.6.0-py3-none-any.whl"
 [[package]]
 name = "gitdb"
 version = "4.0.9"
@@ -436,13 +432,14 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "urllib3"
-version = "1.22"
+version = "1.26.7"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
 [package.extras]
+brotli = ["brotlipy (>=0.6.0)"]
 secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
@@ -472,8 +469,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.6"
-content-hash = "16b7b1f7054f0c7ef33c9023159f3b9c8247351a333748f52484528bcd3894bd"
+python-versions = ">=3.6,<4"
+content-hash = "e3f8b1d641f38668ef6f8a916a98200da32c6088fb2836061066731a38b8c3cb"
 
 [metadata.files]
 certifi = [
@@ -761,8 +758,8 @@ typing-extensions = [
     {file = "typing_extensions-4.0.0.tar.gz", hash = "sha256:2cdf80e4e04866a9b3689a51869016d36db0814d84b8d8a568d22781d45d27ed"},
 ]
 urllib3 = [
-    {file = "urllib3-1.22-py2.py3-none-any.whl", hash = "sha256:06330f386d6e4b195fbfc736b297f58c5a892e4440e54d294d7004e3a9bbea1b"},
-    {file = "urllib3-1.22.tar.gz", hash = "sha256:cc44da8e1145637334317feebd728bd869a35285b93cbb4cca2577da7e62db4f"},
+    {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},
+    {file = "urllib3-1.26.7.tar.gz", hash = "sha256:4987c65554f7a2dbf30c18fd48778ef124af6fab771a377103da0585e2336ece"},
 ]
 websocket-client = [
     {file = "websocket-client-1.2.1.tar.gz", hash = "sha256:8dfb715d8a992f5712fff8c843adae94e22b22a99b2c5e6b0ec4a1a981cc4e0d"},
