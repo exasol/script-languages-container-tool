@@ -33,7 +33,7 @@ jobs:
       - id: set-matrix
         run: |
           sudo apt-get install jq
-          echo "::set-output name=matrix::$(bash ./scripts/tests/get_all_tests.sh)"
+          echo "::set-output name=matrix::$(bash ./scripts/test/get_all_tests.sh)"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
@@ -64,7 +64,7 @@ jobs:
         run: starter_scripts/exaslct_with_poetry.sh --help
 
       - name: Run all tests
-        run: ./scripts/tests/run_test.sh ${{ matrix.test-path }}
+        run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
 
   publish-main:
     if: github.ref == 'refs/heads/main'
