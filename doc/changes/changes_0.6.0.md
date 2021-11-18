@@ -1,13 +1,16 @@
-# Script-Languages-Container-Tool 0.6.0, released t.b.d.
+# Script-Languages-Container-Tool 0.6.0, released 2021-11-18
 
-Code name: t.b.d.
+Code name: Updated to Integrate integration test docker environment 0.6.0
 
 ## Summary 
 
-t.b.d.
+This release uses the Integrate integration test docker environment 0.6.0.
+Also, some release consistency check have been integrated.
+
 ## Features / Enhancements
 
  - #88: Integrate integration test docker environment 0.6.0
+ - #84: Check release consistency and upload release artifacts
 
 ## Bug Fixes
 

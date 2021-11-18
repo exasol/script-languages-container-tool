@@ -8,8 +8,102 @@ on:
         required: true
 
 jobs:
-  build:
+  check-release:
+    strategy:
+      fail-fast: true
     runs-on: ubuntu-latest
     steps:
-      - name: Dummy step
-        run: echo "Nothing to do"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python 3.6 for integration-test-docker-environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.6
+      - name: Check Release
+        run: ./scripts/build/check_release.sh
+
+  test-docker-starter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Test ./exaslct
+        run: ./exaslct --help
+
+  test-installer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Run install tests"
+        run: "bash installer/tests/run_tests.sh"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  prep-testbed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: |
+          sudo apt-get install jq
+          echo "::set-output name=matrix::$(bash ./scripts/test/get_all_tests.sh)"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  test-all:
+    needs: prep-testbed
+    strategy:
+      fail-fast: false
+      matrix:
+        exasol_version:
+          - "default"
+        python_version:
+          - 3.6
+        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python 3.6 for integration-test-docker-environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.6
+
+      - name: Test starter_scripts/exaslct_with_poetry
+        run: starter_scripts/exaslct_with_poetry.sh --help
+
+      - name: Run all tests
+        run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
+  upload:
+    needs: test-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.6
+
+      - name: Build Release
+        run: |
+          bash ./scripts/build/build_release.sh
+      - name: Upload assets to the GitHub release draft
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.inputs.upload_url }}
+          asset_path: dist/*
