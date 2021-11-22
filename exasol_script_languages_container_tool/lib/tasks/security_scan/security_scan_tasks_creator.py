@@ -8,7 +8,7 @@ from exasol_integration_test_docker_environment.lib.docker.images.required_task_
 from exasol_script_languages_container_tool.lib.tasks.export.export_container_task import ExportContainerTask
 
 
-class ExportContainerTasksCreator:
+class SecurityScannerTasksCreator:
 
     def __init__(self, task: BaseTask, export_path: str):
         self.export_path = export_path
@@ -16,7 +16,6 @@ class ExportContainerTasksCreator:
 
     def create_export_tasks(self, build_tasks: Dict[str, DockerCreateImageTask]) \
             -> Dict[str, ExportContainerTask]:
-        print(f'create_export_tasks:{build_tasks.keys()}')
         return {release_goal: self._create_export_task(release_goal, build_task)
                 for release_goal, build_task in build_tasks.items()}
 

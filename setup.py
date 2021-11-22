@@ -13,6 +13,7 @@ packages = \
  'exasol_script_languages_container_tool.lib.tasks.export',
  'exasol_script_languages_container_tool.lib.tasks.push',
  'exasol_script_languages_container_tool.lib.tasks.save',
+ 'exasol_script_languages_container_tool.lib.tasks.security_scan',
  'exasol_script_languages_container_tool.lib.tasks.test',
  'exasol_script_languages_container_tool.lib.tasks.upload',
  'exasol_script_languages_container_tool.lib.utils']
