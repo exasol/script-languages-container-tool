@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class DockerSaveTest(unittest.TestCase):
@@ -20,10 +21,7 @@ class DockerSaveTest(unittest.TestCase):
         completed_process.check_returncode()
 
     def tearDown(self):
-        try:
-            self.test_environment.close()
-        except Exception as e:
-            print(e)
+        utils.close_environments(self.test_environment)
 
     def test_docker_save(self):
         command = f"{self.test_environment.executable} save --save-directory {self.save_path} "

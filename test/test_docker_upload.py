@@ -7,20 +7,22 @@ from exasol_integration_test_docker_environment.testing import utils
 
 class DockerUploadTest(unittest.TestCase):
 
-    def setUp(self):
-        print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
-        self.test_environment.clean_images()
-        self.docker_environment_name = self.__class__.__name__
-        self.docker_environments = \
-            self.test_environment.spawn_docker_test_environments(self.docker_environment_name)
+    @classmethod
+    def setUpClass(cls):
+        print(f"SetUpClass: {cls.__name__}")
+        cls.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(cls, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        cls.test_environment.clean_images()
+        cls.docker_environment_name = cls.__name__
+        cls.docker_environments = \
+            cls.test_environment.spawn_docker_test_environments(cls.docker_environment_name)
         if "GOOGLE_CLOUD_BUILD" in os.environ:
-            self.docker_environment = self.docker_environments.google_cloud_environment
+            cls.docker_environment = cls.docker_environments.google_cloud_environment
         else:
-            self.docker_environment = self.docker_environments.on_host_docker_environment
+            cls.docker_environment = cls.docker_environments.on_host_docker_environment
 
-    def tearDown(self):
-        utils.close_environments(self.docker_environments, self.test_environment)
+    @classmethod
+    def tearDownClass(cls):
+        utils.close_environments(cls.docker_environments, cls.test_environment)
 
     def test_docker_upload_with_path_in_bucket(self):
         self.path_in_bucket = "test"

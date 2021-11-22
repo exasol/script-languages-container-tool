@@ -2,6 +2,7 @@ import os
 import unittest
 
 import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class DockerExportTest(unittest.TestCase):
@@ -12,10 +13,7 @@ class DockerExportTest(unittest.TestCase):
         self.test_environment.clean_images()
 
     def tearDown(self):
-        try:
-            self.test_environment.close()
-        except Exception as e:
-            print(e)
+        utils.close_environments(self.test_environment)
 
     def test_docker_export(self):
         command = f"{self.test_environment.executable} export --export-path {self.export_path}"

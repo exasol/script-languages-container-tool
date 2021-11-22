@@ -5,6 +5,7 @@ import docker
 from exasol_script_languages_container_tool.lib.utils.docker_utils import find_images_by_tag
 
 import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class DockerBuildTest(unittest.TestCase):
@@ -20,10 +21,7 @@ class DockerBuildTest(unittest.TestCase):
             self.docker_client.close()
         except Exception as e:
             print(e)
-        try:
-            self.test_environment.close()
-        except Exception as e:
-            print(e)
+        utils.close_environments(self.test_environment)
 
     def test_docker_build(self):
         command = f"{self.test_environment.executable} build"

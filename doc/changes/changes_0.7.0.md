@@ -8,7 +8,7 @@ t.b.d.
 
 ## Features / Enhancements
 
-n/a
+ - #90: Improve test performance
 
 ## Bug Fixes
 
