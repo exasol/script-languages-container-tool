@@ -10,6 +10,14 @@ set -euo pipefail
 
 init_poetry
 
+#Force to rebuild exaslct docker image. Thus we avoid using a cached docker image (which is based on git sha)
+export EXASLCT_FORCE_REBUILD=1
+
+if [[ $1 == "--no-rebuild" ]]; then
+  unset EXASLCT_FORCE_REBUILD
+  shift 1
+fi
+
 if [ -n "$POETRY_BIN" ]
 then
   PYTHONPATH=. $POETRY_BIN run python3 "${@}"
