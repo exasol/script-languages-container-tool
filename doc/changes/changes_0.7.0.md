@@ -13,6 +13,7 @@ n/a
 ## Bug Fixes
 
  - #63: Force rebuild of docker image for unit tests
+ - #93: Fix installer template of exaslct
 
 ## Documentation
 n/a
