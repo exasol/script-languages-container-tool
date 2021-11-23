@@ -1,6 +1,7 @@
 import unittest
 
 import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class GenerateLanguageActivationTest(unittest.TestCase):
@@ -8,6 +9,9 @@ class GenerateLanguageActivationTest(unittest.TestCase):
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
         self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+
+    def tearDown(self):
+        utils.close_environments(self.test_environment)
 
     def test_generate_with_path_in_bucket(self):
         command = f"{self.test_environment.executable} generate-language-activation --bucketfs-name bfsdefault --bucket-name default --path-in-bucket path --container-name container"
