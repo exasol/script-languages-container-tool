@@ -6,3 +6,4 @@ from .push import push
 from .run_db_tests import run_db_test
 from .save import save
 from .upload import upload
+from .security_scan import security_scan

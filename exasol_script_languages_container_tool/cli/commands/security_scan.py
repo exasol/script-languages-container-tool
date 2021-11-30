@@ -1,6 +1,5 @@
 from typing import Tuple
 
-import click
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.common import add_options, import_build_steps, set_build_config, \
     set_docker_repository_config, generate_root_task, run_task
@@ -10,23 +9,17 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
-from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
+from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
 from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
     get_log_path
 
 
 @cli.command()
 @add_options(flavor_options)
-@add_options(release_options)
-@click.option('--export-path', type=click.Path(exists=False, file_okay=False, dir_okay=True), default=None)
-@click.option('--release-name', type=str, default=None)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
-def export(flavor_path: Tuple[str, ...],
-           release_goal: str,
-           export_path: str,
-           release_name: str,
+def security_scan(flavor_path: Tuple[str, ...],
            force_rebuild: bool,
            force_rebuild_from: Tuple[str, ...],
            force_pull: bool,
@@ -46,9 +39,7 @@ def export(flavor_path: Tuple[str, ...],
            workers: int,
            task_dependencies_dot_file: str):
     """
-    This command exports the whole script language container package of the flavor,
-    ready for the upload into the bucketfs. If the stages do not exists locally,
-    the system will build or pull them before the exporting the packaged container.
+    t.b.d.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -64,18 +55,15 @@ def export(flavor_path: Tuple[str, ...],
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
 
-    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=ExportContainers,
-                                                                                  flavor_paths=list(flavor_path),
-                                                                                  release_goals=list(release_goal),
-                                                                                  export_path=export_path,
-                                                                                  release_name=release_name
+    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=SecurityScan,
+                                                                                  flavor_paths=list(flavor_path)
                                                                                   ))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 
     if success:
-        with task.command_line_output_target.open("r") as f:
+        with task.security_report_target.open("r") as f:
             print(f.read())
-    print(f'Export log can be found at:{get_log_path(task)}')
+    print(f'Security scan log can be found at:{get_log_path(task)}')
     if not success:
         exit(1)
