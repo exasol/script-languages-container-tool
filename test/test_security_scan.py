@@ -16,17 +16,12 @@ class DockerSecurityScanTest(unittest.TestCase):
 
     def test_docker_build(self):
         command = f"{self.test_environment.executable} security-scan"
-        completed_process = self.test_environment.run_command(command, track_task_dependencies=True)
-
-        print(f"completed_process:'{completed_process.stdout}'")
-        self.assertIn("============ START SECURITY SCAN REPORT - "
-                      "</home/thomas/Work/script-languages-container-tool/test/resources/test-flavor> "
-                      "====================", completed_process.stdout)
-        self.assertIn("running security scan",completed_process.stdout)
-        self.assertIn("============ END SECURITY SCAN REPORT - "
-                      "</home/thomas/Work/script-languages-container-tool/test/resources/test-flavor> "
-                      "====================", completed_process.stdout)
-        print(f"completed_process:'{completed_process.stdout}'")
+        completed_process = self.test_environment.run_command(command,
+                                                              track_task_dependencies=True, capture_output=True)
+        output = completed_process.stdout.decode("UTF-8")
+        self.assertIn("============ START SECURITY SCAN REPORT - ", output)
+        self.assertIn("running security scan", output)
+        self.assertIn("============ END SECURITY SCAN REPORT - ", output)
 
 
 if __name__ == '__main__':
