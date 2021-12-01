@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Tuple
 
 from exasol_integration_test_docker_environment.cli.cli import cli
@@ -8,7 +9,6 @@ from exasol_integration_test_docker_environment.cli.options.docker_repository_op
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
-from exasol_script_languages_container_tool.cli.options.goal_options import release_options
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
 from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
     get_log_path
@@ -55,8 +55,10 @@ def security_scan(flavor_path: Tuple[str, ...],
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
 
+    report_path = Path(output_directory).joinpath("security_scan")
     task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=SecurityScan,
-                                                                                  flavor_paths=list(flavor_path)
+                                                                                  flavor_paths=list(flavor_path),
+                                                                                  report_path=report_path
                                                                                   ))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)
@@ -64,6 +66,6 @@ def security_scan(flavor_path: Tuple[str, ...],
     if success:
         with task.security_report_target.open("r") as f:
             print(f.read())
-    print(f'Security scan log can be found at:{get_log_path(task)}')
+    print(f'Full security scan report can be found at:{report_path}')
     if not success:
         exit(1)

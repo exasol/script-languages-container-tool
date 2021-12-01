@@ -2,4 +2,5 @@ FROM {{release}}
 
 RUN echo "Building security scan..."
 
-ENTRYPOINT ["echo", "running", "security",  "scan"]
+COPY security_scan/test.sh /test.sh
+ENTRYPOINT ["/test.sh"]
