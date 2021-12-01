@@ -1,6 +1,8 @@
+import subprocess
 from typing import Dict
 
 import luigi
+from docker.errors import ContainerError
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
 from exasol_integration_test_docker_environment.lib.config.build_config import build_config
 from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
@@ -57,10 +59,16 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         tasks_futures = yield from self.run_dependencies(tasks)
         task_results = self.get_values_from_futures(tasks_futures)
         result = ''
+        assert len(task_results.values()) == 1
         for task_result in task_results.values():
+            print(f"Running security run on image:{task_result.get_target_complete_name()}")
             with ContextDockerClient() as docker_client:
-                result = docker_client.containers\
-                            .run(task_result.get_target_complete_name(), auto_remove=True).decode('utf-8')
+                result_container = docker_client.containers \
+                    .run(task_result.get_target_complete_name(), detach=True, stderr=True)
+                result = result_container.logs(follow=True).decode("UTF-8")
+                result_container_result = result_container.wait()
+                result_container.remove()
+                if result_container_result["StatusCode"] != 0:
+                    raise RuntimeError(f"Error running security scan:'{result}'")
 
-        print(f"Running SecurityScanner for flavor '{self.flavor_path}'....  ")
         self.return_object({self.flavor_path: result})
