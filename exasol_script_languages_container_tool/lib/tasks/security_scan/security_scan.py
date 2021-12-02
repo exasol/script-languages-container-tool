@@ -13,6 +13,13 @@ from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan_parameter import SecurityScanParameter
 
 
+class ScanResult:
+    def __init__(self, is_ok, summary, report_dir):
+        self.is_ok = is_ok
+        self.summary = summary
+        self.report_dir = report_dir
+
+
 class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
     def __init__(self, *args, **kwargs):
@@ -27,23 +34,29 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         self.security_scanner_futures = self.register_dependencies(tasks)
 
     def run_task(self):
-        security_scanner = self.get_values_from_futures(
+        security_scanner_results = self.get_values_from_futures(
             self.security_scanner_futures)
-        self.write_report(security_scanner)
 
-    def write_report(self, security_scanner):
+        print(f"ScanResults:{security_scanner_results}")
+        self.write_report(security_scanner_results)
+        all_result = AllScanResult(security_scanner_results)
+        if not all_result.scans_are_ok:
+            raise RuntimeError(f"Not all security scans were successful.:\n{all_result.get_error_scans_msg()}")
+
+    def write_report(self, security_scanner: Dict[str, ScanResult]):
         with self.security_report_target.open("w") as out_file:
 
-            for results in security_scanner.values():
-                for result_key_value in results.items():
-                    key, value = result_key_value
-                    out_file.write("\n")
-                    out_file.write(f"============ START SECURITY SCAN REPORT - <{key}> ====================")
-                    out_file.write("\n")
-                    out_file.write(value)
-                    out_file.write("\n")
-                    out_file.write(f"============ END SECURITY SCAN REPORT - <{key}> ====================")
-                    out_file.write("\n")
+            for key, value in security_scanner.items():
+                out_file.write("\n")
+                out_file.write(f"============ START SECURITY SCAN REPORT - <{key}> ====================")
+                out_file.write("\n")
+                out_file.write(f"Successful:{value.is_ok}\n")
+                out_file.write(f"Full report:{value.report_dir}\n")
+                out_file.write(f"Summary:\n")
+                out_file.write(value.summary)
+                out_file.write("\n")
+                out_file.write(f"============ END SECURITY SCAN REPORT - <{key}> ====================")
+                out_file.write("\n")
 
 
 class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
@@ -63,7 +76,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         report_path = self.report_path.joinpath(flavor_path.name)
         report_path.mkdir(parents=True, exist_ok=True)
         report_path_abs = str(report_path.absolute())
-        result = ''
+        result = ScanResult(is_ok=False, summary="", report_dir=report_path_abs)
         assert len(task_results.values()) == 1
         for task_result in task_results.values():
             self.logger.info(f"Running security run on image:{task_result.get_target_complete_name()}, report path: "
@@ -75,11 +88,23 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
                                                                 command=report_path_abs, mounts=mounts,
                                                                 detach=True, stderr=True)
                 try:
-                    result = result_container.logs(follow=True).decode("UTF-8")
+                    logs = result_container.logs(follow=True).decode("UTF-8")
                     result_container_result = result_container.wait()
-                    if result_container_result["StatusCode"] != 0:
-                        raise RuntimeError(f"Error running security scan:'{result}'")
+
+                    result = ScanResult(is_ok=(result_container_result["StatusCode"] == 0),
+                                        summary=logs, report_dir=report_path_abs)
                 finally:
                     result_container.remove()
 
-        self.return_object({self.flavor_path: result})
+        self.return_object(result)
+
+
+class AllScanResult:
+    def __init__(self, scan_results_per_flavor: Dict[str, ScanResult]):
+        self.scan_results_per_flavor = scan_results_per_flavor
+        self.scans_are_ok = all(scan_result.is_ok
+                                for scan_result
+                                in scan_results_per_flavor.values())
+
+    def get_error_scans_msg(self):
+        return [f"{key}: '{value.summary}'" for key, value in self.scan_results_per_flavor.items() if not value.is_ok]
