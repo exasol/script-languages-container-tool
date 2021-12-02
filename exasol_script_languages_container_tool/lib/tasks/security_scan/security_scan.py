@@ -66,16 +66,20 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         result = ''
         assert len(task_results.values()) == 1
         for task_result in task_results.values():
-            print(f"Running security run on image:{task_result.get_target_complete_name()}, report path: {report_path_abs}")
+            self.logger.info(f"Running security run on image:{task_result.get_target_complete_name()}, report path: "
+                             f"{report_path_abs}")
 
             with ContextDockerClient() as docker_client:
                 mounts = [Mount(source=report_path_abs, target=report_path_abs, type="bind")]
-                result_container = docker_client.containers \
-                    .run(task_result.get_target_complete_name(), command=report_path_abs, mounts=mounts, detach=True, stderr=True)
-                result = result_container.logs(follow=True).decode("UTF-8")
-                result_container_result = result_container.wait()
-                result_container.remove()
-                if result_container_result["StatusCode"] != 0:
-                    raise RuntimeError(f"Error running security scan:'{result}'")
+                result_container = docker_client.containers.run(task_result.get_target_complete_name(),
+                                                                command=report_path_abs, mounts=mounts,
+                                                                detach=True, stderr=True)
+                try:
+                    result = result_container.logs(follow=True).decode("UTF-8")
+                    result_container_result = result_container.wait()
+                    if result_container_result["StatusCode"] != 0:
+                        raise RuntimeError(f"Error running security scan:'{result}'")
+                finally:
+                    result_container.remove()
 
         self.return_object({self.flavor_path: result})

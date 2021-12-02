@@ -16,7 +16,6 @@ class ExportContainerTasksCreator:
 
     def create_export_tasks(self, build_tasks: Dict[str, DockerCreateImageTask]) \
             -> Dict[str, ExportContainerTask]:
-        print(f'create_export_tasks:{build_tasks.keys()}')
         return {release_goal: self._create_export_task(release_goal, build_task)
                 for release_goal, build_task in build_tasks.items()}
 

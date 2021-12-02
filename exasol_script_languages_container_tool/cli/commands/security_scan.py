@@ -10,8 +10,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
-    get_log_path
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper
 
 
 @cli.command()
@@ -39,7 +38,9 @@ def security_scan(flavor_path: Tuple[str, ...],
            workers: int,
            task_dependencies_dot_file: str):
     """
-    t.b.d.
+    This command executes the security scan, which must be defined as separate step in the build steps declaration.
+    The scan runs the docker container of the respective step, passing a folder of the output-dir as argument.
+    If the stages do not exists locally, the system will build or pull them before running the scan.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
