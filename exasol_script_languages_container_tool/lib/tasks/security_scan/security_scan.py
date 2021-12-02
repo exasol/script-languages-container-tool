@@ -93,6 +93,8 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
                 try:
                     logs = result_container.logs(follow=True).decode("UTF-8")
                     result_container_result = result_container.wait()
+                    #We don't use mount binding here to exchange the report files, but download them from the container
+                    #Thus we avoid that the files are created by root
                     self._write_report(result_container, report_path_abs, report_local_path)
                     result = ScanResult(is_ok=(result_container_result["StatusCode"] == 0),
                                         summary=logs, report_dir=report_path_abs)
