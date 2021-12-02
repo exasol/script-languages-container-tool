@@ -24,7 +24,7 @@ class DockerSecurityScanTest(unittest.TestCase):
         self.assertIn("Running scan...", output)
         self.assertIn("============ END SECURITY SCAN REPORT - ", output)
 
-        report = Path(self.test_environment.temp_dir, "security_scan", "test-flavor", "report.txt")
+        report = Path(self.test_environment.temp_dir, "security_scan", "test-flavor", "report", "report.txt")
         self.assertTrue(report.exists())
         with open(report) as report_file:
             report_result = report_file.read()
