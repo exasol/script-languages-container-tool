@@ -9,6 +9,7 @@ t.b.d.
 ## Features / Enhancements
 
  - #90: Improve test performance
+ - #81: Add security scan command
 
 ## Bug Fixes
 

@@ -5,7 +5,7 @@ from exasol_integration_test_docker_environment.cli.commands import spawn_test_e
     build_test_container
 
 from exasol_script_languages_container_tool.cli.commands import build, clean_all_images, clean_flavor_images, export, \
-    generate_language_activation, push, run_db_test, save, upload, clean
+    generate_language_activation, push, run_db_test, save, upload, clean, security_scan
 
 if __name__ == '__main__':
     # Required to announce the commands to click
@@ -21,5 +21,6 @@ if __name__ == '__main__':
                 run_db_test,
                 save,
                 upload,
-                clean]
+                clean,
+                security_scan]
     cli()
