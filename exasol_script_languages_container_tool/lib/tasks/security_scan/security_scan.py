@@ -40,7 +40,6 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         security_scanner_results = self.get_values_from_futures(
             self.security_scanner_futures)
 
-        print(f"ScanResults:{security_scanner_results}")
         self.write_report(security_scanner_results)
         all_result = AllScanResult(security_scanner_results)
         if not all_result.scans_are_ok:
@@ -82,7 +81,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         result = ScanResult(is_ok=False, summary="", report_dir=report_path_abs)
         assert len(task_results.values()) == 1
         for task_result in task_results.values():
-            self.logger.info(f"Running security run on image:{task_result.get_target_complete_name()}, report path: "
+            self.logger.info(f"Running security run on image: {task_result.get_target_complete_name()}, report path: "
                              f"{report_path_abs}")
 
             report_local_path = "/report"
