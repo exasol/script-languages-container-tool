@@ -59,7 +59,7 @@ def security_scan(flavor_path: Tuple[str, ...],
     report_path = Path(output_directory).joinpath("security_scan")
     task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=SecurityScan,
                                                                                   flavor_paths=list(flavor_path),
-                                                                                  report_path=report_path
+                                                                                  report_path=str(report_path)
                                                                                   ))
 
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)

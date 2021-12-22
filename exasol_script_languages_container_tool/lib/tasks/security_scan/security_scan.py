@@ -27,7 +27,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
     def __init__(self, *args, **kwargs):
         self.security_scanner_futures = None
         super().__init__(*args, **kwargs)
-        report_path = self.report_path.joinpath("security_report")
+        report_path = Path(self.report_path).joinpath("security_report")
         self.security_report_target = luigi.LocalTarget(str(report_path))
 
     def register_required(self):
@@ -74,7 +74,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         tasks_futures = yield from self.run_dependencies(tasks)
         task_results = self.get_values_from_futures(tasks_futures)
         flavor_path = Path(self.flavor_path)
-        report_path = self.report_path.joinpath(flavor_path.name)
+        report_path = Path(self.report_path).joinpath(flavor_path.name)
         report_path.mkdir(parents=True, exist_ok=True)
         report_path_abs = report_path.absolute()
         result = ScanResult(is_ok=False, summary="", report_dir=report_path_abs)
