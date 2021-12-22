@@ -7,7 +7,6 @@ import tarfile
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
 from exasol_integration_test_docker_environment.lib.config.build_config import build_config
-from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 
 from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
 
@@ -85,7 +84,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
                              f"{report_path_abs}")
 
             report_local_path = "/report"
-            with ContextDockerClient() as docker_client:
+            with self._get_docker_client() as docker_client:
                 result_container = docker_client.containers.run(task_result.get_target_complete_name(),
                                                                 command=report_local_path,
                                                                 detach=True, stderr=True)
