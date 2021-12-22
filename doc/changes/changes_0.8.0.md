@@ -13,6 +13,7 @@ n/a
 ## Bug Fixes
 
  - #100: Timeout during security scan
+ - #99: Fixed warning when running security scan
 
 ## Documentation
 n/a
