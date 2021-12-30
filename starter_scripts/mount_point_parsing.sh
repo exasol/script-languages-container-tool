@@ -124,6 +124,7 @@ function _format_parameters() {
 
 declare -a mount_point_paths
 formatted_params=$(_format_parameters "${@}")
+# shellcheck disable=SC2086
 _get_mount_point_paths $formatted_params
 
 echo "${mount_point_paths[@]}"

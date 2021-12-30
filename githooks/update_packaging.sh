@@ -6,7 +6,6 @@ set -o pipefail
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 # define colors for use in output
-green='\033[0;32m'
 no_color='\033[0m'
 grey='\033[0;90m'
 
@@ -31,9 +30,9 @@ then
 fi
 poetry build > /dev/null
 pushd dist > /dev/null
-tar_file=$(ls *.tar.gz)
+tar_file=$(ls -- *.tar.gz)
 extracted_dir=${tar_file%.tar.gz}
-tar -xf $tar_file
+tar -xf "$tar_file"
 cp "$extracted_dir/setup.py" ../setup.py
 rm -r "$extracted_dir"
 popd > /dev/null

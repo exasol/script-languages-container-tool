@@ -18,6 +18,7 @@ else
 fi
 
 RED='\033[0;31m'
+#shellcheck disable=SC2059
 printf "${RED} Using slim version of exaslct. Please note that all input/output arguments (input flavor directories, output, log, etc.) needs to point to directories within the current directory.\n"
 
 rl=readlink
@@ -29,8 +30,6 @@ if [[ ! "$(command -v $rl)" ]]; then
   echo readlink not available! Please install coreutils: On Linux \"apt-get install coreutils\" or similar. On MacOsX \"brew install coreutils\".
   exit 1
 fi
-
-SCRIPT_DIR="$(dirname "$($rl -f "${BASH_SOURCE[0]}")")"
 
 quoted_arguments=''
 for argument in "${@}"; do
