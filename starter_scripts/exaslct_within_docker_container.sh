@@ -22,6 +22,7 @@ fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 declare -a mount_point_paths
+# shellcheck disable=SC2207
 mount_point_paths=($(bash "$SCRIPT_DIR"/mount_point_parsing.sh "${@}"))
 
 quoted_arguments=''

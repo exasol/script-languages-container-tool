@@ -15,7 +15,7 @@ function assert() {
   cmpB="${*}"
   if [[ $cmpA != "$cmpB" ]]; then
     >&2 echo "ERROR: '$cmpA' does not match'$cmpB'"
-    exit -1
+    exit 1
   fi
 }
 
