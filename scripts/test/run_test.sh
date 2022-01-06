@@ -2,6 +2,7 @@
   
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
+#shellcheck source=./starter_scripts/poetry_utils.sh
 source "$SCRIPT_DIR/../../starter_scripts/poetry_utils.sh"
 
 check_requirements

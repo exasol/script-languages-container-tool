@@ -2,7 +2,7 @@
 
 set -e
 
-cd $1
+cd "$1"
 
 echo "************* RUN BASH TEST **********"
 ./starter_scripts/test/test_scripts.sh
