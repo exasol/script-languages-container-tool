@@ -18,6 +18,7 @@ else
 fi
 
 RED='\033[0;31m'
+#Ignore shellcheck rule, as using printf does not change the color in the terminal.
 #shellcheck disable=SC2059
 printf "${RED} Using slim version of exaslct. Please note that all input/output arguments (input flavor directories, output, log, etc.) needs to point to directories within the current directory.\n"
 
