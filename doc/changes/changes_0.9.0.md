@@ -1,14 +1,15 @@
-# Script-Languages-Container-Tool 0.9.0, released t.b.d.
+# Script-Languages-Container-Tool 0.9.0, released 2022-01-27
 
-Code name: t.b.d.
+Code name: Integration-Test-Docker-Environment 0.8.0
 
 ## Summary 
 
-t.b.d.
+This release updates to integration-test-docker-environment 0.8.0. Also the CI build now runs shellcheck on all bash scripts.
 
 ## Features / Enhancements
 
  - #31: Setup shellcheck for the starter scripts
+ - #105: Update integration-test-docker-environment and prepare release
 
 ## Bug Fixes
 
