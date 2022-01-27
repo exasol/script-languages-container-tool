@@ -123,7 +123,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: str,
                 target_docker_password: str,
                 workers: int,
-                task_dependencies_dot_file: str):
+                task_dependencies_dot_file: str,
+                create_certificates: bool):
     """
     This command runs the integration tests in local docker-db.
     The systems spawns a test environment in which the test are executed.
@@ -193,7 +194,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                        external_exasol_xmlrpc_port=external_exasol_xmlrpc_port,
                                        external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
                                        external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
-                                       external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name
+                                       external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
+                                       create_certificates=create_certificates
                                        )
         )
     success, task = run_task(task_creator, workers, task_dependencies_dot_file)

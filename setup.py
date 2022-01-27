@@ -23,7 +23,7 @@ package_data = \
 
 install_requires = \
 ['exasol-integration-test-docker-environment @ '
- 'https://github.com/exasol/integration-test-docker-environment/releases/download/0.7.0/exasol_integration_test_docker_environment-0.7.0-py3-none-any.whl']
+ 'https://github.com/exasol/integration-test-docker-environment/releases/download/0.8.0/exasol_integration_test_docker_environment-0.8.0-py3-none-any.whl']
 
 setup_kwargs = {
     'name': 'exasol-script-languages-container-tool',
