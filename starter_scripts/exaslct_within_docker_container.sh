@@ -28,7 +28,7 @@ mount_point_paths=($(bash "$SCRIPT_DIR"/mount_point_parsing.sh "${@}"))
 
 #Unfortunately for GNU Bash 4.2 we need to add a dummy empty element to mount_point_paths
 #Later we test if element is not empty
-mount_point_paths+=""
+mount_point_paths+=("")
 
 quoted_arguments=''
 for argument in "${@}"; do

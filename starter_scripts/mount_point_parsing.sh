@@ -129,5 +129,5 @@ formatted_params=$(_format_parameters "${@}")
 _get_mount_point_paths $formatted_params
 
 #Unfortunately for GNU Bash 4.2 we need to add a dummy empty element to mount_point_paths
-mount_point_paths+=""
+mount_point_paths+=("")
 echo "${mount_point_paths[@]}"
