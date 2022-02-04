@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "exasol-script-languages-container-tool"
-version = "0.9.0"
+version = "0.10.0"
 description = "Script Languages Container Tool"
 
 license = "MIT"
