@@ -26,6 +26,10 @@ declare -a mount_point_paths
 # shellcheck disable=SC2207
 mount_point_paths=($(bash "$SCRIPT_DIR"/mount_point_parsing.sh "${@}"))
 
+#Unfortunately for GNU Bash 4.2 we need to add a dummy empty element to mount_point_paths
+#Later we test if element is not empty
+mount_point_paths+=("")
+
 quoted_arguments=''
 for argument in "${@}"; do
   argument="${argument//\\/\\\\}"
@@ -37,8 +41,10 @@ done
 #In order to avoid syntax errors we need to encapsulate all those directories with quotes here
 chown_directories=''
 for mount_point in "${mount_point_paths[@]}"; do
-  mount_point="${mount_point//\\/\\\\}"
-  chown_directories="$chown_directories \"${mount_point//\"/\\\"}\""
+  if [[ -n "${mount_point}" ]]; then
+    mount_point="${mount_point//\\/\\\\}"
+    chown_directories="$chown_directories \"${mount_point//\"/\\\"}\""
+  fi
 done
 
 chown_directories_cmd=''
@@ -51,9 +57,11 @@ fi
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
 mount_point_parameter=''
 for mount_point in "${mount_point_paths[@]}"; do
-  host_dir_name=$(readlink -f "${mount_point}")
-  container_dir_name=$(realpath -s "${mount_point}")
-  mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
+  if [[ -n "${mount_point}" ]]; then
+    host_dir_name=$(readlink -f "${mount_point}")
+    container_dir_name=$(realpath -s "${mount_point}")
+    mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
+  fi
 done
 
 # Still need to "CHOWN" .build_output
