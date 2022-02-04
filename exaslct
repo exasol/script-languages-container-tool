@@ -7,7 +7,7 @@
 set -euo pipefail
 
 rl=readlink
-if [[ "$(uname)" = Darwin ]]; then
+if [[ "$(uname)" == Darwin ]]; then
   rl=greadlink
 fi
 
