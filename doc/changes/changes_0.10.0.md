@@ -13,6 +13,7 @@ n/a
 ## Bug Fixes
 
  - #109: fix starter scripts on GNU bash 4.2
+ - #111: Remove Python2 in TestContainer
 
 ## Documentation
 n/a
