@@ -4,16 +4,16 @@ Code name: t.b.d.
 
 ## Summary 
 
-t.b.d
+t.b.d.
 
 ## Features / Enhancements
 
-n/a
+ - #111: Remove Python2 in TestContainer
 
 ## Bug Fixes
 
  - #109: fix starter scripts on GNU bash 4.2
- - #111: Remove Python2 in TestContainer
+
 
 ## Documentation
 n/a
