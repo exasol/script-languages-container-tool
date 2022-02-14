@@ -6,7 +6,6 @@ RUN apt-get -y update && \
     apt-get -y install \
         openjdk-11-jdk \
         locales \
-        python \
         python3 \
         python3-pip \
         unixodbc \
