@@ -79,8 +79,8 @@ jobs:
         with:
           poetry-version: 1.1.6
 
-      - name: Test starter_scripts/exaslct_with_poetry
-        run: starter_scripts/exaslct_with_poetry.sh --help
+      - name: Test exaslct_with_poetry
+        run: ./scripts/test/exaslct_with_poetry.sh --help
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path }}

@@ -68,7 +68,7 @@ curl -L -o install_or_update_exaslct.sh https://raw.githubusercontent.com/exasol
 
 Before you continue with installation, please compute with the following command 
 the sha512 hash sum of the downloaded file and compare it with its 
-[checksum file](installer/checksums/install_or_update_exaslct.sh.sha512sum):
+[checksum file](exasol_script_languages_container_tool/starter_scripts/installer/checksums/install_or_update_exaslct.sh.sha512sum):
 
 ```
 sha512sum install_or_update_exaslct.sh

@@ -7,7 +7,10 @@
 #                    that return code will be used as the return code of the whole pipeline.
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"/..
+SCRIPT_DIR="$(dirname "$($rl -f "${BASH_SOURCE[0]}")")"
+PROJECT_ROOT_DIR="$SCRIPT_DIR/../.."
+STARTER_SCRIPT_DIR="$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/starter_scripts"
+
 
 function assert() {
   cmpA=$1
@@ -25,6 +28,6 @@ exportDirA="$SCRIPT_DIR/test/exportdir=xyz"
 mkdir "$flavorDirA" || true
 trap 'rm -rf "$flavorDirA" "$exportDirA"' EXIT
 
-testStr=$(bash "$SCRIPT_DIR/mount_point_parsing.sh" --flavor-path="$flavorDirA" --export-path "$exportDirA" dummy)
+testStr=$(bash "$STARTER_SCRIPT_DIR/mount_point_parsing.sh" --flavor-path="$flavorDirA" --export-path "$exportDirA" dummy)
 
 assert "$testStr" "$flavorDirA" "$exportDirA" "" #Last element ist dummy element
