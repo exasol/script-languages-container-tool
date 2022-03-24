@@ -3,8 +3,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-
 # define colors for use in output
 no_color='\033[0m'
 grey='\033[0;90m'

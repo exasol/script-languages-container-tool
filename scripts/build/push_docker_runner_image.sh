@@ -11,7 +11,7 @@ else
 fi
 
 
-SCRIPT_DIR="$(dirname "$($rl -f "${BASH_SOURCE[0]}")")"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 PROJECT_ROOT_DIR="$SCRIPT_DIR/../.."
 STARTER_SCRIPT_DIR="$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/starter_scripts"
 
