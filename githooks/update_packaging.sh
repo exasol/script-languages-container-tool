@@ -37,18 +37,10 @@ cp "$extracted_dir/setup.py" ../setup.py
 rm -r "$extracted_dir"
 popd > /dev/null
 
-echo -e "Generate installer checksums ${grey}(pre-commit hook)${no_color}"
-pushd installer > /dev/null
-bash "$SCRIPT_DIR/create_checksums.sh"
-popd > /dev/null
-pushd starter_scripts > /dev/null
-bash "$SCRIPT_DIR/create_checksums.sh"
-popd > /dev/null
-
 if [ "$NO_GIT" == "FALSE" ]
 then
   echo -e "Add generated files ${grey}(pre-commit hook)${no_color}"
-  git add setup.py installer/checksums starter_scripts/checksums
+  git add setup.py
 fi
 
 popd > /dev/null
