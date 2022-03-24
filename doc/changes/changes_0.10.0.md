@@ -10,6 +10,7 @@ t.b.d.
 
  - #111: Remove Python2 in TestContainer
  - #117: Integrate integration-test-docker-environment 0.9.0
+ - #121: Install starter-scripts via Python
 
 ## Bug Fixes
 
