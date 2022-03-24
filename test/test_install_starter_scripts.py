@@ -19,7 +19,7 @@ class InstallStarterScriptTests(unittest.TestCase):
     def test_positive(self):
         with tempfile.TemporaryDirectory() as target_dir:
             target_path = Path(target_dir)
-            run_starter_script_installation(target_path, target_path / TARGET_EXASLCT_SCRIPTS_DIR)
+            run_starter_script_installation(target_path, target_path / TARGET_EXASLCT_SCRIPTS_DIR, False)
 
             self.assertTrue(pkg_resources.resource_isdir(MODULE_IDENTITY, "starter_scripts"))
             source_exaslct_scripts_dir = pkg_resources.resource_filename(MODULE_IDENTITY, "starter_scripts")
