@@ -24,12 +24,15 @@ RUNNER_IMAGE_NAME="$1"
 shift 1
 
 if [[ -z "${EXASLCT_FORCE_REBUILD:-}" ]]; then
+  echo "Searching local image...."
   FIND_IMAGE_LOCALLY=$(docker images -q "$RUNNER_IMAGE_NAME")
   if [ -z "$FIND_IMAGE_LOCALLY" ]; then
+    echo "Not found local image. Let's pull or rebuild it."
     docker pull "$RUNNER_IMAGE_NAME" || bash "$SCRIPT_DIR/build_docker_runner_image.sh"
   fi
 else
-   bash "$SCRIPT_DIR/build_docker_runner_image.sh"
+  echo "Force rebuild image set...."
+  bash "$SCRIPT_DIR/build_docker_runner_image.sh"
 fi
 
 EXEC_SCRIPT=exaslct_within_docker_container.sh

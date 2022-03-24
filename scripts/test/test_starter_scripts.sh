@@ -7,7 +7,7 @@
 #                    that return code will be used as the return code of the whole pipeline.
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$($rl -f "${BASH_SOURCE[0]}")")"
+SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 PROJECT_ROOT_DIR="$SCRIPT_DIR/../.."
 STARTER_SCRIPT_DIR="$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/starter_scripts"
 
@@ -22,8 +22,8 @@ function assert() {
   fi
 }
 
-flavorDirA="$SCRIPT_DIR/test/abc=def"
-exportDirA="$SCRIPT_DIR/test/exportdir=xyz"
+flavorDirA="$SCRIPT_DIR/abc=def"
+exportDirA="$SCRIPT_DIR/exportdir=xyz"
 
 mkdir "$flavorDirA" || true
 trap 'rm -rf "$flavorDirA" "$exportDirA"' EXIT
