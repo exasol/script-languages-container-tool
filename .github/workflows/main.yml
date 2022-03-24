@@ -14,18 +14,6 @@ jobs:
       - name: Test ./exaslct
         run: ./exaslct --help
 
-  test-installer:
-    strategy:
-      fail-fast: false
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: "Run install tests"
-        run: "bash installer/tests/run_tests.sh"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
   prep-testbed:
     runs-on: ubuntu-latest
     steps:

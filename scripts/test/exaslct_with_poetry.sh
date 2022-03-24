@@ -15,7 +15,7 @@ init_poetry
 
 if [ -n "$POETRY_BIN" ]
 then
-  $POETRY_BIN run bash python3 -u "$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/main.py" "${@}" # We use "$@" to pass the commandline arguments to the run function to preserve arguments with spaces as a single argument
+  $POETRY_BIN run python3 -u "$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/main.py" "${@}" # We use "$@" to pass the commandline arguments to the run function to preserve arguments with spaces as a single argument
 else
   echo "Could not find poetry!"
   exit 1
