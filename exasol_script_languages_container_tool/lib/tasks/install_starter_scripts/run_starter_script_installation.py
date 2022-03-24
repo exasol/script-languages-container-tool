@@ -8,9 +8,10 @@ EXASLCT_INSTALL_DIRECTORY = "exaslct_scripts"
 PACKAGE_IDENTITY = "exasol-script-languages-container-tool"
 MODULE_IDENTITY = PACKAGE_IDENTITY.replace("-", "_")
 
-def run_starter_script_installation(install_path: Path, target_script_path: Path):
+
+def run_starter_script_installation(install_path: Path, target_script_path: Path, force_install: bool):
     print(f"Installing to {install_path}")
-    if target_script_path.exists():
+    if target_script_path.exists() and not force_install:
         print(f"The installation directory for exaslct at {install_path} already exists.")
         print("Do you want to remove it and continue with installation?")
 
@@ -20,6 +21,9 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
         else:
             print("Can't continue with the installation, because the installation directory already exists.")
             sys.exit(1)
+    elif force_install:
+        shutil.rmtree(target_script_path)
+
     version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
     print(f"Found version: {version}")
     target_script_path.mkdir(parents=True)
@@ -40,7 +44,9 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
 
     exaslct_symlink_path = install_path / "exaslct"
 
-    if exaslct_symlink_path.is_symlink() or exaslct_symlink_path.exists() or exaslct_symlink_path.is_file():
+    exaslct_symlin_exists = exaslct_symlink_path.is_symlink() or exaslct_symlink_path.exists() or exaslct_symlink_path.is_file()
+
+    if exaslct_symlin_exists and not force_install:
         print(f"The path for the symlink to exaslct at {exaslct_symlink_path} already exists.")
         print("Do you want to remove it and continue with installation?")
         answer = input("yes/no:")
@@ -51,6 +57,8 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
             print("Can't continue with the installation, because the path to exaslct symlink already exists.")
             print("You can change the path to exaslct symlink by setting the environment variable EXASLCT_SYM_LINK_PATH")
             sys.exit(1)
+    elif force_install:
+        exaslct_symlink_path.unlink()
 
     exaslct_symlink_path.symlink_to(target_script_path / "exaslct.sh")
 
