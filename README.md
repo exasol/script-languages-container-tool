@@ -64,7 +64,7 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 
 Find the wheel package for a specific [release](https://github.com/exasol/script-languages-container-tool/releases) under assets.
 
-Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/0.9.0/exasol_script_languages_container_tool-0.9.0-py3-none-any.whl`
+Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/$VERSION/exasol_script_languages_container_tool-$VERSION-py3-none-any.whl`. Replace $VERSION with the latest version or the specific version you are interested in.
 
 Then you can use the Python package itself or install the starter scripts which allow to run exaslct within a docker image:
 `exasol_script_languages_container_tool.main install-starter-scripts --install-path $YOUR_INSTALL_PATH`
