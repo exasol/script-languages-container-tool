@@ -2,8 +2,8 @@ import os
 import shutil
 import sys
 from pathlib import Path
+import importlib_metadata
 import importlib_resources
-import pkg_resources
 
 EXASLCT_INSTALL_DIRECTORY = "exaslct_scripts"
 PACKAGE_IDENTITY = "exasol-script-languages-container-tool"
@@ -25,7 +25,7 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
     elif force_install:
         shutil.rmtree(target_script_path)
 
-    version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
+    version = importlib_metadata.version(MODULE_IDENTITY)
 
     print(f"Found version: {version}")
     target_script_path.mkdir(parents=True)
