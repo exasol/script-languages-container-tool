@@ -2,7 +2,6 @@ import os
 import shutil
 import sys
 from pathlib import Path
-import importlib_metadata
 import importlib_resources
 import pkg_resources
 
@@ -26,8 +25,7 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
     elif force_install:
         shutil.rmtree(target_script_path)
 
-    version = importlib_metadata.version(MODULE_IDENTITY)
-    #version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
+    version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
 
     print(f"Found version: {version}")
     target_script_path.mkdir(parents=True)
