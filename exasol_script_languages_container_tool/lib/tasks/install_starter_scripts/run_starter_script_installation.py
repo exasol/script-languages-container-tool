@@ -2,6 +2,8 @@ import os
 import shutil
 import sys
 from pathlib import Path
+import importlib_metadata
+import importlib_resources
 import pkg_resources
 
 EXASLCT_INSTALL_DIRECTORY = "exaslct_scripts"
@@ -24,17 +26,20 @@ def run_starter_script_installation(install_path: Path, target_script_path: Path
     elif force_install:
         shutil.rmtree(target_script_path)
 
-    version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
+    version = importlib_metadata.version(MODULE_IDENTITY)
+    #version = pkg_resources.get_distribution(PACKAGE_IDENTITY).version
+
     print(f"Found version: {version}")
     target_script_path.mkdir(parents=True)
-    starter_script_dir = Path(pkg_resources.resource_filename(MODULE_IDENTITY, "starter_scripts"))
+    starter_script_dir = importlib_resources.files(MODULE_IDENTITY) / "starter_scripts"
     print(f"starter_script_dir is {starter_script_dir}")
-    for script in pkg_resources.resource_listdir(MODULE_IDENTITY, "starter_scripts"):
-        print(f"Copying {starter_script_dir / script} to {target_script_path}")
-        shutil.copyfile(starter_script_dir / script,  target_script_path / script)
+    for script in starter_script_dir.iterdir():
+        with importlib_resources.as_file(script) as script_file:
+            print(f"Copying {script_file} to {target_script_path / script_file.name}")
+            shutil.copyfile(script_file,  target_script_path / script_file.name)
 
-    exaslct_script = pkg_resources.resource_string(MODULE_IDENTITY,
-                                                   "starter_scripts/exaslct_install_template.sh").decode("utf-8")
+    exaslct_script_path = importlib_resources.files(MODULE_IDENTITY) / "starter_scripts/exaslct_install_template.sh"
+    exaslct_script = exaslct_script_path.read_text()
     exaslct_script = exaslct_script.replace("<<<<EXASLCT_GIT_REF>>>>", version)
 
     with open(target_script_path / "exaslct.sh", "w") as exaslct_file:
