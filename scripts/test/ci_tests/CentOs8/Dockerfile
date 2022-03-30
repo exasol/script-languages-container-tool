@@ -1,5 +1,9 @@
 FROM centos:8
 
+# CentOS Linux 8 had reached the End Of Life (EOL), we need to use a different mirror (https://techglimpse.com/failed-metadata-repo-appstream-centos-8/)
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN yum update -y
 RUN yum install -y htop atop mc
 RUN yum install -y \
     https://download.docker.com/linux/centos/8/x86_64/stable/Packages/docker-ce-20.10.7-3.el8.x86_64.rpm \
