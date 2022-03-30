@@ -6,10 +6,8 @@ import unittest
 import filecmp
 from pathlib import Path
 
-import docker
 import importlib_metadata
 import importlib_resources
-from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 
 from exasol_script_languages_container_tool.lib.tasks.install_starter_scripts.run_starter_script_installation import \
     run_starter_script_installation
@@ -72,31 +70,6 @@ class InstallStarterScriptTests(unittest.TestCase):
             # Thus we also test if the installed version of 'construct_docker_runner_image_name.sh' works as expected.
             self._build_docker_runner_release_tag(script_dir=target_dir,
                                                   current_runner_image_name=current_runner_image_name)
-            command = f"{target_dir}/exaslct --help"
-            completed_process = subprocess.run(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            try:
-                completed_process.check_returncode()
-            except subprocess.CalledProcessError as ex:
-                print(f"Error executing exaslct. Log is \n'{completed_process.stdout.decode('utf-8')}'", flush=True)
-                raise ex
-
-    def test_execute_help(self):
-
-        # First we build the image of the current GIT commit
-        current_runner_image_name = self._build_docker_runner()
-
-        with tempfile.TemporaryDirectory() as target_dir:
-            target_path = Path(target_dir)
-            # Now we install the starter scripts
-            run_starter_script_installation(target_path, target_path / TARGET_EXASLCT_SCRIPTS_DIR, False)
-
-            # Now we use the 'construct_docker_runner_image_name.sh' in
-            # the installed scripts to get the name of the correct tag.
-            # This tag must match with what 'exaslct' will try to use later.
-            # Thus we also test if the installed version of 'construct_docker_runner_image_name.sh' works as expected.
-            self._build_docker_runner_release_tag(script_dir=target_dir,
-                                                  current_runner_image_name=current_runner_image_name)
-            #Now we finally run the installed version of 'exaslct' which is supposed to use the free docker runner img
             command = f"{target_dir}/exaslct --help"
             completed_process = subprocess.run(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             try:
