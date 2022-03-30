@@ -22,13 +22,9 @@ fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 declare -a mount_point_paths
-# Ignore shellcheck rules here as alternatives are worse.
-# shellcheck disable=SC2207
-mount_point_paths=($(bash "$SCRIPT_DIR"/mount_point_parsing.sh "${@}"))
 
-#Unfortunately for GNU Bash 4.2 we need to add a dummy empty element to mount_point_paths
-#Later we test if element is not empty
-mount_point_paths+=("")
+source "$SCRIPT_DIR"/mount_point_parsing.sh
+get_mount_point_paths "${@}"
 
 quoted_arguments=''
 for argument in "${@}"; do
@@ -55,12 +51,13 @@ fi
 #For all mount pounts (directories in argument list) we need
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
-mount_point_parameter=''
+declare -a mount_point_parameter
 for mount_point in "${mount_point_paths[@]}"; do
   if [[ -n "${mount_point}" ]]; then
     host_dir_name=$(readlink -f "${mount_point}")
     container_dir_name=$(realpath -s "${mount_point}")
-    mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
+    mount_point_parameter+=("-v")
+    mount_point_parameter+=("${host_dir_name}:${container_dir_name}")
   fi
 done
 
@@ -105,6 +102,10 @@ trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 create_env_file_debug_protected "$tmpfile_env"
 # Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT")
 # shellcheck disable=SC2068
-docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+echo
+echo ${mount_point_parameter[@]}
+echo
+set -x
+docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_parameter[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
 
 umask "$old_umask"
