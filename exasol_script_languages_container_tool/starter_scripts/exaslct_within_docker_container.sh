@@ -22,6 +22,7 @@ fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
+# shellcheck source=starter_scripts/mount_point_parsing.sh
 source "$SCRIPT_DIR"/mount_point_parsing.sh
 get_mount_point_paths "${@}"
 
@@ -122,10 +123,12 @@ trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
 if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
-  # Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT")
-  # shellcheck disable=SC2068
+  # Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT"), futher we want $terminal_parameter as is
+  # shellcheck disable=SC2068,SC2086
   docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
 else
+  # Ignore shellcheck rule because we want to $terminal_parameter as is
+  # shellcheck disable=SC2086
   docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_parameter[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
 fi
 umask "$old_umask"

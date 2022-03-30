@@ -92,7 +92,7 @@ function _is_param_relevant_mount_point(){
     param=$1
     for check_param in "${!relevant_mount_point_arguments[@]}"; do
       if [[ $param == "${check_param}"=* ]]; then
-        first_part="$(echo $param | cut -d= -f 1)"
+        first_part="$(echo "$param" | cut -d= -f 1)"
         echo "$first_part"
         return 0
       elif [[ "$param" == "${check_param}" ]]; then

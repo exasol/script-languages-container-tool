@@ -7,6 +7,8 @@
 #                    that return code will be used as the return code of the whole pipeline.
 
 if [[ -n "$TEST_DEBUG_OPTIONS" ]]; then
+  # We want to split on spaces here
+  # shellcheck disable=SC2086
   set $TEST_DEBUG_OPTIONS
 fi
 
@@ -16,7 +18,9 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"/
 PROJECT_ROOT_DIR="$SCRIPT_DIR/../.."
 STARTER_SCRIPT_DIR="$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/starter_scripts"
 
+# shellcheck source=scripts/test/assert.sh
 source "$SCRIPT_DIR/assert.sh"
+# shellcheck source=exasol_script_languages_container_tool/starter_scripts/mount_point_parsing.sh
 source "$STARTER_SCRIPT_DIR/mount_point_parsing.sh"
 
 echo "Test arguments with = and spaces"

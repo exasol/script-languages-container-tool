@@ -8,6 +8,6 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-bash $SCRIPT_DIR/test_arguments_with_equals.sh
-bash $SCRIPT_DIR/test_arguments_with_spaces.sh
-bash $SCRIPT_DIR/test_arguments_with_equals_and_spaces.sh
+bash "$SCRIPT_DIR/test_arguments_with_equals.sh"
+bash "$SCRIPT_DIR/test_arguments_with_spaces.sh"
+bash "$SCRIPT_DIR/test_arguments_with_equals_and_spaces.sh"
