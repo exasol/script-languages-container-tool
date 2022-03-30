@@ -26,6 +26,8 @@ the following prerequisites:
       * sha512sum
       * sed
     * [curl](https://curl.se/)
+    * Python 3 (>=3.6)
+      * Pip
 
 
 #### For running
@@ -48,7 +50,7 @@ In order to use this tool, your system needs to fulfill the following prerequisi
     * [Docker](https://docs.docker.com/) >= 17.05 
       * with support for [multi-stage builds required](https://docs.docker.com/develop/develop-images/multistage-build/)
       * host volume mounts need to be allowed
-    
+
 * System Setup  
     * We recommend at least 50 GB free disk space on the partition 
       where Docker stores its images, on linux Docker typically stores 
@@ -60,33 +62,14 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 
 ### Installation
 
-Download the installation and update script via:
+Find the wheel package for a specific [release](https://github.com/exasol/script-languages-container-tool/releases) under assets.
 
-```
-curl -L -o install_or_update_exaslct.sh https://raw.githubusercontent.com/exasol/script-languages-container-tool/main/installer/install_or_update_exaslct.sh
-```
+Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/$VERSION/exasol_script_languages_container_tool-$VERSION-py3-none-any.whl`. Replace $VERSION with the latest version or the specific version you are interested in.
 
-Before you continue with installation, please compute with the following command 
-the sha512 hash sum of the downloaded file and compare it with its 
-[checksum file](installer/checksums/install_or_update_exaslct.sh.sha512sum):
+Then you can use the Python package itself or install the starter scripts which allow to run exaslct within a docker image:
+`exasol_script_languages_container_tool.main install-starter-scripts --install-path $YOUR_INSTALL_PATH`
 
-```
-sha512sum install_or_update_exaslct.sh
-```
-
-If the checksums are identical, you can continue with the installation. 
-Per default, the script installs exaslct into the current working directory.
-It creates a script directory `exaslct_scripts` and the symlink `exaslct`
-to the starter script. If you want to change the path to the script directory 
-you can set the environment variable `EXASLCT_INSTALL_DIRECTORY` and 
-if you want to create the symlink somewhere else you can set `EXASLCT_SYM_LINK_PATH`.  
-
-```
-bash install_or_update_exaslct.sh [version|git-commit-id|branch|tag] 
-```
-
-You can use the same script to change the version of your current installation.
-You only need to provide a different version, git-commit-id, branch or tag. 
+This will create a subfolder with the scripts itself and a symlink `exaslct` in $YOUR_INSTALL_PATH, which can be used as entry point.
 
 ### Usage
 
@@ -149,6 +132,7 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
   We currently support only the mounting of the given command line arguments, but we do not analyze
   the content of those directories.
   Plan is to fix this limitation with [#35](https://github.com/exasol/script-languages-container-tool/issues/35)
+
 
 ### MacOsX Limitations
   

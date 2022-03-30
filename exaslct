@@ -18,6 +18,6 @@ fi
 
 SCRIPT_DIR="$(dirname "$($rl -f "${BASH_SOURCE[0]}")")"
 
-RUNNER_IMAGE_NAME="$("$SCRIPT_DIR/starter_scripts/construct_docker_runner_image_name.sh")"
+RUNNER_IMAGE_NAME="$("$SCRIPT_DIR/exasol_script_languages_container_tool/starter_scripts/construct_docker_runner_image_name.sh")"
 
-bash "$SCRIPT_DIR/starter_scripts/exaslct_within_docker_container_with_container_build.sh" "$RUNNER_IMAGE_NAME" "${@}"
+bash "$SCRIPT_DIR/scripts/build/exaslct_within_docker_container_with_container_build.sh" "$RUNNER_IMAGE_NAME" "${@}"

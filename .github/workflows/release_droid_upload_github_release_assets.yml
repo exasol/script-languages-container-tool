@@ -79,8 +79,8 @@ jobs:
         with:
           poetry-version: 1.1.6
 
-      - name: Test starter_scripts/exaslct_with_poetry
-        run: starter_scripts/exaslct_with_poetry.sh --help
+      - name: Test exaslct_with_poetry
+        run: ./scripts/test/exaslct_with_poetry.sh --help
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
@@ -102,6 +102,9 @@ jobs:
       - name: Build Release
         run: |
           bash ./scripts/build/build_release.sh
+      - name: Generate sha512sum files
+        run: find ./dist -maxdepth 1 -type f -exec bash -c 'sha512sum {} > {}.sha512' \;
+        shell: bash
       - name: Upload assets to the GitHub release draft
         uses: shogo82148/actions-upload-release-asset@v1
         with:

@@ -14,18 +14,6 @@ jobs:
       - name: Test ./exaslct
         run: ./exaslct --help
 
-  test-installer:
-    strategy:
-      fail-fast: false
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: "Run install tests"
-        run: "bash installer/tests/run_tests.sh"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
   prep-testbed:
     runs-on: ubuntu-latest
     steps:
@@ -60,8 +48,8 @@ jobs:
         with:
           poetry-version: 1.1.6
 
-      - name: Test starter_scripts/exaslct_with_poetry
-        run: starter_scripts/exaslct_with_poetry.sh --help
+      - name: Test exaslct_with_poetry
+        run: ./scripts/test/exaslct_with_poetry.sh --help
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
@@ -73,11 +61,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build new Docker image
-        run: "bash starter_scripts/build_docker_runner_image.sh"
+        run: "bash scripts/build/build_docker_runner_image.sh"
       - name: Docker login
         run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
         env: # Set the secret as an input
           SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
       - name: Push new Docker image
-        run: "bash starter_scripts/push_docker_runner_image.sh main"
+        run: "bash scripts/build/push_docker_runner_image.sh main"

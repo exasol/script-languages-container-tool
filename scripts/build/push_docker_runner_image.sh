@@ -10,7 +10,11 @@ else
   image_suffixes=("latest")
 fi
 
+
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+PROJECT_ROOT_DIR="$SCRIPT_DIR/../.."
+STARTER_SCRIPT_DIR="$PROJECT_ROOT_DIR/exasol_script_languages_container_tool/starter_scripts"
+
 
 GIT_IMAGE_NAME="$("$SCRIPT_DIR/build_docker_runner_image.sh")"
 
@@ -18,7 +22,7 @@ docker push "$GIT_IMAGE_NAME"
 
 for image_suffix in "${image_suffixes[@]}"; do
 
-  RENAMED_IMAGE_NAME="$("$SCRIPT_DIR/construct_docker_runner_image_name.sh" "$image_suffix")"
+  RENAMED_IMAGE_NAME="$("$STARTER_SCRIPT_DIR/construct_docker_runner_image_name.sh" "$image_suffix")"
 
   docker tag "$GIT_IMAGE_NAME" "$RENAMED_IMAGE_NAME"
 

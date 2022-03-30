@@ -32,4 +32,5 @@ COPY README.md /script-languages-container-tool/README.md
 WORKDIR /script-languages-container-tool
 RUN python3 -m pip install .
 
-COPY starter_scripts /script-languages-container-tool/starter_scripts
+RUN mkdir -p runner
+COPY docker_runner/ /docker_runner
