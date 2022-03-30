@@ -50,21 +50,32 @@ fi
 BASH_MAJOR_VERSION=$(echo "${BASH_VERSION}" | cut -f1 -d".")
 BASH_MINOR_VERSION=$(echo "${BASH_VERSION}" | cut -f2 -d".")
 
-echo "${BASH_VERSION}"
-#if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 5 ]]
-
 #For all mount pounts (directories in argument list) we need
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
-declare -a mount_point_parameter
-for mount_point in "${mount_point_paths[@]}"; do
-  if [[ -n "${mount_point}" ]]; then
-    host_dir_name=$(readlink -f "${mount_point}")
-    container_dir_name=$(realpath -s "${mount_point}")
-    mount_point_parameter+=("-v")
-    mount_point_parameter+=("${host_dir_name}:${container_dir_name}")
-  fi
-done
+if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
+  echo "Bash Version smaller than 4.4 detected, going to us legacy method for generating mount points. Paths with spaces are not supported."
+  # This workaround is necassary because bash arrays are broken in older bash versions
+  mount_point_parameter=''
+  for mount_point in "${mount_point_paths[@]}"; do
+    if [[ -n "${mount_point}" ]]; then
+      host_dir_name=$(readlink -f "${mount_point}")
+      container_dir_name=$(realpath -s "${mount_point}")
+      mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
+    fi
+  done
+else
+  declare -a mount_point_parameter
+  for mount_point in "${mount_point_paths[@]}"; do
+    if [[ -n "${mount_point}" ]]; then
+      host_dir_name=$(readlink -f "${mount_point}")
+      container_dir_name=$(realpath -s "${mount_point}")
+      mount_point_parameter+=("-v")
+      mount_point_parameter+=("${host_dir_name}:${container_dir_name}")
+    fi
+  done
+fi
+
 
 # Still need to "CHOWN" .build_output
 # because it is a default value for --output-path, and hence might not be part of $chown_directories
