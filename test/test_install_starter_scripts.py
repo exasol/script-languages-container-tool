@@ -70,6 +70,9 @@ class InstallStarterScriptTests(unittest.TestCase):
             # Thus we also test if the installed version of 'construct_docker_runner_image_name.sh' works as expected.
             self._build_docker_runner_release_tag(script_dir=target_dir,
                                                   current_runner_image_name=current_runner_image_name)
+
+            # Finally we call the installed version of 'exaslct'.
+            # This is supposed to use the previously generated docker runner image.
             command = f"{target_dir}/exaslct --help"
             completed_process = subprocess.run(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             try:
