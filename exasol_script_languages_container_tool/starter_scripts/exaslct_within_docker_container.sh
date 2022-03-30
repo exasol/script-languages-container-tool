@@ -21,7 +21,6 @@ else
 fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-declare -a mount_point_paths
 
 source "$SCRIPT_DIR"/mount_point_parsing.sh
 get_mount_point_paths "${@}"
@@ -47,6 +46,12 @@ chown_directories_cmd=''
 if [[ -n "$chown_directories" ]]; then
   chown_directories_cmd="chown -R $(id -u):$(id -g) $chown_directories;"
 fi
+
+BASH_MAJOR_VERSION=$(echo "${BASH_VERSION}" | cut -f1 -d".")
+BASH_MINOR_VERSION=$(echo "${BASH_VERSION}" | cut -f2 -d".")
+
+echo "${BASH_VERSION}"
+#if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 5 ]]
 
 #For all mount pounts (directories in argument list) we need
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
