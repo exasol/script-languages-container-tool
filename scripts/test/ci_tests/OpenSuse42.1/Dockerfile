@@ -2,5 +2,5 @@ FROM opensuse/archive:42.1
 
 RUN zypper --non-interactive install docker
 
-COPY run_ci_test_within_docker.sh /run_ci_test_within_docker.sh
-ENTRYPOINT ["/run_ci_test_within_docker.sh"]
+COPY run_ci_test_within_docker_bash_4.4-.sh /run_ci_test_within_docker_bash_4.4-.sh
+ENTRYPOINT ["/run_ci_test_within_docker_bash_4.4-.sh"]

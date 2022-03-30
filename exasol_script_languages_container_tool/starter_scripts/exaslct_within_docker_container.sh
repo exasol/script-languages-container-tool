@@ -54,11 +54,16 @@ BASH_MINOR_VERSION=$(echo "${BASH_VERSION}" | cut -f2 -d".")
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
 if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
-  echo "Bash Version smaller than 4.4 detected, going to us legacy method for generating mount points. Paths with spaces are not supported."
+  echo "Bash version smaller than 4.4 detected, going to us legacy method for generating mount points. This method doesn't support paths with spaces."
   # This workaround is necassary because bash arrays are broken in older bash versions
   mount_point_parameter=''
+  space_pattern=" "
   for mount_point in "${mount_point_paths[@]}"; do
     if [[ -n "${mount_point}" ]]; then
+      if [[ $mount_point =~ $space_pattern ]]; then
+        echo "Found space in '$mount_point'. Aborting."
+        exit 1
+      fi
       host_dir_name=$(readlink -f "${mount_point}")
       container_dir_name=$(realpath -s "${mount_point}")
       mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
@@ -116,8 +121,11 @@ tmpfile_env=$(mktemp)
 trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
-# Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT")
-# shellcheck disable=SC2068
-docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_parameter[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
-
+if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
+  # Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT")
+  # shellcheck disable=SC2068
+  docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+else
+  docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_parameter[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+fi
 umask "$old_umask"
