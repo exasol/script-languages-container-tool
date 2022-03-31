@@ -35,8 +35,10 @@ else
   bash "$SCRIPT_DIR/build_docker_runner_image.sh"
 fi
 
+BASH_MAJOR_VERSION=$(echo "${BASH_VERSION}" | cut -f1 -d".")
+
 EXEC_SCRIPT=exaslct_within_docker_container.sh
-if [[ "$(uname)" = Darwin ]]; then
+if [[ "$(uname)" = Darwin ]] || [[ $BASH_MAJOR_VERSION -lt 4 ]]; then
   EXEC_SCRIPT=exaslct_within_docker_container_slim.sh
 fi
 
