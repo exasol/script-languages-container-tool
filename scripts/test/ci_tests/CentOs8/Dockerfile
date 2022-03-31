@@ -13,5 +13,5 @@ RUN yum install -y \
     https://download.docker.com/linux/centos/8/x86_64/stable/Packages/docker-scan-plugin-0.8.0-3.el8.x86_64.rpm && \
     yum clean all
 
-COPY run_ci_test_within_docker_bash_4.4+.sh /run_ci_test_within_docker_bash_4.4+.sh
-ENTRYPOINT ["/run_ci_test_within_docker_bash_4.4+.sh"]
+COPY run_ci_test_within_docker_bash_4.4_and_above.sh /run_ci_test_within_docker_bash_4.4_and_above.sh
+ENTRYPOINT ["/run_ci_test_within_docker_bash_4.4_and_above.sh"]

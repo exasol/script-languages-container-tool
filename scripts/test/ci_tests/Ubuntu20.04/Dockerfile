@@ -29,5 +29,5 @@ RUN apt-get -y update && apt-get -y install --no-install-recommends \
     apt-get -y clean && \
     apt-get -y autoremove
 
-COPY run_ci_test_within_docker_bash_4.4+.sh /run_ci_test_within_docker_bash_4.4+.sh
-ENTRYPOINT ["/run_ci_test_within_docker_bash_4.4+.sh"]
+COPY run_ci_test_within_docker_bash_4.4_and_above.sh /run_ci_test_within_docker_bash_4.4_and_above.sh
+ENTRYPOINT ["/run_ci_test_within_docker_bash_4.4_and_above.sh"]
