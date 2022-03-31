@@ -22,7 +22,7 @@ fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-# shellcheck source=starter_scripts/mount_point_parsing.sh
+# shellcheck source=exasol_script_languages_container_tool/starter_scripts/mount_point_parsing.sh
 source "$SCRIPT_DIR"/mount_point_parsing.sh
 get_mount_point_paths "${@}"
 
