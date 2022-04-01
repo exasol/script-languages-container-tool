@@ -21,14 +21,10 @@ else
 fi
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-declare -a mount_point_paths
-# Ignore shellcheck rules here as alternatives are worse.
-# shellcheck disable=SC2207
-mount_point_paths=($(bash "$SCRIPT_DIR"/mount_point_parsing.sh "${@}"))
 
-#Unfortunately for GNU Bash 4.2 we need to add a dummy empty element to mount_point_paths
-#Later we test if element is not empty
-mount_point_paths+=("")
+# shellcheck source=exasol_script_languages_container_tool/starter_scripts/mount_point_parsing.sh
+source "$SCRIPT_DIR"/mount_point_parsing.sh
+get_mount_point_paths "${@}"
 
 quoted_arguments=''
 for argument in "${@}"; do
@@ -52,17 +48,40 @@ if [[ -n "$chown_directories" ]]; then
   chown_directories_cmd="chown -R $(id -u):$(id -g) $chown_directories;"
 fi
 
+BASH_MAJOR_VERSION=$(echo "${BASH_VERSION}" | cut -f1 -d".")
+BASH_MINOR_VERSION=$(echo "${BASH_VERSION}" | cut -f2 -d".")
+
 #For all mount pounts (directories in argument list) we need
 # 1. For the host argument: Resolve relative paths and resolve symbolic links
 # 2. For the container argument: Resolve relative paths, but keep symbolic links
-mount_point_parameter=''
-for mount_point in "${mount_point_paths[@]}"; do
-  if [[ -n "${mount_point}" ]]; then
-    host_dir_name=$(readlink -f "${mount_point}")
-    container_dir_name=$(realpath -s "${mount_point}")
-    mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
-  fi
-done
+if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
+  echo "Bash version smaller than 4.4 detected, going to us legacy method for generating mount points. This method doesn't support paths with spaces."
+  # This workaround is necassary because bash arrays are broken in older bash versions
+  mount_point_parameter=''
+  space_pattern=" "
+  for mount_point in "${mount_point_paths[@]}"; do
+    if [[ -n "${mount_point}" ]]; then
+      if [[ $mount_point =~ $space_pattern ]]; then
+        echo "Found space in '$mount_point'. Aborting."
+        exit 1
+      fi
+      host_dir_name=$(readlink -f "${mount_point}")
+      container_dir_name=$(realpath -s "${mount_point}")
+      mount_point_parameter="$mount_point_parameter-v ${host_dir_name}:${container_dir_name} "
+    fi
+  done
+else
+  declare -a mount_point_parameter
+  for mount_point in "${mount_point_paths[@]}"; do
+    if [[ -n "${mount_point}" ]]; then
+      host_dir_name=$(readlink -f "${mount_point}")
+      container_dir_name=$(realpath -s "${mount_point}")
+      mount_point_parameter+=("-v")
+      mount_point_parameter+=("${host_dir_name}:${container_dir_name}")
+    fi
+  done
+fi
+
 
 # Still need to "CHOWN" .build_output
 # because it is a default value for --output-path, and hence might not be part of $chown_directories
@@ -103,8 +122,13 @@ tmpfile_env=$(mktemp)
 trap 'rm -f -- "$tmpfile_env"' INT TERM HUP EXIT
 
 create_env_file_debug_protected "$tmpfile_env"
-# Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT")
-# shellcheck disable=SC2068
-docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
-
+if [[ $BASH_MAJOR_VERSION -lt 5 ]] && [[ $BASH_MINOR_VERSION -lt 4 ]]; then
+  # Ignore shellcheck rule as we need to split elements of array by space (they are in form "-v %MOUNT_POINT"), futher we want $terminal_parameter as is
+  # shellcheck disable=SC2068,SC2086
+  docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" ${mount_point_parameter[@]} "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+else
+  # Ignore shellcheck rule because we want to $terminal_parameter as is
+  # shellcheck disable=SC2086
+  docker run --network host --env-file "$tmpfile_env" --rm $terminal_parameter -v "$PWD:$PWD" -v "$DOCKER_SOCKET_MOUNT" -w "$PWD" "${mount_point_parameter[@]}" "$RUNNER_IMAGE_NAME" bash -c "$RUN_COMMAND"
+fi
 umask "$old_umask"
