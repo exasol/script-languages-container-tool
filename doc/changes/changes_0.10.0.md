@@ -15,7 +15,7 @@ t.b.d.
 ## Bug Fixes
 
  - #109: fix starter scripts on GNU bash 4.2
-
+ - #123: Fix error when running exaslct on a path containing spaces
 
 ## Documentation
 n/a
