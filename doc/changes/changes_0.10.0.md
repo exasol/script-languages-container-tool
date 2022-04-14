@@ -17,6 +17,7 @@ Also, Python 2 was removed from the Test-Container and the integration-test-dock
 
  - #109: fix starter scripts on GNU bash 4.2
  - #123: Fix error when running exaslct on a path containing spaces
+ - #128: Removed bash installer tests from release droid GH workflow
 
 ## Documentation
 
