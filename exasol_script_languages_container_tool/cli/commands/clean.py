@@ -35,10 +35,9 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "target")
-    task_creator = log_redirector_task_creator_wrapper(
-        lambda: generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path)))
-    success, task = run_task(task_creator, workers, task_dependencies_dot_file)
-    print(f'Clean flavor images log can be found at:{get_log_path(task)}')
+    with log_redirector_task_creator_wrapper(
+        lambda: generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path))) as task_creator:
+        success, task = run_task(task_creator, workers, task_dependencies_dot_file)
     if not success:
         exit(1)
 

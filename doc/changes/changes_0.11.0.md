@@ -13,6 +13,7 @@ t.b.d.
 ## Bug Fixes
 
  - #131: Fixed typehint for parameter release_goal in commands
+ - #133: Fixed crash of Python interpreter when executing exaslct commands multiple times
 
 ## Documentation
 
