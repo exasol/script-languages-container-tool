@@ -76,7 +76,7 @@ from exasol_script_languages_container_tool.lib.utils.logging_redirection import
 @add_options(docker_repository_options)
 @add_options(system_options)
 def run_db_test(flavor_path: Tuple[str, ...],
-                release_goal: str,
+                release_goal: Tuple[str, ...],
                 generic_language_test: Tuple[str, ...],
                 test_folder: Tuple[str, ...],
                 test_file: Tuple[str, ...],

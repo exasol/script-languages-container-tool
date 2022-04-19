@@ -24,7 +24,7 @@ from exasol_script_languages_container_tool.lib.utils.logging_redirection import
 @add_options(docker_repository_options)
 @add_options(system_options)
 def export(flavor_path: Tuple[str, ...],
-           release_goal: str,
+           release_goal: Tuple[str, ...],
            export_path: str,
            release_name: str,
            force_rebuild: bool,
