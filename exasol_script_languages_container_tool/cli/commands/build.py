@@ -11,8 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
-    get_log_path
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper
 
 
 @cli.command()
