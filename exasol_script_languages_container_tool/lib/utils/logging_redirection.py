@@ -37,7 +37,7 @@ class _Tee(object):
             self.file.write(data)
             self.stdout.write(data)
         else:
-            sys.stdout.write(data)
+            raise RuntimeError("_Tee object used but not initialized.")
 
 
 @contextmanager
