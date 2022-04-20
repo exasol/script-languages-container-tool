@@ -1,10 +1,10 @@
-# Script-Languages-Container-Tool 0.11.0, released t.b.d.
+# Script-Languages-Container-Tool 0.11.0, released 2022-04-20
 
-Code name: t.b.d.
+Code name: Critical Bugfix for log-redirection
 
 ## Summary 
 
-t.b.d.
+This release contains 2 bug-fixes, one of it is critical because it (#133) can crash the Python Interpreter on exit.
 
 ## Features / Enhancements
 
@@ -17,5 +17,4 @@ t.b.d.
 
 ## Documentation
 
- n/a
-
+ - #135: Prepare release 0.11.0
