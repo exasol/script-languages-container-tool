@@ -14,8 +14,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
-    get_log_path
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -158,8 +157,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
             handle_commandline_error("Commandline parameter --external-exasol_db-port not set")
         if external_exasol_bucketfs_port is None:
             handle_commandline_error("Commandline parameter --external-exasol-bucketfs-port not set")
-    task_creator = \
-        log_redirector_task_creator_wrapper(
+    with TaskLogRedirector.log_redirector_task_creator_wrapper(
             lambda: generate_root_task(task_class=TestContainer,
                                        flavor_paths=list(flavor_path),
                                        release_goals=list(release_goal),
@@ -197,14 +195,12 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                        external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
                                        create_certificates=create_certificates
                                        )
-        )
-    success, task = run_task(task_creator, workers, task_dependencies_dot_file)
-
-    print("Test Results:")
-    if task.command_line_output_target.exists():
-        with task.command_line_output_target.open("r") as f:
-            print(f.read())
-    print(f'Test logs can be found at:{get_log_path(task)}')
+        ) as task_creator:
+        success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+        print("Test Results:")
+        if task.command_line_output_target.exists():
+            with task.command_line_output_target.open("r") as f:
+                print(f.read())
     if not success:
         exit(1)
 

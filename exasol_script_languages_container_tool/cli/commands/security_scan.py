@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Tuple
 
@@ -10,7 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -19,24 +20,24 @@ from exasol_script_languages_container_tool.lib.utils.logging_redirection import
 @add_options(docker_repository_options)
 @add_options(system_options)
 def security_scan(flavor_path: Tuple[str, ...],
-           force_rebuild: bool,
-           force_rebuild_from: Tuple[str, ...],
-           force_pull: bool,
-           output_directory: str,
-           temporary_base_directory: str,
-           log_build_context_content: bool,
-           cache_directory: str,
-           build_name: str,
-           source_docker_repository_name: str,
-           source_docker_tag_prefix: str,
-           source_docker_username: str,
-           source_docker_password: str,
-           target_docker_repository_name: str,
-           target_docker_tag_prefix: str,
-           target_docker_username: str,
-           target_docker_password: str,
-           workers: int,
-           task_dependencies_dot_file: str):
+                  force_rebuild: bool,
+                  force_rebuild_from: Tuple[str, ...],
+                  force_pull: bool,
+                  output_directory: str,
+                  temporary_base_directory: str,
+                  log_build_context_content: bool,
+                  cache_directory: str,
+                  build_name: str,
+                  source_docker_repository_name: str,
+                  source_docker_tag_prefix: str,
+                  source_docker_username: str,
+                  source_docker_password: str,
+                  target_docker_repository_name: str,
+                  target_docker_tag_prefix: str,
+                  target_docker_username: str,
+                  target_docker_password: str,
+                  workers: int,
+                  task_dependencies_dot_file: str):
     """
     This command executes the security scan, which must be defined as separate step in the build steps declaration.
     The scan runs the docker container of the respective step, passing a folder of the output-dir as argument.
@@ -57,16 +58,16 @@ def security_scan(flavor_path: Tuple[str, ...],
                                  target_docker_tag_prefix, "target")
 
     report_path = Path(output_directory).joinpath("security_scan")
-    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=SecurityScan,
-                                                                                  flavor_paths=list(flavor_path),
-                                                                                  report_path=str(report_path)
-                                                                                  ))
+    with TaskLogRedirector.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=SecurityScan,
+                                                                                          flavor_paths=list(flavor_path),
+                                                                                          report_path=str(report_path)
+                                                                                          )) as task_creator:
+        success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 
-    success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+        if success:
+            with task.security_report_target.open("r") as f:
+                print(f.read())
+    logging.info(f'Full security scan report can be found at:{report_path}')
 
-    if success:
-        with task.security_report_target.open("r") as f:
-            print(f.read())
-    print(f'Full security scan report can be found at:{report_path}')
     if not success:
         exit(1)

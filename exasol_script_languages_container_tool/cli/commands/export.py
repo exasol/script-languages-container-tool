@@ -11,8 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper, \
-    get_log_path
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -64,18 +63,17 @@ def export(flavor_path: Tuple[str, ...],
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
 
-    task_creator = log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=ExportContainers,
-                                                                                  flavor_paths=list(flavor_path),
-                                                                                  release_goals=list(release_goal),
-                                                                                  export_path=export_path,
-                                                                                  release_name=release_name
-                                                                                  ))
+    with TaskLogRedirector.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=ExportContainers,
+                                                                                          flavor_paths=list(flavor_path),
+                                                                                          release_goals=list(release_goal),
+                                                                                          export_path=export_path,
+                                                                                          release_name=release_name
+                                                                                          )) as task_creator:
 
-    success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+        success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+        if success:
+            with task.command_line_output_target.open("r") as f:
+                print(f.read())
 
-    if success:
-        with task.command_line_output_target.open("r") as f:
-            print(f.read())
-    print(f'Export log can be found at:{get_log_path(task)}')
     if not success:
         exit(1)
