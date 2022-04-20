@@ -1,3 +1,4 @@
+import logging
 import sys
 from contextlib import contextmanager
 
@@ -30,7 +31,7 @@ class _Tee(object):
             sys.stdout = self.stdout
             sys.stderr = self.stderr
             self.file.close()
-            print(f'log can be found at:{self.log_file_path}')
+            logging.info(f'Log can be found at:{self.log_file_path}')
 
     def write(self, data):
         if self.is_open:
