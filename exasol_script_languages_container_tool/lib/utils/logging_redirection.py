@@ -10,7 +10,7 @@ def _get_log_path(task: BaseTask):
     return f'{task.get_log_path()}/exaslct.log'
 
 
-class Tee(object):
+class TaskLogRedirector(object):
     """
     Helper object which redirects calls to stdout/stderr to itself, prints to a given file and to real stdout/stderr
     """

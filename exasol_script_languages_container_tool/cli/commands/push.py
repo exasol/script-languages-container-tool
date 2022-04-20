@@ -11,7 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib.tasks.push.docker_push import DockerFlavorsPush
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import Tee
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -60,11 +60,11 @@ def push(flavor_path: Tuple[str, ...],
                                  source_docker_tag_prefix, "source")
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
-    with Tee.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=DockerFlavorsPush,
-                                                                            force_push=force_push,
-                                                                            push_all=push_all,
-                                                                            goals=list(goal),
-                                                                            flavor_paths=list(
+    with TaskLogRedirector.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=DockerFlavorsPush,
+                                                                                          force_push=force_push,
+                                                                                          push_all=push_all,
+                                                                                          goals=list(goal),
+                                                                                          flavor_paths=list(
                                                                                 flavor_path))) as task_creator:
         success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 

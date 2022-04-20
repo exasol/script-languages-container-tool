@@ -11,7 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib.tasks.save.docker_save import DockerSave
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import Tee
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -68,12 +68,12 @@ def save(save_directory: str,
     set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
                                  target_docker_tag_prefix, "target")
 
-    with Tee.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=DockerSave,
-                                                                            save_path=save_directory,
-                                                                            force_save=force_save,
-                                                                            save_all=save_all,
-                                                                            flavor_paths=list(flavor_path),
-                                                                            goals=list(goal))) as task_creator:
+    with TaskLogRedirector.log_redirector_task_creator_wrapper(lambda: generate_root_task(task_class=DockerSave,
+                                                                                          save_path=save_directory,
+                                                                                          force_save=force_save,
+                                                                                          save_all=save_all,
+                                                                                          flavor_paths=list(flavor_path),
+                                                                                          goals=list(goal))) as task_creator:
         success, task = run_task(task_creator, workers, task_dependencies_dot_file)
 
     if not success:
