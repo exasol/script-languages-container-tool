@@ -22,9 +22,8 @@ class DockerBuildDirectTest(unittest.TestCase):
     def tearDown(self):
         try:
             self.docker_client.close()
-        except Exception as e:
-            print(e)
-        self._clean_images()
+        finally:
+            self._clean_images()
 
     def _clean_images(self):
         self.runner.invoke(clean_flavor_images,

@@ -14,7 +14,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import log_redirector_task_creator_wrapper
+from exasol_script_languages_container_tool.lib.utils.logging_redirection import Tee
 
 
 @cli.command()
@@ -157,7 +157,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
             handle_commandline_error("Commandline parameter --external-exasol_db-port not set")
         if external_exasol_bucketfs_port is None:
             handle_commandline_error("Commandline parameter --external-exasol-bucketfs-port not set")
-    with log_redirector_task_creator_wrapper(
+    with Tee.log_redirector_task_creator_wrapper(
             lambda: generate_root_task(task_class=TestContainer,
                                        flavor_paths=list(flavor_path),
                                        release_goals=list(release_goal),
