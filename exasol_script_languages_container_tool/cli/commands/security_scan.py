@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Tuple
 
@@ -66,6 +67,7 @@ def security_scan(flavor_path: Tuple[str, ...],
         if success:
             with task.security_report_target.open("r") as f:
                 print(f.read())
+    logging.info(f'Full security scan report can be found at:{report_path}')
 
     if not success:
         exit(1)
