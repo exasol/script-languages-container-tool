@@ -31,16 +31,6 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             with environment_info_json_path.open() as f:
                 return EnvironmentInfo.from_json(f.read())
 
-    def validate_size(self, key, size, output):
-        """
-        Some values (Mem-Size) of ExaConf are modified by COS during startup (appearently since docker-db 7.1.7).
-        We need to change the check and round the final value from the ExaConf in the docker db.
-        """
-        matches = re.findall(f"{key} = \d+\.\d+ GiB", output)
-        self.assertEqual(len(matches), 1)
-        size_match = re.findall(r"\d+\.\d+", matches[0])
-        self.assertEqual(round(float(size_match[0]), 1), float(size))
-
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
         env_info = self._getEnvironmentInfo()
 
@@ -57,7 +47,15 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             return_code = exit_result[0]
         return_code = exit_result[0]
         self.assertEqual(return_code, 0)
-        self.validate_size(key="MemSize", size=mem_size, output=output)
+        """
+        Mem-Size appearently gets modified by COS during startup (apparently since docker-db 7.1.7).
+        We need to change the check and round the final value from the ExaConf in the docker db.
+        """
+        #Example "...{key} = 1.229 GiB...." => The regex extracts "1.229"
+        mem_size_matches = re.findall(f"MemSize = (\d+\.\d+) GiB", output)
+        self.assertEqual(len(mem_size_matches), 1)
+        self.assertEqual(round(float(mem_size_matches[0]), 1), float(mem_size))
+
         self.assertIn(f" Size = {disk_size}GiB", output)
 
     def remove_docker_environment(self):
