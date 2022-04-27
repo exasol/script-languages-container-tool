@@ -7,7 +7,7 @@ class DockerBuildDirectTest(unittest.TestCase):
 
     def _execute_in_new_process(self, target):
         path = Path(__file__)
-        args = ("python", f"{path.parent.absolute()}/test_docker_build_direct_subprocess.py", target)
+        args = ("python", f"{path.parent.absolute()}/docker_build_direct_subprocess.py", target)
         p = subprocess.run(args)
         p.check_returncode()
 
