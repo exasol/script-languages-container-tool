@@ -24,7 +24,7 @@ package_data = \
 
 install_requires = \
 ['exasol-integration-test-docker-environment @ '
- 'https://github.com/exasol/integration-test-docker-environment/releases/download/0.9.0/exasol_integration_test_docker_environment-0.9.0-py3-none-any.whl',
+ 'https://github.com/exasol/integration-test-docker-environment/releases/download/0.10.0/exasol_integration_test_docker_environment-0.10.0-py3-none-any.whl',
  'importlib_metadata>=4.6.0']
 
 setup_kwargs = {

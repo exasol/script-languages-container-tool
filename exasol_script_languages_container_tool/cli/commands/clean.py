@@ -7,11 +7,11 @@ from exasol_integration_test_docker_environment.cli.options.docker_repository_op
     simple_docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import output_directory_option, \
     system_options
+from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import CleanExaslcAllImages, \
     CleanExaslcFlavorsImages
-from exasol_script_languages_container_tool.lib.utils.logging_redirection import TaskLogRedirector
 
 
 @cli.command()
@@ -34,9 +34,11 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "target")
-    with TaskLogRedirector.log_redirector_task_creator_wrapper(
-        lambda: generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path))) as task_creator:
-        success, task = run_task(task_creator, workers, task_dependencies_dot_file)
+
+    def root_task_generator() -> DependencyLoggerBaseTask:
+        return generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path))
+
+    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
     if not success:
         exit(1)
 
