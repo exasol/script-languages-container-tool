@@ -63,7 +63,6 @@ class DockerBuildTest(object):
                                          "failed tasks or missing dependencies") == self.number_iterations + 2
 
 
-
 if __name__ == '__main__':
     test_type = sys.argv[1]
 
