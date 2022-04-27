@@ -1,3 +1,5 @@
+import math
+import re
 import unittest
 from pathlib import Path
 
@@ -29,6 +31,16 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             with environment_info_json_path.open() as f:
                 return EnvironmentInfo.from_json(f.read())
 
+    def validate_size(self, key, size, output):
+        """
+        Some values (Mem-Size) of ExaConf are modified by COS during startup (appearently since docker-db 7.1.7).
+        We need to change the check and round the final value from the ExaConf in the docker db.
+        """
+        matches = re.findall(f"{key} = \d+\.\d+ GiB", output)
+        self.assertEqual(len(matches), 1)
+        size_match = re.findall(r"\d+\.\d+", matches[0])
+        self.assertEqual(round(float(size_match[0]), 1), float(size))
+
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
         env_info = self._getEnvironmentInfo()
 
@@ -45,8 +57,8 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             return_code = exit_result[0]
         return_code = exit_result[0]
         self.assertEqual(return_code, 0)
-        self.assertIn(f"MemSize = {mem_size}", output)
-        self.assertIn(f" Size = {disk_size}", output)
+        self.validate_size(key="MemSize", size=mem_size, output=output)
+        self.assertIn(f" Size = {disk_size}GiB", output)
 
     def remove_docker_environment(self):
         env_info = self._getEnvironmentInfo()
@@ -68,12 +80,12 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
                 print(f"Error removing network:{e}")
 
     def test_run_db_tests_docker_db(self):
-        mem_size = "1.3GiB"
-        disk_size = "1.4GiB"
+        mem_size = "1.3"
+        disk_size = "1.4"
         arguments = " ".join([
             f"--test-file=empty_test.py",
-            f"--db-mem-size={mem_size}",
-            f"--db-disk-size={disk_size}",
+            f"--db-mem-size={mem_size}GiB",
+            f"--db-disk-size={disk_size}GiB",
             f"--reuse-test-environment",
         ])
         command = f"{self.test_environment.executable} run-db-test {arguments}"
