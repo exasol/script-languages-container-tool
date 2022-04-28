@@ -15,7 +15,8 @@ class DockerClean(unittest.TestCase):
             print(e)
 
     def test_docker_clean_all_images(self):
-        self.test_environment.clean_all_images()
+        command = f"{self.test_environment.executable} clean-all-images"
+        self.test_environment.run_command(command, use_flavor_path=False, clean=True)
 
 
 if __name__ == '__main__':
