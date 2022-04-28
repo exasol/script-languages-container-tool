@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "exasol-script-languages-container-tool"
-version = "0.11.0"
+version = "0.12.0"
 description = "Script Languages Container Tool"
 
 license = "MIT"
@@ -19,7 +19,7 @@ keywords = ['exasol', 'udf', 'script-languages']
 [tool.poetry.dependencies]
 python = ">=3.6,<4"
 importlib_metadata = ">=4.6.0"
-exasol-integration-test-docker-environment = {url = "https://github.com/exasol/integration-test-docker-environment/releases/download/0.9.0/exasol_integration_test_docker_environment-0.9.0-py3-none-any.whl"}
+exasol-integration-test-docker-environment = {url = "https://github.com/exasol/integration-test-docker-environment/releases/download/0.10.0/exasol_integration_test_docker_environment-0.10.0-py3-none-any.whl"}
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
