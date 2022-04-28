@@ -53,7 +53,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         #Example "...{key} = 1.229 GiB...." => The regex extracts "1.229"
         mem_size_matches = re.findall(f"MemSize = (\d+\.\d+) GiB", output)
         self.assertEqual(len(mem_size_matches), 1)
-        self.assertEqual(round(float(mem_size_matches[0]), 1), float(mem_size))
+        self.assertAlmostEqual(float(mem_size_matches[0]), float(mem_size), places=1)
 
         self.assertIn(f" Size = {disk_size}GiB", output)
 
