@@ -12,7 +12,7 @@ This release uses integration-test-docker-environment 0.10.0, which has built-in
 
 ## Bug Fixes
 
- n/a
+ - #142: Fixed clean-all-images command
 
 ## Documentation
 
