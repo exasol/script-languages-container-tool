@@ -15,7 +15,7 @@ from exasol_integration_test_docker_environment.cli.options.docker_repository_op
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 
 
-@cli.command(short_help="Uploads the script language container to the database.")
+@cli.command(short_help="Uploads the script-language-container to the database.")
 @add_options(flavor_options)
 @add_options(release_options)
 @click.option('--database-host', type=str,
@@ -61,7 +61,7 @@ def upload(flavor_path: Tuple[str, ...],
            workers: int,
            task_dependencies_dot_file: str):
     """
-    This command uploads the whole script language container package of the flavor to the database.
+    This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
     export them before the upload.
     """

@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.lib.tasks.save.docker_save import Do
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 
 
-@cli.command(short_help="Saves all stages of a script language container flavor.")
+@cli.command(short_help="Saves all stages of a script-language-container flavor.")
 @click.option('--save-directory',
               type=click.Path(file_okay=False, dir_okay=True),
               help="Directory where to save the image tarballs")
@@ -51,7 +51,7 @@ def save(save_directory: str,
          workers: int,
          task_dependencies_dot_file: str):
     """
-    This command saves all stages of the script language container flavor to a local directory.
+    This command saves all stages of the script-language-container flavor to a local directory.
     If the stages do not exists locally, the system will build or pull them before the execution of save.
     """
     import_build_steps(flavor_path)

@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import rele
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
 
 
-@cli.command(short_help="Exports the script language container.")
+@cli.command(short_help="Exports the script-language-container.")
 @add_options(flavor_options)
 @add_options(release_options)
 @click.option('--export-path', type=click.Path(exists=False, file_okay=False, dir_okay=True), default=None)
@@ -45,7 +45,7 @@ def export(flavor_path: Tuple[str, ...],
            workers: int,
            task_dependencies_dot_file: str):
     """
-    This command exports the whole script language container package of the flavor,
+    This command exports the whole script-language-container package of the flavor,
     ready for the upload into the bucketfs. If the stages do not exists locally,
     the system will build or pull them before the exporting the packaged container.
     """

@@ -44,7 +44,7 @@ def push(flavor_path: Tuple[str, ...],
          workers: int,
          task_dependencies_dot_file: str):
     """
-    This command pushes all stages of the script language container flavor.
+    This command pushes all stages of the script-language-container flavor.
     If the stages do not exists locally, the system will build or pull them before the push.
     """
     import_build_steps(flavor_path)
