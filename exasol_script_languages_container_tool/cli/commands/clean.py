@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import 
     CleanExaslcFlavorsImages
 
 
-@cli.command()
+@cli.command(short_help="Cleans script-languages-container docker images for the given flavor.")
 @add_options(flavor_options)
 @add_options([output_directory_option])
 @add_options(simple_docker_repository_options)
@@ -26,9 +26,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
                         workers: int,
                         task_dependencies_dot_file: str):
     """
-    This command uploads the whole script language container package of the flavor to the database.
-    If the stages or the packaged container do not exists locally, the system will build, pull or
-    export them before the upload.
+    This command removes the docker images of all stages of the script languages container for the given flavor.
     """
     import_build_steps(flavor_path)
     set_output_directory(output_directory)
@@ -43,7 +41,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
         exit(1)
 
 
-@cli.command()
+@cli.command(short_help="Cleans all script-languages-container docker images for all flavors.")
 @add_options([output_directory_option])
 @add_options(simple_docker_repository_options)
 @add_options(system_options)
@@ -54,9 +52,7 @@ def clean_all_images(
         workers: int,
         task_dependencies_dot_file: str):
     """
-    This command uploads the whole script language container package of the flavor to the database.
-    If the stages or the packaged container do not exists locally, the system will build, pull or
-    export them before the upload.
+    This command removes the docker images of all stages of the script languages container for all flavors.
     """
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")

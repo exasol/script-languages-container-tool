@@ -18,7 +18,7 @@ from exasol_integration_test_docker_environment.cli.options.test_environment_opt
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
 
 
-@cli.command()
+@cli.command(short_help="Runs integration tests.")
 @add_options(flavor_options)
 @add_options(release_options)
 @click.option('--generic-language-test', multiple=True, type=str,

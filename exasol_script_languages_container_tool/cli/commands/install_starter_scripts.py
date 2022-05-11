@@ -7,7 +7,7 @@ from exasol_script_languages_container_tool.lib.tasks.install_starter_scripts.ru
     run_starter_script_installation
 
 
-@cli.command()
+@cli.command(short_help="Install starter scripts.")
 @click.option("--install-path", default=".",
             type=click.Path(file_okay=False, dir_okay=True),
             help="Target path where starter scripts will be deployed.")
@@ -17,5 +17,9 @@ from exasol_script_languages_container_tool.lib.tasks.install_starter_scripts.ru
                  help="Forces installation. No prompts will be shown if files/directories already exists. "
                       "They will be silently overwritten.")
 def install_starter_scripts(install_path: Path, script_dir: str, force_install: bool):
+    """"
+    This command installs the starter scripts which can be used to run this project automatically
+    in an isolated environment.
+    """
     inst_path = Path(install_path)
     run_starter_script_installation(inst_path, inst_path / script_dir, force_install)

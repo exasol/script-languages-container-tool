@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.flavor_options import fl
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
 
 
-@cli.command()
+@cli.command(short_help="Performs a security scan.")
 @add_options(flavor_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
