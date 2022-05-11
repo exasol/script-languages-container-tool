@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import goal
 from exasol_script_languages_container_tool.lib.tasks.push.docker_push import DockerFlavorsPush
 
 
-@cli.command()
+@cli.command(short_help="Pushes script languages container to docker repository.")
 @add_options(flavor_options)
 @add_options(goal_options)
 @add_options(push_options)

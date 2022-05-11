@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import goal
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
 
 
-@cli.command()
+@cli.command(short_help="Builds a script-languages-container.")
 @add_options(flavor_options)
 @add_options(goal_options)
 @add_options(build_options)

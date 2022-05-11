@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import rele
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
 
 
-@cli.command()
+@cli.command(short_help="Exports the script language container.")
 @add_options(flavor_options)
 @add_options(release_options)
 @click.option('--export-path', type=click.Path(exists=False, file_okay=False, dir_okay=True), default=None)

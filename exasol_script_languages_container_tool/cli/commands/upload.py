@@ -15,7 +15,7 @@ from exasol_integration_test_docker_environment.cli.options.docker_repository_op
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 
 
-@cli.command()
+@cli.command(short_help="Uploads the script language container to the database.")
 @add_options(flavor_options)
 @add_options(release_options)
 @click.option('--database-host', type=str,
