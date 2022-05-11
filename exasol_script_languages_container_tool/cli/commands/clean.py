@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import 
     CleanExaslcFlavorsImages
 
 
-@cli.command(short_help="Cleans script-languages-container docker images.")
+@cli.command(short_help="Cleans script-languages-container docker images for the given flavor.")
 @add_options(flavor_options)
 @add_options([output_directory_option])
 @add_options(simple_docker_repository_options)
@@ -41,7 +41,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
         exit(1)
 
 
-@cli.command(short_help="Cleans all script-languages-container docker images.")
+@cli.command(short_help="Cleans all script-languages-container docker images for all flavors.")
 @add_options([output_directory_option])
 @add_options(simple_docker_repository_options)
 @add_options(system_options)
