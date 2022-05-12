@@ -62,16 +62,28 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 
 ### Installation
 
+You have two options to use this project:
+ - as a pure Python project
+ - using the _start scripts_ which pull the correct container image from Dockerhub and execute it within the Docker container
+
+#### Pure Python
+
 Find the wheel package for a specific [release](https://github.com/exasol/script-languages-container-tool/releases) under assets.
 
 Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/$VERSION/exasol_script_languages_container_tool-$VERSION-py3-none-any.whl`. Replace $VERSION with the latest version or the specific version you are interested in.
 
-Then you can use the Python package itself or install the starter scripts which allow to run exaslct within a docker image:
-`exasol_script_languages_container_tool.main install-starter-scripts --install-path $YOUR_INSTALL_PATH`
+#### Starter scripts
+
+You need to install the Python package only once to install the starter scripts (see the [previous section](#installation)).
+
+Install the starter scripts which allow to run exaslct within a docker image:
+`python3 -m exasol_script_languages_container_tool.main install-starter-scripts --install-path $YOUR_INSTALL_PATH`
 
 This will create a subfolder with the scripts itself and a symlink `exaslct` in $YOUR_INSTALL_PATH, which can be used as entry point.
 
 ### Usage
+
+For simplicity the following examples use the starter script version (`exaslct`). If you want to use the pure Python package, simply replace `exaslct` with `python3 -m exasol_script_languages_container_tool.main` in all examples. 
 
 #### How to build an existing flavor?
 
@@ -109,7 +121,7 @@ This command will print a SQL statement to activate the language similar to the 
 ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>?lang=<language>#buckets/<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>/exaudf/exaudfclient[_py3]';
 ```
 
-**Please, refer to the User Guide for more detailed information, how to use exalsct.**
+**Please, refer to the [User Guide](doc/user_guide/user_guide.md) for more detailed information, how to use exalsct.**
 
 ## Features
 
