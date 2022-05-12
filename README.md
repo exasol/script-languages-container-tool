@@ -63,7 +63,7 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 ### Installation
 
 You have two options to use this project:
- - as pure Python project
+ - as a pure Python project
  - using the _start scripts_ which pull the correct container image from Dockerhub and execute it within the Docker container
 
 #### Pure Python
@@ -74,7 +74,7 @@ Install the python package with `python3 -m pip install https://github.com/exaso
 
 #### Starter scripts
 
-You need to install the Python package only once to install the starter scripts (see the previous section).
+You need to install the Python package only once to install the starter scripts (see the [previous section](#installation)).
 
 Install the starter scripts which allow to run exaslct within a docker image:
 `python3 -m exasol_script_languages_container_tool.main install-starter-scripts --install-path $YOUR_INSTALL_PATH`
