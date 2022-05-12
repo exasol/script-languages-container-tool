@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY ext/01_nodoc /etc/dpkg/dpkg.cfg.d/01_nodoc
 
@@ -6,8 +7,7 @@ RUN apt-get -y update && \
     apt-get -y install --no-install-recommends\
         ca-certificates \
         locales \
-        python3-wheel \
-        python3-setuptools \
+        python3.8-venv \
         git \
         bash \
         curl && \
@@ -17,7 +17,7 @@ RUN apt-get -y update && \
     apt-get -y autoremove && \
     ldconfig
 
-RUN curl https://bootstrap.pypa.io/pip/3.6/get-pip.py | python3
+RUN curl https://bootstrap.pypa.io/pip/3.6/get-pip.py | python3.8
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -30,7 +30,7 @@ COPY LICENSE /script-languages-container-tool/LICENSE
 COPY README.md /script-languages-container-tool/README.md
 
 WORKDIR /script-languages-container-tool
-RUN python3 -m pip install .
+RUN python3.8 -m pip install .
 
 RUN mkdir -p runner
 COPY docker_runner/ /docker_runner
