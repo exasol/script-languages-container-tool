@@ -17,4 +17,4 @@ t.b.d.
 
 ## Documentation
 
- n/a
+ - #147: Improved short help messages

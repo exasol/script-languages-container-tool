@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import goal
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
 
 
-@cli.command()
+@cli.command(short_help="Builds a script-languages-container.")
 @add_options(flavor_options)
 @add_options(goal_options)
 @add_options(build_options)
@@ -53,7 +53,7 @@ def build(flavor_path: Tuple[str, ...],
           workers: int,
           task_dependencies_dot_file: str):
     """
-    This command builds all stages of the script language container flavor.
+    This command builds all stages of the script-language-container flavor.
     If stages are cached in a docker registry, they command is going to pull them,
     instead of building them.
     """

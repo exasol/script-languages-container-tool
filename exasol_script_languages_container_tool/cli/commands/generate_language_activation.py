@@ -9,7 +9,7 @@ from exasol_script_languages_container_tool.cli.options.flavor_options import si
 from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import LanguageDefinition
 
 
-@cli.command()
+@cli.command(short_help="Generate the language activation statement.")
 @add_options(single_flavor_options)
 @click.option('--bucketfs-name', type=str, required=True)
 @click.option('--bucket-name', type=str, required=True)
@@ -22,7 +22,7 @@ def generate_language_activation(
         path_in_bucket: str,
         container_name: str):
     """
-    Generate the language activation statement
+    Generate the language activation statement.
     """
 
     language_definition = \
