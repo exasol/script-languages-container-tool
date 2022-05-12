@@ -13,6 +13,7 @@ t.b.d.
 ## Bug Fixes
 
  - #145: Added explicit dependency to importlib-resources 
+ - #144: Added documentation regarding installation of starter scripts and added contributing.md
 
 ## Documentation
 

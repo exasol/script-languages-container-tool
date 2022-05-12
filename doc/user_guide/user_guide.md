@@ -10,6 +10,9 @@
 6. [Testing an existing flavor](#testing-an-existing-flavor)
 7. [Cleaning up after your are finished](#cleaning-up-after-you-are-finished)
 
+## Starter scripts or pure Python package?
+
+For simplicity the following examples use the starter script version (`exaslct`). If you want to use the pure Python package, simply replace `exaslct` with `python3 -m exasol_script_languages_container_tool.main` in all examples.
 
 ## How to build an existing flavor?
 
