@@ -8,6 +8,7 @@ RUN apt-get -y update && \
         openjdk-11-jdk \
         locales \
         python3.8-venv \
+        python3-pip \
         unixodbc \
         unixodbc-dev \
         curl \
