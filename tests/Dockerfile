@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY ext/01_nodoc /etc/dpkg/dpkg.cfg.d/01_nodoc
 
@@ -6,7 +7,7 @@ RUN apt-get -y update && \
     apt-get -y install \
         openjdk-11-jdk \
         locales \
-        python3 \
+        python3.8-venv \
         python3-pip \
         unixodbc \
         unixodbc-dev \

@@ -10,6 +10,9 @@ t.b.d.
 
  n/a 
 
+## Refactorings
+ - #118: Updated minimal supported python version to 3.8 and Integrate integration-test-docker-environment 0.11.0
+
 ## Bug Fixes
 
  - #145: Added explicit dependency to importlib-resources 
