@@ -5,7 +5,7 @@ Code name: Update minimal supported Python version to 3.8
 ## Summary 
 
 In this release, the  minimal supported python version is updated to 3.8. In the process, 
-integration-test-docker-environment 0.11.0 is integrated
+the integration-test-docker-environment is updated to version 0.11.0.
 Additionally, an explicit dependency to importlib-resources is added, and permissions for docker credentials env file were fixed.
 
 ## Features / Enhancements
