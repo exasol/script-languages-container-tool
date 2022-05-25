@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import os
-import sys
 
 import docker
 from exasol_python_test_framework import udf
 from exasol_python_test_framework import docker_db_environment
 
 
-class TestContainerEnvironmentTest(udf.TestCase):
+class TestContainerDockerCredentials(udf.TestCase):
 
     @udf.skipIfNot(docker_db_environment.is_available, reason="This test requires a docker-db environment")
     def test_check_docker_credentials(self):

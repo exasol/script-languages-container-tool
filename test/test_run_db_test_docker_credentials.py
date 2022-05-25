@@ -15,18 +15,19 @@ class RunDBTestDockerCredentials(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
-    def test_docker_test_environment(self):
+    @unittest.skipIf(os.getenv("DOCKER_USER") is not None and os.getenv("DOCKER_PASSWD") is not None,
+                     "Docker credentials not configured")
+    def test_docker_credentials_injection_into_test_container(self):
         docker_user = os.getenv("DOCKER_USER")
         docker_password = os.getenv("DOCKER_PASSWD")
-        if docker_user is not None and docker_password is not None:
-            arguments = " ".join([
-                f"--source-docker-username={docker_user}",
-                f"--source-docker-password={docker_password}",
-            ])
+        arguments = " ".join([
+            f"--source-docker-username={docker_user}",
+            f"--source-docker-password={docker_password}",
+        ])
 
-            command = f"{self.test_environment.executable} run-db-test {arguments} " \
-                      f"--test-file test_container_docker_credentials.py"
-            self.test_environment.run_command(command, track_task_dependencies=True)
+        command = f"{self.test_environment.executable} run-db-test {arguments} " \
+                  f"--test-file test_container_docker_credentials.py"
+        self.test_environment.run_command(command, track_task_dependencies=True)
 
 
 if __name__ == '__main__':
