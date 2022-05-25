@@ -1,6 +1,11 @@
+from collections import namedtuple
 from pathlib import Path
+from typing import Tuple, Optional
 
 import luigi
+from exasol_integration_test_docker_environment.lib.config.docker_config import source_docker_repository_config, \
+    target_docker_repository_config
+
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestResult
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import RunDBTestParameter
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
@@ -60,11 +65,28 @@ class RunDBTest(FlavorBaseTask,
         JsonPickleTarget(self.get_output_path().joinpath("test_result.json")).write(result, 4)
         self.return_object(result)
 
+    @staticmethod
+    def _get_docker_credentials() -> Optional[namedtuple]:
+        docker_credentials = namedtuple("DockerCredentials", "username password")
+        if source_docker_repository_config().username is not None and \
+                source_docker_repository_config().password is not None:
+            return docker_credentials(source_docker_repository_config().username,
+                                      source_docker_repository_config().password)
+        if target_docker_repository_config().username is not None and \
+                target_docker_repository_config().password is not None:
+            return docker_credentials(target_docker_repository_config().username,
+                                      target_docker_repository_config().password)
+        return None
+
     def run_test_command(self, bash_cmd, test_container):
         still_running_logger = StillRunningLogger(self.logger, "db tests")
         thread = StillRunningLoggerThread(still_running_logger)
         thread.start()
         environment = FrozenDictToDict().convert(self.test_environment_vars)
+        docker_credentials = self.__class__._get_docker_credentials()
+        if docker_credentials is not None:
+            environment["DOCKER_USERNAME"] = docker_credentials.username
+            environment["DOCKER_PASSWORD"] = docker_credentials.password
         environment["TEST_ENVIRONMENT_TYPE"] = self.test_environment_info.type.name
         environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
         environment["TEST_DOCKER_NETWORK_NAME"] = self.test_environment_info.network_info.network_name
