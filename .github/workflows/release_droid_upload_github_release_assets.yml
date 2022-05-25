@@ -73,6 +73,10 @@ jobs:
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
+        env: # Set the secret as an input
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
+
   upload:
     needs: test-all
     runs-on: ubuntu-latest
