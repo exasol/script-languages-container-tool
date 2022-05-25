@@ -1,10 +1,10 @@
-# Script-Languages-Container-Tool 0.14.0, released t.b.d.
+# Script-Languages-Container-Tool 0.14.0, released 2022-05-25
 
-Code name: t.b.d.
+Code name: Provide docker credentials to tests.
 
 ## Summary 
 
-t.b.d.
+This release contains a bugfix which avoids that tests exceed the Dockerhub pull rate limit and fail.
 
 ## Features / Enhancements
 
