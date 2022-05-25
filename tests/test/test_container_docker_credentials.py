@@ -19,7 +19,5 @@ class TestContainerEnvironmentTest(udf.TestCase):
         client.login(username=docker_user, password=docker_password)
 
 
-
-
 if __name__ == '__main__':
     udf.main()
