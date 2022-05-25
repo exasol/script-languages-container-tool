@@ -27,6 +27,7 @@ jobs:
 
   test-all:
     needs: prep-testbed
+    environment: ci_test
     strategy:
       fail-fast: false
       matrix:
