@@ -1,4 +1,3 @@
-import os
 import re
 import unittest
 from pathlib import Path
@@ -58,20 +57,6 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
 
         self.assertIn(f" Size = {disk_size}GiB", output)
 
-    def assert_docker_credentials(self, username: str, password: str):
-        env_info = self._getEnvironmentInfo()
-
-        containers = \
-            [c.name for c in
-             self.client.containers.list()
-             if env_info.test_container_info.container_name == c.name]
-        self.assertEqual(len(containers), 1)
-        res_exit_code, res_stdout = self.client.containers.get(containers[0]).exec_run("env")
-        self.assertEqual(res_exit_code, 0)
-        res_stdout_str = res_stdout.decode("UTF-8")
-        self.assertIn(f"DOCKER_USERNAME={username}", res_stdout_str)
-        self.assertIn(f"DOCKER_PASSWORD={password}", res_stdout_str)
-
     def remove_docker_environment(self):
         env_info = self._getEnvironmentInfo()
         utils.remove_docker_container([env_info.test_container_info.container_name,
@@ -91,34 +76,19 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             except Exception as e:
                 print(f"Error removing network:{e}")
 
-    # def test_run_db_tests_docker_db_disk_mem_size(self):
-    #     mem_size = "1.3"
-    #     disk_size = "1.4"
-    #     arguments = " ".join([
-    #         f"--test-file=empty_test.py",
-    #         f"--db-mem-size={mem_size}GiB",
-    #         f"--db-disk-size={disk_size}GiB",
-    #         f"--reuse-test-environment",
-    #     ])
-    #     command = f"{self.test_environment.executable} run-db-test {arguments}"
-    #     self.test_environment.run_command(
-    #         command, track_task_dependencies=True)
-    #     self.assert_mem_disk_size(mem_size, disk_size)
-
-    def test_run_db_tests_docker_db_check_docker_credentials(self):
-
-        docker_user = os.getenv("DOCKER_USER")
-        docker_password = os.getenv("DOCKER_PASSWD")
-        if docker_user is not None and docker_password is not None:
-            arguments = " ".join([
-                f"--source-docker-username={docker_user}",
-                f"--source-docker-password={docker_password}",
-                f"--reuse-test-environment"
-            ])
-            command = f"{self.test_environment.executable} run-db-test {arguments}"
-            self.test_environment.run_command(
-                command, track_task_dependencies=True)
-            self.assert_docker_credentials(docker_user, docker_password)
+    def test_run_db_tests_docker_db_disk_mem_size(self):
+        mem_size = "1.3"
+        disk_size = "1.4"
+        arguments = " ".join([
+            f"--test-file=empty_test.py",
+            f"--db-mem-size={mem_size}GiB",
+            f"--db-disk-size={disk_size}GiB",
+            f"--reuse-test-environment",
+        ])
+        command = f"{self.test_environment.executable} run-db-test {arguments}"
+        self.test_environment.run_command(
+            command, track_task_dependencies=True)
+        self.assert_mem_disk_size(mem_size, disk_size)
 
 
 if __name__ == '__main__':
