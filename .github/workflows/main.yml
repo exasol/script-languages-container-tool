@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Test ./exaslct
         run: ./exaslct --help
@@ -17,7 +17,7 @@ jobs:
   prep-testbed:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: |
           sudo apt-get install jq
@@ -27,6 +27,7 @@ jobs:
 
   test-all:
     needs: prep-testbed
+    environment: ci_test
     strategy:
       fail-fast: false
       matrix:
@@ -37,7 +38,7 @@ jobs:
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Python 3.8 for integration-test-docker-environment
         uses: actions/setup-python@v2
@@ -53,13 +54,16 @@ jobs:
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
+        env: # Set the secret as an input
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
 
   publish-main:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: publish
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build new Docker image
         run: "bash scripts/build/build_docker_runner_image.sh"
       - name: Docker login

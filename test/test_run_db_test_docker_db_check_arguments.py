@@ -76,7 +76,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             except Exception as e:
                 print(f"Error removing network:{e}")
 
-    def test_run_db_tests_docker_db(self):
+    def test_run_db_tests_docker_db_disk_mem_size(self):
         mem_size = "1.3"
         disk_size = "1.4"
         arguments = " ".join([

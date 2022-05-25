@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: publish
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Build new Docker image
         run: "bash scripts/build/build_docker_runner_image.sh"
       - name: Docker login
