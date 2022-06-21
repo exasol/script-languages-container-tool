@@ -38,7 +38,7 @@ class RunDBTest(FlavorBaseTask,
         with self._get_docker_client() as docker_client:
             test_container = docker_client.containers.get(self._test_container_info.container_name)
             bash_cmd = self.generate_test_command()
-            environment, exit_code, output = self.run_test_command(bash_cmd, test_container)
+            environment, exit_code, output = self.run_test_command(docker_client, bash_cmd, test_container)
             self.handle_test_result(bash_cmd, environment, exit_code, output)
 
     def handle_test_result(self, bash_cmd: str, environment: luigi.DictParameter, exit_code: int, output: str) -> None:
@@ -70,8 +70,8 @@ class RunDBTest(FlavorBaseTask,
                                       target_docker_repository_config().password)
         return None
 
-    def run_test_command(self, bash_cmd: str, test_container: docker.models.containers.Container) -> \
-            Tuple[luigi.DictParameter, int, str]:
+    def run_test_command(self, docker_client: docker.client, bash_cmd: str,
+                         test_container: docker.models.containers.Container) -> Tuple[luigi.DictParameter, int, str]:
         environment = FrozenDictToDict().convert(self.test_environment_vars)
         docker_credentials = self.__class__._get_docker_credentials()
         if docker_credentials is not None:
@@ -84,14 +84,14 @@ class RunDBTest(FlavorBaseTask,
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = \
                 self.test_environment_info.database_info.container_info.container_name
 
-        exit_code, output = test_container.exec_run(cmd=bash_cmd,
-                                                    environment=environment,
-                                                    stream=True)
         output = str()
-        for output_chunk in output:
-            self.logger.info(output_chunk.decode("utf-8"))
+        _id = docker_client.api.exec_create(container=test_container.id, cmd=bash_cmd, environment=environment)
+        output_stream = docker_client.api.exec_start(_id, detach=False, stream=True)
+        for output_chunk in output_stream:
+            print(output_chunk.decode("utf-8"))
             output += output_chunk.decode("utf-8")
-
+        ret = docker_client.api.exec_inspect(_id)
+        exit_code = ret["ExitCode"]
         return environment, exit_code, output
 
     def generate_test_command(self) -> str:
