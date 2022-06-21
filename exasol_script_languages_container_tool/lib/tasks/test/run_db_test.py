@@ -6,6 +6,7 @@ import docker.models.containers
 import luigi
 from exasol_integration_test_docker_environment.lib.config.docker_config import source_docker_repository_config, \
     target_docker_repository_config
+from exasol_integration_test_docker_environment.lib.config.log_config import log_config, WriteLogFilesToConsole
 
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestResult
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import RunDBTestParameter
@@ -42,12 +43,20 @@ class RunDBTest(FlavorBaseTask,
             exit_code = self.run_test_command(docker_client, bash_cmd, test_container, test_output_file)
             self.handle_test_result(exit_code, test_output_file)
 
+    @staticmethod
+    def read_test_output_file(test_output_file: Path) -> str:
+        with open(test_output_file, "r") as f:
+            return f.read()
+
     def handle_test_result(self, exit_code: int, test_output_file: Path) -> None:
         is_test_ok = (exit_code == 0)
-        if not is_test_ok:
-            with open(test_output_file, "r") as f:
-                test_output = f.read()
-                self.logger.error(test_output)
+        if log_config().write_log_files_to_console == WriteLogFilesToConsole.all :
+            self.logger.info("Test results for db tests\n%s"
+                             % self.read_test_output_file(test_output_file))
+        if log_config().write_log_files_to_console == WriteLogFilesToConsole.only_error and not is_test_ok:
+            self.logger.error("Test results for db tests\n%s"
+                             % self.read_test_output_file(test_output_file))
+
         result = RunDBTestResult(
             test_file=self.test_file,
             language=self.language,
