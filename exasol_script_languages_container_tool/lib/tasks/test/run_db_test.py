@@ -1,6 +1,6 @@
 from collections import namedtuple
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Optional
 
 import docker.models.containers
 import luigi
@@ -38,17 +38,16 @@ class RunDBTest(FlavorBaseTask,
         with self._get_docker_client() as docker_client:
             test_container = docker_client.containers.get(self._test_container_info.container_name)
             bash_cmd = self.generate_test_command()
-            environment, exit_code, output = self.run_test_command(docker_client, bash_cmd, test_container)
-            self.handle_test_result(bash_cmd, environment, exit_code, output)
+            test_output_file = self.get_log_path().joinpath("test_output")
+            exit_code = self.run_test_command(docker_client, bash_cmd, test_container, test_output_file)
+            self.handle_test_result(exit_code, test_output_file)
 
-    def handle_test_result(self, bash_cmd: str, environment: luigi.DictParameter, exit_code: int, output: str) -> None:
-        test_output = "command: " + bash_cmd + "\n" + \
-                      "environment: " + str(environment) + "\n" + \
-                      output
+    def handle_test_result(self, exit_code: int, test_output_file: Path) -> None:
         is_test_ok = (exit_code == 0)
-        test_output_file = self.get_log_path().joinpath("test_output")
-        with test_output_file.open("w") as file:
-            file.write(test_output)
+        if not is_test_ok:
+            with open(test_output_file, "r") as f:
+                test_output = f.read()
+                self.logger.error(test_output)
         result = RunDBTestResult(
             test_file=self.test_file,
             language=self.language,
@@ -71,7 +70,8 @@ class RunDBTest(FlavorBaseTask,
         return None
 
     def run_test_command(self, docker_client: docker.client, bash_cmd: str,
-                         test_container: docker.models.containers.Container) -> Tuple[luigi.DictParameter, int, str]:
+                         test_container: docker.models.containers.Container,
+                         test_output_file: Path) -> int:
         environment = FrozenDictToDict().convert(self.test_environment_vars)
         docker_credentials = self.__class__._get_docker_credentials()
         if docker_credentials is not None:
@@ -84,15 +84,18 @@ class RunDBTest(FlavorBaseTask,
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = \
                 self.test_environment_info.database_info.container_info.container_name
 
-        output = str()
-        _id = docker_client.api.exec_create(container=test_container.id, cmd=bash_cmd, environment=environment)
-        output_stream = docker_client.api.exec_start(_id, detach=False, stream=True)
-        for output_chunk in output_stream:
-            print(output_chunk.decode("utf-8"))
-            output += output_chunk.decode("utf-8")
-        ret = docker_client.api.exec_inspect(_id)
-        exit_code = ret["ExitCode"]
-        return environment, exit_code, output
+        self.logger.info(f"Writing test-log to {test_output_file}")
+        test_output = "command: " + bash_cmd + "\n" + \
+                      "environment: " + str(environment) + "\n"
+        with test_output_file.open("w") as file:
+            file.write(test_output)
+            _id = docker_client.api.exec_create(container=test_container.id, cmd=bash_cmd, environment=environment)
+            output_stream = docker_client.api.exec_start(_id, detach=False, stream=True)
+            for output_chunk in output_stream:
+                file.write(output_chunk.decode("utf-8"))
+            ret = docker_client.api.exec_inspect(_id)
+            exit_code = ret["ExitCode"]
+        return exit_code
 
     def generate_test_command(self) -> str:
         credentials = f"--user '{self.db_user}' --password '{self.db_password}'"
