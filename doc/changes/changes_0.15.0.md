@@ -7,7 +7,7 @@ t.b.d.
 
 ## Features / Enhancements
 
- n/a 
+ - #160: Streamed test output to log file
 
 ## Refactorings
 

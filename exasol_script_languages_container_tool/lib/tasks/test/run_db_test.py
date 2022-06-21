@@ -2,6 +2,7 @@ from collections import namedtuple
 from pathlib import Path
 from typing import Tuple, Optional
 
+import docker.models.containers
 import luigi
 from exasol_integration_test_docker_environment.lib.config.docker_config import source_docker_repository_config, \
     target_docker_repository_config
@@ -11,9 +12,6 @@ from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_paramete
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
 from exasol_integration_test_docker_environment.lib.base.frozendict_to_dict import FrozenDictToDict
 from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
-from exasol_integration_test_docker_environment.lib.base.still_running_logger import StillRunningLogger, \
-    StillRunningLoggerThread
-from exasol_integration_test_docker_environment.lib.config.log_config import log_config, WriteLogFilesToConsole
 from exasol_integration_test_docker_environment.lib.data.database_credentials import DatabaseCredentialsParameter
 
 
@@ -43,17 +41,11 @@ class RunDBTest(FlavorBaseTask,
             environment, exit_code, output = self.run_test_command(bash_cmd, test_container)
             self.handle_test_result(bash_cmd, environment, exit_code, output)
 
-    def handle_test_result(self, bash_cmd, environment, exit_code, output):
+    def handle_test_result(self, bash_cmd: str, environment: luigi.DictParameter, exit_code: int, output: str) -> None:
         test_output = "command: " + bash_cmd + "\n" + \
                       "environment: " + str(environment) + "\n" + \
-                      output.decode("utf-8")
+                      output
         is_test_ok = (exit_code == 0)
-        if log_config().write_log_files_to_console == WriteLogFilesToConsole.all:
-            self.logger.info("Test results for db tests\n%s"
-                             % test_output)
-        if log_config().write_log_files_to_console == WriteLogFilesToConsole.only_error and not is_test_ok:
-            self.logger.error("db tests failed\nTest results:\n%s"
-                              % test_output)
         test_output_file = self.get_log_path().joinpath("test_output")
         with test_output_file.open("w") as file:
             file.write(test_output)
@@ -78,10 +70,8 @@ class RunDBTest(FlavorBaseTask,
                                       target_docker_repository_config().password)
         return None
 
-    def run_test_command(self, bash_cmd, test_container):
-        still_running_logger = StillRunningLogger(self.logger, "db tests")
-        thread = StillRunningLoggerThread(still_running_logger)
-        thread.start()
+    def run_test_command(self, bash_cmd: str, test_container: docker.models.containers.Container) -> \
+            Tuple[luigi.DictParameter, int, str]:
         environment = FrozenDictToDict().convert(self.test_environment_vars)
         docker_credentials = self.__class__._get_docker_credentials()
         if docker_credentials is not None:
@@ -95,12 +85,16 @@ class RunDBTest(FlavorBaseTask,
                 self.test_environment_info.database_info.container_info.container_name
 
         exit_code, output = test_container.exec_run(cmd=bash_cmd,
-                                                    environment=environment)
-        thread.stop()
-        thread.join()
+                                                    environment=environment,
+                                                    stream=True)
+        output = str()
+        for output_chunk in output:
+            self.logger.info(output_chunk.decode("utf-8"))
+            output += output_chunk.decode("utf-8")
+
         return environment, exit_code, output
 
-    def generate_test_command(self):
+    def generate_test_command(self) -> str:
         credentials = f"--user '{self.db_user}' --password '{self.db_password}'"
         log_level = f"--loglevel={self.test_log_level}"
         server = f"--server '{self._database_info.host}:{self._database_info.db_port}'"
