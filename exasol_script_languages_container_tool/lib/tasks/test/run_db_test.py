@@ -15,6 +15,8 @@ from exasol_integration_test_docker_environment.lib.base.frozendict_to_dict impo
 from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
 from exasol_integration_test_docker_environment.lib.data.database_credentials import DatabaseCredentialsParameter
 
+from exasol_script_languages_container_tool.lib.utils.docker_utils import exec_run_and_write_to_stream
+
 
 class RunDBTest(FlavorBaseTask,
                 RunDBTestParameter,
@@ -98,12 +100,7 @@ class RunDBTest(FlavorBaseTask,
                       "environment: " + str(environment) + "\n"
         with test_output_file.open("w") as file:
             file.write(test_output)
-            _id = docker_client.api.exec_create(container=test_container.id, cmd=bash_cmd, environment=environment)
-            output_stream = docker_client.api.exec_start(_id, detach=False, stream=True)
-            for output_chunk in output_stream:
-                file.write(output_chunk.decode("utf-8"))
-            ret = docker_client.api.exec_inspect(_id)
-            exit_code = ret["ExitCode"]
+            exit_code = exec_run_and_write_to_stream(docker_client, test_container, bash_cmd, file, environment)
         return exit_code
 
     def generate_test_command(self) -> str:
