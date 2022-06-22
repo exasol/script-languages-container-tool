@@ -52,14 +52,13 @@ class ClickApiConsistency(unittest.TestCase):
             self.assertEqual(api_spec.args, self._param_names_of_click_call(cli_call))
             cli_defaults = self._defaults_of_click_call(cli_call)
             self.assertEqual(len(cli_defaults), len(api_spec.defaults))
-            for i in range(len(cli_defaults)):
-                api_default = api_spec.defaults[i]
-                cli_param_name, cli_default = cli_defaults[i]
-                if api_default != cli_default:
+            for api_default_value, cli_default in zip(api_spec.defaults, cli_defaults):
+                cli_param_name, cli_default_value = cli_default
+                if api_default_value != cli_default_value:
                     self.fail(f"Default value for parameter '{cli_param_name}' "
                               f"for method '{api_call.__name__}' does not match. "
-                              f"API method has default value '{api_default}' "
-                              f"while CLI method has default value '{cli_default}'")
+                              f"API method has default value '{api_default_value}' "
+                              f"while CLI method has default value '{cli_default_value}'")
 
     def test_same_functions(self):
         """
