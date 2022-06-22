@@ -18,7 +18,7 @@ class ClickApiConsistency(unittest.TestCase):
     def _replace_list_with_tuple(x: Any):
         """
         Click stores default values as list if 'Multiple'=true. However, for plain Python methods we
-        need to use (immutable) tuples for declaring default value. Hence, we need to transform lists with tuples
+        need to use (immutable) tuples for declaring default value. Hence, we need to convert lists with tuples
         for comparison.
         """
         if type(x) == list:
