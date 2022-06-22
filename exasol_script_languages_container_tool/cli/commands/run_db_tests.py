@@ -85,6 +85,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 max_start_attempts: int,
                 docker_db_image_version: str,
                 docker_db_image_name: str,
+                create_certificates: bool,
                 external_exasol_db_host: Optional[str],
                 external_exasol_db_port: int,
                 external_exasol_bucketfs_port: int,
@@ -122,8 +123,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str],
                 target_docker_password: Optional[str],
                 workers: int,
-                task_dependencies_dot_file: Optional[str],
-                create_certificates: bool):
+                task_dependencies_dot_file: Optional[str]):
     """
     This command runs the integration tests in local docker-db.
     The systems spawns a test environment in which the test are executed.
@@ -143,6 +143,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                         max_start_attempts,
                         docker_db_image_version,
                         docker_db_image_name,
+                        create_certificates,
                         external_exasol_db_host,
                         external_exasol_db_port,
                         external_exasol_bucketfs_port,
@@ -180,7 +181,6 @@ def run_db_test(flavor_path: Tuple[str, ...],
                         target_docker_username,
                         target_docker_password,
                         workers,
-                        task_dependencies_dot_file,
-                        create_certificates)
+                        task_dependencies_dot_file)
     except InvalidArgumentError as e:
         handle_invalid_argument_error(e.args)

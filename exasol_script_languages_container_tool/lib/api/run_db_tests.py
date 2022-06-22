@@ -22,6 +22,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 max_start_attempts: int = 2,
                 docker_db_image_version: str = LATEST_DB_VERSION,
                 docker_db_image_name: str = "exasol/docker-db",
+                create_certificates: bool = False,
                 external_exasol_db_host: Optional[str] = None,
                 external_exasol_db_port: int = 8563,
                 external_exasol_bucketfs_port: int = 6583,
@@ -29,7 +30,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 external_exasol_db_password: Optional[str] = None,
                 external_exasol_bucketfs_write_password: Optional[str] = None,
                 external_exasol_xmlrpc_host: Optional[str] = None,
-                external_exasol_xmlrpc_port: int = 443,
+                external_exasol_xmlrpc_port: int = "443", #Requires fix for https://github.com/exasol/integration-test-docker-environment/issues/230
                 external_exasol_xmlrpc_user: str = "admin",
                 external_exasol_xmlrpc_password: Optional[str] = None,
                 external_exasol_xmlrpc_cluster_name: str = "cluster1",
@@ -59,8 +60,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str] = None,
                 target_docker_password: Optional[str] = None,
                 workers: int = 5,
-                task_dependencies_dot_file: Optional[str] = None,
-                create_certificates: bool = False):
+                task_dependencies_dot_file: Optional[str] = None):
     """
     This command runs the integration tests in local docker-db.
     The systems spawns a test environment in which the test are executed.

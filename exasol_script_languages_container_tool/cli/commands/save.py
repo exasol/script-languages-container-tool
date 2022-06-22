@@ -12,8 +12,8 @@ from exasol_script_languages_container_tool.cli.options.goal_options import goal
 from exasol_script_languages_container_tool.lib import api
 
 
-@add_options(flavor_options)
 @cli.command(short_help="Saves all stages of a script-language-container flavor.")
+@add_options(flavor_options)
 @click.option('--save-directory',
               type=click.Path(file_okay=False, dir_okay=True),
               help="Directory where to save the image tarballs")
