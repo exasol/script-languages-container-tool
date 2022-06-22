@@ -1,21 +1,20 @@
-import json
-from typing import Tuple
+from typing import Tuple, Optional
 
 import click
-from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.cli.commands.handle_invalid_argument_error import \
+    handle_invalid_argument_error
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
-from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
+from exasol_script_languages_container_tool.lib.api.invalid_argument_error import InvalidArgumentError
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options, import_build_steps, \
-    set_docker_repository_config, run_task, set_build_config, generate_root_task
+from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
-from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
+from exasol_script_languages_container_tool.lib import api
 
 
 @cli.command(short_help="Runs integration tests.")
@@ -77,25 +76,25 @@ from exasol_integration_test_docker_environment.lib.data.environment_type import
 @add_options(system_options)
 def run_db_test(flavor_path: Tuple[str, ...],
                 release_goal: Tuple[str, ...],
-                generic_language_test: Tuple[str, ...],
-                test_folder: Tuple[str, ...],
-                test_file: Tuple[str, ...],
+                generic_language_test: Optional[Tuple[str, ...]],
+                test_folder: Optional[Tuple[str, ...]],
+                test_file: Optional[Tuple[str, ...]],
                 test_language: Tuple[str, ...],
-                test: Tuple[str, ...],
+                test: Optional[Tuple[str, ...]],
                 environment_type: str,
                 max_start_attempts: int,
                 docker_db_image_version: str,
                 docker_db_image_name: str,
-                external_exasol_db_host: str,
+                external_exasol_db_host: Optional[str],
                 external_exasol_db_port: int,
                 external_exasol_bucketfs_port: int,
-                external_exasol_db_user: str,
-                external_exasol_db_password: str,
-                external_exasol_bucketfs_write_password: str,
-                external_exasol_xmlrpc_host: str,
+                external_exasol_db_user: Optional[str],
+                external_exasol_db_password: Optional[str],
+                external_exasol_bucketfs_write_password: Optional[str],
+                external_exasol_xmlrpc_host: Optional[str],
                 external_exasol_xmlrpc_port: int,
                 external_exasol_xmlrpc_user: str,
-                external_exasol_xmlrpc_password: str,
+                external_exasol_xmlrpc_password: Optional[str],
                 external_exasol_xmlrpc_cluster_name: str,
                 db_mem_size: str,
                 db_disk_size: str,
@@ -107,23 +106,23 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 reuse_test_container: bool,
                 reuse_test_environment: bool,
                 force_rebuild: bool,
-                force_rebuild_from: Tuple[str, ...],
+                force_rebuild_from: Optional[Tuple[str, ...]],
                 force_pull: bool,
                 output_directory: str,
                 temporary_base_directory: str,
                 log_build_context_content: bool,
-                cache_directory: str,
-                build_name: str,
+                cache_directory: Optional[str],
+                build_name: Optional[str],
                 source_docker_repository_name: str,
                 source_docker_tag_prefix: str,
-                source_docker_username: str,
-                source_docker_password: str,
+                source_docker_username: Optional[str],
+                source_docker_password: Optional[str],
                 target_docker_repository_name: str,
                 target_docker_tag_prefix: str,
-                target_docker_username: str,
-                target_docker_password: str,
+                target_docker_username: Optional[str],
+                target_docker_password: Optional[str],
                 workers: int,
-                task_dependencies_dot_file: str,
+                task_dependencies_dot_file: Optional[str],
                 create_certificates: bool):
     """
     This command runs the integration tests in local docker-db.
@@ -132,83 +131,56 @@ def run_db_test(flavor_path: Tuple[str, ...],
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
     """
-    import_build_steps(flavor_path)
-    set_build_config(force_rebuild,
-                     force_rebuild_from,
-                     force_pull,
-                     log_build_context_content,
-                     output_directory,
-                     temporary_base_directory,
-                     cache_directory,
-                     build_name)
-    set_docker_repository_config(source_docker_password, source_docker_repository_name, source_docker_username,
-                                 source_docker_tag_prefix, "source")
-    set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
-                                 target_docker_tag_prefix, "target")
-
-    if reuse_test_environment:
-        reuse_database = True
-        reuse_uploaded_container = True
-        reuse_test_container = True
-        reuse_database_setup = True
-    if environment_type == EnvironmentType.external_db.name:
-        if external_exasol_db_host is None:
-            handle_commandline_error("Commandline parameter --external-exasol-db-host not set")
-        if external_exasol_db_port is None:
-            handle_commandline_error("Commandline parameter --external-exasol_db-port not set")
-        if external_exasol_bucketfs_port is None:
-            handle_commandline_error("Commandline parameter --external-exasol-bucketfs-port not set")
-
-    def root_task_generator() -> DependencyLoggerBaseTask:
-        return generate_root_task(task_class=TestContainer,
-                                  flavor_paths=list(flavor_path),
-                                  release_goals=list(release_goal),
-                                  generic_language_tests=list(generic_language_test),
-                                  test_folders=list(test_folder),
-                                  test_files=list(test_file),
-                                  test_restrictions=list(test),
-                                  languages=list(test_language),
-                                  mem_size=db_mem_size,
-                                  disk_size=db_disk_size,
-                                  test_environment_vars=json.loads(test_environment_vars),
-                                  test_log_level=test_log_level,
-                                  reuse_uploaded_container=reuse_uploaded_container,
-                                  environment_type=EnvironmentType[environment_type],
-                                  reuse_database_setup=reuse_database_setup,
-                                  reuse_test_container=reuse_test_container,
-                                  reuse_database=reuse_database,
-                                  no_test_container_cleanup_after_success=reuse_test_container,
-                                  no_test_container_cleanup_after_failure=reuse_test_container,
-                                  no_database_cleanup_after_success=reuse_database,
-                                  no_database_cleanup_after_failure=reuse_database,
-                                  docker_db_image_name=docker_db_image_name,
-                                  docker_db_image_version=docker_db_image_version,
-                                  max_start_attempts=max_start_attempts,
-                                  external_exasol_db_host=external_exasol_db_host,
-                                  external_exasol_db_port=external_exasol_db_port,
-                                  external_exasol_bucketfs_port=external_exasol_bucketfs_port,
-                                  external_exasol_db_user=external_exasol_db_user,
-                                  external_exasol_db_password=external_exasol_db_password,
-                                  external_exasol_bucketfs_write_password=external_exasol_bucketfs_write_password,
-                                  external_exasol_xmlrpc_host=external_exasol_xmlrpc_host,
-                                  external_exasol_xmlrpc_port=external_exasol_xmlrpc_port,
-                                  external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
-                                  external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
-                                  external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
-                                  create_certificates=create_certificates
-                                  )
-
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-    print("Test Results:")
-    if task.command_line_output_target.exists():
-        with task.command_line_output_target.open("r") as f:
-            print(f.read())
-    if not success:
-        exit(1)
-
-
-def handle_commandline_error(error):
-    print(error)
-    ctx = click.get_current_context()
-    click.echo(ctx.get_help())
-    exit(1)
+    try:
+        api.run_db_test(flavor_path,
+                        release_goal,
+                        generic_language_test,
+                        test_folder,
+                        test_file,
+                        test_language,
+                        test,
+                        environment_type,
+                        max_start_attempts,
+                        docker_db_image_version,
+                        docker_db_image_name,
+                        external_exasol_db_host,
+                        external_exasol_db_port,
+                        external_exasol_bucketfs_port,
+                        external_exasol_db_user,
+                        external_exasol_db_password,
+                        external_exasol_bucketfs_write_password,
+                        external_exasol_xmlrpc_host,
+                        external_exasol_xmlrpc_port,
+                        external_exasol_xmlrpc_user,
+                        external_exasol_xmlrpc_password,
+                        external_exasol_xmlrpc_cluster_name,
+                        db_mem_size,
+                        db_disk_size,
+                        test_environment_vars,
+                        test_log_level,
+                        reuse_database,
+                        reuse_database_setup,
+                        reuse_uploaded_container,
+                        reuse_test_container,
+                        reuse_test_environment,
+                        force_rebuild,
+                        force_rebuild_from,
+                        force_pull,
+                        output_directory,
+                        temporary_base_directory,
+                        log_build_context_content,
+                        cache_directory,
+                        build_name,
+                        source_docker_repository_name,
+                        source_docker_tag_prefix,
+                        source_docker_username,
+                        source_docker_password,
+                        target_docker_repository_name,
+                        target_docker_tag_prefix,
+                        target_docker_username,
+                        target_docker_password,
+                        workers,
+                        task_dependencies_dot_file,
+                        create_certificates)
+    except InvalidArgumentError as e:
+        handle_invalid_argument_error(e.args)

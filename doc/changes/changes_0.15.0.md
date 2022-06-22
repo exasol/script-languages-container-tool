@@ -11,7 +11,7 @@ t.b.d.
 
 ## Refactorings
 
- n/a 
+ - #124: Moved implementations of all click commands in separate methods
 
 ## Bug Fixes
 

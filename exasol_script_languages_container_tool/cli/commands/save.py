@@ -1,19 +1,18 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import click
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options, import_build_steps, set_build_config, \
-    set_docker_repository_config, run_task, generate_root_task
+from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
-from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
-from exasol_script_languages_container_tool.lib.tasks.save.docker_save import DockerSave
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
+from exasol_script_languages_container_tool.lib import api
 
 
+@add_options(flavor_options)
 @cli.command(short_help="Saves all stages of a script-language-container flavor.")
 @click.option('--save-directory',
               type=click.Path(file_okay=False, dir_okay=True),
@@ -22,60 +21,57 @@ from exasol_script_languages_container_tool.cli.options.goal_options import goal
               help="Forces the system to overwrite existing save for build steps that run")
 @click.option('--save-all/--no-save-all', default=False,
               help="Forces the system to save all images of build-steps that are specified by the goals")
-@add_options(flavor_options)
 @add_options(goal_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
-def save(save_directory: str,
+def save(flavor_path: Tuple[str, ...],
+         save_directory: Optional[str],
          force_save: bool,
          save_all: bool,
-         flavor_path: Tuple[str, ...],
-         goal: Tuple[str, ...],
+         goal: Optional[Tuple[str, ...]],
          force_rebuild: bool,
-         force_rebuild_from: Tuple[str, ...],
+         force_rebuild_from: Optional[Tuple[str, ...]],
          force_pull: bool,
          output_directory: str,
          temporary_base_directory: str,
          log_build_context_content: bool,
-         cache_directory: str,
-         build_name: str,
+         cache_directory: Optional[str],
+         build_name: Optional[str],
          source_docker_repository_name: str,
          source_docker_tag_prefix: str,
-         source_docker_username: str,
-         source_docker_password: str,
+         source_docker_username: Optional[str],
+         source_docker_password: Optional[str],
          target_docker_repository_name: str,
          target_docker_tag_prefix: str,
-         target_docker_username: str,
-         target_docker_password: str,
+         target_docker_username: Optional[str],
+         target_docker_password: Optional[str],
          workers: int,
-         task_dependencies_dot_file: str):
+         task_dependencies_dot_file: Optional[str]):
     """
     This command saves all stages of the script-language-container flavor to a local directory.
     If the stages do not exists locally, the system will build or pull them before the execution of save.
     """
-    import_build_steps(flavor_path)
-    set_build_config(force_rebuild,
-                     force_rebuild_from,
-                     force_pull,
-                     log_build_context_content,
-                     output_directory,
-                     temporary_base_directory,
-                     cache_directory,
-                     build_name)
-    set_docker_repository_config(source_docker_password, source_docker_repository_name, source_docker_username,
-                                 source_docker_tag_prefix, "source")
-    set_docker_repository_config(target_docker_password, target_docker_repository_name, target_docker_username,
-                                 target_docker_tag_prefix, "target")
-
-    def root_task_generator() -> DependencyLoggerBaseTask:
-        return generate_root_task(task_class=DockerSave,
-                                  save_path=save_directory,
-                                  force_save=force_save,
-                                  save_all=save_all,
-                                  flavor_paths=list(flavor_path),
-                                  goals=list(goal))
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-
-    if not success:
-        exit(1)
+    api.save(flavor_path,
+             save_directory,
+             force_save,
+             save_all,
+             goal,
+             force_rebuild,
+             force_rebuild_from,
+             force_pull,
+             output_directory,
+             temporary_base_directory,
+             log_build_context_content,
+             cache_directory,
+             build_name,
+             source_docker_repository_name,
+             source_docker_tag_prefix,
+             source_docker_username,
+             source_docker_password,
+             target_docker_repository_name,
+             target_docker_tag_prefix,
+             target_docker_username,
+             target_docker_password,
+             workers,
+             task_dependencies_dot_file)
