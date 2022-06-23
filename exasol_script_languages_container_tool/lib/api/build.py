@@ -4,6 +4,7 @@ from exasol_integration_test_docker_environment.cli.common import import_build_s
     set_docker_repository_config, run_task, generate_root_task
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
 
 
@@ -32,6 +33,9 @@ def build(flavor_path: Tuple[str, ...],
     This command builds all stages of the script-language-container flavor.
     If stages are cached in a docker registry, they command is going to pull them,
     instead of building them.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
+
     """
     import_build_steps(flavor_path)
 
@@ -57,4 +61,4 @@ def build(flavor_path: Tuple[str, ...],
     success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
 
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()

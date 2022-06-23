@@ -4,7 +4,7 @@ from typing import Tuple, Optional
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import LATEST_DB_VERSION
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
-from exasol_script_languages_container_tool.lib.api.invalid_argument_error import InvalidArgumentError
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
 from exasol_integration_test_docker_environment.cli.common import import_build_steps, \
     set_docker_repository_config, run_task, set_build_config, generate_root_task
@@ -68,7 +68,9 @@ def run_db_test(flavor_path: Tuple[str, ...],
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
     raises:
-        InvalidArgumentError: if arguments are not correct.
+        api_errors.MissingArgumentError: if one or more arguments are not set.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -91,11 +93,11 @@ def run_db_test(flavor_path: Tuple[str, ...],
         reuse_database_setup = True
     if environment_type == EnvironmentType.external_db.name:
         if external_exasol_db_host is None:
-            raise InvalidArgumentError("Commandline parameter --external-exasol-db-host not set")
+            raise api_errors.MissingArgumentError("external_exasol_db_host")
         if external_exasol_db_port is None:
-            raise InvalidArgumentError("Commandline parameter --external-exasol_db-port not set")
+            raise api_errors.MissingArgumentError("external_exasol_db_port")
         if external_exasol_bucketfs_port is None:
-            raise InvalidArgumentError("Commandline parameter --external-exasol-bucketfs-port not set")
+            raise api_errors.MissingArgumentError("external_exasol_bucketfs_port")
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(task_class=TestContainer,
@@ -141,6 +143,6 @@ def run_db_test(flavor_path: Tuple[str, ...],
     if task.command_line_output_target.exists():
         with task.command_line_output_target.open("r") as f:
             print(f.read())
-    if not success:
-        exit(1)
 
+    if not success:
+        raise api_errors.TaskFailureError()

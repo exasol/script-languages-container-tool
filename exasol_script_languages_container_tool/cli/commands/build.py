@@ -1,3 +1,4 @@
+import sys
 from typing import Tuple, Optional
 
 import click
@@ -10,6 +11,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib import api
+from exasol_script_languages_container_tool.lib.api import api_errors
 
 
 @cli.command(short_help="Builds a script-languages-container.")
@@ -55,24 +57,27 @@ def build(flavor_path: Tuple[str, ...],
     If stages are cached in a docker registry, they command is going to pull them,
     instead of building them.
     """
-    api.build(flavor_path,
-              goal,
-              force_rebuild,
-              force_rebuild_from,
-              force_pull,
-              output_directory,
-              temporary_base_directory,
-              log_build_context_content,
-              cache_directory,
-              build_name,
-              shortcut_build,
-              source_docker_repository_name,
-              source_docker_tag_prefix,
-              source_docker_username,
-              source_docker_password,
-              target_docker_repository_name,
-              target_docker_tag_prefix,
-              target_docker_username,
-              target_docker_password,
-              workers,
-              task_dependencies_dot_file)
+    try:
+        api.build(flavor_path,
+                  goal,
+                  force_rebuild,
+                  force_rebuild_from,
+                  force_pull,
+                  output_directory,
+                  temporary_base_directory,
+                  log_build_context_content,
+                  cache_directory,
+                  build_name,
+                  shortcut_build,
+                  source_docker_repository_name,
+                  source_docker_tag_prefix,
+                  source_docker_username,
+                  source_docker_password,
+                  target_docker_repository_name,
+                  target_docker_tag_prefix,
+                  target_docker_username,
+                  target_docker_password,
+                  workers,
+                  task_dependencies_dot_file)
+    except api_errors.TaskFailureError:
+        sys.exit(1)

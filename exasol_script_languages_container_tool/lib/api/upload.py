@@ -3,6 +3,7 @@ from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers import UploadContainers
 from exasol_integration_test_docker_environment.cli.common import import_build_steps, set_build_config, \
     set_docker_repository_config, generate_root_task, run_task
@@ -41,6 +42,8 @@ def upload(flavor_path: Tuple[str, ...],
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
     export them before the upload.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -80,4 +83,4 @@ def upload(flavor_path: Tuple[str, ...],
             print(f.read())
 
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()

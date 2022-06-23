@@ -6,6 +6,7 @@ from exasol_integration_test_docker_environment.cli.common import import_build_s
     set_docker_repository_config, generate_root_task, run_task
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
 
 
@@ -32,6 +33,8 @@ def security_scan(flavor_path: Tuple[str, ...],
     This command executes the security scan, which must be defined as separate step in the build steps declaration.
     The scan runs the docker container of the respective step, passing a folder of the output-dir as argument.
     If the stages do not exists locally, the system will build or pull them before running the scan.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -63,4 +66,4 @@ def security_scan(flavor_path: Tuple[str, ...],
     logging.info(f'Full security scan report can be found at:{report_path}')
 
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()

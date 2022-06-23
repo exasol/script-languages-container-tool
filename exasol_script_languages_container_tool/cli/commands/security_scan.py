@@ -1,3 +1,4 @@
+import sys
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.cli.cli import cli
@@ -8,6 +9,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.lib import api
+from exasol_script_languages_container_tool.lib.api import api_errors
 
 
 @cli.command(short_help="Performs a security scan.")
@@ -39,22 +41,25 @@ def security_scan(flavor_path: Tuple[str, ...],
     The scan runs the docker container of the respective step, passing a folder of the output-dir as argument.
     If the stages do not exists locally, the system will build or pull them before running the scan.
     """
-    api.security_scan(flavor_path,
-                      force_rebuild,
-                      force_rebuild_from,
-                      force_pull,
-                      output_directory,
-                      temporary_base_directory,
-                      log_build_context_content,
-                      cache_directory,
-                      build_name,
-                      source_docker_repository_name,
-                      source_docker_tag_prefix,
-                      source_docker_username,
-                      source_docker_password,
-                      target_docker_repository_name,
-                      target_docker_tag_prefix,
-                      target_docker_username,
-                      target_docker_password,
-                      workers,
-                      task_dependencies_dot_file)
+    try:
+        api.security_scan(flavor_path,
+                          force_rebuild,
+                          force_rebuild_from,
+                          force_pull,
+                          output_directory,
+                          temporary_base_directory,
+                          log_build_context_content,
+                          cache_directory,
+                          build_name,
+                          source_docker_repository_name,
+                          source_docker_tag_prefix,
+                          source_docker_username,
+                          source_docker_password,
+                          target_docker_repository_name,
+                          target_docker_tag_prefix,
+                          target_docker_username,
+                          target_docker_password,
+                          workers,
+                          task_dependencies_dot_file)
+    except api_errors.TaskFailureError:
+        sys.exit(1)

@@ -4,6 +4,7 @@ from exasol_integration_test_docker_environment.cli.common import import_build_s
     set_docker_repository_config, run_task, generate_root_task
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.save.docker_save import DockerSave
 
 
@@ -33,6 +34,8 @@ def save(flavor_path: Tuple[str, ...],
     """
     This command saves all stages of the script-language-container flavor to a local directory.
     If the stages do not exists locally, the system will build or pull them before the execution of save.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -58,4 +61,4 @@ def save(flavor_path: Tuple[str, ...],
     success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
 
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()

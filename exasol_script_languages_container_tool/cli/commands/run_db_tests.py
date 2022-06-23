@@ -1,12 +1,10 @@
-from typing import Tuple, Optional
+import sys
+from typing import Tuple, Optional, Any
 
 import click
 
-from exasol_script_languages_container_tool.cli.commands.handle_invalid_argument_error import \
-    handle_invalid_argument_error
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
-from exasol_script_languages_container_tool.lib.api.invalid_argument_error import InvalidArgumentError
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
@@ -15,6 +13,7 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
 from exasol_script_languages_container_tool.lib import api
+from exasol_script_languages_container_tool.lib.api import api_errors
 
 
 @cli.command(short_help="Runs integration tests.")
@@ -182,5 +181,16 @@ def run_db_test(flavor_path: Tuple[str, ...],
                         target_docker_password,
                         workers,
                         task_dependencies_dot_file)
-    except InvalidArgumentError as e:
-        handle_invalid_argument_error(e.args)
+    except api_errors.MissingArgumentError as e:
+        handle_missing_argument_error(e.args)
+    except api_errors.TaskFailureError:
+        sys.exit(1)
+
+
+def handle_missing_argument_error(missing_arguments: Tuple[Any, ...]):
+    for e in missing_arguments:
+        formatted = f"--{e}".replace("_", "-")
+        print(f"Commandline parameter {formatted} not set")
+    ctx = click.get_current_context()
+    click.echo(ctx.get_help())
+    exit(1)

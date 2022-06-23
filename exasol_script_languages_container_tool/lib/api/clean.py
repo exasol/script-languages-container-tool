@@ -4,6 +4,7 @@ from exasol_integration_test_docker_environment.cli.common import set_output_dir
     set_docker_repository_config, generate_root_task, run_task, import_build_steps
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
+from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import CleanExaslcAllImages, \
     CleanExaslcFlavorsImages
 
@@ -16,6 +17,8 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
                         task_dependencies_dot_file: Optional[str] = None):
     """
     This command removes the docker images of all stages of the script languages container for the given flavor.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     import_build_steps(flavor_path)
     set_output_directory(output_directory)
@@ -27,7 +30,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
 
     success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()
 
 
 def clean_all_images(
@@ -38,6 +41,8 @@ def clean_all_images(
         task_dependencies_dot_file: Optional[str] = None):
     """
     This command removes the docker images of all stages of the script languages container for all flavors.
+    raises:
+        api_errors.TaskFailureError: if operation is not successful.
     """
     set_output_directory(output_directory)
     set_docker_repository_config(None, docker_repository_name, None, docker_tag_prefix, "source")
@@ -47,7 +52,8 @@ def clean_all_images(
         return generate_root_task(task_class=CleanExaslcAllImages)
 
     success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
+
     if not success:
-        exit(1)
+        raise api_errors.TaskFailureError()
 
 # TODO add commands clean containers, networks, all
