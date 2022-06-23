@@ -7,6 +7,8 @@ from exasol_script_languages_container_tool.cli import commands
 from exasol_script_languages_container_tool.lib import api
 import inspect
 
+import utils as exaslct_utils
+
 
 def is_click_command(obj: Any) -> bool:
     return isinstance(obj, click.Command)
@@ -33,9 +35,9 @@ class ClickApiConsistency(unittest.TestCase):
     def _param_names_of_click_call(click_call: click.Command) -> List[str]:
         return [o.name for o in click_call.params]
 
-    def test_api_consistency(self):
+    def test_api_arguments(self):
         """
-        Validate that the argument lists and default values for all commands match!
+        Validate that the argument lists for all commands match!
         """
 
         # Get all click commands in module exasol_script_languages_container_tool.cli.commands
@@ -47,10 +49,27 @@ class ClickApiConsistency(unittest.TestCase):
         for cli_call, api_call in zip(click_commands, api_functions):
             cli_spec = inspect.getfullargspec(cli_call.callback)
             api_spec = inspect.getfullargspec(api_call)
-            self.assertEqual(api_spec.args, cli_spec.args)
-            self.assertEqual(api_spec.annotations, cli_spec.annotations)
-            self.assertEqual(api_spec.args, self._param_names_of_click_call(cli_call))
+
+            exaslct_utils.multiassert([lambda: self.assertEqual(api_spec.args, cli_spec.args),
+                                       lambda: self.assertEqual(api_spec.annotations, cli_spec.annotations),
+                                       lambda: self.assertEqual(api_spec.args,
+                                                                self._param_names_of_click_call(cli_call))], self)
+
+    def test_api_default_values(self):
+        """
+        Validate that the default values for all commands match!
+        """
+
+        # Get all click commands in module exasol_script_languages_container_tool.cli.commands
+        click_commands = [c[1] for c in inspect.getmembers(commands, is_click_command)]
+        # Get all functions in module exasol_script_languages_container_tool.lib.api
+        api_functions = [f[1] for f in inspect.getmembers(api, inspect.isfunction)]
+
+        # Now iterate over the list and compare consistency
+        for cli_call, api_call in zip(click_commands, api_functions):
+            api_spec = inspect.getfullargspec(api_call)
             cli_defaults = self._defaults_of_click_call(cli_call)
+
             self.assertEqual(len(cli_defaults), len(api_spec.defaults))
             for api_default_value, cli_default in zip(api_spec.defaults, cli_defaults):
                 cli_param_name, cli_default_value = cli_default
