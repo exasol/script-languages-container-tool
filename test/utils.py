@@ -1,4 +1,6 @@
+import unittest
 from pathlib import Path
+from typing import List, Callable
 
 from exasol_integration_test_docker_environment.testing import exaslct_test_environment
 
@@ -18,3 +20,15 @@ class ExaslctTestEnvironmentWithCleanUp(exaslct_test_environment.ExaslctTestEnvi
     def clean_all_images(self):
         self.run_command(f"{self.executable} clean-all-images", use_flavor_path=False, clean=True)
 
+
+def multiassert(assert_list: List[Callable], unit_test: unittest.TestCase):
+    failure_log: List[str] = []
+    for assert_fn in assert_list:
+        try:
+            assert_fn()
+        except AssertionError as e:
+            failure_log.append(f"\nFailure {len(failure_log)}: {str(e)}")
+
+    if len(failure_log) != 0:
+        res_failure_log = '\n'.join(failure_log)
+        unit_test.fail(f"{len(failure_log)} failures within test.\n {res_failure_log}")

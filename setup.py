@@ -7,6 +7,7 @@ packages = \
  'exasol_script_languages_container_tool.cli.commands',
  'exasol_script_languages_container_tool.cli.options',
  'exasol_script_languages_container_tool.lib',
+ 'exasol_script_languages_container_tool.lib.api',
  'exasol_script_languages_container_tool.lib.tasks',
  'exasol_script_languages_container_tool.lib.tasks.build',
  'exasol_script_languages_container_tool.lib.tasks.clean',
