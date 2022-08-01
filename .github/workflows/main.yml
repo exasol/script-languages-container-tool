@@ -48,7 +48,7 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2.1.4
         with:
-          poetry-version: 1.1.11
+          poetry-version: 1.1.14
 
       - name: Test exaslct_with_poetry
         run: ./scripts/test/exaslct_with_poetry.sh --help

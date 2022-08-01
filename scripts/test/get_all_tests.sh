@@ -7,6 +7,6 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC2207,SC2086
 declare -a test_array
 for test_file in $SCRIPT_DIR/../../test/test_*.py; do
-  test_array=("${test_array[@]}" $test_file $(basename $test_file))
+  test_array=("${test_array[@]}" $test_file $(basename "$test_file"))
 done
 printf '{"path": "%s", "name": "%s"}\n' "${test_array[@]}" | jq -cs .
