@@ -37,6 +37,7 @@ jobs:
           - 3.8
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
+    name: ${{ matrix.test-path.name }}
     steps:
       - uses: actions/checkout@v3
 
@@ -47,13 +48,13 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2.1.4
         with:
-          poetry-version: 1.1.11
+          poetry-version: 1.1.14
 
       - name: Test exaslct_with_poetry
         run: ./scripts/test/exaslct_with_poetry.sh --help
 
       - name: Run all tests
-        run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
+        run: ./scripts/test/run_test.sh ${{ matrix.test-path.path }}
         env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}

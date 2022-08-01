@@ -1,4 +1,5 @@
 import os
+import subprocess
 import unittest
 
 import utils as exaslct_utils
@@ -42,7 +43,15 @@ class DockerUploadTest(unittest.TestCase):
         ])
         command = f"{self.test_environment.executable} upload {arguments}"
 
-        self.test_environment.run_command(command, track_task_dependencies=True)
+        completed_process = self.test_environment.run_command(command, track_task_dependencies=True,
+                                                              capture_output=True)
+        self.assertIn(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/"
+            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}/"
+            f"exaudf/exaudfclient_py3",
+            completed_process.stdout.decode("UTF-8"))
+        self.validate_file_on_bucket_fs(f"{self.path_in_bucket}/test-flavor-release-{self.release_name}.tar.gz")
 
     def test_docker_upload_without_path_in_bucket(self):
         self.release_name = "TEST"
@@ -60,11 +69,14 @@ class DockerUploadTest(unittest.TestCase):
         ])
         command = f"{self.test_environment.executable} upload {arguments}"
 
-        completed_process = self.test_environment.run_command(command, track_task_dependencies=True, capture_output=True)
-
+        completed_process = self.test_environment.run_command(command,
+                                                              track_task_dependencies=True, capture_output=True)
         self.assertIn(
-            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}?lang=python#buckets/{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}/exaudf/exaudfclient_py3",
+            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/"
+            f"{self.bucket_name}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}/exaudf/exaudfclient_py3",
             completed_process.stdout.decode("UTF-8"))
+        self.validate_file_on_bucket_fs(f"test-flavor-release-{self.release_name}.tar.gz")
 
     def test_docker_upload_fail_path_in_bucket(self):
         self.release_name = "TEST"
@@ -88,6 +100,16 @@ class DockerUploadTest(unittest.TestCase):
         except:
             exception_thrown = True
         assert exception_thrown
+
+    def validate_file_on_bucket_fs(self, expected_file_path: str):
+        url = "http://w:{password}@{host}:{port}/{bucket}".format(
+            host=self.docker_environment.database_host, port=self.docker_environment.bucketfs_port,
+            bucket=self.bucket_name, password=self.docker_environment.bucketfs_password)
+        cmd = ["curl", "--silent", "--show-error", "--fail", url]
+        p = subprocess.run(cmd, capture_output=True)
+        p.check_returncode()
+        found_lines = [line for line in p.stdout.decode("utf-8").split("\n") if line == expected_file_path]
+        assert len(found_lines) == 1
 
 
 if __name__ == '__main__':

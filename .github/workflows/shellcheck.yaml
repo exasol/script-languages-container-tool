@@ -1,6 +1,7 @@
 name: Check bash scripts
 
-on: [push, pull_request]
+on:
+  push:
 
 jobs:
   shellcheck:

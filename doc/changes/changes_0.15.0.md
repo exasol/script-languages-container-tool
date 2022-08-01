@@ -15,7 +15,8 @@ t.b.d.
 
 ## Bug Fixes
 
- n/a
+ - #163: Fixed upload path if --path-in-bucket not specified
+
 ## Documentation
 
   - #152: Added note to exalsct scripts that these files are generated  

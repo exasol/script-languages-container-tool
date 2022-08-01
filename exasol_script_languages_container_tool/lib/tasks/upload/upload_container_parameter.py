@@ -2,7 +2,7 @@ import luigi
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 
-class UploadContainerParameter(DependencyLoggerBaseTask):
+class UploadContainerParameter:
     database_host = luigi.Parameter()
     bucketfs_port = luigi.IntParameter()
     bucketfs_username = luigi.Parameter(significant=False)
