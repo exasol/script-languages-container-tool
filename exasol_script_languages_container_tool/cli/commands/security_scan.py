@@ -19,7 +19,7 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @add_options(system_options)
 def security_scan(flavor_path: Tuple[str, ...],
                   force_rebuild: bool,
-                  force_rebuild_from: Optional[Tuple[str, ...]],
+                  force_rebuild_from: Tuple[str, ...],
                   force_pull: bool,
                   output_directory: str,
                   temporary_base_directory: str,

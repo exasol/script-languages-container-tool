@@ -16,6 +16,7 @@ t.b.d.
 ## Bug Fixes
 
  - #163: Fixed upload path if --path-in-bucket not specified
+ - #164: Fixed default values for click parameters of type multiple=true
 
 ## Documentation
 

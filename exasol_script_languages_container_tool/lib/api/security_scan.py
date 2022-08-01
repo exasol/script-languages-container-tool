@@ -12,7 +12,7 @@ from exasol_script_languages_container_tool.lib.tasks.security_scan.security_sca
 
 def security_scan(flavor_path: Tuple[str, ...],
                   force_rebuild: bool = False,
-                  force_rebuild_from: Optional[Tuple[str, ...]] = None,
+                  force_rebuild_from: Tuple[str, ...] = tuple(),
                   force_pull: bool = False,
                   output_directory: str = ".build_output",
                   temporary_base_directory: str = "/tmp",

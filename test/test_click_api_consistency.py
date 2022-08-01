@@ -17,19 +17,24 @@ def is_click_command(obj: Any) -> bool:
 class ClickApiConsistency(unittest.TestCase):
 
     @staticmethod
-    def _replace_list_with_tuple(x: Any):
+    def _adjust_multiple_default_value(x: Any):
         """
         Click stores default values as list if 'Multiple'=true. However, for plain Python methods we
         need to use (immutable) tuples for declaring default value. Hence, we need to convert lists with tuples
         for comparison.
+        Also, default values for none-required click calls are marked as "None", but in reality are "tuple()".
+        Bug in click????
         """
-        if type(x) == list:
-            return tuple(x)
-        else:
-            return x
+        def_value = x.default
+        if x.multiple:
+            if type(def_value) == list:
+                return tuple(def_value)
+            elif def_value is None:
+                return tuple()
+        return def_value
 
     def _defaults_of_click_call(self, click_call: click.Command) -> List[Tuple[str, Any]]:
-        return [(o.name, self._replace_list_with_tuple(o.default)) for o in click_call.params if not o.required]
+        return [(o.name, self._adjust_multiple_default_value(o)) for o in click_call.params if not o.required]
 
     @staticmethod
     def _param_names_of_click_call(click_call: click.Command) -> List[str]:
@@ -39,6 +44,7 @@ class ClickApiConsistency(unittest.TestCase):
         """
         Validate that the argument lists for all commands match!
         """
+        self.maxDiff = None
 
         # Get all click commands in module exasol_script_languages_container_tool.cli.commands
         click_commands = [c[1] for c in inspect.getmembers(commands, is_click_command)]
