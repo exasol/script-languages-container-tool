@@ -1,5 +1,4 @@
 import os
-import shlex
 import subprocess
 import unittest
 
@@ -106,8 +105,8 @@ class DockerUploadTest(unittest.TestCase):
         url = "http://w:{password}@{host}:{port}/{bucket}".format(
             host=self.docker_environment.database_host, port=self.docker_environment.bucketfs_port,
             bucket=self.bucket_name, password=self.docker_environment.bucketfs_password)
-        cmd = f"curl --silent --show-error --fail '{url}'"
-        p = subprocess.run(shlex.split(cmd), capture_output=True)
+        cmd = ["curl", "--silent", "--show-error", "--fail", url]
+        p = subprocess.run(cmd, capture_output=True)
         p.check_returncode()
         found_lines = [line for line in p.stdout.decode("utf-8").split("\n") if line == expected_file_path]
         assert len(found_lines) == 1
