@@ -5,6 +5,8 @@ on:
 
 jobs:
   test-docker-starter:
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,11 +21,9 @@ jobs:
       - id: set-matrix
         run: |
           sudo apt-get install jq
-          echo "::set-output name=matrix_test_paths::$(bash ./scripts/test/get_all_tests.sh)"
-          echo "::set-output name=matrix_test_names::$(bash ./scripts/test/get_all_test_names.sh)"
+          echo "::set-output name=matrix::$(bash ./scripts/test/get_all_tests.sh)"
     outputs:
-      matrix_test_paths: ${{ steps.set-matrix.outputs.matrix_test_paths }}
-      matrix_test_names: ${{ steps.set-matrix.outputs.matrix_test_names }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
   test-all:
     needs: prep-testbed
@@ -35,10 +35,9 @@ jobs:
           - "default"
         python_version:
           - 3.8
-        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix_test_paths)}}
-        test-name: ${{fromJson(needs.prep-testbed.outputs.matrix_test_names)}}
+        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
-    name: ${{ matrix.test-name }}
+    name: ${{ matrix.test-path.name }}
     steps:
       - uses: actions/checkout@v3
 
@@ -55,7 +54,7 @@ jobs:
         run: ./scripts/test/exaslct_with_poetry.sh --help
 
       - name: Run all tests
-        run: ./scripts/test/run_test.sh ${{ matrix.test-path }}
+        run: ./scripts/test/run_test.sh ${{ matrix.test-path.path }}
         env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
