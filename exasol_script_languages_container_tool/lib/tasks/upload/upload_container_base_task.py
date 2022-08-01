@@ -93,8 +93,9 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             login = ""
         else:
             login = f"""{self.bucketfs_username}:{self.bucketfs_password}@"""
+        path_in_bucket = f"{self.path_in_bucket}/" if self.path_in_bucket is not None else ""
         url = f"""{self._get_url_prefix()}{login}""" + \
-              f"""{self.database_host}:{self.bucketfs_port}/{self.bucket_name}/{self.path_in_bucket}/""" + \
+              f"""{self.database_host}:{self.bucketfs_port}/{self.bucket_name}/{path_in_bucket}""" + \
               complete_release_name + ".tar.gz"
         return url
 
