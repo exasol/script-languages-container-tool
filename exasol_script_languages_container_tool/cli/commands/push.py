@@ -22,11 +22,11 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @add_options(docker_repository_options)
 @add_options(system_options)
 def push(flavor_path: Tuple[str, ...],
-         goal: Optional[Tuple[str, ...]],
+         goal: Tuple[str, ...],
          force_push: bool,
          push_all: bool,
          force_rebuild: bool,
-         force_rebuild_from: Optional[Tuple[str, ...]],
+         force_rebuild_from: Tuple[str, ...],
          force_pull: bool,
          output_directory: str,
          temporary_base_directory: str,

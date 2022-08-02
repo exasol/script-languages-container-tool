@@ -9,9 +9,9 @@ from exasol_script_languages_container_tool.lib.tasks.build.docker_build import 
 
 
 def build(flavor_path: Tuple[str, ...],
-          goal: Optional[Tuple[str, ...]] = None,
+          goal: Tuple[str, ...] = tuple(),
           force_rebuild: bool = False,
-          force_rebuild_from: Optional[Tuple[str, ...]] = None,
+          force_rebuild_from: Tuple[str, ...] = tuple(),
           force_pull: bool = False,
           output_directory: str = ".build_output",
           temporary_base_directory: str = "/tmp",

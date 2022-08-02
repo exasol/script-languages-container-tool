@@ -9,11 +9,11 @@ from exasol_script_languages_container_tool.lib.tasks.push.docker_push import Do
 
 
 def push(flavor_path: Tuple[str, ...],
-         goal: Optional[Tuple[str, ...]] = None,
+         goal: Tuple[str, ...] = tuple(),
          force_push: bool = False,
          push_all: bool = False,
          force_rebuild: bool = False,
-         force_rebuild_from: Optional[Tuple[str, ...]] = None,
+         force_rebuild_from: Tuple[str, ...] = tuple(),
          force_pull: bool = False,
          output_directory: str = '.build_output',
          temporary_base_directory: str = "/tmp",
