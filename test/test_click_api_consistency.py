@@ -24,7 +24,7 @@ class ClickApiConsistency(unittest.TestCase):
         for comparison.
         Also, default values for none-required parameters of with multiple=true are marked as "None"
         in the command object, but in reality click invokes the command with "tuple()" for that parameter.
-        (Bug in click????)
+        (Note that we use here internal structures of click and don't have guarantee of the behavior)
         """
         def_value = x.default
         if x.multiple:
