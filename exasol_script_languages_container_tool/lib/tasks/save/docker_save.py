@@ -32,6 +32,6 @@ class DockerFlavorSave(DockerFlavorBuildBase, DockerSaveParameter):
         build_tasks = self.create_build_tasks(shortcut_build=not self.save_all)
         save_task_creator = SaveTaskCreatorFromBuildTasks(self)
         save_tasks = save_task_creator.create_tasks_for_build_tasks(build_tasks)
-        image_info_furtures = yield from self.run_dependencies(save_tasks)
-        image_infos = self.get_values_from_futures(image_info_furtures)
+        image_info_futures = yield from self.run_dependencies(save_tasks)
+        image_infos = self.get_values_from_futures(image_info_futures)
         self.return_object(image_infos)
