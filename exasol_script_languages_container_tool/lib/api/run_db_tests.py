@@ -30,7 +30,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 external_exasol_db_password: Optional[str] = None,
                 external_exasol_bucketfs_write_password: Optional[str] = None,
                 external_exasol_xmlrpc_host: Optional[str] = None,
-                external_exasol_xmlrpc_port: int = "443", #Requires fix for https://github.com/exasol/integration-test-docker-environment/issues/230
+                external_exasol_xmlrpc_port: int = 443,
                 external_exasol_xmlrpc_user: str = "admin",
                 external_exasol_xmlrpc_password: Optional[str] = None,
                 external_exasol_xmlrpc_cluster_name: str = "cluster1",
