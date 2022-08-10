@@ -7,7 +7,7 @@ from exasol_script_languages_container_tool.cli import commands
 from exasol_script_languages_container_tool.lib import api
 import inspect
 
-import utils as exaslct_utils
+from exasol_integration_test_docker_environment.testing.utils import multiassert
 
 
 def is_click_command(obj: Any) -> bool:
@@ -57,10 +57,10 @@ class ClickApiConsistency(unittest.TestCase):
             cli_spec = inspect.getfullargspec(cli_call.callback)
             api_spec = inspect.getfullargspec(api_call)
 
-            exaslct_utils.multiassert([lambda: self.assertEqual(api_spec.args, cli_spec.args),
-                                       lambda: self.assertEqual(api_spec.annotations, cli_spec.annotations),
-                                       lambda: self.assertEqual(api_spec.args,
-                                                                self._param_names_of_click_call(cli_call))], self)
+            multiassert([lambda: self.assertEqual(api_spec.args, cli_spec.args),
+                         lambda: self.assertEqual(api_spec.annotations, cli_spec.annotations),
+                         lambda: self.assertEqual(api_spec.args,
+                                                  self._param_names_of_click_call(cli_call))], self)
 
     def test_api_default_values(self):
         """

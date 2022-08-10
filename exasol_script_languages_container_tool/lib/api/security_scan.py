@@ -1,12 +1,10 @@
-import logging
 from pathlib import Path
 from typing import Tuple, Optional
 
-from exasol_integration_test_docker_environment.cli.common import import_build_steps, set_build_config, \
+from exasol_integration_test_docker_environment.lib.api.common import import_build_steps, set_build_config, \
     set_docker_repository_config, generate_root_task, run_task
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
-from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
 
 
@@ -57,13 +55,4 @@ def security_scan(flavor_path: Tuple[str, ...],
                                   flavor_paths=list(flavor_path),
                                   report_path=str(report_path)
                                   )
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-
-    if success:
-        with task.security_report_target.open("r") as f:
-            print(f.read())
-
-    logging.info(f'Full security scan report can be found at:{report_path}')
-
-    if not success:
-        raise api_errors.TaskFailureError()
+    run_task(root_task_generator, workers, task_dependencies_dot_file)

@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 
-from exasol_integration_test_docker_environment.cli.common import import_build_steps, set_build_config, \
-    set_docker_repository_config, generate_root_task, run_task
+from exasol_integration_test_docker_environment.lib.api.common import set_docker_repository_config, generate_root_task, \
+    run_task, import_build_steps, set_build_config
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.api import api_errors
@@ -57,7 +57,4 @@ def push(flavor_path: Tuple[str, ...],
                                   goals=list(goal),
                                   flavor_paths=list(flavor_path))
 
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-
-    if not success:
-        raise api_errors.TaskFailureError()
+    run_task(root_task_generator, workers, task_dependencies_dot_file)

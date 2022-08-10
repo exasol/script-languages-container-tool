@@ -36,4 +36,4 @@ def generate_language_activation(
 
             {language_definition.generate_alter_system()}
             """)
-    print(command_line_output_str)
+    return language_definition.generate_alter_session(), language_definition.generate_alter_system()

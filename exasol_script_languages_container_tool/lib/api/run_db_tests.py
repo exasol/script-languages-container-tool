@@ -2,12 +2,12 @@ import json
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import LATEST_DB_VERSION
+from exasol_integration_test_docker_environment.lib.api.common import run_task, generate_root_task, \
+    set_docker_repository_config, set_build_config, import_build_steps
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
-from exasol_integration_test_docker_environment.cli.common import import_build_steps, \
-    set_docker_repository_config, run_task, set_build_config, generate_root_task
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
 
 
@@ -138,11 +138,4 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   create_certificates=create_certificates
                                   )
 
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-    print("Test Results:")
-    if task.command_line_output_target.exists():
-        with task.command_line_output_target.open("r") as f:
-            print(f.read())
-
-    if not success:
-        raise api_errors.TaskFailureError()
+    return run_task(root_task_generator, workers, task_dependencies_dot_file)

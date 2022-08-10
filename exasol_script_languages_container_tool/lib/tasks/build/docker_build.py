@@ -16,8 +16,8 @@ class DockerBuildParameter(Config):
 class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self._images_futures = None
+        super().__init__(*args, **kwargs)
 
     def register_required(self):
         tasks = self.create_tasks_for_flavors_with_common_params(DockerFlavorBuild)

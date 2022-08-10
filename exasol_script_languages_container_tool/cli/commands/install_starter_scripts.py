@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import click
 
 from exasol_integration_test_docker_environment.cli.cli import cli
