@@ -1,6 +1,6 @@
 import unittest
 
-from exasol_integration_test_docker_environment.testing import utils
+from exasol_integration_test_docker_environment.lib.docker.container.utils import remove_docker_container
 
 import utils as exaslct_utils
 
@@ -17,7 +17,7 @@ class DockerRunDBTestDockerDBTest(unittest.TestCase):
         self.test_environment.close()
 
     def remove_docker_container(self):
-        utils.remove_docker_container([f"test_container_{self.test_environment.name}",
+        remove_docker_container([f"test_container_{self.test_environment.name}",
                                        f"db_container_{self.test_environment.name}"])
 
     def test_run_db_tests_docker_db(self):
