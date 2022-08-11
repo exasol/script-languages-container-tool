@@ -17,6 +17,7 @@ class DockerPushTest(unittest.TestCase):
 
     def test_docker_push(self):
         with LocalDockerRegistryContextManager(self.test_environment.name) as local_registry:
+            self.test_environment.repository_name = local_registry.name
             command = f"{self.test_environment.executable} push "
             self.test_environment.run_command(command, track_task_dependencies=True)
             print("repos:", local_registry.repositories)
