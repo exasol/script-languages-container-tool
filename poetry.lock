@@ -88,7 +88,7 @@ simplejson = ">=3.16.0"
 type = "git"
 url = "https://github.com/exasol/integration-test-docker-environment.git"
 reference = "refactoring/240_create_more_integation_tests_for_api_calls"
-resolved_reference = "3c24a2353b171eab9aa8c308abeb9b4b87026c3d"
+resolved_reference = "0813481aaca5df088a6ab8f792b5b04c393d76fb"
 
 [[package]]
 name = "gitdb"
