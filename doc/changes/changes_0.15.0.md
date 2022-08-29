@@ -1,9 +1,12 @@
-# Script-Languages-Container-Tool 0.15.0, released t.b.d.
+# Script-Languages-Container-Tool 0.15.0, released 2022-08-29
 
-Code name: t.b.d.
+Code name: Initial API layer and support for stream output of tests to log files.
 
 ## Summary 
-t.b.d.
+
+This release streams the output of running tests to the logfile during test execution. Also, a new API module 
+has been added, which allows the usage of the script-languages-container-tools functionality from other Python packags.
+Besides, there were some bugfixes and a minor improvement in the documentation in the code.
 
 ## Features / Enhancements
 
