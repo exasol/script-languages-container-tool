@@ -5,7 +5,7 @@ Code name: Path-in-bucket parameter fix, initial API layer and support for strea
 ## Summary 
 
 This release fixes a major bug which occured if the parameter "path-in-bucket" was not specified.
-Also, it introduces a new API module , which allows the usage of the script-languages-container-tools functionality from other Python packags.
+Also, it introduces a new API module , which allows the usage of the script-languages-container-tools functionality from other Python packages.
 The handling of the logging for tests has been improved, as the logs are now written to the log-file during the test execution.
 Besides, there is one more bugfix and a minor improvement in the documentation in the code.
 
