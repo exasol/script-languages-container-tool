@@ -1,12 +1,13 @@
 # Script-Languages-Container-Tool 0.15.0, released 2022-08-29
 
-Code name: Initial API layer and support for stream output of tests to log files.
+Code name: Path-in-bucket parameter fix, initial API layer and support for stream output of tests to log files.
 
 ## Summary 
 
-This release streams the output of running tests to the logfile during test execution. Also, a new API module 
-has been added, which allows the usage of the script-languages-container-tools functionality from other Python packags.
-Besides, there were some bugfixes and a minor improvement in the documentation in the code.
+This release fixes a major bug which occured if the parameter "path-in-bucket" was not specified.
+Also, it introduces a new API module , which allows the usage of the script-languages-container-tools functionality from other Python packags.
+The handling of the logging for tests has been improved, as the logs are now written to the log-file during the test execution.
+Besides, there is one more bugfix and a minor improvement in the documentation in the code.
 
 ## Features / Enhancements
 
