@@ -1,12 +1,13 @@
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib.api.common import import_build_steps, set_build_config, \
-    set_docker_repository_config, generate_root_task, run_task
+    set_docker_repository_config, generate_root_task, run_task, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportContainers
 
 
+@cli_function
 def export(flavor_path: Tuple[str, ...],
            release_goal: Tuple[str, ...] = ('release',),
            export_path: Optional[str] = None,

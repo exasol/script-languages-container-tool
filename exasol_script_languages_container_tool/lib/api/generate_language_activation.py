@@ -1,9 +1,12 @@
 import textwrap
 from pathlib import Path
 
+from exasol_integration_test_docker_environment.lib.api.common import cli_function
+
 from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import LanguageDefinition
 
 
+@cli_function
 def generate_language_activation(
         flavor_path: str,
         bucketfs_name: str,

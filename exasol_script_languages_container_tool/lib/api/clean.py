@@ -1,13 +1,14 @@
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib.api.common import run_task, generate_root_task, \
-    set_output_directory, set_docker_repository_config, import_build_steps
+    set_output_directory, set_docker_repository_config, import_build_steps, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.tasks.clean.clean_images import CleanExaslcAllImages, \
     CleanExaslcFlavorsImages
 
 
+@cli_function
 def clean_flavor_images(flavor_path: Tuple[str, ...],
                         output_directory: str = ".build_output",
                         docker_repository_name: str = 'exasol/script-language-container',
@@ -30,6 +31,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
     run_task(root_task_generator, workers, task_dependencies_dot_file)
 
 
+@cli_function
 def clean_all_images(
         output_directory: str = '.build_output',
         docker_repository_name: str = 'exasol/script-language-container',

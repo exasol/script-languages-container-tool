@@ -2,12 +2,13 @@ import getpass
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib.api.common import import_build_steps, set_build_config, \
-    set_docker_repository_config, generate_root_task, run_task
+    set_docker_repository_config, generate_root_task, run_task, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers import UploadContainers
 
 
+@cli_function
 def upload(flavor_path: Tuple[str, ...],
            database_host: str,
            bucketfs_port: int,

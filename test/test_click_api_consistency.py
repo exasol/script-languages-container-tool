@@ -1,17 +1,15 @@
 import unittest
 
-from exasol_integration_test_docker_environment.testing.api_consistency_utils import get_click_and_api_function_names, \
-    defaults_of_click_call, get_click_and_api_functions, param_names_of_click_call
-
+from exasol_integration_test_docker_environment.testing.api_consistency_utils import \
+    param_names_of_click_call, get_click_and_api_functions, defaults_of_click_call, get_click_and_api_function_names
+from exasol_integration_test_docker_environment.testing.utils import multiassert
 from exasol_script_languages_container_tool.cli import commands
 from exasol_script_languages_container_tool.lib import api
 import inspect
 
-from exasol_integration_test_docker_environment.testing.utils import multiassert
 
 
 class ClickApiConsistency(unittest.TestCase):
-
 
     def test_api_arguments(self):
         """

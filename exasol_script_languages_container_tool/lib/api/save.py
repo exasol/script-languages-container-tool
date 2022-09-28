@@ -1,12 +1,13 @@
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib.api.common import set_docker_repository_config, generate_root_task, \
-    run_task, import_build_steps, set_build_config
+    run_task, import_build_steps, set_build_config, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.tasks.save.docker_save import DockerSave
 
 
+@cli_function
 def save(flavor_path: Tuple[str, ...],
          save_directory: Optional[str] = None,
          force_save: bool = False,
