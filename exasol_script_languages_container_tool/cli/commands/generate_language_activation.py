@@ -21,4 +21,6 @@ def generate_language_activation(
     """
     Generate the language activation statement.
     """
-    api.generate_language_activation(flavor_path, bucketfs_name, bucket_name, container_name, path_in_bucket)
+    _, _, result = \
+        api.generate_language_activation(flavor_path, bucketfs_name, bucket_name, container_name, path_in_bucket)
+    print(result)

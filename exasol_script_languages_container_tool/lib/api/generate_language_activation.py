@@ -13,11 +13,12 @@ def generate_language_activation(
         bucketfs_name: str,
         bucket_name: str,
         container_name: str,
-        path_in_bucket: str = '') -> Tuple[str, str]:
+        path_in_bucket: str = '') -> Tuple[str, str, str]:
     """
     Generate the language activation statement.
-    :return: A pair of language definition statements: The first one is the alter session statement,
-             the second one the alter system statement.
+    :return: A tuple of language definition statements: The first one is the alter session statement,
+             the second one the alter system statement; the last string contains a summary which is useful to print to
+             the user.
     """
 
     language_definition = \
@@ -42,4 +43,5 @@ def generate_language_activation(
 
             {language_definition.generate_alter_system()}
             """)
-    return language_definition.generate_alter_session(), language_definition.generate_alter_system()
+    return language_definition.generate_alter_session(), language_definition.generate_alter_system(), \
+           command_line_output_str
