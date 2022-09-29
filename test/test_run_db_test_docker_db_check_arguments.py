@@ -85,6 +85,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
             f"--db-mem-size={mem_size}GiB",
             f"--db-disk-size={disk_size}GiB",
             f"--reuse-test-environment",
+            exaslct_utils.get_test_container_folder_for_tests_parameter()
         ])
         command = f"{self.test_environment.executable} run-db-test {arguments}"
         self.test_environment.run_command(

@@ -4,6 +4,7 @@ from typing import Generator, Any, Dict
 import luigi
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportFlavorContainer
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
+from exasol_script_languages_container_tool.lib.tasks.test.populate_test_engine import PopulateTestEngine
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestsInTestConfigResult
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_in_test_config import RunDBTestsInTestConfig
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import RunDBTestsInTestConfigParameter
@@ -69,6 +70,7 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         yield from self.upload_container(database_credentials,
                                          export_info,
                                          reuse_release_container)
+        yield from self.populate_test_engine_data(self.test_environment_info, database_credentials)
         test_results = yield from self.run_test(self.test_environment_info, export_info)
         self.return_object(test_results)
 
@@ -83,6 +85,18 @@ class TestRunnerDBTestTask(FlavorBaseTask,
             bucketfs_write_password=database_credentials.bucketfs_write_password
         )
         yield from self.run_dependencies(upload_task)
+
+    def populate_test_engine_data(self, test_environment_info: EnvironmentInfo,
+                                  database_credentials: DatabaseCredentials) -> None:
+        task = self.create_child_task(
+            PopulateTestEngine,
+            test_environment_info=test_environment_info,
+            environment_name=self.test_environment_info.name,
+            db_user=database_credentials.db_user,
+            db_password=database_credentials.db_password,
+            bucketfs_write_password=database_credentials.bucketfs_write_password
+        )
+        yield from self.run_dependencies(task)
 
     def get_database_credentials(self) -> DatabaseCredentials:
         if self.environment_type == EnvironmentType.external_db:

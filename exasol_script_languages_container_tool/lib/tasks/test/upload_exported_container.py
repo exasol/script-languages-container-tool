@@ -20,7 +20,7 @@ class UploadExportedContainer(UploadFileToBucketFS):
         return self.export_info.name + ".*extracted"
 
     def get_file_to_upload(self):
-        file = "/exports/" + pathlib.Path(self.export_info.cache_file).name
+        file = self.export_info.cache_file
         return file
 
     def get_upload_target(self):

@@ -70,6 +70,9 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @click.option('--reuse-test-environment/--no-reuse-test-environment', default=False,
               help="Reuse the whole test environment with docker network, test container, "
                    "database, database setup and uploaded container")
+@click.option('--test-container-folder', type=click.Path(exists=True, file_okay=False, dir_okay=True),
+              default="./test_container",
+              help="Test folder containing 'Dockerfile', tests and test-data.")
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -105,6 +108,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 reuse_uploaded_container: bool,
                 reuse_test_container: bool,
                 reuse_test_environment: bool,
+                test_container_folder: str,
                 force_rebuild: bool,
                 force_rebuild_from: Tuple[str, ...],
                 force_pull: bool,
@@ -164,6 +168,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                             reuse_uploaded_container,
                             reuse_test_container,
                             reuse_test_environment,
+                            test_container_folder,
                             force_rebuild,
                             force_rebuild_from,
                             force_pull,

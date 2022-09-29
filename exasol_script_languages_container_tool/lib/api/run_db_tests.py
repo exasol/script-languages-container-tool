@@ -10,6 +10,8 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
 
+from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import build_test_container_content
+
 
 @cli_function
 def run_db_test(flavor_path: Tuple[str, ...],
@@ -44,6 +46,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 reuse_uploaded_container: bool = False,
                 reuse_test_container: bool = False,
                 reuse_test_environment: bool = False,
+                test_container_folder: str = "./test_container",
                 force_rebuild: bool = False,
                 force_rebuild_from: Tuple[str, ...] = tuple(),
                 force_pull: bool = False,
@@ -136,7 +139,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
                                   external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
                                   external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
-                                  create_certificates=create_certificates
+                                  create_certificates=create_certificates,
+                                  test_container_content=build_test_container_content(test_container_folder)
                                   )
 
     return run_task(root_task_generator, workers, task_dependencies_dot_file)
