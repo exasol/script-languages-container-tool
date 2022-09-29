@@ -1,7 +1,9 @@
+from pathlib import Path
 from typing import Dict
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask, FlavorBaseTask
+from exasol_integration_test_docker_environment.lib.base.info import Info
 from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.spawn_test_environment_parameter import \
     SpawnTestEnvironmentParameter
@@ -31,20 +33,21 @@ class FlavorTestResult:
                                 in test_results_per_release_goal.values())
 
 
-class AllTestsResult:
-    def __init__(self, test_results_per_flavor: Dict[str, FlavorTestResult]):
+class AllTestsResult(Info):
+    def __init__(self, test_results_per_flavor: Dict[str, FlavorTestResult], command_line_output_path: Path):
         self.test_results_per_flavor = test_results_per_flavor
         self.tests_are_ok = all(test_result.tests_are_ok
                                 for test_result
                                 in test_results_per_flavor.values())
+        self.command_line_output_path = command_line_output_path
 
 
 class TestStatusPrinter:
     def __init__(self, file):
         self.file = file
 
-    def print_status_for_all_tests(self, test_result: AllTestsResult):
-        for flavor, test_result_of_flavor in test_result.test_results_per_flavor.items():
+    def print_status_for_all_tests(self, test_results: Dict[str,FlavorTestResult]):
+        for flavor, test_result_of_flavor in test_results.items():
             print(f"- Tests: {self.get_status_string(test_result_of_flavor.tests_are_ok)}",
                   file=self.file)
             self.print_status_for_flavor(flavor, test_result_of_flavor, indent=STATUS_INDENT)
@@ -129,14 +132,14 @@ class TestContainer(FlavorsBaseTask,
     def run_task(self):
         test_results = self.get_values_from_futures(
             self.test_results_futures)  # type: Dict[str,FlavorTestResult]
-        test_result = AllTestsResult(test_results_per_flavor=test_results)
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(test_results, 4)
 
         with self.command_line_output_target.open("w") as file:
-            TestStatusPrinter(file).print_status_for_all_tests(test_result)
+            TestStatusPrinter(file).print_status_for_all_tests(test_results)
 
-        if not test_result.tests_are_ok:
-            raise Exception("Some tests failed")
+        test_result = AllTestsResult(test_results_per_flavor=test_results,
+                                     command_line_output_path=Path(self.command_line_output_target.path))
+        self.return_object(test_result)
 
 
 class TestFlavorContainer(FlavorBaseTask,

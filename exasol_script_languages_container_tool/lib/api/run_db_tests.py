@@ -7,7 +7,7 @@ from exasol_integration_test_docker_environment.lib.api.common import run_task, 
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.api import api_errors
-from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
+from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer, AllTestsResult
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
 
 from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import build_test_container_content
@@ -64,17 +64,16 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str] = None,
                 target_docker_password: Optional[str] = None,
                 workers: int = 5,
-                task_dependencies_dot_file: Optional[str] = None):
+                task_dependencies_dot_file: Optional[str] = None) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
     The systems spawns a test environment in which the test are executed.
     After finishing the tests, the test environment gets cleaned up.
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
-    raises:
-        api_errors.MissingArgumentError: if one or more arguments are not set.
-    raises:
-        api_errors.TaskFailureError: if operation is not successful.
+    :raises api.errors.MissingArgumentError: if one or more arguments are not set.
+    :raises api_errors.TaskFailureError: if operation is not successful.
+    :return: result of all test as AllTestsResult object.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,

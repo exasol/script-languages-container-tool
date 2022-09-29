@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import Tuple, Optional
 
+import luigi
 from exasol_integration_test_docker_environment.lib.api.common import import_build_steps, set_build_config, \
     set_docker_repository_config, generate_root_task, run_task, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
-from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan
+from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan import SecurityScan, AllScanResult
 
 
 @cli_function
@@ -27,13 +28,13 @@ def security_scan(flavor_path: Tuple[str, ...],
                   target_docker_username: Optional[str] = None,
                   target_docker_password: Optional[str] = None,
                   workers: int = 5,
-                  task_dependencies_dot_file: Optional[str] = None):
+                  task_dependencies_dot_file: Optional[str] = None) -> AllScanResult:
     """
     This command executes the security scan, which must be defined as separate step in the build steps declaration.
     The scan runs the docker container of the respective step, passing a folder of the output-dir as argument.
     If the stages do not exists locally, the system will build or pull them before running the scan.
-    raises:
-        api_errors.TaskFailureError: if operation is not successful.
+    :raises api_errors.TaskFailureError: if operation is not successful.
+    :return: Results of all scans.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -56,4 +57,4 @@ def security_scan(flavor_path: Tuple[str, ...],
                                   flavor_paths=list(flavor_path),
                                   report_path=str(report_path)
                                   )
-    run_task(root_task_generator, workers, task_dependencies_dot_file)
+    return run_task(root_task_generator, workers, task_dependencies_dot_file)

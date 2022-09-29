@@ -1,5 +1,6 @@
 import textwrap
 from pathlib import Path
+from typing import Tuple
 
 from exasol_integration_test_docker_environment.lib.api.common import cli_function
 
@@ -12,9 +13,11 @@ def generate_language_activation(
         bucketfs_name: str,
         bucket_name: str,
         container_name: str,
-        path_in_bucket: str = ''):
+        path_in_bucket: str = '') -> Tuple[str, str]:
     """
     Generate the language activation statement.
+    :return: A pair of language definition statements: The first one is the alter session statement,
+             the second one the alter system statement.
     """
 
     language_definition = \

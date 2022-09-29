@@ -23,7 +23,8 @@ class ExaslctApiTestEnvironmentWithCleanup(api_test_environment.ApiTestEnvironme
         api.clean_all_images(docker_repository_name=self.docker_repository_name)
 
 
-EXASLCT_DEFAULT_BIN = "python3 -m exasol_script_languages_container_tool.main"#Path(Path(__file__).parent.parent, "exaslct")
+EXASLCT_DEFAULT_BIN = "python3 -m exasol_script_languages_container_tool.main"
+#EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
 
 
 class ExaslctTestEnvironmentWithCleanUp(exaslct_test_environment.ExaslctTestEnvironment):

@@ -9,7 +9,7 @@ from exasol_script_languages_container_tool.lib.tasks.install_starter_scripts.ru
 @cli_function
 def install_starter_scripts(install_path: str = '.',
                             script_dir: str = 'exaslct_scripts',
-                            force_install: bool = False):
+                            force_install: bool = False) -> None:
     """"
     This command installs the starter scripts which can be used to run this project automatically
     in an isolated environment.

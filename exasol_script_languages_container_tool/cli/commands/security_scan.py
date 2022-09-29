@@ -41,22 +41,27 @@ def security_scan(flavor_path: Tuple[str, ...],
     If the stages do not exists locally, the system will build or pull them before running the scan.
     """
     with TerminationHandler():
-        api.security_scan(flavor_path,
-                          force_rebuild,
-                          force_rebuild_from,
-                          force_pull,
-                          output_directory,
-                          temporary_base_directory,
-                          log_build_context_content,
-                          cache_directory,
-                          build_name,
-                          source_docker_repository_name,
-                          source_docker_tag_prefix,
-                          source_docker_username,
-                          source_docker_password,
-                          target_docker_repository_name,
-                          target_docker_tag_prefix,
-                          target_docker_username,
-                          target_docker_password,
-                          workers,
-                          task_dependencies_dot_file)
+        scan_result = api.security_scan(flavor_path,
+                                        force_rebuild,
+                                        force_rebuild_from,
+                                        force_pull,
+                                        output_directory,
+                                        temporary_base_directory,
+                                        log_build_context_content,
+                                        cache_directory,
+                                        build_name,
+                                        source_docker_repository_name,
+                                        source_docker_tag_prefix,
+                                        source_docker_username,
+                                        source_docker_password,
+                                        target_docker_repository_name,
+                                        target_docker_tag_prefix,
+                                        target_docker_username,
+                                        target_docker_password,
+                                        workers,
+                                        task_dependencies_dot_file)
+        if scan_result.report_path.exists():
+            with scan_result.report_path.open("r") as f:
+                print(f.read())
+        if not scan_result.scans_are_ok:
+            raise RuntimeError("Some security scans not successful.")

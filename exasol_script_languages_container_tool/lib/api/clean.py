@@ -14,7 +14,7 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
                         docker_repository_name: str = 'exasol/script-language-container',
                         docker_tag_prefix: str = '',
                         workers: int = 5,
-                        task_dependencies_dot_file: Optional[str] = None):
+                        task_dependencies_dot_file: Optional[str] = None) -> None:
     """
     This command removes the docker images of all stages of the script languages container for the given flavor.
     raises:
@@ -37,7 +37,7 @@ def clean_all_images(
         docker_repository_name: str = 'exasol/script-language-container',
         docker_tag_prefix: str = '',
         workers: int = 5,
-        task_dependencies_dot_file: Optional[str] = None):
+        task_dependencies_dot_file: Optional[str] = None) -> None:
     """
     This command removes the docker images of all stages of the script languages container for all flavors.
     raises:
