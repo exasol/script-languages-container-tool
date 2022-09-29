@@ -5,8 +5,6 @@ on:
 
 jobs:
   test-docker-starter:
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -41,14 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python 3.8 for integration-test-docker-environment
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.1.4
-        with:
-          poetry-version: 1.1.14
+      - uses: ./.github/actions/prepare_poetry_env
 
       - name: Test exaslct_with_poetry
         run: ./scripts/test/exaslct_with_poetry.sh --help
