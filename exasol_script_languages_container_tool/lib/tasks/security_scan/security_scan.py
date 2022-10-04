@@ -6,6 +6,7 @@ import luigi
 import tarfile
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
+from exasol_integration_test_docker_environment.lib.base.info import Info
 from exasol_integration_test_docker_environment.lib.config.build_config import build_config
 
 from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
@@ -15,7 +16,7 @@ from exasol_script_languages_container_tool.lib.tasks.security_scan.security_sca
 from docker.models.containers import Container
 
 
-class ScanResult:
+class ScanResult(Info):
     def __init__(self, is_ok: bool, summary: str, report_dir: Path):
         self.is_ok = is_ok
         self.summary = summary
@@ -40,9 +41,8 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
             self.security_scanner_futures)
 
         self.write_report(security_scanner_results)
-        all_result = AllScanResult(security_scanner_results)
-        if not all_result.scans_are_ok:
-            raise RuntimeError(f"Not all security scans were successful.:\n{all_result.get_error_scans_msg()}")
+        all_result = AllScanResult(security_scanner_results, Path(self.security_report_target.path))
+        self.return_object(all_result)
 
     def write_report(self, security_scanner: Dict[str, ScanResult]):
         with self.security_report_target.open("w") as out_file:
@@ -111,12 +111,13 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
             tar_file.extractall(path=report_path_abs)
 
 
-class AllScanResult:
-    def __init__(self, scan_results_per_flavor: Dict[str, ScanResult]):
+class AllScanResult(Info):
+    def __init__(self, scan_results_per_flavor: Dict[str, ScanResult], report_path: Path):
         self.scan_results_per_flavor = scan_results_per_flavor
         self.scans_are_ok = all(scan_result.is_ok
                                 for scan_result
                                 in scan_results_per_flavor.values())
+        self.report_path = report_path
 
     def get_error_scans_msg(self):
         return [f"{key}: '{value.summary}'" for key, value in self.scan_results_per_flavor.items() if not value.is_ok]

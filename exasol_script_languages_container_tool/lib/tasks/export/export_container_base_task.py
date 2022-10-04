@@ -8,6 +8,8 @@ from pathlib import Path
 
 import humanfriendly
 import luigi
+
+from exasol_script_languages_container_tool.lib.tasks.export.create_export_directory import CreateExportDirectory
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
@@ -15,8 +17,6 @@ from exasol_integration_test_docker_environment.lib.base.still_running_logger im
 from exasol_integration_test_docker_environment.lib.config.build_config import build_config
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import ImageInfo
 from exasol_integration_test_docker_environment.lib.logging.command_log_handler import CommandLogHandler
-from exasol_integration_test_docker_environment.lib.test_environment.create_export_directory import \
-    CreateExportDirectory
 
 CHECKSUM_ALGORITHM = "sha512sum"
 

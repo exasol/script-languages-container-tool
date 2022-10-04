@@ -14,14 +14,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Setup Python 3.8 for integration-test-docker-environment
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.1.4
-        with:
-          poetry-version: 1.1.14
+      - uses: ./.github/actions/prepare_poetry_env
       - name: Check Release
         run: ./scripts/build/check_release.sh
 
@@ -60,15 +53,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python 3.8 for integration-test-docker-environment
-        uses: actions/setup-python@v2
+      - uses: ./.github/actions/prepare_poetry_env
         with:
           python-version: 3.8
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.1.4
-        with:
-          poetry-version: 1.1.14
-
       - name: Test exaslct_with_poetry
         run: ./scripts/test/exaslct_with_poetry.sh --help
 
@@ -84,14 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.1.4
-        with:
-          poetry-version: 1.1.14
+      - uses: ./.github/actions/prepare_poetry_env
 
       - name: Build Release
         run: |

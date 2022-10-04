@@ -2,15 +2,18 @@ import json
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import LATEST_DB_VERSION
+from exasol_integration_test_docker_environment.lib.api.common import run_task, generate_root_task, \
+    set_docker_repository_config, set_build_config, import_build_steps, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
 
 from exasol_script_languages_container_tool.lib.api import api_errors
-from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer
-from exasol_integration_test_docker_environment.cli.common import import_build_steps, \
-    set_docker_repository_config, run_task, set_build_config, generate_root_task
+from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer, AllTestsResult
 from exasol_integration_test_docker_environment.lib.data.environment_type import EnvironmentType
 
+from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import build_test_container_content
 
+
+@cli_function
 def run_db_test(flavor_path: Tuple[str, ...],
                 release_goal: Tuple[str, ...] = ('release',),
                 generic_language_test: Tuple[str, ...] = tuple(),
@@ -30,7 +33,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 external_exasol_db_password: Optional[str] = None,
                 external_exasol_bucketfs_write_password: Optional[str] = None,
                 external_exasol_xmlrpc_host: Optional[str] = None,
-                external_exasol_xmlrpc_port: int = "443", #Requires fix for https://github.com/exasol/integration-test-docker-environment/issues/230
+                external_exasol_xmlrpc_port: int = 443,
                 external_exasol_xmlrpc_user: str = "admin",
                 external_exasol_xmlrpc_password: Optional[str] = None,
                 external_exasol_xmlrpc_cluster_name: str = "cluster1",
@@ -43,6 +46,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 reuse_uploaded_container: bool = False,
                 reuse_test_container: bool = False,
                 reuse_test_environment: bool = False,
+                test_container_folder: str = "./test_container",
                 force_rebuild: bool = False,
                 force_rebuild_from: Tuple[str, ...] = tuple(),
                 force_pull: bool = False,
@@ -60,17 +64,16 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str] = None,
                 target_docker_password: Optional[str] = None,
                 workers: int = 5,
-                task_dependencies_dot_file: Optional[str] = None):
+                task_dependencies_dot_file: Optional[str] = None) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
     The systems spawns a test environment in which the test are executed.
     After finishing the tests, the test environment gets cleaned up.
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
-    raises:
-        api_errors.MissingArgumentError: if one or more arguments are not set.
-    raises:
-        api_errors.TaskFailureError: if operation is not successful.
+    :raises api.errors.MissingArgumentError: if one or more arguments are not set.
+    :raises api_errors.TaskFailureError: if operation is not successful.
+    :return: result of all test as AllTestsResult object.
     """
     import_build_steps(flavor_path)
     set_build_config(force_rebuild,
@@ -135,14 +138,8 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
                                   external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
                                   external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
-                                  create_certificates=create_certificates
+                                  create_certificates=create_certificates,
+                                  test_container_content=build_test_container_content(test_container_folder)
                                   )
 
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-    print("Test Results:")
-    if task.command_line_output_target.exists():
-        with task.command_line_output_target.open("r") as f:
-            print(f.read())
-
-    if not success:
-        raise api_errors.TaskFailureError()
+    return run_task(root_task_generator, workers, task_dependencies_dot_file)

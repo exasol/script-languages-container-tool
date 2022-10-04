@@ -1,17 +1,16 @@
-import sys
 from typing import Tuple, Optional
 
 import click
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
+from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
+from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib import api
-from exasol_script_languages_container_tool.lib.api import api_errors
 
 
 @cli.command(short_help="Builds a script-languages-container.")
@@ -54,10 +53,10 @@ def build(flavor_path: Tuple[str, ...],
           task_dependencies_dot_file: Optional[str]):
     """
     This command builds all stages of the script-language-container flavor.
-    If stages are cached in a docker registry, they command is going to pull them,
+    If stages are cached in a docker registry, this command is going to pull them,
     instead of building them.
     """
-    try:
+    with TerminationHandler():
         api.build(flavor_path,
                   goal,
                   force_rebuild,
@@ -79,5 +78,3 @@ def build(flavor_path: Tuple[str, ...],
                   target_docker_password,
                   workers,
                   task_dependencies_dot_file)
-    except api_errors.TaskFailureError:
-        sys.exit(1)

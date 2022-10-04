@@ -1,6 +1,6 @@
 import click
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options
+from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import single_flavor_options
 from exasol_script_languages_container_tool.lib import api
@@ -21,4 +21,6 @@ def generate_language_activation(
     """
     Generate the language activation statement.
     """
-    api.generate_language_activation(flavor_path, bucketfs_name, bucket_name, container_name, path_in_bucket)
+    _, _, result = \
+        api.generate_language_activation(flavor_path, bucketfs_name, bucket_name, container_name, path_in_bucket)
+    print(result)

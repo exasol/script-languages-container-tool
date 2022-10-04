@@ -1,17 +1,16 @@
-import sys
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.push_options import push_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
+from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
+from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import goal_options
 from exasol_script_languages_container_tool.lib import api
-from exasol_script_languages_container_tool.lib.api import api_errors
 
 
 @cli.command(short_help="Pushes script languages container to docker repository.")
@@ -47,7 +46,7 @@ def push(flavor_path: Tuple[str, ...],
     This command pushes all stages of the script-language-container flavor.
     If the stages do not exists locally, the system will build or pull them before the push.
     """
-    try:
+    with TerminationHandler():
         api.push(flavor_path, goal,
                  force_push,
                  push_all,
@@ -69,5 +68,3 @@ def push(flavor_path: Tuple[str, ...],
                  target_docker_password,
                  workers,
                  task_dependencies_dot_file)
-    except api_errors.TaskFailureError:
-        sys.exit(1)

@@ -1,7 +1,9 @@
+from pathlib import Path
 from typing import Dict
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
+from exasol_integration_test_docker_environment.lib.base.info import Info
 from exasol_integration_test_docker_environment.lib.config.build_config import build_config
 from luigi import Config
 
@@ -15,6 +17,12 @@ class ExportContainerParameter(Config):
     export_path = luigi.OptionalParameter(None)
     release_name = luigi.OptionalParameter(None)
     # TOOD force export
+
+
+class ExportContainerResult(Info):
+    def __init__(self, export_infos: Dict[str,Dict[str,ExportInfo]], command_line_output_path: Path):
+        self.export_infos = export_infos
+        self.command_line_output_path = command_line_output_path
 
 
 class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
@@ -34,6 +42,8 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
         export_infos = self.get_values_from_futures(
             self.export_info_futures)  # type: Dict[str,Dict[str,ExportInfo]]
         self.write_command_line_output(export_infos)
+        result = ExportContainerResult(export_infos, Path(self.command_line_output_target.path))
+        self.return_object(result)
 
     def write_command_line_output(self, export_infos: Dict[str, Dict[str, ExportInfo]]):
         if self.command_line_output_target.exists():

@@ -37,5 +37,6 @@ class DockerFlavorPush(DockerFlavorBuildBase, DockerPushParameter):
         build_tasks = self.create_build_tasks(shortcut_build=not self.push_all)
         push_task_creator = PushTaskCreatorFromBuildTasks(self)
         push_tasks = push_task_creator.create_tasks_for_build_tasks(build_tasks)
-        image_infos = yield from self.run_dependencies(push_tasks)
+        image_info_futures = yield from self.run_dependencies(push_tasks)
+        image_infos = self.get_values_from_futures(image_info_futures)
         self.return_object(image_infos)

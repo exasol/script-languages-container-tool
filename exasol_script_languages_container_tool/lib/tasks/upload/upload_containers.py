@@ -29,6 +29,7 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
         uploads = self.get_values_from_futures(
             self.export_info_futures)
         self.write_command_line_output(uploads)
+        self.return_object(self.command_line_output_target)
 
     def write_command_line_output(self, uploads):
         with self.command_line_output_target.open("w") as out_file:

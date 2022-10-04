@@ -1,12 +1,12 @@
-import sys
 from typing import Tuple, Optional, Any
 
 import click
+from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
+from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol_script_languages_container_tool.cli.options.flavor_options import flavor_options
 from exasol_script_languages_container_tool.cli.options.goal_options import release_options
 from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.common import add_options
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
@@ -70,6 +70,9 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @click.option('--reuse-test-environment/--no-reuse-test-environment', default=False,
               help="Reuse the whole test environment with docker network, test container, "
                    "database, database setup and uploaded container")
+@click.option('--test-container-folder', type=click.Path(exists=True, file_okay=False, dir_okay=True),
+              default="./test_container",
+              help="Test folder containing 'Dockerfile', tests and test-data.")
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -105,6 +108,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 reuse_uploaded_container: bool,
                 reuse_test_container: bool,
                 reuse_test_environment: bool,
+                test_container_folder: str,
                 force_rebuild: bool,
                 force_rebuild_from: Tuple[str, ...],
                 force_pull: bool,
@@ -130,61 +134,66 @@ def run_db_test(flavor_path: Tuple[str, ...],
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
     """
-    try:
-        api.run_db_test(flavor_path,
-                        release_goal,
-                        generic_language_test,
-                        test_folder,
-                        test_file,
-                        test_language,
-                        test,
-                        environment_type,
-                        max_start_attempts,
-                        docker_db_image_version,
-                        docker_db_image_name,
-                        create_certificates,
-                        external_exasol_db_host,
-                        external_exasol_db_port,
-                        external_exasol_bucketfs_port,
-                        external_exasol_db_user,
-                        external_exasol_db_password,
-                        external_exasol_bucketfs_write_password,
-                        external_exasol_xmlrpc_host,
-                        external_exasol_xmlrpc_port,
-                        external_exasol_xmlrpc_user,
-                        external_exasol_xmlrpc_password,
-                        external_exasol_xmlrpc_cluster_name,
-                        db_mem_size,
-                        db_disk_size,
-                        test_environment_vars,
-                        test_log_level,
-                        reuse_database,
-                        reuse_database_setup,
-                        reuse_uploaded_container,
-                        reuse_test_container,
-                        reuse_test_environment,
-                        force_rebuild,
-                        force_rebuild_from,
-                        force_pull,
-                        output_directory,
-                        temporary_base_directory,
-                        log_build_context_content,
-                        cache_directory,
-                        build_name,
-                        source_docker_repository_name,
-                        source_docker_tag_prefix,
-                        source_docker_username,
-                        source_docker_password,
-                        target_docker_repository_name,
-                        target_docker_tag_prefix,
-                        target_docker_username,
-                        target_docker_password,
-                        workers,
-                        task_dependencies_dot_file)
-    except api_errors.MissingArgumentError as e:
-        handle_missing_argument_error(e.args)
-    except api_errors.TaskFailureError:
-        sys.exit(1)
+    with TerminationHandler():
+        try:
+            result = api.run_db_test(flavor_path,
+                                     release_goal,
+                                     generic_language_test,
+                                     test_folder,
+                                     test_file,
+                                     test_language,
+                                     test,
+                                     environment_type,
+                                     max_start_attempts,
+                                     docker_db_image_version,
+                                     docker_db_image_name,
+                                     create_certificates,
+                                     external_exasol_db_host,
+                                     external_exasol_db_port,
+                                     external_exasol_bucketfs_port,
+                                     external_exasol_db_user,
+                                     external_exasol_db_password,
+                                     external_exasol_bucketfs_write_password,
+                                     external_exasol_xmlrpc_host,
+                                     external_exasol_xmlrpc_port,
+                                     external_exasol_xmlrpc_user,
+                                     external_exasol_xmlrpc_password,
+                                     external_exasol_xmlrpc_cluster_name,
+                                     db_mem_size,
+                                     db_disk_size,
+                                     test_environment_vars,
+                                     test_log_level,
+                                     reuse_database,
+                                     reuse_database_setup,
+                                     reuse_uploaded_container,
+                                     reuse_test_container,
+                                     reuse_test_environment,
+                                     test_container_folder,
+                                     force_rebuild,
+                                     force_rebuild_from,
+                                     force_pull,
+                                     output_directory,
+                                     temporary_base_directory,
+                                     log_build_context_content,
+                                     cache_directory,
+                                     build_name,
+                                     source_docker_repository_name,
+                                     source_docker_tag_prefix,
+                                     source_docker_username,
+                                     source_docker_password,
+                                     target_docker_repository_name,
+                                     target_docker_tag_prefix,
+                                     target_docker_username,
+                                     target_docker_password,
+                                     workers,
+                                     task_dependencies_dot_file)
+            if result.command_line_output_path.exists():
+                with result.command_line_output_path.open("r") as f:
+                    print(f.read())
+            if not result.tests_are_ok:
+                raise RuntimeError("Some tests failed")
+        except api_errors.MissingArgumentError as e:
+            handle_missing_argument_error(e.args)
 
 
 def handle_missing_argument_error(missing_arguments: Tuple[Any, ...]):

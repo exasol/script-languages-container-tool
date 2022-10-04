@@ -1,13 +1,14 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict
 
-from exasol_integration_test_docker_environment.cli.common import import_build_steps, set_build_config, \
-    set_docker_repository_config, run_task, generate_root_task
+from exasol_integration_test_docker_environment.lib.api.common import import_build_steps, set_build_config, \
+    set_docker_repository_config, generate_root_task, run_task, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
+from exasol_integration_test_docker_environment.lib.docker.images.image_info import ImageInfo
 
-from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.build.docker_build import DockerBuild
 
 
+@cli_function
 def build(flavor_path: Tuple[str, ...],
           goal: Tuple[str, ...] = tuple(),
           force_rebuild: bool = False,
@@ -28,14 +29,13 @@ def build(flavor_path: Tuple[str, ...],
           target_docker_username: Optional[str] = None,
           target_docker_password: Optional[str] = None,
           workers: int = 5,
-          task_dependencies_dot_file: Optional[str] = None):
+          task_dependencies_dot_file: Optional[str] = None) -> Dict[str, ImageInfo]:
     """
     This command builds all stages of the script-language-container flavor.
     If stages are cached in a docker registry, they command is going to pull them,
     instead of building them.
-    raises:
-        api_errors.TaskFailureError: if operation is not successful.
-
+    :raises api_errors.TaskFailureError: if operation is not successful.
+    :return: Image info per goal.
     """
     import_build_steps(flavor_path)
 
@@ -58,7 +58,4 @@ def build(flavor_path: Tuple[str, ...],
                                   goals=list(goal),
                                   shortcut_build=shortcut_build)
 
-    success, task = run_task(root_task_generator, workers, task_dependencies_dot_file)
-
-    if not success:
-        raise api_errors.TaskFailureError()
+    return run_task(root_task_generator, workers, task_dependencies_dot_file)
