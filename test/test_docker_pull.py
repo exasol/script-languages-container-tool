@@ -19,6 +19,7 @@ class DockerPullTest(unittest.TestCase):
     def test_docker_pull(self):
         with LocalDockerRegistryContextManager(name=self.test_environment.name) as local_registry:
             self.test_environment.repository_name = local_registry.name
+            self.test_environment.clean_images()
             command = f"{self.test_environment.executable} push "
             self.test_environment.run_command(command, track_task_dependencies=False)
             self.test_environment.clean_images()

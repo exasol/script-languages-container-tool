@@ -53,7 +53,7 @@ def build(flavor_path: Tuple[str, ...],
           task_dependencies_dot_file: Optional[str]):
     """
     This command builds all stages of the script-language-container flavor.
-    If stages are cached in a docker registry, they command is going to pull them,
+    If stages are cached in a docker registry, this command is going to pull them,
     instead of building them.
     """
     with TerminationHandler():
