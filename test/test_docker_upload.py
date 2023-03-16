@@ -46,7 +46,7 @@ class DockerUploadTest(unittest.TestCase):
         completed_process = self.test_environment.run_command(command, track_task_dependencies=True,
                                                               capture_output=True)
         self.assertIn(
-            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/"
+            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
             f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}?lang=python#buckets/"
             f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}/"
             f"exaudf/exaudfclient_py3",
@@ -72,7 +72,7 @@ class DockerUploadTest(unittest.TestCase):
         completed_process = self.test_environment.run_command(command,
                                                               track_task_dependencies=True, capture_output=True)
         self.assertIn(
-            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3=localzmq+protobuf:///{self.bucketfs_name}/"
+            f"ALTER SESSION SET SCRIPT_LANGUAGES=\'PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
             f"{self.bucket_name}/test-flavor-release-{self.release_name}?lang=python#buckets/"
             f"{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}/exaudf/exaudfclient_py3",
             completed_process.stdout.decode("UTF-8"))
