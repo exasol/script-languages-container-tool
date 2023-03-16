@@ -28,7 +28,8 @@ install_requires = \
  'https://github.com/exasol/integration-test-docker-environment/releases/download/1.1.0/exasol_integration_test_docker_environment-1.1.0-py3-none-any.whl',
  'importlib-resources>=5.4.0',
  'importlib_metadata>=4.6.0',
- 'networkx==2.8.2']
+ 'networkx==2.8.2',
+ 'typeguard<=3.0.0']
 
 setup_kwargs = {
     'name': 'exasol-script-languages-container-tool',
