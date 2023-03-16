@@ -29,7 +29,7 @@ install_requires = \
  'importlib-resources>=5.4.0',
  'importlib_metadata>=4.6.0',
  'networkx==2.8.2',
- 'typeguard<=3.0.0']
+ 'typeguard<3.0.0']
 
 setup_kwargs = {
     'name': 'exasol-script-languages-container-tool',

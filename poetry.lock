@@ -426,27 +426,15 @@ python-versions = ">= 3.7"
 
 [[package]]
 name = "typeguard"
-version = "3.0.0"
+version = "2.13.3"
 description = "Run-time type checker for Python"
 category = "main"
 optional = false
-python-versions = ">=3.7.4"
-
-[package.dependencies]
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
-typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.11\""}
+python-versions = ">=3.5.3"
 
 [package.extras]
-doc = ["packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["mypy (>=0.991)", "pytest"]
-
-[[package]]
-name = "typing-extensions"
-version = "4.5.0"
-description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "main"
-optional = false
-python-versions = ">=3.7"
+doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["mypy", "pytest", "typing-extensions"]
 
 [[package]]
 name = "urllib3"
@@ -489,7 +477,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4"
-content-hash = "b2f2ce1b9e78950ac4079d1e2f839a0e0d911247e207b38620234a93a2429479"
+content-hash = "3894c0bef0e5e013a218482a570b57d5ccd04269f884c956e14da74eb6219bb6"
 
 [metadata.files]
 certifi = [
@@ -847,12 +835,8 @@ tornado = [
     {file = "tornado-6.2.tar.gz", hash = "sha256:9b630419bde84ec666bfd7ea0a4cb2a8a651c2d5cccdbdd1972a0c859dfc3c13"},
 ]
 typeguard = [
-    {file = "typeguard-3.0.0-py3-none-any.whl", hash = "sha256:f595ad0c7dab4d7cb7158ddb46c392f17200a1f6f7ce340068ba2417661de31a"},
-    {file = "typeguard-3.0.0.tar.gz", hash = "sha256:91d86faa19b750515edab2d5fc9e4167dedd45b420e1696cd5d5e42f06d6bc02"},
-]
-typing-extensions = [
-    {file = "typing_extensions-4.5.0-py3-none-any.whl", hash = "sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4"},
-    {file = "typing_extensions-4.5.0.tar.gz", hash = "sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb"},
+    {file = "typeguard-2.13.3-py3-none-any.whl", hash = "sha256:5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"},
+    {file = "typeguard-2.13.3.tar.gz", hash = "sha256:00edaa8da3a133674796cf5ea87d9f4b4c367d77476e185e80251cc13dfbb8c4"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.15-py2.py3-none-any.whl", hash = "sha256:aa751d169e23c7479ce47a0cb0da579e3ede798f994f5816a74e4f4500dcea42"},
