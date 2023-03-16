@@ -18,7 +18,7 @@ class GenerateLanguageActivationTest(unittest.TestCase):
         completed_process = self.test_environment.run_command(command, use_docker_repository=False,
                                                               use_output_directory=False, capture_output=True)
         self.assertIn(
-            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3=localzmq+protobuf:///bfsdefault/default/path/container?lang=python#buckets/bfsdefault/default/path/container/exaudf/exaudfclient_py3';",
+            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///bfsdefault/default/path/container?lang=python#buckets/bfsdefault/default/path/container/exaudf/exaudfclient_py3';",
             completed_process.stdout.decode("UTF-8"))
 
     def test_generate_without_path_in_bucket(self):
@@ -26,7 +26,7 @@ class GenerateLanguageActivationTest(unittest.TestCase):
         completed_process = self.test_environment.run_command(command, use_docker_repository=False,
                                                               use_output_directory=False, capture_output=True)
         self.assertIn(
-            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3=localzmq+protobuf:///bfsdefault/default/container?lang=python#buckets/bfsdefault/default/container/exaudf/exaudfclient_py3';",
+            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///bfsdefault/default/container?lang=python#buckets/bfsdefault/default/container/exaudf/exaudfclient_py3';",
             completed_process.stdout.decode("UTF-8"))
 
 

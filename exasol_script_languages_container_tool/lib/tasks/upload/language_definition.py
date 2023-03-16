@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from jinja2 import Template
 
@@ -9,7 +10,7 @@ class LanguageDefinition:
                  flavor_path: str,
                  bucketfs_name: str,
                  bucket_name: str,
-                 path_in_bucket: str,
+                 path_in_bucket: Optional[str],
                  add_missing_builtin: bool = False):
         self.path_in_bucket = path_in_bucket
         self.bucket_name = bucket_name
@@ -34,10 +35,11 @@ class LanguageDefinition:
         if self.add_missing_builtin:
             defined_aliases = [alias.split("=")[0]
                                for alias in language_definition.split(" ")]
-            builtin_aliases = ["PYTHON", "JAVA", "R"]
+            builtin_aliases = ["PYTHON", "PYTHON3", "JAVA", "R"]
             missing_aliases = set(builtin_aliases) - set(defined_aliases)
+            sorted_missing_aliases = sorted(missing_aliases)
             additional_language_defintions = " ".join(
-                alias + "=builtin_" + alias.lower() for alias in missing_aliases)
+                alias + "=builtin_" + alias.lower() for alias in sorted_missing_aliases)
             language_definition = " ".join(
                 [language_definition, additional_language_defintions])
         return language_definition.strip()
