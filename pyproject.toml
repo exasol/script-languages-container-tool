@@ -22,6 +22,7 @@ importlib_metadata = ">=4.6.0"
 importlib-resources = ">=5.4.0"
 networkx = "2.8.2" # We pinned networkx to this version, because in newer versions it throws an exception, see https://github.com/exasol/integration-test-docker-environment/issues/228
 exasol-integration-test-docker-environment = {url = "https://github.com/exasol/integration-test-docker-environment/releases/download/1.1.0/exasol_integration_test_docker_environment-1.1.0-py3-none-any.whl"}
+typeguard = "<3.0.0"
 [build-system]
 requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
