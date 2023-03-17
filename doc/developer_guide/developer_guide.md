@@ -220,3 +220,55 @@ which are used to build the image are not part of the final hash.
 The `BuildContextHasher` hashes the execution rights of files, 
 because these are the only rights which get saved in git and 
 can be important for the images.
+
+## Creating a release
+
+### Prerequisites
+
+* Change log needs to be up to date
+* Latest change log version needs to match project and package version
+* Release tag needs to match package, changelog and project version
+   * For Example:
+        * Tag: 0.4.0
+        * Changelog: changes_0.4.0.md
+        * \`poetry version -s\`: 0.4.0
+
+### Triggering the Release
+In order to trigger a release a new tag must be pushed to Github.
+For further details see: `.github/workflows/release.yml`.
+
+
+1. Create a local tag with the appropriate version number
+
+        git tag x.y.z
+
+2. Push the tag to Github
+
+        git push origin x.y.z
+
+### What to do if the release failed?
+
+#### The release failed during pre-release checks
+
+1. Delete the local tag
+
+        git tag -d x.y.z
+
+2. Delete the remote tag
+
+        git push --delete origin x.y.z
+
+3. Fix the issue(s) which lead to the failing checks
+4. Start the release process from the beginning
+
+
+#### One of the release steps failed (Partial Release)
+
+1. Check the Github action/workflow to see which steps failed
+2. Finish or redo the failed release steps manually
+
+**Example**:
+
+_Scenario_: Publishing of the release on Github was successfully but during the PyPi release, the upload step got interrupted.
+
+_Solution_: Manually push the package to PyPi
