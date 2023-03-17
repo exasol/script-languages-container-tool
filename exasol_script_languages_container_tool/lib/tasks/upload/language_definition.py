@@ -20,6 +20,12 @@ class LanguageDefinition:
         self.add_missing_builtin = add_missing_builtin
 
     def generate_definition(self):
+        language_definition = self._render_language_definition()
+        if self.add_missing_builtin:
+            language_definition = self._add_missing_builtin_language_definitions(language_definition)
+        return language_definition.strip()
+
+    def _render_language_definition(self):
         path_in_bucket = self.path_in_bucket if self.path_in_bucket is not None else ""
         if path_in_bucket != "" and not path_in_bucket.endswith("/"):
             path_in_bucket = path_in_bucket + "/"
@@ -32,17 +38,18 @@ class LanguageDefinition:
                                               bucket_name=self.bucket_name,
                                               path_in_bucket=path_in_bucket,
                                               release_name=self.release_name)
-        if self.add_missing_builtin:
-            defined_aliases = [alias.split("=")[0]
-                               for alias in language_definition.split(" ")]
-            builtin_aliases = ["PYTHON", "PYTHON3", "JAVA", "R"]
-            missing_aliases = set(builtin_aliases) - set(defined_aliases)
-            sorted_missing_aliases = sorted(missing_aliases)
-            additional_language_defintions = " ".join(
-                alias + "=builtin_" + alias.lower() for alias in sorted_missing_aliases)
-            language_definition = " ".join(
-                [language_definition, additional_language_defintions])
-        return language_definition.strip()
+        return language_definition
+
+    def _add_missing_builtin_language_definitions(self, language_definition):
+        builtin_aliases = {"PYTHON", "PYTHON3", "JAVA", "R"}
+        defined_aliases = {alias.split("=")[0] for alias in language_definition.split(" ")}
+        missing_aliases = builtin_aliases - defined_aliases
+        sorted_missing_aliases = sorted(missing_aliases)
+        additional_language_defintions = " ".join(
+            f"{alias}=builtin_{alias.lower()}" for alias in sorted_missing_aliases
+        )
+        language_definition = f"{language_definition} {additional_language_defintions}"
+        return language_definition
 
     def generate_alter_session(self):
         return f"""ALTER SESSION SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
