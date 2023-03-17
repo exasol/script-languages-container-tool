@@ -26,6 +26,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 docker_db_image_version: str = LATEST_DB_VERSION,
                 docker_db_image_name: str = "exasol/docker-db",
                 create_certificates: bool = False,
+                additional_db_parameter: Tuple[str, ...] = tuple(),
                 external_exasol_db_host: Optional[str] = None,
                 external_exasol_db_port: int = 8563,
                 external_exasol_bucketfs_port: int = 6583,
@@ -39,7 +40,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 external_exasol_xmlrpc_cluster_name: str = "cluster1",
                 db_mem_size: str = '2 GiB',
                 db_disk_size: str = '2 GiB',
-                test_environment_vars: str =  "{}",
+                test_environment_vars: str = "{}",
                 test_log_level: str = 'critical',
                 reuse_database: bool = False,
                 reuse_database_setup: bool = False,
@@ -67,7 +68,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 task_dependencies_dot_file: Optional[str] = None) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
-    The systems spawns a test environment in which the test are executed.
+    The system spawns a test environment in which the test are executed.
     After finishing the tests, the test environment gets cleaned up.
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
@@ -139,6 +140,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
                                   external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
                                   create_certificates=create_certificates,
+                                  additional_db_parameter=additional_db_parameter,
                                   test_container_content=build_test_container_content(test_container_folder)
                                   )
 

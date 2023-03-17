@@ -9,6 +9,7 @@ This release fix a bug where PYTHON3 was missing when the LanguageDefinition cla
 ## Features / Enhancements
 
  - #175: Update vagrant environment
+ - #178: Install exasol-integration-test-docker-environment from pypi
 
 ## Refactorings
 

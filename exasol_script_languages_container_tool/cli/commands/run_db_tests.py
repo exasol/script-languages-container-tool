@@ -88,6 +88,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 docker_db_image_version: str,
                 docker_db_image_name: str,
                 create_certificates: bool,
+                additional_db_parameter: Tuple[str, ...],
                 external_exasol_db_host: Optional[str],
                 external_exasol_db_port: int,
                 external_exasol_bucketfs_port: int,
@@ -129,7 +130,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 task_dependencies_dot_file: Optional[str]):
     """
     This command runs the integration tests in local docker-db.
-    The systems spawns a test environment in which the test are executed.
+    The system spawns a test environment in which the test are executed.
     After finishing the tests, the test environment gets cleaned up.
     If the stages or the packaged container do not exists locally,
     the system will build, pull or export them before running the tests.
@@ -148,6 +149,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                      docker_db_image_version,
                                      docker_db_image_name,
                                      create_certificates,
+                                     additional_db_parameter,
                                      external_exasol_db_host,
                                      external_exasol_db_port,
                                      external_exasol_bucketfs_port,
