@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Tuple
 
 from git import Repo
 import toml
@@ -9,9 +10,13 @@ def get_git_version():
     repo = Repo()
     assert not repo.bare
     tag_strings = [t.name for t in repo.tags]
-    tag_strings.sort(reverse=True)
     tag_strings = [t for t in tag_strings if t != "latest"]
 
+    def version_string_to_tuple(version: str) -> Tuple[int, ...]:
+        return tuple(int(i) for i in version.split("."))
+
+    tag_strings = sorted(tag_strings, key=version_string_to_tuple, reverse=True)
+    print(tag_strings)
     latest_tag = tag_strings[0].strip()
     assert len(latest_tag) > 0
     return latest_tag
