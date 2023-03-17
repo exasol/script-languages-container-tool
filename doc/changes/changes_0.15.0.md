@@ -12,6 +12,7 @@ Besides, there is one more bugfix and a minor improvement in the documentation i
 ## Features / Enhancements
 
  - #160: Streamed test output to log file
+ - #175: Update vagrant environment
 
 ## Refactorings
 
@@ -21,7 +22,8 @@ Besides, there is one more bugfix and a minor improvement in the documentation i
 
  - #163: Fixed upload path if --path-in-bucket not specified
  - #164: Fixed default values for click parameters of type multiple=true
-
+ - #174: Add missing PYTHON3 to the add_missing_builtin option for the LanguageDefinition class
+ - 
 ## Documentation
 
   - #152: Added note to exalsct scripts that these files are generated  
