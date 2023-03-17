@@ -15,6 +15,8 @@ from exasol_script_languages_container_tool.lib.tasks.security_scan.security_sca
 
 from docker.models.containers import Container
 
+from exasol_script_languages_container_tool.lib.utils.tar_safe_extract_all import safe_extract
+
 
 class ScanResult(Info):
     def __init__(self, is_ok: bool, summary: str, report_dir: Path):
@@ -108,28 +110,6 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
             for chunk in bits:
                 tar_file.write(chunk)
         with tarfile.open(tar_file_path) as tar_file:
-            
-            import os
-            
-            def is_within_directory(directory, target):
-                
-                abs_directory = os.path.abspath(directory)
-                abs_target = os.path.abspath(target)
-            
-                prefix = os.path.commonprefix([abs_directory, abs_target])
-                
-                return prefix == abs_directory
-            
-            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
-            
-                for member in tar.getmembers():
-                    member_path = os.path.join(path, member.name)
-                    if not is_within_directory(path, member_path):
-                        raise Exception("Attempted Path Traversal in Tar File")
-            
-                tar.extractall(path, members, numeric_owner) 
-                
-            
             safe_extract(tar_file, path=report_path_abs)
 
 
