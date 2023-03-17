@@ -24,8 +24,7 @@ package_data = \
 {'': ['*'], 'exasol_script_languages_container_tool': ['starter_scripts/*']}
 
 install_requires = \
-['exasol-integration-test-docker-environment @ '
- 'https://github.com/exasol/integration-test-docker-environment/releases/download/1.1.0/exasol_integration_test_docker_environment-1.1.0-py3-none-any.whl',
+['exasol-integration-test-docker-environment>=1.4.0,<2.0.0',
  'importlib-resources>=5.4.0',
  'importlib_metadata>=4.6.0',
  'networkx==2.8.2',

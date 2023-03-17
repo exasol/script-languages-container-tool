@@ -59,8 +59,8 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
-name = "exasol-bucketfs-utils-python"
-version = "0.3.0"
+name = "exasol-bucketfs"
+version = "0.6.0"
 description = "BucketFS utilities for the Python programming language"
 category = "main"
 optional = false
@@ -71,13 +71,9 @@ joblib = ">=1.0.1"
 requests = ">=2.24.0"
 typeguard = ">=2.11.1"
 
-[package.source]
-type = "url"
-url = "https://github.com/exasol/bucketfs-utils-python/releases/download/0.3.0/exasol_bucketfs_utils_python-0.3.0-py3-none-any.whl"
-
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "1.1.0"
+version = "1.4.0"
 description = "Integration Test Docker Environment for Exasol"
 category = "main"
 optional = false
@@ -86,7 +82,7 @@ python-versions = ">=3.8,<4"
 [package.dependencies]
 click = ">=7.0"
 docker = {version = ">=4.0.0", markers = "sys_platform != \"win32\""}
-exasol_bucketfs_utils_python = {url = "https://github.com/exasol/bucketfs-utils-python/releases/download/0.3.0/exasol_bucketfs_utils_python-0.3.0-py3-none-any.whl"}
+exasol-bucketfs = ">=0.6.0,<0.7.0"
 gitpython = ">=2.1.0"
 humanfriendly = ">=4.18"
 importlib_resources = ">=5.4.0"
@@ -100,9 +96,6 @@ requests = ">=2.21.0"
 simplejson = ">=3.16.0"
 "stopwatch.py" = ">=1.0.0"
 
-[package.source]
-type = "url"
-url = "https://github.com/exasol/integration-test-docker-environment/releases/download/1.1.0/exasol_integration_test_docker_environment-1.1.0-py3-none-any.whl"
 [[package]]
 name = "gitdb"
 version = "4.0.10"
@@ -477,7 +470,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4"
-content-hash = "3894c0bef0e5e013a218482a570b57d5ccd04269f884c956e14da74eb6219bb6"
+content-hash = "edf21153032418a25c273ef43798468d90723aaf432047f0e81bfa2f45e28c61"
 
 [metadata.files]
 certifi = [
@@ -577,8 +570,14 @@ docutils = [
     {file = "docutils-0.19-py3-none-any.whl", hash = "sha256:5e1de4d849fee02c63b040a4a3fd567f4ab104defd8a5511fbbc24a8a017efbc"},
     {file = "docutils-0.19.tar.gz", hash = "sha256:33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6"},
 ]
-exasol-bucketfs-utils-python = []
-exasol-integration-test-docker-environment = []
+exasol-bucketfs = [
+    {file = "exasol_bucketfs-0.6.0-py3-none-any.whl", hash = "sha256:15d49a03b647b07be1fb70cd473ed5da038f13ce84c3c3bda3c4926e58551cb5"},
+    {file = "exasol_bucketfs-0.6.0.tar.gz", hash = "sha256:2a91e43a695073c095da74ba542e67c11f9f7574da9f81af9ebb8037a6812567"},
+]
+exasol-integration-test-docker-environment = [
+    {file = "exasol_integration_test_docker_environment-1.4.0-py3-none-any.whl", hash = "sha256:0ea38f8a49f417d4f86e4d57e37e265b1ac99c5726a39fcd2d8cf19264092a9e"},
+    {file = "exasol_integration_test_docker_environment-1.4.0.tar.gz", hash = "sha256:46f984e7583ccabcb0fb5eaf5117a71d816f66ed662db2ea710626a62548ff5b"},
+]
 gitdb = [
     {file = "gitdb-4.0.10-py3-none-any.whl", hash = "sha256:c286cf298426064079ed96a9e4a9d39e7f3e9bf15ba60701e95f5492f28415c7"},
     {file = "gitdb-4.0.10.tar.gz", hash = "sha256:6eb990b69df4e15bad899ea868dc46572c3f75339735663b81de79b06f17eb9a"},
