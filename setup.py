@@ -30,6 +30,10 @@ install_requires = \
  'networkx==2.8.2',
  'typeguard<3.0.0']
 
+entry_points = \
+{'console_scripts': ['exaslct = '
+                     'exasol_script_languages_container_tool.main:main']}
+
 setup_kwargs = {
     'name': 'exasol-script-languages-container-tool',
     'version': '0.16.0',
@@ -43,6 +47,7 @@ setup_kwargs = {
     'packages': packages,
     'package_data': package_data,
     'install_requires': install_requires,
+    'entry_points': entry_points,
     'python_requires': '>=3.8,<4',
 }
 

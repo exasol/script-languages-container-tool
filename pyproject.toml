@@ -29,3 +29,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dev-dependencies]
 toml = ">=0.10.2"
+
+
+[tool.poetry.scripts]
+exaslct = 'exasol_script_languages_container_tool.main:main'
