@@ -15,7 +15,7 @@ from exasol_script_languages_container_tool.lib.tasks.security_scan.security_sca
 
 from docker.models.containers import Container
 
-from exasol_script_languages_container_tool.lib.utils.tar_safe_extract_all import safe_extract
+from exasol_script_languages_container_tool.lib.utils.tar_safe_extract import safe_extract
 
 
 class ScanResult(Info):
