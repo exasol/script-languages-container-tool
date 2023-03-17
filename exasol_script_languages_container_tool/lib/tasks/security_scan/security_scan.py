@@ -15,6 +15,8 @@ from exasol_script_languages_container_tool.lib.tasks.security_scan.security_sca
 
 from docker.models.containers import Container
 
+from exasol_script_languages_container_tool.lib.utils.tar_safe_extract import safe_extract
+
 
 class ScanResult(Info):
     def __init__(self, is_ok: bool, summary: str, report_dir: Path):
@@ -108,7 +110,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
             for chunk in bits:
                 tar_file.write(chunk)
         with tarfile.open(tar_file_path) as tar_file:
-            tar_file.extractall(path=report_path_abs)
+            safe_extract(tar_file, path=report_path_abs)
 
 
 class AllScanResult(Info):
