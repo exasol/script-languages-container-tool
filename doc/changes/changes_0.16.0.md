@@ -19,6 +19,10 @@ N/A
 
  - #174: Add missing PYTHON3 to the add_missing_builtin option for the LanguageDefinition class
 
+## Security
+
+ - #172: Fix CVE-2007-4559
+
 ## Documentation
 
 N/A
