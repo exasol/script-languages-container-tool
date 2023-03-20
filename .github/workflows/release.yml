@@ -1,22 +1,48 @@
-name: Release
+name: Build & Publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags: '**'
 
 jobs:
 
   publish-release:
     runs-on: ubuntu-latest
     environment: publish
+
     steps:
-      - uses: actions/checkout@v3
+
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/prepare_poetry_env
+
+      - name: Build Artifacts
+        run: poetry build
+
       - name: Build new Docker image
         run: "bash scripts/build/build_docker_runner_image.sh"
+
       - name: Docker login
         run: echo "$SECRET_DOCKER_TOKEN" | docker login --username "$SECRET_DOCKER_USER_NAME" --password-stdin
         env: # Set the secret as an input
           SECRET_DOCKER_USER_NAME: ${{ secrets.DOCKER_USER_NAME }}
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
       - name: Push new Docker images
         run: bash scripts/build/push_docker_runner_image.sh latest "${{ github.event.release.tag_name }}"
+
+      - name: PyPi Release
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: "__token__"
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+        run: poetry publish
+
+      - name: GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${GITHUB_REF_NAME}
+          --title ${GITHUB_REF_NAME} -F "./doc/changes/changes_${GITHUB_REF_NAME}.md"
+          dist/*
