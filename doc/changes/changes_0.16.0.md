@@ -4,7 +4,9 @@ Code name: Bugfix in LanguageDefinition class and prepare for pypi release.
 
 ## Summary 
 
-This release fix a bug where PYTHON3 was missing when the LanguageDefinition class was called with add_missing_builtin. It also prepares the project for the pypi release.
+This release fixes a bug where PYTHON3 was missing 
+when the LanguageDefinition class was called with add_missing_builtin. 
+It also prepares the project for the pypi release.
 
 ## Features / Enhancements
 
