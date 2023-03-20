@@ -1,10 +1,12 @@
-# Script-Languages-Container-Tool 0.16.0, released 2023-03-17
+# Script-Languages-Container-Tool 0.16.0, released 2023-03-20
 
 Code name: Bugfix in LanguageDefinition class and prepare for pypi release.
 
 ## Summary 
 
-This release fix a bug where PYTHON3 was missing when the LanguageDefinition class was called with add_missing_builtin. It also prepares the project for the pypi release.
+This release fixes a bug where PYTHON3 was missing 
+when the LanguageDefinition class was called with add_missing_builtin. 
+It also prepares the project for the pypi release.
 
 ## Features / Enhancements
 
