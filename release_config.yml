@@ -10,3 +10,5 @@ community-project-description: |
   The Script-Languages-Container-Tool (exaslct) is the build tool for the script language container.
   You can build, export and upload script-language container from so-called flavors which are description how to build the script language container.
   [Script-Languages-Container-Tool](https://github.com/exasol/script-languages-container-tool).
+release-platforms:
+  - GitHub
