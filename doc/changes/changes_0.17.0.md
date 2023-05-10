@@ -16,7 +16,7 @@ N/A
  
 ## Bug Fixes
 
-N/A
+ - #183: Disabled check_version workflow for tags
 
 ## Security
 
