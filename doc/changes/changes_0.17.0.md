@@ -16,7 +16,7 @@ N/A
  
 ## Bug Fixes
 
-N/A
+ - #184: Fixed variable used to get the version in the release workflow
 
 ## Security
 
