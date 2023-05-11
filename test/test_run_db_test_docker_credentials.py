@@ -23,7 +23,7 @@ class RunDBTestDockerCredentials(unittest.TestCase):
         arguments = " ".join([
             f"--source-docker-username={docker_user}",
             f"--source-docker-password={docker_password}",
-            exaslct_utils.get_test_container_folder_for_tests_parameter()
+            exaslct_utils.get_full_test_container_folder_parameter()
         ])
 
         command = f"{self.test_environment.executable} run-db-test {arguments} " \

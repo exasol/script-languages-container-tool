@@ -16,7 +16,7 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
 
     def test_docker_test_environment(self):
         command = f"{self.test_environment.executable} run-db-test --test-file docker_environment_test.py " \
-                  f"{exaslct_utils.get_test_container_folder_for_tests_parameter()}"
+                  f"{exaslct_utils.get_full_test_container_folder_parameter()}"
         self.test_environment.run_command(command, track_task_dependencies=True)
 
 
