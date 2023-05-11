@@ -31,7 +31,7 @@ jobs:
           SECRET_DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Push new Docker images
-        run: bash scripts/build/push_docker_runner_image.sh latest "${{ github.event.release.tag_name }}"
+        run: bash scripts/build/push_docker_runner_image.sh latest "${{ github.ref_name }}"
 
       - name: PyPi Release
         env:
