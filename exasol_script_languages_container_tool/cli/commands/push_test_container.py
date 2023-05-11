@@ -1,16 +1,14 @@
 from typing import Tuple, Optional
 
-import click
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
-from exasol_integration_test_docker_environment.lib import api
 from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol_script_languages_container_tool.cli.options.test_container_options import test_container_options
-from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import build_test_container_content
+from exasol_script_languages_container_tool.lib import api
 
 
 @cli.command(short_help="Builds a script-languages-container.")
@@ -45,7 +43,7 @@ def push_test_container(
     """
     with TerminationHandler():
         api.push_test_container(
-            test_container_content=build_test_container_content(test_container_folder),
+            test_container_folder=test_container_folder,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,
