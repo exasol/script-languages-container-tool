@@ -17,6 +17,8 @@ N/A
 ## Bug Fixes
 
  - #184: Fixed variable used to get the version in the release workflow
+ - #183: Disabled check_version workflow for tags
+
 
 ## Security
 
