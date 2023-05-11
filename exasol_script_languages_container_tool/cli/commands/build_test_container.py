@@ -11,7 +11,7 @@ from exasol_script_languages_container_tool.cli.options.test_container_options i
 from exasol_script_languages_container_tool.lib import api
 
 
-@cli.command(short_help="Builds a script-languages-container.")
+@cli.command(short_help="Builds the test container docker image.")
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
@@ -37,7 +37,7 @@ def build_test_container(
         workers: int,
         task_dependencies_dot_file: Optional[str]):
     """
-    Build the test container docker image.
+    Builds the test container docker image.
 
     The test container is used during tests of the Script-Language-Container.
     """

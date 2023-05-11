@@ -11,7 +11,7 @@ from exasol_script_languages_container_tool.cli.options.test_container_options i
 from exasol_script_languages_container_tool.lib import api
 
 
-@cli.command(short_help="Builds a script-languages-container.")
+@cli.command(short_help="Pushes the test container docker image to the registry.")
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
