@@ -1,11 +1,12 @@
 from typing import Tuple, Optional
 
 from exasol_integration_test_docker_environment.lib import api
+from exasol_integration_test_docker_environment.lib.api.common import cli_function
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import ImageInfo
 
 from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import build_test_container_content
 
-
+@cli_function
 def build_test_container(
         test_container_folder: str,
         force_rebuild: bool,
