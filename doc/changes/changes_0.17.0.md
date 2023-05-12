@@ -1,10 +1,10 @@
-# Script-Languages-Container-Tool 0.17.0, released t.b.d.
+# Script-Languages-Container-Tool 0.17.0, released 2023-05-12
 
-Code name: t.b.d.
+Code name: Add API and CLI commands for building and pushing the test container
 
 ## Summary 
 
-t.b.d.
+This releases adds API and CLI commands for building and pushing the test container. It further updates the integration-test-docker-environment to 1.6.0 and fixes some bugs.
 
 ## Features / Enhancements
 
@@ -12,7 +12,8 @@ t.b.d.
 
 ## Refactorings
 
- - #187: Updated release_config.yml 
+ - #187: Updated release_config.yml
+ - #192: Remove setup.py and updated the integration-test-docker-environment to 1.6.0
  
 ## Bug Fixes
 
