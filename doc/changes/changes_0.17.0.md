@@ -8,7 +8,7 @@ t.b.d.
 
 ## Features / Enhancements
 
-N/A
+ - #193: Added build and push test container CLI commands
 
 ## Refactorings
 

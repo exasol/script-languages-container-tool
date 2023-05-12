@@ -28,7 +28,7 @@ class DockerRunDBTestExternalDBTest(unittest.TestCase):
             f"--external-exasol-db-user {self.docker_environment.db_username}",
             f"--external-exasol-db-password {self.docker_environment.db_password}",
             f"--external-exasol-bucketfs-write-password {self.docker_environment.bucketfs_password}",
-            exaslct_utils.get_test_container_folder_for_tests_parameter()
+            exaslct_utils.get_full_test_container_folder_parameter()
         ])
         command = f"{self.test_environment.executable} run-db-test {arguments}"
         self.test_environment.run_command(
