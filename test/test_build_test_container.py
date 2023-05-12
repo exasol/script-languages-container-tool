@@ -30,7 +30,7 @@ class BuildTestContainerTest(unittest.TestCase):
         images = find_images_by_tag(self.docker_client,
                                     lambda tag: tag.startswith(self.test_environment.repository_name))
         self.assertTrue(len(images) > 0,
-                        f"Did not found images for repository "
+                        f"Did not find images for repository "
                         f"{self.test_environment.repository_name} in list {images}")
 
 
