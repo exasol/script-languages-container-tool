@@ -12,6 +12,8 @@ from exasol_integration_test_docker_environment.cli.options.docker_repository_op
 from exasol_integration_test_docker_environment.cli.options.system_options import system_options
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
+
+from exasol_script_languages_container_tool.cli.options.test_container_options import test_container_options
 from exasol_script_languages_container_tool.lib import api
 from exasol_script_languages_container_tool.lib.api import api_errors
 
@@ -70,9 +72,7 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @click.option('--reuse-test-environment/--no-reuse-test-environment', default=False,
               help="Reuse the whole test environment with docker network, test container, "
                    "database, database setup and uploaded container")
-@click.option('--test-container-folder', type=click.Path(exists=True, file_okay=False, dir_okay=True),
-              default="./test_container",
-              help="Test folder containing 'Dockerfile', tests and test-data.")
+@add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)

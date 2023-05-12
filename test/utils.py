@@ -4,6 +4,9 @@ from exasol_integration_test_docker_environment.testing import api_test_environm
 
 from exasol_script_languages_container_tool.lib import api
 
+TEST_CONTAINER_ROOT_DIRECTORY = Path(__file__).parent / "resources" / "test_container"
+EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
+
 
 class ExaslctApiTestEnvironmentWithCleanup(api_test_environment.ApiTestEnvironment):
 
@@ -23,9 +26,6 @@ class ExaslctApiTestEnvironmentWithCleanup(api_test_environment.ApiTestEnvironme
         api.clean_all_images(docker_repository_name=self.docker_repository_name)
 
 
-EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
-
-
 class ExaslctTestEnvironmentWithCleanUp(exaslct_test_environment.ExaslctTestEnvironment):
 
     def close(self):
@@ -40,6 +40,19 @@ class ExaslctTestEnvironmentWithCleanUp(exaslct_test_environment.ExaslctTestEnvi
         self.run_command(f"{self.executable} clean-all-images", use_flavor_path=False, clean=True)
 
 
-def get_test_container_folder_for_tests_parameter() -> str:
-    path = Path(__file__).parent / "test_container"
-    return f"--test-container-folder {path}"
+def get_full_test_container_folder_parameter() -> str:
+    return f"--test-container-folder {get_full_test_container_folder()}"
+
+
+def get_mock_test_container_folder_parameter() -> str:
+    return f"--test-container-folder {get_mock_test_container_folder()}"
+
+
+def get_full_test_container_folder() -> Path:
+    path = TEST_CONTAINER_ROOT_DIRECTORY / "full"
+    return path
+
+
+def get_mock_test_container_folder() -> Path:
+    path = TEST_CONTAINER_ROOT_DIRECTORY / "full"
+    return path

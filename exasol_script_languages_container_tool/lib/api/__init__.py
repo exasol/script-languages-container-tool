@@ -9,3 +9,5 @@ from .save import save
 from .upload import upload
 from .security_scan import security_scan
 from .install_starter_scripts import install_starter_scripts
+from .build_test_container import build_test_container
+from .push_test_container import push_test_container
