@@ -29,7 +29,10 @@ def build(flavor_path: Tuple[str, ...],
           target_docker_username: Optional[str] = None,
           target_docker_password: Optional[str] = None,
           workers: int = 5,
-          task_dependencies_dot_file: Optional[str] = None) -> Dict[str, ImageInfo]:
+          task_dependencies_dot_file: Optional[str] = None,
+          log_level: Optional[str] = None,
+          use_job_specific_log_file: bool = True
+          ) -> Dict[str, ImageInfo]:
     """
     This command builds all stages of the script-language-container flavor.
     If stages are cached in a docker registry, they command is going to pull them,
@@ -58,4 +61,9 @@ def build(flavor_path: Tuple[str, ...],
                                   goals=list(goal),
                                   shortcut_build=shortcut_build)
 
-    return run_task(root_task_generator, workers, task_dependencies_dot_file)
+    return run_task(root_task_generator,
+                    workers=workers,
+                    task_dependencies_dot_file=task_dependencies_dot_file,
+                    log_level=log_level,
+                    use_job_specific_log_file=use_job_specific_log_file
+                    )

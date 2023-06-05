@@ -31,7 +31,10 @@ def push(flavor_path: Tuple[str, ...],
          target_docker_username: Optional[str] = None,
          target_docker_password: Optional[str] = None,
          workers: int = 5,
-         task_dependencies_dot_file: Optional[str] = None) -> Dict[str, List[ImageInfo]]:
+         task_dependencies_dot_file: Optional[str] = None,
+         log_level: Optional[str] = None,
+         use_job_specific_log_file: bool = True
+         ) -> Dict[str, List[ImageInfo]]:
     """
     This command pushes all stages of the script-language-container flavor.
     If the stages do not exists locally, the system will build or pull them before the push.
@@ -60,4 +63,9 @@ def push(flavor_path: Tuple[str, ...],
                                   goals=list(goal),
                                   flavor_paths=list(flavor_path))
 
-    return run_task(root_task_generator, workers, task_dependencies_dot_file)
+    return run_task(root_task_generator,
+                    workers=workers,
+                    task_dependencies_dot_file=task_dependencies_dot_file,
+                    log_level=log_level,
+                    use_job_specific_log_file=use_job_specific_log_file
+                    )

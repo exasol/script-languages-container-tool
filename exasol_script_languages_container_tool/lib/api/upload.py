@@ -38,7 +38,10 @@ def upload(flavor_path: Tuple[str, ...],
            target_docker_username: Optional[str] = None,
            target_docker_password: Optional[str] = None,
            workers: int = 5,
-           task_dependencies_dot_file: Optional[str] = None) -> luigi.LocalTarget:
+           task_dependencies_dot_file: Optional[str] = None,
+           log_level: Optional[str] = None,
+           use_job_specific_log_file: bool = True
+           ) -> luigi.LocalTarget:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
@@ -77,4 +80,9 @@ def upload(flavor_path: Tuple[str, ...],
                                   release_name=release_name,
                                   bucketfs_name=bucketfs_name)
 
-    return run_task(root_task_generator, workers, task_dependencies_dot_file)
+    return run_task(root_task_generator,
+                    workers=workers,
+                    task_dependencies_dot_file=task_dependencies_dot_file,
+                    log_level=log_level,
+                    use_job_specific_log_file=use_job_specific_log_file
+                    )

@@ -28,7 +28,10 @@ def build_test_container(
         target_docker_username: Optional[str] = None,
         target_docker_password: Optional[str] = None,
         workers: int = 5,
-        task_dependencies_dot_file: Optional[str] = None) -> ImageInfo:
+        task_dependencies_dot_file: Optional[str] = None,
+        log_level: Optional[str] = None,
+        use_job_specific_log_file: bool = True
+) -> ImageInfo:
     """
     Build the test container docker image.
 
@@ -53,4 +56,7 @@ def build_test_container(
         target_docker_username=target_docker_username,
         target_docker_password=target_docker_password,
         workers=workers,
-        task_dependencies_dot_file=task_dependencies_dot_file)
+        task_dependencies_dot_file=task_dependencies_dot_file,
+        log_level=log_level,
+        use_job_specific_log_file=use_job_specific_log_file
+    )

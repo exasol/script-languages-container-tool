@@ -9,7 +9,7 @@ from exasol_script_languages_container_tool.cli.options.goal_options import rele
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
-from exasol_integration_test_docker_environment.cli.options.system_options import system_options
+from exasol_integration_test_docker_environment.cli.options.system_options import system_options, luigi_logging_options
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import test_environment_options, \
     docker_db_options, external_db_options
 
@@ -76,6 +76,7 @@ from exasol_script_languages_container_tool.lib.api import api_errors
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
+@add_options(luigi_logging_options)
 def run_db_test(flavor_path: Tuple[str, ...],
                 release_goal: Tuple[str, ...],
                 generic_language_test: Tuple[str, ...],
@@ -127,7 +128,10 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str],
                 target_docker_password: Optional[str],
                 workers: int,
-                task_dependencies_dot_file: Optional[str]):
+                task_dependencies_dot_file: Optional[str],
+                log_level: Optional[str],
+                use_job_specific_log_file: bool
+                ):
     """
     This command runs the integration tests in local docker-db.
     The system spawns a test environment in which the test are executed.
@@ -137,58 +141,60 @@ def run_db_test(flavor_path: Tuple[str, ...],
     """
     with TerminationHandler():
         try:
-            result = api.run_db_test(flavor_path,
-                                     release_goal,
-                                     generic_language_test,
-                                     test_folder,
-                                     test_file,
-                                     test_language,
-                                     test,
-                                     environment_type,
-                                     max_start_attempts,
-                                     docker_db_image_version,
-                                     docker_db_image_name,
-                                     create_certificates,
-                                     additional_db_parameter,
-                                     external_exasol_db_host,
-                                     external_exasol_db_port,
-                                     external_exasol_bucketfs_port,
-                                     external_exasol_db_user,
-                                     external_exasol_db_password,
-                                     external_exasol_bucketfs_write_password,
-                                     external_exasol_xmlrpc_host,
-                                     external_exasol_xmlrpc_port,
-                                     external_exasol_xmlrpc_user,
-                                     external_exasol_xmlrpc_password,
-                                     external_exasol_xmlrpc_cluster_name,
-                                     db_mem_size,
-                                     db_disk_size,
-                                     test_environment_vars,
-                                     test_log_level,
-                                     reuse_database,
-                                     reuse_database_setup,
-                                     reuse_uploaded_container,
-                                     reuse_test_container,
-                                     reuse_test_environment,
-                                     test_container_folder,
-                                     force_rebuild,
-                                     force_rebuild_from,
-                                     force_pull,
-                                     output_directory,
-                                     temporary_base_directory,
-                                     log_build_context_content,
-                                     cache_directory,
-                                     build_name,
-                                     source_docker_repository_name,
-                                     source_docker_tag_prefix,
-                                     source_docker_username,
-                                     source_docker_password,
-                                     target_docker_repository_name,
-                                     target_docker_tag_prefix,
-                                     target_docker_username,
-                                     target_docker_password,
-                                     workers,
-                                     task_dependencies_dot_file)
+            result = api.run_db_test(flavor_path=flavor_path,
+                                     release_goal=release_goal,
+                                     generic_language_test=generic_language_test,
+                                     test_folder=test_folder,
+                                     test_file=test_file,
+                                     test_language=test_language,
+                                     test=test,
+                                     environment_type=environment_type,
+                                     max_start_attempts=max_start_attempts,
+                                     docker_db_image_version=docker_db_image_version,
+                                     docker_db_image_name=docker_db_image_name,
+                                     create_certificates=create_certificates,
+                                     additional_db_parameter=additional_db_parameter,
+                                     external_exasol_db_host=external_exasol_db_host,
+                                     external_exasol_db_port=external_exasol_db_port,
+                                     external_exasol_bucketfs_port=external_exasol_bucketfs_port,
+                                     external_exasol_db_user=external_exasol_db_user,
+                                     external_exasol_db_password=external_exasol_db_password,
+                                     external_exasol_bucketfs_write_password=external_exasol_bucketfs_write_password,
+                                     external_exasol_xmlrpc_host=external_exasol_xmlrpc_host,
+                                     external_exasol_xmlrpc_port=external_exasol_xmlrpc_port,
+                                     external_exasol_xmlrpc_user=external_exasol_xmlrpc_user,
+                                     external_exasol_xmlrpc_password=external_exasol_xmlrpc_password,
+                                     external_exasol_xmlrpc_cluster_name=external_exasol_xmlrpc_cluster_name,
+                                     db_mem_size=db_mem_size,
+                                     db_disk_size=db_disk_size,
+                                     test_environment_vars=test_environment_vars,
+                                     test_log_level=test_log_level,
+                                     reuse_database=reuse_database,
+                                     reuse_database_setup=reuse_database_setup,
+                                     reuse_uploaded_container=reuse_uploaded_container,
+                                     reuse_test_container=reuse_test_container,
+                                     reuse_test_environment=reuse_test_environment,
+                                     test_container_folder=test_container_folder,
+                                     force_rebuild=force_rebuild,
+                                     force_rebuild_from=force_rebuild_from,
+                                     force_pull=force_pull,
+                                     output_directory=output_directory,
+                                     temporary_base_directory=temporary_base_directory,
+                                     log_build_context_content=log_build_context_content,
+                                     cache_directory=cache_directory,
+                                     build_name=build_name,
+                                     source_docker_repository_name=source_docker_repository_name,
+                                     source_docker_tag_prefix=source_docker_tag_prefix,
+                                     source_docker_username=source_docker_username,
+                                     source_docker_password=source_docker_password,
+                                     target_docker_repository_name=target_docker_repository_name,
+                                     target_docker_tag_prefix=target_docker_tag_prefix,
+                                     target_docker_username=target_docker_username,
+                                     target_docker_password=target_docker_password,
+                                     workers=workers,
+                                     task_dependencies_dot_file=task_dependencies_dot_file,
+                                     log_level=log_level,
+                                     use_job_specific_log_file=use_job_specific_log_file)
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:
                     print(f.read())

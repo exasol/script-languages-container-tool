@@ -14,7 +14,9 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
                         docker_repository_name: str = 'exasol/script-language-container',
                         docker_tag_prefix: str = '',
                         workers: int = 5,
-                        task_dependencies_dot_file: Optional[str] = None) -> None:
+                        task_dependencies_dot_file: Optional[str] = None,
+                        log_level: Optional[str] = None,
+                        use_job_specific_log_file: bool = True) -> None:
     """
     This command removes the docker images of all stages of the script languages container for the given flavor.
     raises:
@@ -28,7 +30,11 @@ def clean_flavor_images(flavor_path: Tuple[str, ...],
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(task_class=CleanExaslcFlavorsImages, flavor_paths=list(flavor_path))
 
-    run_task(root_task_generator, workers, task_dependencies_dot_file)
+    run_task(root_task_generator,
+             workers=workers,
+             task_dependencies_dot_file=task_dependencies_dot_file,
+             log_level=log_level,
+             use_job_specific_log_file=use_job_specific_log_file)
 
 
 @cli_function
@@ -37,7 +43,9 @@ def clean_all_images(
         docker_repository_name: str = 'exasol/script-language-container',
         docker_tag_prefix: str = '',
         workers: int = 5,
-        task_dependencies_dot_file: Optional[str] = None) -> None:
+        task_dependencies_dot_file: Optional[str] = None,
+        log_level: Optional[str] = None,
+        use_job_specific_log_file: bool = True) -> None:
     """
     This command removes the docker images of all stages of the script languages container for all flavors.
     raises:
@@ -50,6 +58,10 @@ def clean_all_images(
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(task_class=CleanExaslcAllImages)
 
-    run_task(root_task_generator, workers, task_dependencies_dot_file)
+    run_task(root_task_generator,
+             workers=workers,
+             task_dependencies_dot_file=task_dependencies_dot_file,
+             log_level=log_level,
+             use_job_specific_log_file=use_job_specific_log_file)
 
 # TODO add commands clean containers, networks, all

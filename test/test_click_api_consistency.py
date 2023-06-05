@@ -8,7 +8,6 @@ from exasol_script_languages_container_tool.lib import api
 import inspect
 
 
-
 class ClickApiConsistency(unittest.TestCase):
 
     def test_api_arguments(self):
@@ -43,7 +42,8 @@ class ClickApiConsistency(unittest.TestCase):
             api_spec_defaults = inspect.getfullargspec(api_call).defaults or tuple()
             cli_defaults = defaults_of_click_call(cli_call)
 
-            self.assertEqual(len(cli_defaults), len(api_spec_defaults))
+            self.assertEqual(len(cli_defaults), len(api_spec_defaults),
+                             f"{cli_call},{cli_defaults},{api_spec_defaults}")
             for api_default_value, cli_default in zip(api_spec_defaults, cli_defaults):
                 cli_param_name, cli_default_value = cli_default
                 if api_default_value != cli_default_value:
