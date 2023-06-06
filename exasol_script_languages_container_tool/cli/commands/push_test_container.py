@@ -1,9 +1,10 @@
 from typing import Tuple, Optional
 
+import click
 from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.cli.options.build_options import build_options
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
-from exasol_integration_test_docker_environment.cli.options.system_options import system_options
+from exasol_integration_test_docker_environment.cli.options.system_options import system_options, luigi_logging_options
 from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
 from exasol_integration_test_docker_environment.lib.api.common import add_options
 
@@ -13,11 +14,16 @@ from exasol_script_languages_container_tool.lib import api
 
 @cli.command(short_help="Pushes the test container docker image to the registry.")
 @add_options(test_container_options)
+@click.option("--force-push", type=bool, default=False, help="Push images also if they already exist.")
+@click.option("--push-all", type=bool, default=False, help="Push all images.")
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
+@add_options(luigi_logging_options)
 def push_test_container(
         test_container_folder: str,
+        force_push: bool,
+        push_all: bool,
         force_rebuild: bool,
         force_rebuild_from: Tuple[str, ...],
         force_pull: bool,
@@ -35,7 +41,10 @@ def push_test_container(
         target_docker_username: Optional[str],
         target_docker_password: Optional[str],
         workers: int,
-        task_dependencies_dot_file: Optional[str]):
+        task_dependencies_dot_file: Optional[str],
+        log_level: Optional[str],
+        use_job_specific_log_file: bool
+):
     """
     Push the test container docker image to the registry.
 
@@ -44,6 +53,8 @@ def push_test_container(
     with TerminationHandler():
         api.push_test_container(
             test_container_folder=test_container_folder,
+            force_push=force_push,
+            push_all=push_all,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,
@@ -61,4 +72,7 @@ def push_test_container(
             target_docker_username=target_docker_username,
             target_docker_password=target_docker_password,
             workers=workers,
-            task_dependencies_dot_file=task_dependencies_dot_file)
+            task_dependencies_dot_file=task_dependencies_dot_file,
+            log_level=log_level,
+            use_job_specific_log_file=use_job_specific_log_file
+        )

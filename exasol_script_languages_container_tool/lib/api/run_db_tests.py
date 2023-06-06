@@ -65,7 +65,10 @@ def run_db_test(flavor_path: Tuple[str, ...],
                 target_docker_username: Optional[str] = None,
                 target_docker_password: Optional[str] = None,
                 workers: int = 5,
-                task_dependencies_dot_file: Optional[str] = None) -> AllTestsResult:
+                task_dependencies_dot_file: Optional[str] = None,
+                log_level: Optional[str] = None,
+                use_job_specific_log_file: bool = True
+                ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
     The system spawns a test environment in which the test are executed.
@@ -144,4 +147,9 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   test_container_content=build_test_container_content(test_container_folder)
                                   )
 
-    return run_task(root_task_generator, workers, task_dependencies_dot_file)
+    return run_task(root_task_generator,
+                    workers=workers,
+                    task_dependencies_dot_file=task_dependencies_dot_file,
+                    log_level=log_level,
+                    use_job_specific_log_file=use_job_specific_log_file
+                    )

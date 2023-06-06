@@ -11,6 +11,8 @@ from exasol_script_languages_container_tool.lib.tasks.test.test_container_conten
 @cli_function
 def push_test_container(
         test_container_folder: str = TEST_CONTAINER_DEFAULT_DIRECTORY,
+        force_push: bool = False,
+        push_all: bool = False,
         force_rebuild: bool = False,
         force_rebuild_from: Tuple[str, ...] = tuple(),
         force_pull: bool = False,
@@ -28,7 +30,9 @@ def push_test_container(
         target_docker_username: Optional[str] = None,
         target_docker_password: Optional[str] = None,
         workers: int = 5,
-        task_dependencies_dot_file: Optional[str] = None) -> ImageInfo:
+        task_dependencies_dot_file: Optional[str] = None,
+        log_level: Optional[str] = None,
+        use_job_specific_log_file: bool = True) -> ImageInfo:
     """
     Push the test container docker image to the registry.
 
@@ -36,6 +40,8 @@ def push_test_container(
     """
     return api.push_test_container(
         test_container_content=build_test_container_content(test_container_folder),
+        force_push=force_push,
+        push_all=push_all,
         force_rebuild=force_rebuild,
         force_rebuild_from=force_rebuild_from,
         force_pull=force_pull,
@@ -53,4 +59,7 @@ def push_test_container(
         target_docker_username=target_docker_username,
         target_docker_password=target_docker_password,
         workers=workers,
-        task_dependencies_dot_file=task_dependencies_dot_file)
+        task_dependencies_dot_file=task_dependencies_dot_file,
+        log_level=log_level,
+        use_job_specific_log_file=use_job_specific_log_file
+    )
