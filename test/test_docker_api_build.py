@@ -25,7 +25,7 @@ class ApiDockerBuildTest(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     def test_docker_build(self):
-        image_infos = build(flavor_path=(str(self.test_environment.get_test_flavor()),),
+        image_infos = build(flavor_path=(str(exaslct_utils.get_test_flavor()),),
                             source_docker_repository_name=self.test_environment.docker_repository_name,
                             target_docker_repository_name=self.test_environment.docker_repository_name)
         assert len(image_infos) == 1
