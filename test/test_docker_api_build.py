@@ -25,7 +25,8 @@ class ApiDockerBuildTest(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     def test_docker_build(self):
-        image_infos = build(flavor_path=(str(exaslct_utils.get_test_flavor()),),
+        flavor_path = exaslct_utils.get_test_flavor()
+        image_infos = build(flavor_path=(str(flavor_path),),
                             source_docker_repository_name=self.test_environment.docker_repository_name,
                             target_docker_repository_name=self.test_environment.docker_repository_name)
         assert len(image_infos) == 1
@@ -34,7 +35,8 @@ class ApiDockerBuildTest(unittest.TestCase):
         self.assertTrue(len(images) > 0,
                         f"Did not found images for repository "
                         f"{self.test_environment.docker_repository_name} in list {images}")
-        image_infos_for_test_flavor = image_infos[str(self.test_environment.flavor_path.name)]
+        print("image_infos", image_infos.keys())
+        image_infos_for_test_flavor = image_infos[str(flavor_path)]
         for goal, image_info in image_infos_for_test_flavor.items():
             expected_prefix = f"{image_info.target_repository_name}:{image_info.target_tag}"
             images = find_images_by_tag(self.docker_client,
