@@ -45,7 +45,7 @@ class ExaslctTestEnvironmentWithCleanUp():
         self._itde_cli_test_environment = exaslct_test_environment.ExaslctTestEnvironment(
             test_object=test_object,
             executable=executable,
-            clean_images_at_close=clean_images_at_close,
+            clean_images_at_close=False,
             name=name
         )
 
@@ -115,7 +115,7 @@ class ExaslctTestEnvironmentWithCleanUp():
         self._itde_cli_test_environment.close()
 
     def clean_all_images(self):
-        self.run_command(f"{self.executable} clean-all-images", use_flavor_path=False, clean=True)
+        self.run_command(f"{self.executable} clean-all-images", use_flavor_path=True, clean=True)
 
 
 def get_full_test_container_folder_parameter() -> str:

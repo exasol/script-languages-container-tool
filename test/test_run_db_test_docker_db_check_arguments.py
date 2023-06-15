@@ -51,8 +51,8 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         Mem-Size appearently gets modified by COS during startup (apparently since docker-db 7.1.7).
         We need to change the check and round the final value from the ExaConf in the docker db.
         """
-        #Example "...{key} = 1.229 GiB...." => The regex extracts "1.229"
-        mem_size_matches = re.findall(f"MemSize = (\d+\.\d+) GiB", output)
+        # Example "...{key} = 1.229 GiB...." => The regex extracts "1.229"
+        mem_size_matches = re.findall(r"MemSize = (\d+\.\d+) GiB", output)
         self.assertEqual(len(mem_size_matches), 1)
         self.assertAlmostEqual(float(mem_size_matches[0]), float(mem_size), places=1)
 
