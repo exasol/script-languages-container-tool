@@ -28,6 +28,10 @@ class ExaslctApiTestEnvironmentWithCleanup():
     def docker_repository_name(self):
         return self._itde_api_test_environement.docker_repository_name
 
+    @docker_repository_name.setter
+    def docker_repository_name(self, value):
+        self._itde_api_test_environement.docker_repository_name = value
+
     @property
     def test_object(self):
         return self._itde_api_test_environement.test_object
@@ -165,7 +169,7 @@ class ExaslctTestEnvironmentWithCleanUp():
         self._itde_cli_test_environment.close()
 
     def clean_all_images(self):
-        self.run_command(f"{self.executable} clean-all-images", use_flavor_path=True, clean=True)
+        self.run_command(f"{self.executable} clean-all-images", use_flavor_path=False, clean=True)
 
 
 def get_full_test_container_folder_parameter() -> str:
