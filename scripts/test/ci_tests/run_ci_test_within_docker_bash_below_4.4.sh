@@ -12,8 +12,8 @@ echo "************* FINISHED BASH TEST *****"
 export EXASLCT_FORCE_REBUILD=1
 
 ./exaslct --help
-./exaslct export --flavor-path ./test/resources/test-flavor --export-path ./out
-./exaslct export --flavor-path "./test/resources/test-flavor spaces/real-test-flavor" --export-path ./out || (echo "spaces_failed" > "/tmp/spaces_failed")
+./exaslct export --flavor-path ./test/resources/flavors/test-flavor --export-path ./out
+./exaslct export --flavor-path "./test/resources/flavors/test-flavor spaces/real-test-flavor" --export-path ./out || (echo "spaces_failed" > "/tmp/spaces_failed")
 
 if [[ ! -e "/tmp/spaces_failed" ]]; then
   echo "Test with spaces didn't failed. This is not expected for bash 4.4- (${BASH_VERSION})"
