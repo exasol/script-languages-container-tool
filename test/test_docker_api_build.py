@@ -34,7 +34,7 @@ class ApiDockerBuildTest(unittest.TestCase):
         self.assertTrue(len(images) > 0,
                         f"Did not found images for repository "
                         f"{self.test_environment.docker_repository_name} in list {images}")
-        image_infos_for_test_flavor = image_infos[str(self.test_environment.flavor_path)]
+        image_infos_for_test_flavor = image_infos[str(self.test_environment.flavor_path.name)]
         for goal, image_info in image_infos_for_test_flavor.items():
             expected_prefix = f"{image_info.target_repository_name}:{image_info.target_tag}"
             images = find_images_by_tag(self.docker_client,
