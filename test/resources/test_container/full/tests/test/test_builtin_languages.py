@@ -1,27 +1,11 @@
 #!/usr/bin/env python3
+import time
 
 from exasol_python_test_framework import udf
 from exasol_python_test_framework import docker_db_environment
 
 
 class DockerDBEnvironmentTest(udf.TestCase):
-
-    def test_python(self):
-        schema = "DockerDBEnvironmentTest"
-        try:
-            self.query(udf.fixindent("DROP SCHEMA %s CASCADE" % schema), ignore_errors=True)
-            self.query(udf.fixindent("CREATE SCHEMA %s" % schema))
-            self.query(udf.fixindent("OPEN SCHEMA %s" % schema))
-            self.query(udf.fixindent('''
-                CREATE OR REPLACE PYTHON SCALAR SCRIPT test_python(i int) returns int AS
-                
-                def run(ctx):
-                  return 0
-                /
-                '''))
-            self.query("select test_python(0)")
-        finally:
-            self.query(udf.fixindent("DROP SCHEMA %s CASCADE" % schema))
 
     def test_python3(self):
         schema = "DockerDBEnvironmentTest"

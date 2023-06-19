@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
+import time
 
 from exasol_python_test_framework import udf
 from exasol_python_test_framework import docker_db_environment
 
 
 class DockerDBEnvironmentTest(udf.TestCase):
+    def setUp(self):
+        # The extraction of the builtin language container takes long with Exasol 8
+        time.sleep(2*60)
 
     @udf.skipIfNot(docker_db_environment.is_available, reason="This test requires a docker-db environment")
     def test_connect_from_udf_to_other_container(self):
@@ -15,7 +19,7 @@ class DockerDBEnvironmentTest(udf.TestCase):
             self.query(udf.fixindent("CREATE SCHEMA %s" % schema))
             self.query(udf.fixindent("OPEN SCHEMA %s" % schema))
             self.query(udf.fixindent('''
-                CREATE OR REPLACE PYTHON SCALAR SCRIPT connect_container(host varchar(1000), port int)  returns int AS
+                CREATE OR REPLACE PYTHON3 SCALAR SCRIPT connect_container(host varchar(1000), port int)  returns int AS
                 import socket
                 def run(ctx):
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
