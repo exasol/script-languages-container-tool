@@ -1,8 +1,10 @@
 import re
 import unittest
+from io import StringIO
 from pathlib import Path
 
 import docker
+from configobj import ConfigObj
 from exasol_integration_test_docker_environment.lib.docker.container.utils import remove_docker_container
 from exasol_integration_test_docker_environment.lib.docker.volumes.utils import remove_docker_volumes
 from exasol_integration_test_docker_environment.lib.data.environment_info import EnvironmentInfo
@@ -52,11 +54,15 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         We need to allow zero or more whitespace between the numbder and the unit.
         Further, we need to compare the number after rounding.
         """
-        mem_size_matches = re.findall(r"MemSize = (\d+\.\d+)\s*GiB", output)
+        config = ConfigObj(StringIO(output))
+
+        mem_size_value = config["DB : DB1"]["MemSize"]
+        mem_size_matches = re.findall(r"(\d+\.\d+)\s*GiB", mem_size_value)
         self.assertEqual(len(mem_size_matches), 1)
         self.assertAlmostEqual(float(mem_size_matches[0]), float(mem_size), places=1)
 
-        disk_size_matches = re.findall(r"Size = (\d+\.\d+)\s*GiB", output)
+        disk_size_value = config["EXAVolume : DataVolume1"]["Size"]
+        disk_size_matches = re.findall(r"(\d+\.\d+)\s*GiB", disk_size_value)
         self.assertEqual(len(disk_size_matches), 1)
         self.assertAlmostEqual(float(disk_size_matches[0]), float(disk_size), places=1)
 
