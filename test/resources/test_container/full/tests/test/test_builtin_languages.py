@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-import time
 
 from exasol_python_test_framework import udf
-from exasol_python_test_framework import docker_db_environment
 
 
 class DockerDBEnvironmentTest(udf.TestCase):

@@ -93,7 +93,6 @@ class ExaslctTestEnvironmentWithCleanUp():
                  clean_images_at_close=True,
                  name=None,
                  flavor_path: Path = FLAVORS_ROOT_DIRECTORY / "test-flavor"):
-        print("flavor_path", flavor_path)
         self._flavor_path = flavor_path
         self._clean_images_at_close = clean_images_at_close
         self._itde_cli_test_environment = exaslct_test_environment.ExaslctTestEnvironment(
