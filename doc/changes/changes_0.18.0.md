@@ -12,7 +12,7 @@ t.b.d
 
 ## Refactorings
 
-N/A
+ - #201: Updated to integration-test-docker-environment 1.7.1
 
 ## Bug Fixes
 

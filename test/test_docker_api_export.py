@@ -19,10 +19,10 @@ class ApiDockerExportTest(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     def test_docker_export(self):
-        export_result = api.export(flavor_path=(str(self.test_environment.get_test_flavor()),),
+        export_result = api.export(flavor_path=(str(exaslct_utils.get_test_flavor()),),
                                    export_path=self.export_path)
         self.assertEqual(len(export_result.export_infos), 1)
-        export_infos_for_flavor = export_result.export_infos[str(self.test_environment.get_test_flavor())]
+        export_infos_for_flavor = export_result.export_infos[str(exaslct_utils.get_test_flavor())]
         self.assertEqual(len(export_infos_for_flavor), 1)
         export_info = export_infos_for_flavor["release"]
         exported_files = os.listdir(self.export_path)

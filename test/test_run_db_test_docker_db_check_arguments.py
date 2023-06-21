@@ -1,8 +1,10 @@
 import re
 import unittest
+from io import StringIO
 from pathlib import Path
 
 import docker
+from configobj import ConfigObj
 from exasol_integration_test_docker_environment.lib.docker.container.utils import remove_docker_container
 from exasol_integration_test_docker_environment.lib.docker.volumes.utils import remove_docker_volumes
 from exasol_integration_test_docker_environment.lib.data.environment_info import EnvironmentInfo
@@ -48,15 +50,21 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         return_code = exit_result[0]
         self.assertEqual(return_code, 0)
         """
-        Mem-Size appearently gets modified by COS during startup (apparently since docker-db 7.1.7).
-        We need to change the check and round the final value from the ExaConf in the docker db.
+        The size values might be modified by COS during startup (apparently since docker-db 7.1.7).
+        We need to allow zero or more whitespace between the numbder and the unit.
+        Further, we need to compare the number after rounding.
         """
-        #Example "...{key} = 1.229 GiB...." => The regex extracts "1.229"
-        mem_size_matches = re.findall(f"MemSize = (\d+\.\d+) GiB", output)
+        config = ConfigObj(StringIO(output))
+
+        mem_size_value = config["DB : DB1"]["MemSize"]
+        mem_size_matches = re.findall(r"(\d+\.\d+)\s*GiB", mem_size_value)
         self.assertEqual(len(mem_size_matches), 1)
         self.assertAlmostEqual(float(mem_size_matches[0]), float(mem_size), places=1)
 
-        self.assertIn(f" Size = {disk_size}GiB", output)
+        disk_size_value = config["EXAVolume : DataVolume1"]["Size"]
+        disk_size_matches = re.findall(r"(\d+\.\d+)\s*GiB", disk_size_value)
+        self.assertEqual(len(disk_size_matches), 1)
+        self.assertAlmostEqual(float(disk_size_matches[0]), float(disk_size), places=1)
 
     def remove_docker_environment(self):
         env_info = self._getEnvironmentInfo()
