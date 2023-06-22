@@ -22,18 +22,14 @@ from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_
 class TestRunnerDBTestTask(FlavorBaseTask,
                            SpawnTestEnvironmentParameter,
                            RunDBTestsInTestConfigParameter):
-    # TODO execute tests only if the exported container is new build
-    #       - a pulled one is ok,
-    #       - needs change in image-info and export-info)
-    #       - add options force tests
-    #       - only possible if the hash of exaslc also goes into the image hashes
-
     reuse_uploaded_container = luigi.BoolParameter(False, significant=False)
     release_goal = luigi.Parameter()
 
     def __init__(self, *args, **kwargs):
         self.test_environment_info = None
         super().__init__(*args, **kwargs)
+        print("TestRunnerDBTestTask_args",args)
+        print("TestRunnerDBTestTask_kwargs", kwargs)
 
     def register_required(self):
         self.register_export_container()
@@ -70,7 +66,10 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         yield from self.upload_container(database_credentials,
                                          export_info,
                                          reuse_release_container)
-        yield from self.populate_test_engine_data(self.test_environment_info, database_credentials)
+        reuse_databse_setup = not (self.reuse_database_setup and self.test_environment_info.database_info.reused)
+        print("reuse_databse_setup", reuse_databse_setup)
+        if reuse_databse_setup:
+            yield from self.populate_test_engine_data(self.test_environment_info, database_credentials)
         test_results = yield from self.run_test(self.test_environment_info, export_info)
         self.return_object(test_results)
 
