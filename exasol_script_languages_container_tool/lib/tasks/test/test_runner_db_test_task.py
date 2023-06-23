@@ -28,8 +28,6 @@ class TestRunnerDBTestTask(FlavorBaseTask,
     def __init__(self, *args, **kwargs):
         self.test_environment_info = None
         super().__init__(*args, **kwargs)
-        print("TestRunnerDBTestTask_args",args)
-        print("TestRunnerDBTestTask_kwargs", kwargs)
 
     def register_required(self):
         self.register_export_container()
@@ -67,7 +65,6 @@ class TestRunnerDBTestTask(FlavorBaseTask,
                                          export_info,
                                          reuse_release_container)
         reuse_databse_setup = not (self.reuse_database_setup and self.test_environment_info.database_info.reused)
-        print("reuse_databse_setup", reuse_databse_setup)
         if reuse_databse_setup:
             yield from self.populate_test_engine_data(self.test_environment_info, database_credentials)
         test_results = yield from self.run_test(self.test_environment_info, export_info)
