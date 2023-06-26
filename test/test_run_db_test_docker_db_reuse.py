@@ -10,7 +10,7 @@ import utils as exaslct_utils
 from typing import Dict, List
 
 
-def get_docker_container_ids(self, *names) -> Dict[str, str]:
+def get_docker_container_ids(*names) -> Dict[str, str]:
     result = {}
     with ContextDockerClient() as docker_client:
         for name in names:
