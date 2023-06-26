@@ -7,6 +7,16 @@ from exasol_integration_test_docker_environment.lib.docker.container.utils impor
 
 import utils as exaslct_utils
 
+from typing import Dict, List
+
+
+def get_docker_container_ids(self, *names) -> Dict[str, str]:
+    result = {}
+    with ContextDockerClient() as docker_client:
+        for name in names:
+            result[name] = docker_client.containers.get(name).id
+    return result
+
 
 class RunDBTestDockerDBReuseTest(unittest.TestCase):
 
@@ -25,29 +35,24 @@ class RunDBTestDockerDBReuseTest(unittest.TestCase):
     def remove_docker_container(self):
         remove_docker_container([self._test_container_name, self._db_container_name])
 
-from typing import Dict
-
-    def get_docker_container_ids(self, *names) -> Dict[str, str]:
-        result = {}
-        with ContextDockerClient() as docker_client:
-            for name in names:
-                result[name] = docker_client.containers.get(name).id
-        return result
-
     def test_reuse(self):
-        def container_ids(command: List[str]) -> Dict[str, str]:
+        def run_command():
+            command = [f"{self.test_environment.executable}",
+                       f"run-db-test",
+                       f"{exaslct_utils.get_full_test_container_folder_parameter()}",
+                       "--reuse-test-environment"]
             self.test_environment.run_command(" ".join(command), track_task_dependencies=True)
+
+        def container_ids() -> Dict[str, str]:
             return get_docker_container_ids(
                 self._test_container_name,
                 self._db_container_name,
             )
 
-        command = [f"{self.test_environment.executable}",
-                   f"run-db-test",
-                   f"{exaslct_utils.get_full_test_container_folder_parameter()}",
-                   "--reuse-test-environment"]
-        old_ids = container_ids(command)
-        new_ids = container_ids(command)
+        run_command()
+        old_ids = container_ids()
+        run_command()
+        new_ids = container_ids()
         self.assertEqual(old_ids, new_ids)
 
 
