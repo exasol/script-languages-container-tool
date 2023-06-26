@@ -25,25 +25,30 @@ class RunDBTestDockerDBReuseTest(unittest.TestCase):
     def remove_docker_container(self):
         remove_docker_container([self._test_container_name, self._db_container_name])
 
-    def get_docker_container_id(self, container: str) -> str:
+from typing import Dict
+
+    def get_docker_container_ids(self, *names) -> Dict[str, str]:
+        result = {}
         with ContextDockerClient() as docker_client:
-            print("containerscontainers",[c.name for c in docker_client.containers.list()])
-            return docker_client.containers.get(container).id
+            for name in names:
+                result[name] = docker_client.containers.get(name).id
+        return result
 
     def test_reuse(self):
+        def container_ids(command: List[str]) -> Dict[str, str]:
+            self.test_environment.run_command(" ".join(command), track_task_dependencies=True)
+            return get_docker_container_ids(
+                self._test_container_name,
+                self._db_container_name,
+            )
+
         command = [f"{self.test_environment.executable}",
                    f"run-db-test",
                    f"{exaslct_utils.get_full_test_container_folder_parameter()}",
                    "--reuse-test-environment"]
-        command_str = " ".join(command)
-        self.test_environment.run_command(command_str, track_task_dependencies=True)
-        old_test_container_id = self.get_docker_container_id(self._test_container_name)
-        old_db_container_id = self.get_docker_container_id(self._db_container_name)
-        self.test_environment.run_command(command_str, track_task_dependencies=True)
-        new_test_container_id = self.get_docker_container_id(self._test_container_name)
-        new_db_container_id = self.get_docker_container_id(self._db_container_name)
-        self.assertEqual(old_test_container_id, new_test_container_id)
-        self.assertEqual(old_db_container_id, new_db_container_id)
+        old_ids = container_ids(command)
+        new_ids = container_ids(command)
+        self.assertEqual(old_ids, new_ids)
 
 
 if __name__ == '__main__':
