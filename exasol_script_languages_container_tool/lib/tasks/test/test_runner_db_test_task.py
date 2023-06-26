@@ -81,8 +81,8 @@ class TestRunnerDBTestTask(FlavorBaseTask,
 
     def populate_test_engine_data(self, test_environment_info: EnvironmentInfo,
                                   database_credentials: DatabaseCredentials) -> None:
-        reuse = not (self.reuse_database_setup and self.test_environment_info.database_info.reused)
-        if reuse:
+        reuse = self.reuse_database_setup and self.test_environment_info.database_info.reused
+        if not reuse:
             task = self.create_child_task(
                 PopulateTestEngine,
                 test_environment_info=test_environment_info,
