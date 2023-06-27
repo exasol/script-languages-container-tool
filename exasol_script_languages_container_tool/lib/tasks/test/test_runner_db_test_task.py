@@ -22,12 +22,6 @@ from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_
 class TestRunnerDBTestTask(FlavorBaseTask,
                            SpawnTestEnvironmentParameter,
                            RunDBTestsInTestConfigParameter):
-    # TODO execute tests only if the exported container is new build
-    #       - a pulled one is ok,
-    #       - needs change in image-info and export-info)
-    #       - add options force tests
-    #       - only possible if the hash of exaslc also goes into the image hashes
-
     reuse_uploaded_container = luigi.BoolParameter(False, significant=False)
     release_goal = luigi.Parameter()
 
@@ -62,41 +56,42 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         export_info = export_infos[self.release_goal]
         self.test_environment_info = self.get_values_from_future(
             self._test_environment_info_future)  # type: EnvironmentInfo
-        reuse_release_container = \
-            self.reuse_database and \
-            self.reuse_uploaded_container and \
-            not export_info.is_new
         database_credentials = self.get_database_credentials()
         yield from self.upload_container(database_credentials,
-                                         export_info,
-                                         reuse_release_container)
+                                         export_info)
         yield from self.populate_test_engine_data(self.test_environment_info, database_credentials)
         test_results = yield from self.run_test(self.test_environment_info, export_info)
         self.return_object(test_results)
 
-    def upload_container(self, database_credentials, export_info, reuse_release_container):
+    def upload_container(self, database_credentials: DatabaseCredentials, export_info: ExportInfo):
+        reuse = \
+            self.reuse_database and \
+            self.reuse_uploaded_container and \
+            not export_info.is_new
         upload_task = self.create_child_task_with_common_params(
             UploadExportedContainer,
             export_info=export_info,
             environment_name=self.test_environment_info.name,
             test_environment_info=self.test_environment_info,
             release_name=export_info.name,
-            reuse_uploaded=reuse_release_container,
+            reuse_uploaded=reuse,
             bucketfs_write_password=database_credentials.bucketfs_write_password
         )
         yield from self.run_dependencies(upload_task)
 
     def populate_test_engine_data(self, test_environment_info: EnvironmentInfo,
                                   database_credentials: DatabaseCredentials) -> None:
-        task = self.create_child_task(
-            PopulateTestEngine,
-            test_environment_info=test_environment_info,
-            environment_name=self.test_environment_info.name,
-            db_user=database_credentials.db_user,
-            db_password=database_credentials.db_password,
-            bucketfs_write_password=database_credentials.bucketfs_write_password
-        )
-        yield from self.run_dependencies(task)
+        reuse = self.reuse_database_setup and self.test_environment_info.database_info.reused
+        if not reuse:
+            task = self.create_child_task(
+                PopulateTestEngine,
+                test_environment_info=test_environment_info,
+                environment_name=self.test_environment_info.name,
+                db_user=database_credentials.db_user,
+                db_password=database_credentials.db_password,
+                bucketfs_write_password=database_credentials.bucketfs_write_password
+            )
+            yield from self.run_dependencies(task)
 
     def get_database_credentials(self) -> DatabaseCredentials:
         if self.environment_type == EnvironmentType.external_db:
