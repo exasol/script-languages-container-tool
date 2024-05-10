@@ -57,7 +57,7 @@ check_poetry() {
 check_python_version() {
   echo -n "Python available? "
   if [ -z "$PYTHON_BIN" ]; then
-    ACCEPTABLE_PYTHON_EXECUTABLES=("python3.8" "python3.9" "python3.10")
+    ACCEPTABLE_PYTHON_EXECUTABLES=("python3.10" "python3.11" "python3.12")
     for python_executable in "${ACCEPTABLE_PYTHON_EXECUTABLES[@]}"; do
       PYTHON_BIN=$(command -v "$python_executable")
       if [ -n "$PYTHON_BIN" ]; then
