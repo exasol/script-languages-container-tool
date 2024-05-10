@@ -2,6 +2,13 @@ import pathlib
 from typing import Generator, Any, Dict
 
 import luigi
+from exasol_integration_test_docker_environment.lib.base.db_os_executor import DbOsExecFactory, SshExecFactory, \
+    DockerClientFactory, DockerExecFactory
+from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
+from exasol_integration_test_docker_environment.lib.data.database_info import DatabaseInfo
+from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import \
+    DbOsAccess
+
 from exasol_script_languages_container_tool.lib.tasks.export.export_containers import ExportFlavorContainer
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
 from exasol_script_languages_container_tool.lib.tasks.test.populate_test_engine import PopulateTestEngine
@@ -63,6 +70,12 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         test_results = yield from self.run_test(self.test_environment_info, export_info)
         self.return_object(test_results)
 
+    def _executor_factory(self, database_info: DatabaseInfo) -> DbOsExecFactory:
+        if self.db_os_access == DbOsAccess.SSH:
+            return SshExecFactory.from_database_info(database_info)
+        client_factory = DockerClientFactory(timeout=100000)
+        return DockerExecFactory(database_info.container_info.db_container_name, client_factory)
+
     def upload_container(self, database_credentials: DatabaseCredentials, export_info: ExportInfo):
         reuse = \
             self.reuse_database and \
@@ -75,7 +88,8 @@ class TestRunnerDBTestTask(FlavorBaseTask,
             test_environment_info=self.test_environment_info,
             release_name=export_info.name,
             reuse_uploaded=reuse,
-            bucketfs_write_password=database_credentials.bucketfs_write_password
+            bucketfs_write_password=database_credentials.bucketfs_write_password,
+            executor_factory=self._executor_factory(self.test_environment_info.database_info)
         )
         yield from self.run_dependencies(upload_task)
 

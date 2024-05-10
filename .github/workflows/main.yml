@@ -32,7 +32,7 @@ jobs:
         exasol_version:
           - "default"
         python_version:
-          - 3.8
+          - 3.10
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
     name: ${{ matrix.test-path.name }}
