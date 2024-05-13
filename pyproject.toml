@@ -22,7 +22,8 @@ importlib_metadata = ">=4.6.0"
 importlib-resources = ">=5.4.0"
 networkx = "2.8.2" # We pinned networkx to this version, because in newer versions it throws an exception, see https://github.com/exasol/integration-test-docker-environment/issues/228
 exasol-integration-test-docker-environment = "^1.7.1"
-docker = ">=7.0.0"
+docker = { version = ">=4.0.0,<7.0.0", markers = "sys_platform != 'win32'" }
+
 # The current combination of dependencies for ITDE and Luigi is not compatible with projects that run on Python 3.8.
 # The latest version of docutils, version 0.21.1, is required to run on Python 3.9 or higher.
 # As a temporary fix, until support for Python 3.8 is dropped (which is estimated to be around 6 months),
