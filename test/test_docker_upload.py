@@ -31,8 +31,8 @@ class DockerUploadTest(unittest.TestCase):
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join([
-            f"--database-host {self.docker_environment.database_host}",
-            f"--bucketfs-port {self.docker_environment.bucketfs_port}",
+            f"--database-host {self.docker_environment.ports.database}",
+            f"--bucketfs-port {self.docker_environment.ports.bucketfs}",
             f"--bucketfs-username {self.docker_environment.bucketfs_username}",
             f"--bucketfs-password {self.docker_environment.bucketfs_password}",
             f"--bucketfs-name {self.bucketfs_name}",
@@ -58,8 +58,8 @@ class DockerUploadTest(unittest.TestCase):
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join([
-            f"--database-host {self.docker_environment.database_host}",
-            f"--bucketfs-port {self.docker_environment.bucketfs_port}",
+            f"--database-host {self.docker_environment.ports.database}",
+            f"--bucketfs-port {self.docker_environment.ports.bucketfs}",
             f"--bucketfs-username {self.docker_environment.bucketfs_username}",
             f"--bucketfs-password {self.docker_environment.bucketfs_password}",
             f"--bucketfs-name {self.bucketfs_name}",
@@ -83,8 +83,8 @@ class DockerUploadTest(unittest.TestCase):
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join([
-            f"--database-host {self.docker_environment.database_host}",
-            f"--bucketfs-port {self.docker_environment.bucketfs_port}",
+            f"--database-host {self.docker_environment.ports.database}",
+            f"--bucketfs-port {self.docker_environment.ports.bucketfs}",
             f"--bucketfs-username {self.docker_environment.bucketfs_username}",
             f"--bucketfs-password invalid",
             f"--bucketfs-name {self.bucketfs_name}",

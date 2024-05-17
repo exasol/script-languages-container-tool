@@ -74,7 +74,7 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         if self.db_os_access == DbOsAccess.SSH:
             return SshExecFactory.from_database_info(database_info)
         client_factory = DockerClientFactory(timeout=100000)
-        return DockerExecFactory(database_info.container_info.db_container_name, client_factory)
+        return DockerExecFactory(database_info.container_info.container_name, client_factory)
 
     def upload_container(self, database_credentials: DatabaseCredentials, export_info: ExportInfo):
         reuse = \
