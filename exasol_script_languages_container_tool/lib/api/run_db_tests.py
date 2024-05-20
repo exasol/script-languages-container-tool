@@ -5,6 +5,8 @@ from exasol_integration_test_docker_environment.cli.options.test_environment_opt
 from exasol_integration_test_docker_environment.lib.api.common import run_task, generate_root_task, \
     set_docker_repository_config, set_build_config, import_build_steps, cli_function
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import DependencyLoggerBaseTask
+from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import \
+    DbOsAccess
 
 from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.test.test_container import TestContainer, AllTestsResult
@@ -126,6 +128,7 @@ def run_db_test(flavor_path: Tuple[str, ...],
                                   reuse_database_setup=reuse_database_setup,
                                   reuse_test_container=reuse_test_container,
                                   reuse_database=reuse_database,
+                                  db_os_access=DbOsAccess[db_os_access],
                                   no_test_container_cleanup_after_success=reuse_test_container,
                                   no_test_container_cleanup_after_failure=reuse_test_container,
                                   no_database_cleanup_after_success=reuse_database,

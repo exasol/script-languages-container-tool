@@ -2,8 +2,9 @@ import pathlib
 from typing import Generator, Any, Dict
 
 import luigi
+from docker.models.containers import ExecResult
 from exasol_integration_test_docker_environment.lib.base.db_os_executor import DbOsExecFactory, SshExecFactory, \
-    DockerClientFactory, DockerExecFactory
+    DockerClientFactory, DockerExecFactory, DbOsExecutor
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
 from exasol_integration_test_docker_environment.lib.data.database_info import DatabaseInfo
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import \
@@ -24,6 +25,26 @@ from exasol_integration_test_docker_environment.lib.data.environment_type import
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.spawn_test_environment_parameter import \
     SpawnTestEnvironmentParameter
 from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_environment import SpawnTestEnvironment
+
+
+class DummyExecutor(DbOsExecutor):
+
+    def exec(self, cmd: str) -> ExecResult:
+        raise RuntimeError("Not supposed to be called.")
+
+    def prepare(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type_, value, traceback):
+        pass
+
+
+class DummyExecFactory(DbOsExecFactory):
+    def executor(self) -> DbOsExecutor:
+        return DummyExecutor()
 
 
 class TestRunnerDBTestTask(FlavorBaseTask,
@@ -71,10 +92,13 @@ class TestRunnerDBTestTask(FlavorBaseTask,
         self.return_object(test_results)
 
     def _executor_factory(self, database_info: DatabaseInfo) -> DbOsExecFactory:
+
         if self.db_os_access == DbOsAccess.SSH:
             return SshExecFactory.from_database_info(database_info)
         client_factory = DockerClientFactory(timeout=100000)
-        return DockerExecFactory(database_info.container_info.container_name, client_factory)
+        if database_info.container_info is not None:
+            return DockerExecFactory(database_info.container_info.container_name, client_factory)
+        return DummyExecFactory()
 
     def upload_container(self, database_credentials: DatabaseCredentials, export_info: ExportInfo):
         reuse = \
