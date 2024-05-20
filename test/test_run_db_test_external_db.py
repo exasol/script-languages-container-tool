@@ -23,8 +23,8 @@ class DockerRunDBTestExternalDBTest(unittest.TestCase):
         arguments = " ".join([
             f"--environment-type external_db",
             f"--external-exasol-db-host {self.docker_environment.database_host}",
-            f"--external-exasol-db-port {self.docker_environment.database_port}",
-            f"--external-exasol-bucketfs-port {self.docker_environment.bucketfs_port}",
+            f"--external-exasol-db-port {self.docker_environment.ports.database}",
+            f"--external-exasol-bucketfs-port {self.docker_environment.ports.bucketfs}",
             f"--external-exasol-db-user {self.docker_environment.db_username}",
             f"--external-exasol-db-password {self.docker_environment.db_password}",
             f"--external-exasol-bucketfs-write-password {self.docker_environment.bucketfs_password}",
