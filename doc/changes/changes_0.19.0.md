@@ -1,4 +1,4 @@
-9 Script-Languages-Container-Tool 0.19.0, released 2024-05-10
+9 Script-Languages-Container-Tool 0.19.0, released 2024-05-21
 
 Code name: Updated dependencies
 
@@ -6,7 +6,7 @@ Code name: Updated dependencies
 
 This releases updated the dependency to exasol-integration-test-docker-environment.
 
-## Bugs
+## Refactorings
 
-- #209: Fixed tests
+- #212: Updating dependencies and Python
 
