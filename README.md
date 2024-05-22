@@ -26,7 +26,7 @@ the following prerequisites:
       * sha512sum
       * sed
     * [curl](https://curl.se/)
-    * Python 3 (>=3.8)
+    * Python 3 (>=3.10)
       * Pip
 
 

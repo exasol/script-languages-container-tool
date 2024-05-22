@@ -106,7 +106,7 @@ class RunDBTest(FlavorBaseTask,
     def generate_test_command(self) -> str:
         credentials = f"--user '{self.db_user}' --password '{self.db_password}'"
         log_level = f"--loglevel={self.test_log_level}"
-        server = f"--server '{self._database_info.host}:{self._database_info.db_port}'"
+        server = f"--server '{self._database_info.host}:{self._database_info.ports.database}'"
         environment = "--driver=/downloads/ODBC/lib/linux/x86_64/libexaodbc-uo2214lv2.so  " \
                       "--jdbc-path /downloads/JDBC/exajdbc.jar"
         language_definition = f"--script-languages '{self.language_definition}'"
