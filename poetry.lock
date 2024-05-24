@@ -409,13 +409,13 @@ files = [
 
 [[package]]
 name = "exasol-bucketfs"
-version = "0.10.0"
+version = "0.11.0"
 description = "BucketFS utilities for the Python programming language"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "exasol_bucketfs-0.10.0-py3-none-any.whl", hash = "sha256:4f5aa81c31c5e03f19daa04d8b455ed09740f9e82bc53f3f9cb47db025146625"},
-    {file = "exasol_bucketfs-0.10.0.tar.gz", hash = "sha256:033ee923728037af4d7771d9c6855e9eed2389d842c98a8456f937c917c395f8"},
+    {file = "exasol_bucketfs-0.11.0-py3-none-any.whl", hash = "sha256:9eb42c6df5804aa104646e141bd22f4f85c43cc9d563254f9b9ab7293a574120"},
+    {file = "exasol_bucketfs-0.11.0.tar.gz", hash = "sha256:6dc2639336816dc57383095eafbfd811ade737f9290191ee5cefa55a22f581df"},
 ]
 
 [package.dependencies]
@@ -471,13 +471,13 @@ simplejson = ">=3.16.0"
 
 [[package]]
 name = "exasol-saas-api"
-version = "0.5.0"
+version = "0.6.0"
 description = "API enabling Python applications connecting to Exasol database SaaS instances and using their SaaS services"
 optional = false
 python-versions = "<4.0,>=3.8.0"
 files = [
-    {file = "exasol_saas_api-0.5.0-py3-none-any.whl", hash = "sha256:a2b81ad4100dc6d2f0f8dc6d0e2b18a0f67d04c3f7d2eb117e8038fe9db87eee"},
-    {file = "exasol_saas_api-0.5.0.tar.gz", hash = "sha256:164f31c23fc54ddda18b0a881880b91cff6cd07926f73c154a9b8f44f4cf9575"},
+    {file = "exasol_saas_api-0.6.0-py3-none-any.whl", hash = "sha256:d6ff6501e10e97352459cd853f47053ed3affcc6d7c733debbe80b3f8c709aaa"},
+    {file = "exasol_saas_api-0.6.0.tar.gz", hash = "sha256:195ad5aaf15be270838e08b2e4a9fddb7981faf33ee00ed68042c5707d90612f"},
 ]
 
 [package.dependencies]
@@ -1108,13 +1108,13 @@ files = [
 
 [[package]]
 name = "requests"
-version = "2.31.0"
+version = "2.32.2"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "requests-2.31.0-py3-none-any.whl", hash = "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"},
-    {file = "requests-2.31.0.tar.gz", hash = "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"},
+    {file = "requests-2.32.2-py3-none-any.whl", hash = "sha256:fc06670dd0ed212426dfeb94fc1b983d917c4f9847c863f313c9dfaaffb7c23c"},
+    {file = "requests-2.32.2.tar.gz", hash = "sha256:dd951ff5ecf3e3b3aa26b40703ba77495dab41da839ae72ef3c8e5d8e2433289"},
 ]
 
 [package.dependencies]
@@ -1370,13 +1370,13 @@ test = ["mypy (>=1.2.0)", "pytest (>=7)"]
 
 [[package]]
 name = "types-requests"
-version = "2.32.0.20240521"
+version = "2.32.0.20240523"
 description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-requests-2.32.0.20240521.tar.gz", hash = "sha256:c5c4a0ae95aad51f1bf6dae9eed04a78f7f2575d4b171da37b622e08b93eb5d3"},
-    {file = "types_requests-2.32.0.20240521-py3-none-any.whl", hash = "sha256:ab728ba43ffb073db31f21202ecb97db8753ded4a9dc49cb480d8a5350c5c421"},
+    {file = "types-requests-2.32.0.20240523.tar.gz", hash = "sha256:26b8a6de32d9f561192b9942b41c0ab2d8010df5677ca8aa146289d11d505f57"},
+    {file = "types_requests-2.32.0.20240523-py3-none-any.whl", hash = "sha256:f19ed0e2daa74302069bbbbf9e82902854ffa780bc790742a810a9aaa52f65ec"},
 ]
 
 [package.dependencies]
@@ -1384,13 +1384,13 @@ urllib3 = ">=2"
 
 [[package]]
 name = "typing-extensions"
-version = "4.11.0"
+version = "4.12.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "typing_extensions-4.11.0-py3-none-any.whl", hash = "sha256:c1f94d72897edaf4ce775bb7558d5b79d8126906a14ea5ed1635921406c0387a"},
-    {file = "typing_extensions-4.11.0.tar.gz", hash = "sha256:83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"},
+    {file = "typing_extensions-4.12.0-py3-none-any.whl", hash = "sha256:b349c66bea9016ac22978d800cfff206d5f9816951f12a7d0ec5578b0a819594"},
+    {file = "typing_extensions-4.12.0.tar.gz", hash = "sha256:8cbcdc8606ebcb0d95453ad7dc5065e6237b6aa230a31e81d0f440c30fed5fd8"},
 ]
 
 [[package]]
@@ -1523,4 +1523,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4"
-content-hash = "052abcae475bc78ddd06e62e69265e6dba79890195def0de725ae0702b44ab8a"
+content-hash = "e19502a8339026b6047ae5a8ee4ea12a35feda2e90097a4327f571404cce9f5a"
