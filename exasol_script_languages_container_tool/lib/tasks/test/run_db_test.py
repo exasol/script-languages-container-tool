@@ -42,6 +42,9 @@ class RunDBTest(FlavorBaseTask,
             test_container = docker_client.containers.get(self._test_container_info.container_name)
             bash_cmd = self.generate_test_command()
             test_output_file = self.get_log_path().joinpath("test_output")
+            self.run_test_command(docker_client, f'bash -c "ls -lR /downloads/"', test_container, test_output_file)
+            self.logger.warn("ls command in docker container returned\n%s"
+                             % self.read_test_output_file(test_output_file))
             exit_code = self.run_test_command(docker_client, bash_cmd, test_container, test_output_file)
             self.handle_test_result(exit_code, test_output_file)
 
@@ -107,8 +110,10 @@ class RunDBTest(FlavorBaseTask,
         credentials = f"--user '{self.db_user}' --password '{self.db_password}'"
         log_level = f"--loglevel={self.test_log_level}"
         server = f"--server '{self._database_info.host}:{self._database_info.ports.database}'"
-        environment = "--driver=/downloads/ODBC/lib/libexaodbc.so  " \
-                      "--jdbc-path /downloads/JDBC/exajdbc.jar"
+        environment = (
+            "--driver=/downloads/ODBC/lib/libexaodbc.so " 
+            "--jdbc-path /downloads/JDBC/exajdbc.jar"
+        )
         language_definition = f"--script-languages '{self.language_definition}'"
         language_path = f"--lang-path /tests/lang"
         language = ""
