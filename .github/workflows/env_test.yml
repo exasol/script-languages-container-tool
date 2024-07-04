@@ -7,7 +7,7 @@ jobs:
   prep-testbed:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: set-matrix
         run: |
           sudo apt-get install jq
@@ -23,7 +23,7 @@ jobs:
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run all env tests
         run: ./scripts/test/ci_tests/run_ci_test.sh ${{ matrix.test-path }}
