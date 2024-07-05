@@ -1,6 +1,7 @@
 from collections import namedtuple
 from pathlib import Path
 from typing import Optional
+from io import StringIO
 
 import docker.models.containers
 import luigi
@@ -36,15 +37,28 @@ class RunDBTest(FlavorBaseTask,
         self._test_container_info = self.test_environment_info.test_container_info
         self._database_info = self.test_environment_info.database_info
 
+    def _run_command(
+            self,
+            docker_client: docker.client,
+            container: docker.models.containers.Container,
+            command: str,
+    ) -> str:
+        file = StringIO()
+        exit_code = exec_run_and_write_to_stream(docker_client, container, command, file, {})
+        if exit_code != 0:
+            raise Exception(f"Command returned {exit_code}: {command}")
+        return file.getvalue()
+
     def run_task(self):
         self.logger.info("Running db tests")
         with self._get_docker_client() as docker_client:
             test_container = docker_client.containers.get(self._test_container_info.container_name)
-            bash_cmd = self.generate_test_command()
+            odbc_driver = self._run_command(
+                docker_client, test_container,
+                "find /downloads/ODBC -name libexaodbc\*.so",
+            )
+            bash_cmd = self.generate_test_command(odbc_driver)
             test_output_file = self.get_log_path().joinpath("test_output")
-            self.run_test_command(docker_client, f'bash -c "ls -lR /downloads/"', test_container, test_output_file)
-            self.logger.warn("ls command in docker container returned\n%s"
-                             % self.read_test_output_file(test_output_file))
             exit_code = self.run_test_command(docker_client, bash_cmd, test_container, test_output_file)
             self.handle_test_result(exit_code, test_output_file)
 
@@ -106,30 +120,30 @@ class RunDBTest(FlavorBaseTask,
             exit_code = exec_run_and_write_to_stream(docker_client, test_container, bash_cmd, file, environment)
         return exit_code
 
-    def generate_test_command(self) -> str:
-        credentials = f"--user '{self.db_user}' --password '{self.db_password}'"
-        log_level = f"--loglevel={self.test_log_level}"
-        server = f"--server '{self._database_info.host}:{self._database_info.ports.database}'"
-        environment = (
-            "--driver=/downloads/ODBC/lib/libexaodbc.so " 
-            "--jdbc-path /downloads/JDBC/exajdbc.jar"
-        )
-        language_definition = f"--script-languages '{self.language_definition}'"
-        language_path = f"--lang-path /tests/lang"
-        language = ""
-        if self.language is not None:
-            language = "--lang %s" % self.language
-        test_restrictions = " ".join(self.test_restrictions)
-        test_file = f'"{self.test_file}"'
-        args = " ".join([test_file,
-                         server,
-                         credentials,
-                         language_definition,
-                         language_path,
-                         log_level,
-                         environment,
-                         language,
-                         test_restrictions])
-        cmd = f'cd /tests/test/; python3 {args}'
-        bash_cmd = f"""bash -c "{cmd}" """
-        return bash_cmd
+    def generate_test_command(self, odbc_driver: str) -> str:
+        def quote(s):
+            return f"'{s}'"
+
+        def command_line():
+            host = self._database_info.host
+            port = self._database_info.ports.database
+            yield from [
+                "cd /tests/test/;",
+                "python3",
+                quote(self.test_file),
+                "--server", quote(f"{host}:{port}"),
+                "--user", quote(self.db_user),
+                "--password", quote(self.db_password),
+                "--script-languages", quote(self.language_definition),
+                "--lang-path", "/tests/lang",
+                f"--loglevel={self.test_log_level}",
+                f"--driver={odbc_driver}",
+                # f"--driver=/downloads/ODBC/lib/linux/x86_64/libexaodbc-uo2214lv2.so",
+                "--jdbc-path" ,"/downloads/JDBC/exajdbc.jar",
+            ]
+            if self.language is not None:
+                yield from [ "--lang", self.language ]
+            yield from self.test_restrictions
+
+        command = " ".join([ e for e in command_line() ])
+        return f'bash -c "{command}"'
