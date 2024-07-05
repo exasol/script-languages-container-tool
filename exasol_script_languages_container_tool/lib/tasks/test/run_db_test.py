@@ -47,7 +47,7 @@ class RunDBTest(FlavorBaseTask,
         exit_code = exec_run_and_write_to_stream(docker_client, container, command, file, {})
         if exit_code != 0:
             raise Exception(f"Command returned {exit_code}: {command}")
-        return file.getvalue()
+        return file.getvalue().strip()
 
     def run_task(self):
         self.logger.info("Running db tests")
@@ -138,8 +138,7 @@ class RunDBTest(FlavorBaseTask,
                 "--lang-path", "/tests/lang",
                 f"--loglevel={self.test_log_level}",
                 f"--driver={odbc_driver}",
-                # f"--driver=/downloads/ODBC/lib/linux/x86_64/libexaodbc-uo2214lv2.so",
-                "--jdbc-path" ,"/downloads/JDBC/exajdbc.jar",
+                "--jdbc-path", "/downloads/JDBC/exajdbc.jar",
             ]
             if self.language is not None:
                 yield from [ "--lang", self.language ]
