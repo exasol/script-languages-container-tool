@@ -144,7 +144,7 @@ Instructions
 1. You can download the latest versions from https://downloads.exasol.com/clients-and-drivers/odbc.
 2. When downloading the ODBC driver, then please ensure to select the correct operating system, e.g. "Linux (x86_64)".
 3. Copy the download URL used by your browser into file [test/resources/test_container/full/build/Dockerfile](https://github.com/exasol/script-languages-container-tool/blob/main/test/resources/test_container/full/build/Dockerfile).
-4. Update the path to the resp. so files in file `lib/tasks/test/run_db_test.py`, method [command_line()](https://github.com/exasol/script-languages-container-tool/blob/main/exasol_script_languages_container_tool/lib/tasks/test/run_db_test.py#L110).
+4. Update the path to the resp. `*.so` files in file `lib/tasks/test/run_db_test.py`, method [command_line()](https://github.com/exasol/script-languages-container-tool/blob/main/exasol_script_languages_container_tool/lib/tasks/test/run_db_test.py#L110).
 
 ## Creating a Release
 
