@@ -36,5 +36,5 @@ RUN curl -s https://x-up.s3.amazonaws.com/7.x/24.1.1/EXAplus-24.1.1.tar.gz | tar
 ENV EXAPLUS=/downloads/EXAplus/exaplus
 
 COPY deps/requirements.txt requirements.txt
-RUN python3.10 -m pip install pip -u
+RUN python3.10 -m pip install pip --upgrade
 RUN python3.10 -m pip install -r requirements.txt
