@@ -25,7 +25,10 @@ python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=5.4.0"
 networkx = "^2.8.2"
-exasol-integration-test-docker-environment = "^3.0.0"
+# ITDE versions >= 3.1.0 bring in newer versions of Exasol database
+# see issues
+# ...
+exasol-integration-test-docker-environment = "^3.1.0"
 requests="^2.31.0"
 
 # previously pinned
