@@ -1,4 +1,4 @@
-# Script-Languages-Container-Tool 0.20.0, released 2024-07-04
+# Script-Languages-Container-Tool 0.20.0, released 2024-07-09
 
 Code name: Fix vulnerabilities
 
