@@ -18,6 +18,11 @@ from exasol_integration_test_docker_environment.lib.data.database_credentials im
 
 from exasol_script_languages_container_tool.lib.utils.docker_utils import exec_run_and_write_to_stream
 
+class DockerCommandException(Exception):
+    """
+    Executing a special command inside the TestContainer failed.
+    """
+
 
 class RunDBTest(FlavorBaseTask,
                 RunDBTestParameter,
@@ -46,7 +51,7 @@ class RunDBTest(FlavorBaseTask,
         file = StringIO()
         exit_code = exec_run_and_write_to_stream(docker_client, container, command, file, {})
         if exit_code != 0:
-            raise Exception(f"Command returned {exit_code}: {command}")
+            raise DockerCommandException(f"Command returned {exit_code}: {command}")
         return file.getvalue().strip()
 
     def run_task(self):
