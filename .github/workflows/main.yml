@@ -7,7 +7,7 @@ jobs:
   test-docker-starter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Test ./exaslct
         run: ./exaslct --help
@@ -15,7 +15,7 @@ jobs:
   prep-testbed:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: set-matrix
         run: |
           sudo apt-get install jq
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ${{ matrix.test-path.name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/actions/prepare_poetry_env
 
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: publish
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build new Docker image
         run: "bash scripts/build/build_docker_runner_image.sh"
       - name: Docker login

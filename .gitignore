@@ -140,3 +140,5 @@ dmypy.json
 # Project
 .build_output/
 
+# Emacs
+TAGS

@@ -15,8 +15,14 @@ class RunDBTestBuiltinLanguagesTest(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     def test_builtin_languages(self):
-        command = f"{self.test_environment.executable} run-db-test --test-file test_builtin_languages.py " \
-                  f"{exaslct_utils.get_full_test_container_folder_parameter()}"
+        # optionally add "--reuse-test-environment" here
+        command = " ".join([
+            str(self.test_environment.executable),
+            "run-db-test",
+            "--test-file",
+            "test_builtin_languages.py",
+            exaslct_utils.get_full_test_container_folder_parameter(),
+        ])
         self.test_environment.run_command(command, track_task_dependencies=True)
 
 
