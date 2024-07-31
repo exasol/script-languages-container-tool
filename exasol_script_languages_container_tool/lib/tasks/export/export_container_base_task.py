@@ -153,6 +153,8 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _pack_release_file(self, log_path: Path, extract_dir: str, release_file: Path):
         self.logger.info("Pack container file %s", release_file)
         extract_content = " ".join("'%s'" % file for file in os.listdir(extract_dir))
+        if not str(release_file).endswith("tar.gz"):
+            raise ValueError(f"Unexpected release file: '{release_file}'. Expected suffix 'tar.gz'.")
         tmp_release_file = release_file.with_suffix("") #cut off ".gz" from ".tar.gz"
         command = f"""tar -C '{extract_dir}' -vcf '{tmp_release_file}' {extract_content}"""
         self.run_command(command, "packing container file %s" % tmp_release_file,
