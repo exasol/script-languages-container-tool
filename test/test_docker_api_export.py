@@ -1,4 +1,5 @@
 import os
+import tarfile
 import unittest
 from pathlib import Path
 
@@ -28,6 +29,13 @@ class ApiDockerExportTest(unittest.TestCase):
         exported_files = os.listdir(self.export_path)
         export_path = Path(export_info.output_file)
         self.assertIn(export_path.name, exported_files)
+
+        # Verify that "exasol-manifest.json" is the last file in the Tar archive
+        with tarfile.open(export_path, "r:*") as tf:
+            tf_members = tf.getmembers()
+            last_tf_member = tf_members[-1]
+            assert last_tf_member.name == "exasol-manifest.json"
+            assert last_tf_member.path == "exasol-manifest.json"
 
 
 if __name__ == '__main__':
