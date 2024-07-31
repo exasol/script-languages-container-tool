@@ -163,10 +163,10 @@ class ExportContainerBaseTask(FlavorBaseTask):
         with open(manifest_file, "w") as f:
             print("{}", file=f)
         command = f"""tar -C '{extract_dir}' -rvf '{tmp_release_file}' exasol-manifest.json"""
-        self.run_command(command, "adding manifest to %s" % tmp_release_file,
+        self.run_command(command, f"adding manifest to '{tmp_release_file}'",
                          log_path.joinpath("pack_release_file.log"))
         command = f"""gzip {tmp_release_file}"""
-        self.run_command(command, "Creating %s" % release_file,
+        self.run_command(command, f"Creating '{release_file}'",
                          log_path.joinpath("pack_release_file.log"))
 
     @staticmethod
