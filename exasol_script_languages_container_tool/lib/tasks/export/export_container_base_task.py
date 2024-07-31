@@ -152,16 +152,16 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _pack_release_file(self, log_path: Path, extract_dir: str, release_file: Path):
         self.logger.info("Pack container file %s", release_file)
-        extract_content = " ".join("'%s'" % file for file in os.listdir(extract_dir))
+        extract_content = " ".join(f"'{file}'" for file in os.listdir(extract_dir))
         if not str(release_file).endswith("tar.gz"):
             raise ValueError(f"Unexpected release file: '{release_file}'. Expected suffix 'tar.gz'.")
         tmp_release_file = release_file.with_suffix("") #cut off ".gz" from ".tar.gz"
         command = f"""tar -C '{extract_dir}' -vcf '{tmp_release_file}' {extract_content}"""
-        self.run_command(command, "packing container file %s" % tmp_release_file,
+        self.run_command(command, f"packing container file {tmp_release_file}",
                          log_path.joinpath("pack_release_file.log"))
         manifest_file = os.path.join(extract_dir, "exasol-manifest.json")
         with open(manifest_file, "w") as f:
-            pass
+            print("{}", file=f)
         command = f"""tar -C '{extract_dir}' -rvf '{tmp_release_file}' exasol-manifest.json"""
         self.run_command(command, "adding manifest to %s" % tmp_release_file,
                          log_path.joinpath("pack_release_file.log"))
