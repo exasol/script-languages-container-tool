@@ -1,4 +1,5 @@
 import os
+import tarfile
 import unittest
 
 import utils as exaslct_utils
@@ -23,6 +24,14 @@ class DockerExportTest(unittest.TestCase):
                          sorted(['test-flavor_release.tar.gz', 'test-flavor_release.tar.gz.sha512sum']),
                          f"Did not found saved files for repository {self.test_environment.repository_name} "
                          f"in list {exported_files}")
+
+        #Verify that "exasol-manifest.json" is the last file in the Tar archive
+        with tarfile.open(os.path.join(self.export_path, 'test-flavor_release.tar.gz'), "r:*") as tf:
+            tf_members = tf.getmembers()
+            last_tf_member = tf_members[-1]
+            assert last_tf_member.name == "exasol-manifest.json"
+            assert last_tf_member.path == "exasol-manifest.json"
+
 
 
 if __name__ == '__main__':

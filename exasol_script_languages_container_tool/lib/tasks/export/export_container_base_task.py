@@ -153,8 +153,18 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _pack_release_file(self, log_path: Path, extract_dir: str, release_file: Path):
         self.logger.info("Pack container file %s", release_file)
         extract_content = " ".join("'%s'" % file for file in os.listdir(extract_dir))
-        command = f"""tar -C '{extract_dir}' -cvzf '{release_file}' {extract_content}"""
-        self.run_command(command, "packing container file %s" % release_file,
+        tmp_release_file = release_file.with_suffix("") #cut off ".gz" from ".tar.gz"
+        command = f"""tar -C '{extract_dir}' -vcf '{tmp_release_file}' {extract_content}"""
+        self.run_command(command, "packing container file %s" % tmp_release_file,
+                         log_path.joinpath("pack_release_file.log"))
+        manifest_file = os.path.join(extract_dir, "exasol-manifest.json")
+        with open(manifest_file, "w") as f:
+            pass
+        command = f"""tar -C '{extract_dir}' -rvf '{tmp_release_file}' exasol-manifest.json"""
+        self.run_command(command, "adding manifest to %s" % tmp_release_file,
+                         log_path.joinpath("pack_release_file.log"))
+        command = f"""gzip {tmp_release_file}"""
+        self.run_command(command, "Creating %s" % release_file,
                          log_path.joinpath("pack_release_file.log"))
 
     @staticmethod
