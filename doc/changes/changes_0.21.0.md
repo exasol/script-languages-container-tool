@@ -1,10 +1,10 @@
-# Script-Languages-Container-Tool 0.21.0, released t.b.d.
+# Script-Languages-Container-Tool 0.21.0, released 2024-08-13
 
-Code name: t.b.d.
+Code name: Empty manifest
 
 ## Summary
 
-t.b.d.
+This release adds support for the creation of an empty manifest JSON file in the exported Script-Lanugages-Container.
 
 ## Features
 
