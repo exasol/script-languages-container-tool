@@ -1,14 +1,14 @@
-# Script-Languages-Container-Tool 1.0.0, released 2024-08-26
+# Script-Languages-Container-Tool 1.0.0, released t.b.d.
 
-Code name: Use new BucketFS API and improved documentation
+Code name: t.b.d.
 
 ## Summary
 
-This release uses the new BucketFS API and improves the CLI help.
+t.b.d.
 
 ## Features
 
-#221: Added an empty manifest to script language containers
+n/a
 
 ## Refactoring
 
