@@ -52,13 +52,13 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
         )
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             ExportFlavorContainer
         )  # type: Dict[str,ExportFlavorContainer]
         self.export_info_futures = self.register_dependencies(tasks)
 
     def run_task(self):
-        export_infos = self.get_values_from_futures(
+        export_infos = self.get_values_from_futures(  # type: ignore
             self.export_info_futures
         )  # type: Dict[str,Dict[str,ExportInfo]]
         self.write_command_line_output(export_infos)

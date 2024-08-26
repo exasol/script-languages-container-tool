@@ -4,7 +4,7 @@ import subprocess
 import unittest
 from pathlib import Path
 
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
 
 class DockerLoadTest(unittest.TestCase):

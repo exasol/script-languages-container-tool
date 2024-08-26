@@ -26,10 +26,15 @@ class ExportContainerTask(ExportContainerBaseTask):
     )  # type: RequiredTaskInfo
 
     def get_release_task(self):
-        module = importlib.import_module(self.required_task_info.module_name)
-        class_ = getattr(module, self.required_task_info.class_name)
+        module = importlib.import_module(
+            self.required_task_info.module_name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        class_ = getattr(
+            module, self.required_task_info.class_name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
         return self.create_child_task(
-            task_class=class_, **self.required_task_info.params
+            task_class=class_,
+            **self.required_task_info.params  # pylint: disable=no-member
         )
 
     def get_release_goal(self):

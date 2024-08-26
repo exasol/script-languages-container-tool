@@ -1,6 +1,6 @@
 import unittest
 
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
 
 class DockerClean(unittest.TestCase):

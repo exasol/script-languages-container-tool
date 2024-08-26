@@ -1,9 +1,9 @@
 import unittest
 
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing.docker_registry import (
     LocalDockerRegistryContextManager,
-)
+)  # type: ignore
 
 
 class DockerPushTest(unittest.TestCase):

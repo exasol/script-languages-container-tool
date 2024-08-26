@@ -22,14 +22,16 @@ class UploadExportedContainer(UploadFileToBucketFS):
         return "/exa/logs/cored/bucketfsd*"
 
     def get_pattern_to_wait_for(self):
-        return self.export_info.name + ".*extracted"
+        return self.export_info.name + ".*extracted"  # pylint: disable=no-member
 
     def get_file_to_upload(self):
-        file = self.export_info.cache_file
+        file = self.export_info.cache_file  # pylint: disable=no-member
         return file
 
     def get_upload_target(self):
-        return "myudfs/" + self.export_info.name + ".tar.gz"
+        return (
+            "myudfs/" + self.export_info.name + ".tar.gz"  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def get_sync_time_estimation(self) -> int:
         return 1 * 60

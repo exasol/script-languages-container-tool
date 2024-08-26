@@ -1,10 +1,10 @@
 import unittest
 
-import utils as exaslct_utils
-from exasol_integration_test_docker_environment.testing import utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 from exasol_integration_test_docker_environment.testing.docker_registry import (
     LocalDockerRegistryContextManager,
-)
+)  # type: ignore
 
 from exasol_script_languages_container_tool.lib import api
 
@@ -36,11 +36,11 @@ class ApiDockerPushTest(unittest.TestCase):
             images = local_registry.images
             print("images", images)
             images_info_list = image_infos[str(exaslct_utils.get_test_flavor())]
-            images_info_list_tags = list(
-                {image_info.target_tag for image_info in images_info_list}
-            ).sort()
+            images_info_list_tags = sorted(
+                list({image_info.target_tag for image_info in images_info_list})
+            )
             self.assertEqual(
-                images["tags"].sort(),
+                sorted(images["tags"]),
                 images_info_list_tags,
                 f"{images} doesn't have the expected tags, it only has {len(images['tags'])}",
             )

@@ -20,8 +20,12 @@ class DockerFlavorBuildBase(FlavorBaseTask, DockerBuildBase):
     # TODO order pull for images which share dependencies
 
     def get_goal_class_map(self) -> Dict[str, DockerAnalyzeImageTask]:
-        module_name_for_build_steps = self.flavor_path.replace("/", "_").replace(
-            ".", "_"
+        module_name_for_build_steps = (
+            self.flavor_path.replace(  # pylint: disable=no-member
+                "/", "_"
+            ).replace(  # pylint: disable=no-member
+                ".", "_"
+            )
         )
         available_tasks = [
             self.create_child_task_with_common_params(subclass)

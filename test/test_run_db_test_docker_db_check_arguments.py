@@ -4,7 +4,7 @@ from io import StringIO
 from pathlib import Path
 
 import docker
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from configobj import ConfigObj
 from exasol_integration_test_docker_environment.lib.data.environment_info import (
     EnvironmentInfo,
@@ -32,7 +32,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.test_environment.close()
         self.client.close()
 
-    def _getEnvironmentInfo(self):
+    def _get_environment_info(self):
         test_environment_name = f"""{self.test_environment.flavor_path.name}_release"""
         environment_info_json_path = Path(
             self.test_environment.temp_dir,
@@ -43,7 +43,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
                 return EnvironmentInfo.from_json(f.read())
 
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
-        env_info = self._getEnvironmentInfo()
+        env_info = self._get_environment_info()
 
         containers = [
             c.name
@@ -81,7 +81,7 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.assertAlmostEqual(float(disk_size_matches[0]), float(disk_size), places=1)
 
     def remove_docker_environment(self):
-        env_info = self._getEnvironmentInfo()
+        env_info = self._get_environment_info()
         remove_docker_container(
             [
                 env_info.test_container_info.container_name,

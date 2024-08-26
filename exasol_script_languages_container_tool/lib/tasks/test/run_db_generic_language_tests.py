@@ -35,7 +35,7 @@ class RunDBGenericLanguageTest(
 
     def run_task(self):
         results = []
-        for language in self.generic_language_tests:
+        for language in self.generic_language_tests:  # pylint: disable=not-an-iterable
             test_result = yield from self.run_test(language, "generic")
             results.append(test_result)
         test_results = RunDBTestFoldersResult(test_results=results)

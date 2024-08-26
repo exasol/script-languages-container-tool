@@ -20,7 +20,7 @@ from exasol_integration_test_docker_environment.lib.data.environment_type import
 )
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import (
     DbOsAccess,
-)
+)  # pylint: disable=line-too-long
 
 from exasol_script_languages_container_tool.lib.api import api_errors
 from exasol_script_languages_container_tool.lib.tasks.test.test_container import (
@@ -39,7 +39,7 @@ def run_db_test(
     generic_language_test: Tuple[str, ...] = tuple(),
     test_folder: Tuple[str, ...] = tuple(),
     test_file: Tuple[str, ...] = tuple(),
-    test_language: Tuple[str, ...] = (None,),
+    test_language: Tuple[str, ...] = (None,),  # type: ignore
     test: Tuple[str, ...] = tuple(),
     environment_type: str = "docker_db",
     max_start_attempts: int = 2,

@@ -24,7 +24,7 @@ class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
         super().__init__(*args, **kwargs)
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             DockerFlavorPush
         )  # type: Dict[str,DockerFlavorPush]
         self.image_info_futures = self.register_dependencies(tasks)

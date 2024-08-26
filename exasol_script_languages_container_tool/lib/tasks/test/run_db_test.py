@@ -36,6 +36,8 @@ from exasol_script_languages_container_tool.lib.utils.docker_utils import (
     exec_run_and_write_to_stream,
 )
 
+DockerCredentials = namedtuple("DockerCredentials", "username password")
+
 
 class DockerCommandException(Exception):
     """
@@ -56,8 +58,12 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._test_container_info = self.test_environment_info.test_container_info
-        self._database_info = self.test_environment_info.database_info
+        self._test_container_info = (
+            self.test_environment_info.test_container_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        self._database_info = (
+            self.test_environment_info.database_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def _run_command(
         self,
@@ -124,13 +130,13 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         self.return_object(result)
 
     @staticmethod
-    def _get_docker_credentials() -> Optional[namedtuple]:
-        docker_credentials = namedtuple("DockerCredentials", "username password")
+    def _get_docker_credentials() -> Optional[DockerCredentials]:
+
         if (
             source_docker_repository_config().username is not None
             and source_docker_repository_config().password is not None
         ):
-            return docker_credentials(
+            return DockerCredentials(
                 source_docker_repository_config().username,
                 source_docker_repository_config().password,
             )
@@ -138,7 +144,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             target_docker_repository_config().username is not None
             and target_docker_repository_config().password is not None
         ):
-            return docker_credentials(
+            return DockerCredentials(
                 target_docker_repository_config().username,
                 target_docker_repository_config().password,
             )
@@ -156,14 +162,21 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         if docker_credentials is not None:
             environment["DOCKER_USERNAME"] = docker_credentials.username
             environment["DOCKER_PASSWORD"] = docker_credentials.password
-        environment["TEST_ENVIRONMENT_TYPE"] = self.test_environment_info.type.name
-        environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
+        environment["TEST_ENVIRONMENT_TYPE"] = (
+            self.test_environment_info.type.name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        environment["TEST_ENVIRONMENT_NAME"] = (
+            self.test_environment_info.name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
         environment["TEST_DOCKER_NETWORK_NAME"] = (
-            self.test_environment_info.network_info.network_name
+            self.test_environment_info.network_info.network_name  # pylint: disable=no-member
         )
-        if self.test_environment_info.database_info.container_info is not None:
+        if (
+            self.test_environment_info.database_info.container_info  # pylint: disable=no-member
+            is not None
+        ):
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
-                self.test_environment_info.database_info.container_info.container_name
+                self.test_environment_info.database_info.container_info.container_name  # pylint: disable=no-member
             )
 
         self.logger.info(f"Writing test-log to {test_output_file}")
@@ -205,7 +218,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             ]
             if self.language is not None:
                 yield from ["--lang", self.language]
-            yield from self.test_restrictions
+            yield from self.test_restrictions  # pylint: disable=not-an-iterable
 
         command = " ".join([e for e in command_line()])
         return f'bash -c "{command}"'

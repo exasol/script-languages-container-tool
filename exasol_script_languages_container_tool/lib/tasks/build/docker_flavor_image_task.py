@@ -22,7 +22,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
     #  if this would have parameters instead of abstract methods
 
     def __init__(self, *args, **kwargs):
-        self.build_step = self.get_build_step()
+        self.build_step = (  # pylint: disable=assignment-from-no-return
+            self.get_build_step()
+        )
         self.additional_build_directories_mapping = (
             self.get_additional_build_directories_mapping()
         )
@@ -35,7 +37,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             or len(config.force_rebuild_from) == 0
         )
 
-    def get_build_step(self) -> str:
+    def get_build_step(self) -> str:  # type: ignore
         """
         Called by the constructor to get the name of build step.
         Sub classes need to implement this method.
@@ -86,7 +88,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_image_tag(self) -> str:
         flavor_name = self.get_flavor_name()
-        return "{}-{}".format(flavor_name, self.build_step)
+        return f"{flavor_name}-{self.build_step}"
 
     def get_mapping_of_build_files_and_directories(self) -> Dict[str, str]:
         build_step_path = self.get_build_step_path()
@@ -95,7 +97,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         return result
 
     def get_build_step_path(self):
-        path_in_flavor = self.get_path_in_flavor()
+        path_in_flavor = (  # pylint: disable=assignment-from-none
+            self.get_path_in_flavor()
+        )
         if path_in_flavor is None:
             build_step_path_in_flavor = Path(self.build_step)
         else:

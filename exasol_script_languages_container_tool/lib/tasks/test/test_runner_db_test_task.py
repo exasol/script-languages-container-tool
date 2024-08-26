@@ -30,10 +30,10 @@ from exasol_integration_test_docker_environment.lib.data.environment_type import
 )
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import (
     DbOsAccess,
-)
+)  # pylint: disable=line-too-long
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.spawn_test_environment_parameter import (
     SpawnTestEnvironmentParameter,
-)
+)  # pylint: disable=line-too-long
 from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_environment import (
     SpawnTestEnvironment,
 )
@@ -116,11 +116,11 @@ class TestRunnerDBTestTask(
         )
 
     def run_task(self):
-        export_infos = self.get_values_from_future(
+        export_infos = self.get_values_from_future(  # type: ignore
             self._export_infos_future
         )  # type: Dict[str,ExportInfo]
         export_info = export_infos[self.release_goal]
-        self.test_environment_info = self.get_values_from_future(
+        self.test_environment_info = self.get_values_from_future(  # type: ignore
             self._test_environment_info_future
         )  # type: EnvironmentInfo
         database_credentials = self.get_database_credentials()
@@ -164,7 +164,7 @@ class TestRunnerDBTestTask(
         )
         yield from self.run_dependencies(upload_task)
 
-    def populate_test_engine_data(
+    def populate_test_engine_data(  # type: ignore
         self,
         test_environment_info: EnvironmentInfo,
         database_credentials: DatabaseCredentials,

@@ -32,7 +32,7 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
         )
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             UploadFlavorContainers
         )  # type: Dict[str,UploadFlavorContainers]
         self.export_info_futures = self.register_dependencies(tasks)

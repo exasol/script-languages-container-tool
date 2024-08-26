@@ -37,9 +37,9 @@ class RunDBTestFiles(
 
     def run_task(self):
         results = []
-        for language in self.languages:
+        for language in self.languages:  # pylint: disable=not-an-iterable
             results_for_language = []
-            for test_file in self.test_files:
+            for test_file in self.test_files:  # pylint: disable=not-an-iterable
                 test_result = yield from self.run_test(language, test_file)
                 results_for_language.append(test_result)
             results.append(

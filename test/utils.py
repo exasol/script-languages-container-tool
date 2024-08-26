@@ -1,20 +1,20 @@
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from exasol_integration_test_docker_environment.lib.data.test_container_content_description import (
     TestContainerContentDescription,
-)
-from exasol_integration_test_docker_environment.testing import (
+)  # type: ignore
+from exasol_integration_test_docker_environment.testing import (  # type: ignore
     api_test_environment,
     exaslct_test_environment,
 )
 from exasol_integration_test_docker_environment.testing.exaslct_docker_test_environment import (
     ExaslctDockerTestEnvironment,
-)
+)  # type: ignore
 from exasol_integration_test_docker_environment.testing.spawned_test_environments import (
     SpawnedTestEnvironments,
-)
+)  # type: ignore
 
 from exasol_script_languages_container_tool.lib import api
 
@@ -81,7 +81,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         self,
         name: str,
         test_container_content: TestContainerContentDescription,
-        additional_parameter: Dict[str, Any] = None,
+        additional_parameter: Optional[Dict[str, Any]] = None,
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment_with_test_container(
             name=name,
@@ -90,7 +90,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         )
 
     def spawn_docker_test_environment(
-        self, name: str, additional_parameter: Dict[str, Any] = None
+        self, name: str, additional_parameter: Optional[Dict[str, Any]] = None
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment(
             name=name, additional_parameter=additional_parameter
@@ -176,7 +176,7 @@ class ExaslctTestEnvironmentWithCleanUp:
         )
 
     def spawn_docker_test_environments(
-        self, name: str, additional_parameter: List[str] = None
+        self, name: str, additional_parameter: Optional[List[str]] = None
     ) -> SpawnedTestEnvironments:
         return self._itde_cli_test_environment.spawn_docker_test_environments(
             name, additional_parameter

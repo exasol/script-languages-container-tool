@@ -87,21 +87,24 @@ from exasol_script_languages_container_tool.lib.api import api_errors
     type=str,
     default="2 GiB",
     show_default=True,
-    help="The main memory used by the database. Format <number> <unit>, e.g. 1 GiB. The minimum size is 1 GB, below that the database will not start.",
+    help="The main memory used by the database. Format <number> <unit>, e.g. 1 GiB."
+    " The minimum size is 1 GB, below that the database will not start.",
 )
 @click.option(
     "--db-disk-size",
     type=str,
     default="2 GiB",
     show_default=True,
-    help="The disk size available for the database. Format <number> <unit>, e.g. 1 GiB. The minimum size is 100 MiB. However, the setup creates volume files with at least 2 GB larger size, because the database needs at least so much more disk.",
+    help="The disk size available for the database. Format <number> <unit>, e.g. 1 GiB. The minimum size is 100 MiB."
+    "However, the setup creates volume files with at least 2 GB larger size,"
+    " because the database needs at least so much more disk.",
 )
 @click.option(
     "--test-environment-vars",
     type=str,
     default="""{}""",
     show_default=True,
-    help="""Specifies the environment variables for the test runner as a json 
+    help="""Specifies the environment variables for the test runner as a json
               in the form of {"<variable_name>":<value>}.""",
 )
 @click.option(

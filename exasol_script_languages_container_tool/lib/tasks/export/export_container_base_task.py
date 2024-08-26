@@ -56,7 +56,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
         pass
 
     def run_task(self):
-        image_info_of_release_image = (
+        image_info_of_release_image = (  # type: ignore
             self._release_task_future.get_output()
         )  # type: ImageInfo
         cache_file, release_complete_name, release_image_name = (
@@ -277,7 +277,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             ) as log_handler:
                 still_running_logger = StillRunningLogger(self.logger, description)
                 log_handler.handle_log_lines((command + "\n").encode("utf-8"))
-                for line in iter(process.stdout.readline, b""):
+                for line in iter(process.stdout.readline, b""):  # type: ignore
                     still_running_logger.log()
                     log_handler.handle_log_lines(line)
                 process.wait(timeout=60 * 2)

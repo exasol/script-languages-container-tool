@@ -21,7 +21,7 @@ class DockerSave(FlavorsBaseTask, DockerSaveParameter):
         super().__init__(*args, **kwargs)
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             DockerFlavorSave
         )  # type: Dict[str,DockerFlavorSave]
         self.image_info_futures = self.register_dependencies(tasks)

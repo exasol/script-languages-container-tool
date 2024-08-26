@@ -28,7 +28,7 @@ class UploadContainerTasksCreator:
 
     def _create_upload_task(self, release_goal: str, build_task: DockerCreateImageTask):
         required_task_info = self._create_required_task_info(build_task)
-        return self.task.create_child_task_with_common_params(
+        return self.task.create_child_task_with_common_params(  # type: ignore
             UploadContainerTask,
             required_task_info=required_task_info,
             release_goal=release_goal,

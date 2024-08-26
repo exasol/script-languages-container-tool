@@ -35,8 +35,8 @@ class RunDBTestFolder(
 
     def run_task(self):
         results = []
-        for language in self.languages:
-            for test_folder in self.test_folders:
+        for language in self.languages:  # pylint: disable=not-an-iterable
+            for test_folder in self.test_folders:  # pylint: disable=not-an-iterable
                 test_result = yield from self.run_test(language, test_folder)
                 results.append(test_result)
         self.return_object(RunDBTestFoldersResult(test_results=results))

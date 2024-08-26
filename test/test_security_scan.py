@@ -1,8 +1,8 @@
 import unittest
 from pathlib import Path
 
-import utils as exaslct_utils
-from exasol_integration_test_docker_environment.testing import utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 
 class DockerSecurityScanTest(unittest.TestCase):

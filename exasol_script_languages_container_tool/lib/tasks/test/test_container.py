@@ -181,13 +181,13 @@ class TestContainer(
         )
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             TestFlavorContainer
         )  # type: Dict[str,TestFlavorContainer]
         self.test_results_futures = self.register_dependencies(tasks)
 
     def run_task(self):
-        test_results = self.get_values_from_futures(
+        test_results = self.get_values_from_futures(  # type: ignore
             self.test_results_futures
         )  # type: Dict[str,FlavorTestResult]
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
@@ -215,7 +215,7 @@ class TestFlavorContainer(
     def register_required(self):
         tasks = {
             release_goal: self.generate_tasks_for_flavor(release_goal)
-            for release_goal in self.release_goals
+            for release_goal in self.release_goals  # type: ignore  # pylint: disable=not-an-iterable
         }
         self.test_result_futures = self.register_dependencies(tasks)
 
@@ -226,7 +226,7 @@ class TestFlavorContainer(
         return task
 
     def run_task(self):
-        test_results = self.get_values_from_futures(
+        test_results = self.get_values_from_futures(  # type: ignore
             self.test_result_futures
         )  # type: Dict[str,RunDBTestsInTestConfigResult]
         result = FlavorTestResult(self.flavor_path, test_results)

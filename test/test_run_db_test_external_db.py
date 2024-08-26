@@ -1,7 +1,9 @@
 import unittest
 
-import utils as exaslct_utils
-from exasol_integration_test_docker_environment.testing import utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+from exasol_integration_test_docker_environment.testing import (
+    utils,
+)  # type: ignore # type: ignore
 
 
 class DockerRunDBTestExternalDBTest(unittest.TestCase):
@@ -16,7 +18,10 @@ class DockerRunDBTestExternalDBTest(unittest.TestCase):
         self.docker_environments = self.test_environment.spawn_docker_test_environments(
             self.docker_environment_name
         )
-        # localhost gets translated in exaslct to the Gateway address of the docker environment network, because thats typically the IP Adress of the bridge to the host, for google cloud this means it should be able to connect to the db via the port forwards from the test container
+        # localhost gets translated in exaslct to the Gateway address of the docker environment network,
+        # because thats typically the IP Adress of the bridge to the host,
+        # for google cloud this means it should be able to connect to the db
+        # via the port forwards from the test container
         # TODO check alternative of ip address on default bridge
         self.docker_environment = self.docker_environments.on_host_docker_environment
 

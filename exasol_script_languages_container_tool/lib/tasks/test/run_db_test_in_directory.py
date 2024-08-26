@@ -31,7 +31,9 @@ class RunDBTestsInDirectory(
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._test_container_info = self.test_environment_info.test_container_info
+        self._test_container_info = (
+            self.test_environment_info.test_container_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
         self.tasks = self.create_test_tasks_from_directory(self.directory)
 
     def run_task(self):

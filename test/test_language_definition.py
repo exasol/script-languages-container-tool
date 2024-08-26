@@ -19,7 +19,9 @@ class LanguageDefintionTest(unittest.TestCase):
             add_missing_builtin=True,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang=python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3 JAVA=builtin_java PYTHON=builtin_python PYTHON3=builtin_python3 R=builtin_r",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3"
+            " JAVA=builtin_java PYTHON=builtin_python PYTHON3=builtin_python3 R=builtin_r",
             language_definition.generate_definition(),
         )
 
@@ -33,7 +35,8 @@ class LanguageDefintionTest(unittest.TestCase):
             add_missing_builtin=False,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang=python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
@@ -46,7 +49,8 @@ class LanguageDefintionTest(unittest.TestCase):
             path_in_bucket=None,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang=python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
@@ -59,7 +63,8 @@ class LanguageDefintionTest(unittest.TestCase):
             path_in_bucket="",
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang=python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
@@ -72,7 +77,8 @@ class LanguageDefintionTest(unittest.TestCase):
             path_in_bucket="path_in_bucket",
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang=python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
@@ -85,7 +91,9 @@ class LanguageDefintionTest(unittest.TestCase):
             path_in_bucket="path_in_bucket",
         )
         self.assertEqual(
-            "ALTER SYSTEM SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang=python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
+            "ALTER SYSTEM SET SCRIPT_LANGUAGES='PYTHON3_TEST="
+            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
             language_definition.generate_alter_system(),
         )
 
@@ -98,7 +106,9 @@ class LanguageDefintionTest(unittest.TestCase):
             path_in_bucket="path_in_bucket",
         )
         self.assertEqual(
-            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang=python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
+            "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST="
+            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
             language_definition.generate_alter_session(),
         )
 

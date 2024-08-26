@@ -2,7 +2,7 @@ import os
 import unittest
 from pathlib import Path
 
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.docker.container.utils import (
     remove_docker_container,
 )

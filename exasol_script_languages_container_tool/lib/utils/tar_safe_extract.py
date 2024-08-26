@@ -28,4 +28,4 @@ def safe_extract(
         if not is_within_directory(path, member_path):
             raise Exception("Attempted Path Traversal in Tar File")
 
-    tar.extractall(path=path, members=members, numeric_owner=numeric_owner)
+    tar.extractall(path=path, members=members, numeric_owner=numeric_owner)  # type: ignore

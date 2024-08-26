@@ -2,7 +2,7 @@ import dataclasses
 from pathlib import Path
 from typing import Tuple
 
-import exasol.bucketfs as bfs
+import exasol.bucketfs as bfs  # type: ignore
 import luigi
 from docker.models.containers import Container
 
@@ -29,10 +29,10 @@ from exasol_integration_test_docker_environment.lib.data.environment_info import
 )
 from exasol_integration_test_docker_environment.lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker import (
     DockerDBLogBasedBucketFSSyncChecker,
-)
+)  # pylint: disable=line-too-long
 from exasol_integration_test_docker_environment.lib.test_environment.database_setup.time_based_bucketfs_sync_waiter import (
     TimeBasedBucketFSSyncWaiter,
-)
+)  # pylint: disable=line-too-long
 
 
 @dataclasses.dataclass
@@ -54,7 +54,9 @@ class UploadFileToBucketFS(DockerBaseTask):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._database_info = self.test_environment_info.database_info
+        self._database_info = (
+            self.test_environment_info.database_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def run_task(self):
         file_to_upload = self.get_file_to_upload()
@@ -71,7 +73,7 @@ class UploadFileToBucketFS(DockerBaseTask):
             else:
                 database_container = None
             if not self.should_be_reused(upload_target):
-                with self.executor_factory.executor() as executor:
+                with self.executor_factory.executor() as executor:  # pylint: disable=no-member
                     executor.prepare()
                     self.upload_and_wait(
                         database_container,

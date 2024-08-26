@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from typing import Dict, List
 
-import utils as exaslct_utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.lib.docker.container.utils import (
     remove_docker_container,

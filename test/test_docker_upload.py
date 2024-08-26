@@ -2,8 +2,8 @@ import os
 import subprocess
 import unittest
 
-import utils as exaslct_utils
-from exasol_integration_test_docker_environment.testing import utils
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 
 class DockerUploadTest(unittest.TestCase):
@@ -120,10 +120,10 @@ class DockerUploadTest(unittest.TestCase):
 
     def validate_file_on_bucket_fs(self, expected_file_path: str):
         url = "http://w:{password}@{host}:{port}/{bucket}".format(
-            host=self.docker_environment.database_host,
-            port=self.docker_environment.ports.bucketfs,
+            host=self.docker_environment.database_host,  # type: ignore
+            port=self.docker_environment.ports.bucketfs,  # type: ignore
             bucket=self.bucket_name,
-            password=self.docker_environment.bucketfs_password,
+            password=self.docker_environment.bucketfs_password,  # type: ignore
         )
         cmd = ["curl", "--silent", "--show-error", "--fail", url]
         p = subprocess.run(cmd, capture_output=True)

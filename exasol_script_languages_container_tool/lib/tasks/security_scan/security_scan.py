@@ -39,7 +39,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         self.security_report_target = luigi.LocalTarget(str(report_path))
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             SecurityScanner, report_path=self.report_path
         )  # type: Dict[str,SecurityScanner]
         self.security_scanner_futures = self.register_dependencies(tasks)
@@ -135,7 +135,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
             for chunk in bits:
                 tar_file.write(chunk)
         with tarfile.open(tar_file_path) as tar_file:
-            safe_extract(tar_file, path=report_path_abs)
+            safe_extract(tar_file, path=report_path_abs)  # type: ignore
 
 
 class AllScanResult(Info):

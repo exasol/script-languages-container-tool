@@ -26,7 +26,7 @@ class CleanImageTask(DockerBaseTask):
         yield from self.run_dependencies(
             self.get_clean_image_tasks_for_dependent_images()
         )
-        for i in range(3):
+        for _ in range(3):
             try:
                 with self._get_docker_client() as docker_client:
                     self.logger.info("Try to remove image %s" % self.image_id)
@@ -119,7 +119,7 @@ class CleanExaslcFlavorImages(FlavorBaseTask):
 class CleanExaslcFlavorsImages(FlavorsBaseTask):
 
     def register_required(self):
-        for flavor_path in self.flavor_paths:
+        for flavor_path in self.flavor_paths:  # pylint: disable=not-an-iterable
             task = self.create_child_task(
                 CleanExaslcFlavorImages, flavor_path=flavor_path
             )
