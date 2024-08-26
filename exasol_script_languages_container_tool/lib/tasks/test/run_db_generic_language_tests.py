@@ -1,21 +1,34 @@
 from typing import Any, Generator
 
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
-from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
-from exasol_integration_test_docker_environment.lib.data.database_credentials import DatabaseCredentialsParameter
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
+    JsonPickleTarget,
+)
+from exasol_integration_test_docker_environment.lib.data.database_credentials import (
+    DatabaseCredentialsParameter,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_in_directory import RunDBTestsInDirectory
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestFoldersResult, \
-    RunDBTestDirectoryResult
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import \
-    RunDBGenericLanguageTestParameter, \
-    ActualRunDBTestParameter
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_in_directory import (
+    RunDBTestsInDirectory,
+)
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import (
+    RunDBTestDirectoryResult,
+    RunDBTestFoldersResult,
+)
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import (
+    ActualRunDBTestParameter,
+    RunDBGenericLanguageTestParameter,
+)
 
 
-class RunDBGenericLanguageTest(FlavorBaseTask,
-                               RunDBGenericLanguageTestParameter,
-                               ActualRunDBTestParameter,
-                               DatabaseCredentialsParameter):
+class RunDBGenericLanguageTest(
+    FlavorBaseTask,
+    RunDBGenericLanguageTestParameter,
+    ActualRunDBTestParameter,
+    DatabaseCredentialsParameter,
+):
 
     def extend_output_path(self):
         return self.caller_output_path + ("generic",)
@@ -26,11 +39,14 @@ class RunDBGenericLanguageTest(FlavorBaseTask,
             test_result = yield from self.run_test(language, "generic")
             results.append(test_result)
         test_results = RunDBTestFoldersResult(test_results=results)
-        JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(test_results, 4)
+        JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
+            test_results, 4
+        )
         self.return_object(test_results)
 
-    def run_test(self, language: str, test_folder: str) -> \
-            Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
+    def run_test(
+        self, language: str, test_folder: str
+    ) -> Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
         task = self.create_child_task_with_common_params(
             RunDBTestsInDirectory,
             language=language,

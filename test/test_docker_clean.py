@@ -6,7 +6,9 @@ import utils as exaslct_utils
 class DockerClean(unittest.TestCase):
 
     def setUp(self):
-        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            self, exaslct_utils.EXASLCT_DEFAULT_BIN
+        )
 
     def tearDown(self):
         try:
@@ -19,5 +21,5 @@ class DockerClean(unittest.TestCase):
         self.test_environment.run_command(command, use_flavor_path=False, clean=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

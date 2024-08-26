@@ -12,7 +12,9 @@ class DockerSaveTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            self, exaslct_utils.EXASLCT_DEFAULT_BIN
+        )
         self.save_path = self.test_environment.temp_dir + "/save_dir"
         self.test_environment.clean_images()
 
@@ -26,11 +28,15 @@ class DockerSaveTest(unittest.TestCase):
     def test_docker_save(self):
         command = f"{self.test_environment.executable} save --save-directory {self.save_path} "
         self.test_environment.run_command(command, track_task_dependencies=True)
-        saved_files = os.listdir(Path(self.save_path).joinpath(self.test_environment.repository_name).parent)
-        self.assertTrue(len(saved_files) > 0,
-                        f"Did not found saved files for repository {self.test_environment.repository_name} "
-                        f"in list {saved_files}")
+        saved_files = os.listdir(
+            Path(self.save_path).joinpath(self.test_environment.repository_name).parent
+        )
+        self.assertTrue(
+            len(saved_files) > 0,
+            f"Did not found saved files for repository {self.test_environment.repository_name} "
+            f"in list {saved_files}",
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

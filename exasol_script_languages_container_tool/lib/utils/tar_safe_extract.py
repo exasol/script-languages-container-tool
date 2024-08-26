@@ -12,7 +12,13 @@ def is_within_directory(directory, target):
     return prefix == abs_directory
 
 
-def safe_extract(tar: TarFile, path: str = ".", members: Optional[List[str]] = None, *, numeric_owner: bool = False):
+def safe_extract(
+    tar: TarFile,
+    path: str = ".",
+    members: Optional[List[str]] = None,
+    *,
+    numeric_owner: bool = False
+):
     """
     This function implements a patch for the CVE-2007-4559. The patch essentially checks
     to see if all tarfile members will be extracted safely and throws an exception otherwise.

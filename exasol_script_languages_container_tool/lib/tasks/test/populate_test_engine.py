@@ -1,9 +1,12 @@
 from pathlib import PurePath
 
-from exasol_integration_test_docker_environment.lib.test_environment.database_setup.populate_data import \
-    PopulateTestDataToDatabase
+from exasol_integration_test_docker_environment.lib.test_environment.database_setup.populate_data import (
+    PopulateTestDataToDatabase,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import TEST_DATA_TARGET
+from exasol_script_languages_container_tool.lib.tasks.test.test_container_content import (
+    TEST_DATA_TARGET,
+)
 
 
 class PopulateTestEngine(PopulateTestDataToDatabase):

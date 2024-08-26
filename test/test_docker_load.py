@@ -11,7 +11,9 @@ class DockerLoadTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            self, exaslct_utils.EXASLCT_DEFAULT_BIN
+        )
         self.save_path = self.test_environment.temp_dir + "/save_dir"
         self.test_environment.clean_images()
         self.save()
@@ -39,5 +41,5 @@ class DockerLoadTest(unittest.TestCase):
         self.test_environment.run_command(command, track_task_dependencies=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

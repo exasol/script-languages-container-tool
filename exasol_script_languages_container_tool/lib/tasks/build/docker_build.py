@@ -1,11 +1,19 @@
 import luigi
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
-from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
-from exasol_integration_test_docker_environment.lib.base.pickle_target import PickleTarget
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorsBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
+    JsonPickleTarget,
+)
+from exasol_integration_test_docker_environment.lib.base.pickle_target import (
+    PickleTarget,
+)
 from luigi import Config
 from luigi.format import Nop
 
-from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
+from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import (
+    DockerFlavorBuildBase,
+)
 
 
 class DockerBuildParameter(Config):
@@ -24,7 +32,7 @@ class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
         self._images_futures = self.register_dependencies(tasks)
 
     def run_task(self):
-        image_info = (self.get_values_from_futures(self._images_futures))
+        image_info = self.get_values_from_futures(self._images_futures)
         self.return_object(image_info)
 
 

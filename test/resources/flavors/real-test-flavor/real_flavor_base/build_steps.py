@@ -1,6 +1,8 @@
 from typing import Dict
 
-from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_image_task import DockerFlavorAnalyzeImageTask
+from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_image_task import (
+    DockerFlavorAnalyzeImageTask,
+)
 
 
 class AnalyzeUDFClientDeps(DockerFlavorAnalyzeImageTask):
@@ -48,8 +50,7 @@ class AnalyzeBuildRun(DockerFlavorAnalyzeImageTask):
         return "build_run"
 
     def requires_tasks(self):
-        return {"build_deps": AnalyzeBuildDeps,
-                "language_deps": AnalyzeLanguageDeps}
+        return {"build_deps": AnalyzeBuildDeps, "language_deps": AnalyzeLanguageDeps}
 
     def get_additional_build_directories_mapping(self) -> Dict[str, str]:
         return {}
@@ -76,8 +77,10 @@ class AnalyzeBaseTestBuildRun(DockerFlavorAnalyzeImageTask):
         return "base_test_build_run"
 
     def requires_tasks(self):
-        return {"base_test_deps": AnalyzeBaseTestDeps,
-                "language_deps": AnalyzeLanguageDeps}
+        return {
+            "base_test_deps": AnalyzeBaseTestDeps,
+            "language_deps": AnalyzeLanguageDeps,
+        }
 
     def get_additional_build_directories_mapping(self) -> Dict[str, str]:
         return {}
@@ -116,21 +119,26 @@ class AnalyzeFlavorTestBuildRun(DockerFlavorAnalyzeImageTask):
         return "flavor_test_build_run"
 
     def requires_tasks(self):
-        return {"flavor_customization": AnalyzeFlavorCustomization,
-                "base_test_build_run": AnalyzeBaseTestBuildRun}
+        return {
+            "flavor_customization": AnalyzeFlavorCustomization,
+            "base_test_build_run": AnalyzeBaseTestBuildRun,
+        }
 
     def get_path_in_flavor(self):
         return "flavor_base"
+
 
 class AnalyzeRelease(DockerFlavorAnalyzeImageTask):
     def get_build_step(self) -> str:
         return "release"
 
     def requires_tasks(self):
-        return {"flavor_customization": AnalyzeFlavorCustomization,
-                "build_run": AnalyzeBuildRun,
-                "language_deps": AnalyzeLanguageDeps,
-                "language_deps": AnalyzeLanguageDeps}
+        return {
+            "flavor_customization": AnalyzeFlavorCustomization,
+            "build_run": AnalyzeBuildRun,
+            "language_deps": AnalyzeLanguageDeps,
+            "language_deps": AnalyzeLanguageDeps,
+        }
 
     def get_path_in_flavor(self):
         return "flavor_base"
@@ -145,4 +153,3 @@ class SecurityScan(DockerFlavorAnalyzeImageTask):
 
     def get_path_in_flavor(self):
         return "flavor_base"
-

@@ -1,12 +1,19 @@
 from typing import Dict
 
 import luigi
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
-from exasol_integration_test_docker_environment.lib.docker.images.push.docker_push_parameter import DockerPushParameter
-from exasol_integration_test_docker_environment.lib.docker.images.push.push_task_creator_for_build_tasks import \
-    PushTaskCreatorFromBuildTasks
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorsBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.docker.images.push.docker_push_parameter import (
+    DockerPushParameter,
+)
+from exasol_integration_test_docker_environment.lib.docker.images.push.push_task_creator_for_build_tasks import (
+    PushTaskCreatorFromBuildTasks,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
+from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import (
+    DockerFlavorBuildBase,
+)
 
 
 class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
@@ -16,10 +23,10 @@ class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
 
-
     def register_required(self):
         tasks = self.create_tasks_for_flavors_with_common_params(
-            DockerFlavorPush)  # type: Dict[str,DockerFlavorPush]
+            DockerFlavorPush
+        )  # type: Dict[str,DockerFlavorPush]
         self.image_info_futures = self.register_dependencies(tasks)
 
     def run_task(self):

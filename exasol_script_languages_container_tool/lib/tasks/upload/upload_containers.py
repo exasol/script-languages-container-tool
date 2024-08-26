@@ -1,15 +1,22 @@
 from typing import Dict
 
 import luigi
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorsBaseTask,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
-from exasol_script_languages_container_tool.lib.tasks.export.export_container_tasks_creator import \
-    ExportContainerTasksCreator
-from exasol_script_languages_container_tool.lib.tasks.upload.upload_container_tasks_creator import \
-    UploadContainerTasksCreator
-from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers_parameter import \
-    UploadContainersParameter
+from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import (
+    DockerFlavorBuildBase,
+)
+from exasol_script_languages_container_tool.lib.tasks.export.export_container_tasks_creator import (
+    ExportContainerTasksCreator,
+)
+from exasol_script_languages_container_tool.lib.tasks.upload.upload_container_tasks_creator import (
+    UploadContainerTasksCreator,
+)
+from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers_parameter import (
+    UploadContainersParameter,
+)
 
 
 class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
@@ -17,17 +24,21 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
     def __init__(self, *args, **kwargs):
         self.export_info_futures = None
         super().__init__(*args, **kwargs)
-        command_line_output_path = self.get_output_path().joinpath("command_line_output")
-        self.command_line_output_target = luigi.LocalTarget(str(command_line_output_path))
+        command_line_output_path = self.get_output_path().joinpath(
+            "command_line_output"
+        )
+        self.command_line_output_target = luigi.LocalTarget(
+            str(command_line_output_path)
+        )
 
     def register_required(self):
         tasks = self.create_tasks_for_flavors_with_common_params(
-            UploadFlavorContainers)  # type: Dict[str,UploadFlavorContainers]
+            UploadFlavorContainers
+        )  # type: Dict[str,UploadFlavorContainers]
         self.export_info_futures = self.register_dependencies(tasks)
 
     def run_task(self):
-        uploads = self.get_values_from_futures(
-            self.export_info_futures)
+        uploads = self.get_values_from_futures(self.export_info_futures)
         self.write_command_line_output(uploads)
         self.return_object(self.command_line_output_target)
 
@@ -52,8 +63,12 @@ class UploadFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
         export_tasks = self.create_export_tasks(build_tasks)
         upload_tasks = self.create_upload_tasks(export_tasks)
 
-        command_line_output_string_futures = yield from self.run_dependencies(upload_tasks)
-        command_line_output_strings = self.get_values_from_futures(command_line_output_string_futures)
+        command_line_output_string_futures = yield from self.run_dependencies(
+            upload_tasks
+        )
+        command_line_output_strings = self.get_values_from_futures(
+            command_line_output_string_futures
+        )
         self.return_object(command_line_output_strings)
 
     def create_upload_tasks(self, export_tasks):

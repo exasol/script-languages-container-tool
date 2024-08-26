@@ -5,13 +5,15 @@ from jinja2 import Template
 
 
 class LanguageDefinition:
-    def __init__(self,
-                 release_name: str,
-                 flavor_path: str,
-                 bucketfs_name: str,
-                 bucket_name: str,
-                 path_in_bucket: Optional[str],
-                 add_missing_builtin: bool = False):
+    def __init__(
+        self,
+        release_name: str,
+        flavor_path: str,
+        bucketfs_name: str,
+        bucket_name: str,
+        path_in_bucket: Optional[str],
+        add_missing_builtin: bool = False,
+    ):
         self.path_in_bucket = path_in_bucket
         self.bucket_name = bucket_name
         self.bucketfs_name = bucketfs_name
@@ -22,7 +24,9 @@ class LanguageDefinition:
     def generate_definition(self):
         language_definition = self._render_language_definition()
         if self.add_missing_builtin:
-            language_definition = self._add_missing_builtin_language_definitions(language_definition)
+            language_definition = self._add_missing_builtin_language_definitions(
+                language_definition
+            )
         return language_definition.strip()
 
     def _render_language_definition(self):
@@ -30,19 +34,24 @@ class LanguageDefinition:
         if path_in_bucket != "" and not path_in_bucket.endswith("/"):
             path_in_bucket = path_in_bucket + "/"
         language_definition_path = Path(
-            self.flavor_path, "flavor_base", "language_definition")
+            self.flavor_path, "flavor_base", "language_definition"
+        )
         with language_definition_path.open("r") as f:
             language_definition_template = f.read()
         template = Template(language_definition_template)
-        language_definition = template.render(bucketfs_name=self.bucketfs_name,
-                                              bucket_name=self.bucket_name,
-                                              path_in_bucket=path_in_bucket,
-                                              release_name=self.release_name)
+        language_definition = template.render(
+            bucketfs_name=self.bucketfs_name,
+            bucket_name=self.bucket_name,
+            path_in_bucket=path_in_bucket,
+            release_name=self.release_name,
+        )
         return language_definition
 
     def _add_missing_builtin_language_definitions(self, language_definition):
         builtin_aliases = {"PYTHON", "PYTHON3", "JAVA", "R"}
-        defined_aliases = {alias.split("=")[0] for alias in language_definition.split(" ")}
+        defined_aliases = {
+            alias.split("=")[0] for alias in language_definition.split(" ")
+        }
         missing_aliases = builtin_aliases - defined_aliases
         sorted_missing_aliases = sorted(missing_aliases)
         additional_language_defintions = " ".join(

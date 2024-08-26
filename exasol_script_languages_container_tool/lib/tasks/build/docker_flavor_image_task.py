@@ -1,12 +1,19 @@
 from pathlib import Path
 from typing import Dict
 
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
-from exasol_integration_test_docker_environment.lib.config.build_config import build_config
-from exasol_integration_test_docker_environment.lib.config.docker_config import source_docker_repository_config, \
-    target_docker_repository_config
-from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_analyze_task import \
-    DockerAnalyzeImageTask
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.config.build_config import (
+    build_config,
+)
+from exasol_integration_test_docker_environment.lib.config.docker_config import (
+    source_docker_repository_config,
+    target_docker_repository_config,
+)
+from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_analyze_task import (
+    DockerAnalyzeImageTask,
+)
 
 
 class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
@@ -16,17 +23,17 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def __init__(self, *args, **kwargs):
         self.build_step = self.get_build_step()
-        self.additional_build_directories_mapping = self.get_additional_build_directories_mapping()
+        self.additional_build_directories_mapping = (
+            self.get_additional_build_directories_mapping()
+        )
         super().__init__(*args, **kwargs)
 
     def is_rebuild_requested(self) -> bool:
         config = build_config()
-        return (
-                config.force_rebuild and
-                (
-                        self.get_build_step() in config.force_rebuild_from or
-                        len(config.force_rebuild_from) == 0
-                ))
+        return config.force_rebuild and (
+            self.get_build_step() in config.force_rebuild_from
+            or len(config.force_rebuild_from) == 0
+        )
 
     def get_build_step(self) -> str:
         """
@@ -63,19 +70,23 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_source_image_tag(self):
         if source_docker_repository_config().tag_prefix != "":
-            return f"{source_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
+            return (
+                f"{source_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
+            )
         else:
             return f"{self.get_image_tag()}"
 
     def get_target_image_tag(self):
         if target_docker_repository_config().tag_prefix != "":
-            return f"{target_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
+            return (
+                f"{target_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
+            )
         else:
             return f"{self.get_image_tag()}"
 
     def get_image_tag(self) -> str:
         flavor_name = self.get_flavor_name()
-        return "%s-%s" % (flavor_name, self.build_step)
+        return "{}-{}".format(flavor_name, self.build_step)
 
     def get_mapping_of_build_files_and_directories(self) -> Dict[str, str]:
         build_step_path = self.get_build_step_path()

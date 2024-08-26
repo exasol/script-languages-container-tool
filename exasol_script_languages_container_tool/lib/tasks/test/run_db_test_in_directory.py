@@ -1,19 +1,29 @@
-from typing import List, Generator, Any
+from typing import Any, Generator, List
 
 import luigi
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
-from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
-from exasol_integration_test_docker_environment.lib.data.database_credentials import DatabaseCredentialsParameter
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
+    JsonPickleTarget,
+)
+from exasol_integration_test_docker_environment.lib.data.database_credentials import (
+    DatabaseCredentialsParameter,
+)
 
 from exasol_script_languages_container_tool.lib.tasks.test.run_db_test import RunDBTest
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestDirectoryResult, \
-    RunDBTestResult
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import RunDBTestParameter
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import (
+    RunDBTestDirectoryResult,
+    RunDBTestResult,
+)
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import (
+    RunDBTestParameter,
+)
 
 
-class RunDBTestsInDirectory(FlavorBaseTask,
-                            RunDBTestParameter,
-                            DatabaseCredentialsParameter):
+class RunDBTestsInDirectory(
+    FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
+):
     directory = luigi.Parameter()
 
     def extend_output_path(self):
@@ -26,10 +36,14 @@ class RunDBTestsInDirectory(FlavorBaseTask,
 
     def run_task(self):
         test_results = yield from self.run_tests()
-        result = RunDBTestDirectoryResult(test_results=test_results,
-                                          language=self.language,
-                                          test_folder=self.directory)
-        JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(test_results, 4)
+        result = RunDBTestDirectoryResult(
+            test_results=test_results,
+            language=self.language,
+            test_folder=self.directory,
+        )
+        JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
+            test_results, 4
+        )
         self.return_object(result)
 
     def run_tests(self) -> Generator[RunDBTest, Any, List[RunDBTestResult]]:
@@ -40,20 +54,24 @@ class RunDBTestsInDirectory(FlavorBaseTask,
             test_results.append(test_result)
         return test_results
 
-    def create_test_tasks_from_directory(
-            self, directory: str):
+    def create_test_tasks_from_directory(self, directory: str):
         with self._get_docker_client() as docker_client:
-            test_container = docker_client.containers.get(self._test_container_info.container_name)
-            exit_code, ls_output = test_container.exec_run(cmd="ls /tests/test/%s/" % directory)
+            test_container = docker_client.containers.get(
+                self._test_container_info.container_name
+            )
+            exit_code, ls_output = test_container.exec_run(
+                cmd="ls /tests/test/%s/" % directory
+            )
             test_files = ls_output.decode("utf-8").split("\n")
-            tasks = [self.create_test_task(directory, test_file)
-                     for test_file in test_files
-                     if test_file != "" and test_file.endswith(".py")]
+            tasks = [
+                self.create_test_task(directory, test_file)
+                for test_file in test_files
+                if test_file != "" and test_file.endswith(".py")
+            ]
             return tasks
 
     def create_test_task(self, directory: str, test_file: str):
         task = self.create_child_task_with_common_params(
-            RunDBTest,
-            test_file=directory + "/" + test_file
+            RunDBTest, test_file=directory + "/" + test_file
         )
         return task

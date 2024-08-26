@@ -1,6 +1,10 @@
 import luigi
-from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
-from exasol_integration_test_docker_environment.lib.data.environment_info import EnvironmentInfo
+from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
+    JsonPickleParameter,
+)
+from exasol_integration_test_docker_environment.lib.data.environment_info import (
+    EnvironmentInfo,
+)
 
 
 class GeneralRunDBTestParameter:
@@ -12,7 +16,9 @@ class GeneralRunDBTestParameter:
 class ActualRunDBTestParameter(GeneralRunDBTestParameter):
     release_goal = luigi.Parameter()
     language_definition = luigi.Parameter(significant=False)
-    test_environment_info = JsonPickleParameter(EnvironmentInfo, significant=False)  # type: EnvironmentInfo
+    test_environment_info = JsonPickleParameter(
+        EnvironmentInfo, significant=False
+    )  # type: EnvironmentInfo
 
 
 class RunDBTestParameter(ActualRunDBTestParameter):
@@ -35,7 +41,7 @@ class RunDBTestFilesParameter(RunDBLanguageTestParameter):
     test_files = luigi.ListParameter([])
 
 
-class RunDBTestsInTestConfigParameter(RunDBGenericLanguageTestParameter,
-                                      RunDBTestFolderParameter,
-                                      RunDBTestFilesParameter):
+class RunDBTestsInTestConfigParameter(
+    RunDBGenericLanguageTestParameter, RunDBTestFolderParameter, RunDBTestFilesParameter
+):
     pass
