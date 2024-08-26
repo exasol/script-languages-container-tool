@@ -36,6 +36,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.dev-dependencies]
 toml = ">=0.10.2"
 configobj = "^5.0.8" # moved to dev dependencie so security alert does not propagate further up
+exasol-toolbox = ">=0.14.0"
 
 
 [tool.poetry.scripts]
