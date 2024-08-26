@@ -4,7 +4,7 @@ import luigi
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
 
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from exasol_script_languages_container_tool.lib.tasks.upload.upload_file_to_bucket_fs import UploadFileToBucketFS
+from exasol_script_languages_container_tool.lib.tasks.test.upload_file_to_bucket_fs import UploadFileToBucketFS
 
 
 class UploadExportedContainer(UploadFileToBucketFS):

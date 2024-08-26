@@ -159,7 +159,7 @@ class UploadFileToBucketFS(DockerBaseTask):
     def bucket_fs_url(self):
         return f"http://{self._database_info.host}:{self._database_info.ports.bucketfs}"
 
-    def build_file_path_in_bucket(self, upload_target: str):
+    def build_file_path_in_bucket(self, upload_target: str) -> bfs.path.PathLike:
         backend = bfs.path.StorageBackend.onprem
         bucket_name, path_in_bucket, file_in_bucket = self.split_upload_target(upload_target)
         path_in_bucket_to_upload_path = bfs.path.build_path(
@@ -179,7 +179,7 @@ class UploadFileToBucketFS(DockerBaseTask):
         self.logger.info("upload file %s to %s",
                          file_to_upload, upload_target)
         file_in_bucket_to_upload_path = self.build_file_path_in_bucket(upload_target)
-        with open(file_to_upload, "r") as f:
+        with open(file_to_upload, "rb") as f:
             file_in_bucket_to_upload_path.write(f)
 
         return f"File '{file_to_upload}' to '{upload_target}'"
