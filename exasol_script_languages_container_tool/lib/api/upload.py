@@ -52,6 +52,7 @@ def upload(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
+    ignore_certificate=False,
 ) -> luigi.LocalTarget:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -106,6 +107,7 @@ def upload(
             bucketfs_https=bucketfs_https,
             release_name=release_name,
             bucketfs_name=bucketfs_name,
+            ignore_certificate=ignore_certificate,
         )
 
     return run_task(

@@ -8,7 +8,7 @@ t.b.d.
 
 ## Features
 
-n/a
+#218: Added an option to ignore certificate errors for upload command
 
 ## Refactoring
 
