@@ -65,7 +65,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         command_line_output_str = textwrap.dedent(
             f"""
             Uploaded {release_path} to
-            {self.build_file_path_in_bucket(export_info)}
+            {self.build_file_path_in_bucket(export_info).as_udf_path()}
 
 
             In SQL, you can activate the languages supported by the {flavor_name}
