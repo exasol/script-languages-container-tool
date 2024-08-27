@@ -9,6 +9,12 @@ authors = [
     "Torsten Kilias <torsten.kilias@exasol.com>"
 ]
 
+packages = [
+    {include = "README.md"},
+    {include = "LICENSE"},
+    {include = "exasol_script_languages_container_tool"},
+]
+
 readme = 'README.md'  # Markdown files are supported
 repository = "https://github.com/exasol/script-languages-container-tool"
 homepage = "https://github.com/exasol/script-languages-container-tool"
