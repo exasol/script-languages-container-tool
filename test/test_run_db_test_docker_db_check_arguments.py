@@ -4,19 +4,26 @@ from io import StringIO
 from pathlib import Path
 
 import docker
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from configobj import ConfigObj
-from exasol_integration_test_docker_environment.lib.docker.container.utils import remove_docker_container
-from exasol_integration_test_docker_environment.lib.docker.volumes.utils import remove_docker_volumes
-from exasol_integration_test_docker_environment.lib.data.environment_info import EnvironmentInfo
-
-import utils as exaslct_utils
+from exasol_integration_test_docker_environment.lib.data.environment_info import (
+    EnvironmentInfo,
+)
+from exasol_integration_test_docker_environment.lib.docker.container.utils import (
+    remove_docker_container,
+)
+from exasol_integration_test_docker_environment.lib.docker.volumes.utils import (
+    remove_docker_volumes,
+)
 
 
 class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
-        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(self, exaslct_utils.EXASLCT_DEFAULT_BIN)
+        self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            self, exaslct_utils.EXASLCT_DEFAULT_BIN
+        )
         self.test_environment.clean_images()
         self.client = docker.from_env()
 
@@ -25,26 +32,33 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.test_environment.close()
         self.client.close()
 
-    def _getEnvironmentInfo(self):
+    def _get_environment_info(self):
         test_environment_name = f"""{self.test_environment.flavor_path.name}_release"""
-        environment_info_json_path = Path(self.test_environment.temp_dir,
-                                          f"cache/environments/{test_environment_name}/environment_info.json")
+        environment_info_json_path = Path(
+            self.test_environment.temp_dir,
+            f"cache/environments/{test_environment_name}/environment_info.json",
+        )
         if environment_info_json_path.exists():
             with environment_info_json_path.open() as f:
                 return EnvironmentInfo.from_json(f.read())
 
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
-        env_info = self._getEnvironmentInfo()
+        env_info = self._get_environment_info()
 
-        containers = \
-            [c.name for c in
-             self.client.containers.list()
-             if env_info.database_info.container_info.container_name == c.name]
+        containers = [
+            c.name
+            for c in self.client.containers.list()
+            if env_info.database_info.container_info.container_name == c.name
+        ]
         self.assertEqual(len(containers), 1)
-        exit_result = self.client.containers.get(containers[0]).exec_run("cat /exa/etc/EXAConf")
+        exit_result = self.client.containers.get(containers[0]).exec_run(
+            "cat /exa/etc/EXAConf"
+        )
         output = exit_result[1].decode("UTF-8")
-        if output == '':
-            exit_result = self.client.containers.get(containers[0]).exec_run("cat /exa/etc/EXAConf")
+        if output == "":
+            exit_result = self.client.containers.get(containers[0]).exec_run(
+                "cat /exa/etc/EXAConf"
+            )
             output = exit_result[1].decode("UTF-8")
             return_code = exit_result[0]
         return_code = exit_result[0]
@@ -67,14 +81,21 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         self.assertAlmostEqual(float(disk_size_matches[0]), float(disk_size), places=1)
 
     def remove_docker_environment(self):
-        env_info = self._getEnvironmentInfo()
-        remove_docker_container([env_info.test_container_info.container_name,
-                                 env_info.database_info.container_info.container_name])
-        volumes_to_remove = \
-            [v for v in
-             [env_info.test_container_info.volume_name,
-              env_info.database_info.container_info.volume_name]
-             if v is not None]
+        env_info = self._get_environment_info()
+        remove_docker_container(
+            [
+                env_info.test_container_info.container_name,
+                env_info.database_info.container_info.container_name,
+            ]
+        )
+        volumes_to_remove = [
+            v
+            for v in [
+                env_info.test_container_info.volume_name,
+                env_info.database_info.container_info.volume_name,
+            ]
+            if v is not None
+        ]
         remove_docker_volumes(volumes_to_remove)
         self._remove_docker_networks([env_info.network_info.network_name])
 
@@ -88,18 +109,19 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
     def test_run_db_tests_docker_db_disk_mem_size(self):
         mem_size = "1.3"
         disk_size = "1.4"
-        arguments = " ".join([
-            f"--test-file=empty_test.py",
-            f"--db-mem-size={mem_size}GiB",
-            f"--db-disk-size={disk_size}GiB",
-            f"--reuse-test-environment",
-            exaslct_utils.get_full_test_container_folder_parameter()
-        ])
+        arguments = " ".join(
+            [
+                f"--test-file=empty_test.py",
+                f"--db-mem-size={mem_size}GiB",
+                f"--db-disk-size={disk_size}GiB",
+                f"--reuse-test-environment",
+                exaslct_utils.get_full_test_container_folder_parameter(),
+            ]
+        )
         command = f"{self.test_environment.executable} run-db-test {arguments}"
-        self.test_environment.run_command(
-            command, track_task_dependencies=True)
+        self.test_environment.run_command(command, track_task_dependencies=True)
         self.assert_mem_disk_size(mem_size, disk_size)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

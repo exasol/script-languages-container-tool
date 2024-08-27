@@ -2,30 +2,38 @@ import dataclasses
 from pathlib import Path
 from typing import Tuple
 
+import exasol.bucketfs as bfs  # type: ignore
 import luigi
 from docker.models.containers import Container
 
 # TODO add timeout, because sometimes the upload stucks
-from exasol_integration_test_docker_environment.abstract_method_exception import AbstractMethodException
-from exasol_integration_test_docker_environment.lib.base.docker_base_task import DockerBaseTask
-from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
-from exasol_integration_test_docker_environment.lib.base.still_running_logger import StillRunningLogger, \
-    StillRunningLoggerThread
-from exasol_integration_test_docker_environment.lib.data.environment_info \
-    import EnvironmentInfo
-from exasol_integration_test_docker_environment \
-    .lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker \
-    import DockerDBLogBasedBucketFSSyncChecker
-from exasol_integration_test_docker_environment \
-    .lib.test_environment.database_setup.time_based_bucketfs_sync_waiter \
-    import TimeBasedBucketFSSyncWaiter
-from exasol_integration_test_docker_environment \
-    .lib.base.db_os_executor import (
-        DbOsExecutor,
-        DbOsExecFactory,
-    )
+from exasol_integration_test_docker_environment.abstract_method_exception import (
+    AbstractMethodException,
+)
+from exasol_integration_test_docker_environment.lib.base.db_os_executor import (
+    DbOsExecFactory,
+    DbOsExecutor,
+)
+from exasol_integration_test_docker_environment.lib.base.docker_base_task import (
+    DockerBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
+    JsonPickleParameter,
+)
+from exasol_integration_test_docker_environment.lib.base.still_running_logger import (
+    StillRunningLogger,
+    StillRunningLoggerThread,
+)
+from exasol_integration_test_docker_environment.lib.data.environment_info import (
+    EnvironmentInfo,
+)
+from exasol_integration_test_docker_environment.lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker import (
+    DockerDBLogBasedBucketFSSyncChecker,
+)  # pylint: disable=line-too-long
+from exasol_integration_test_docker_environment.lib.test_environment.database_setup.time_based_bucketfs_sync_waiter import (
+    TimeBasedBucketFSSyncWaiter,
+)  # pylint: disable=line-too-long
 
-import exasol.bucketfs as bfs
 
 @dataclasses.dataclass
 class UploadResult:
@@ -36,15 +44,19 @@ class UploadResult:
 class UploadFileToBucketFS(DockerBaseTask):
     environment_name = luigi.Parameter()
     test_environment_info = JsonPickleParameter(
-        EnvironmentInfo, significant=False)  # type: EnvironmentInfo
+        EnvironmentInfo, significant=False
+    )  # type: EnvironmentInfo
     reuse_uploaded = luigi.BoolParameter(False, significant=False)
     bucketfs_write_password = luigi.Parameter(
-        significant=False, visibility=luigi.parameter.ParameterVisibility.HIDDEN)
-    executor_factory=JsonPickleParameter(DbOsExecFactory, significant=False)
+        significant=False, visibility=luigi.parameter.ParameterVisibility.HIDDEN
+    )
+    executor_factory = JsonPickleParameter(DbOsExecFactory, significant=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._database_info = self.test_environment_info.database_info
+        self._database_info = (
+            self.test_environment_info.database_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def run_task(self):
         file_to_upload = self.get_file_to_upload()
@@ -56,11 +68,12 @@ class UploadFileToBucketFS(DockerBaseTask):
         with self._get_docker_client() as docker_client:
             if self._database_info.container_info is not None:
                 database_container = docker_client.containers.get(
-                    self._database_info.container_info.container_name)
+                    self._database_info.container_info.container_name
+                )
             else:
                 database_container = None
             if not self.should_be_reused(upload_target):
-                with self.executor_factory.executor() as executor:
+                with self.executor_factory.executor() as executor:  # pylint: disable=no-member
                     executor.prepare()
                     self.upload_and_wait(
                         database_container,
@@ -71,28 +84,29 @@ class UploadFileToBucketFS(DockerBaseTask):
                         sync_time_estimation,
                         db_os_executor=executor,
                     )
-                    self.return_object(UploadResult(
-                        upload_target=upload_target,
-                        reused=False
-                    ))
+                    self.return_object(
+                        UploadResult(upload_target=upload_target, reused=False)
+                    )
             else:
-                self.logger.warning("Reusing uploaded target %s instead of file %s",
-                                    upload_target, file_to_upload)
+                self.logger.warning(
+                    "Reusing uploaded target %s instead of file %s",
+                    upload_target,
+                    file_to_upload,
+                )
                 self.write_logs("Reusing")
-                self.return_object(UploadResult(
-                    upload_target=upload_target,
-                    reused=True
-                ))
+                self.return_object(
+                    UploadResult(upload_target=upload_target, reused=True)
+                )
 
     def upload_and_wait(
-            self,
-            database_container,
-            file_to_upload: str,
-            upload_target: str,
-            log_file: str,
-            pattern_to_wait_for: str,
-            sync_time_estimation: int,
-            db_os_executor: DbOsExecutor,
+        self,
+        database_container,
+        file_to_upload: str,
+        upload_target: str,
+        log_file: str,
+        pattern_to_wait_for: str,
+        sync_time_estimation: int,
+        db_os_executor: DbOsExecutor,
     ):
         still_running_logger = StillRunningLogger(
             self.logger,
@@ -120,12 +134,12 @@ class UploadFileToBucketFS(DockerBaseTask):
             thread.join()
 
     def get_sync_checker(
-            self,
-            database_container: Container,
-            sync_time_estimation: int,
-            log_file: str,
-            pattern_to_wait_for: str,
-            db_os_executor: DbOsExecutor,
+        self,
+        database_container: Container,
+        sync_time_estimation: int,
+        log_file: str,
+        pattern_to_wait_for: str,
+        db_os_executor: DbOsExecutor,
     ):
         if database_container is not None:
             return DockerDBLogBasedBucketFSSyncChecker(
@@ -161,23 +175,23 @@ class UploadFileToBucketFS(DockerBaseTask):
 
     def build_file_path_in_bucket(self, upload_target: str) -> bfs.path.PathLike:
         backend = bfs.path.StorageBackend.onprem
-        bucket_name, path_in_bucket, file_in_bucket = self.split_upload_target(upload_target)
+        bucket_name, path_in_bucket, file_in_bucket = self.split_upload_target(
+            upload_target
+        )
         path_in_bucket_to_upload_path = bfs.path.build_path(
             backend=backend,
             url=self.bucket_fs_url,
             bucket_name=bucket_name,
-            service_name='bfsdefault',
+            service_name="bfsdefault",
             path=path_in_bucket,
-            username='w',
+            username="w",
             password=self.bucketfs_write_password,
-            verify=False
+            verify=False,
         )
         return path_in_bucket_to_upload_path / file_in_bucket
 
-
     def upload_file(self, file_to_upload: str, upload_target: str):
-        self.logger.info("upload file %s to %s",
-                         file_to_upload, upload_target)
+        self.logger.info("upload file %s to %s", file_to_upload, upload_target)
         file_in_bucket_to_upload_path = self.build_file_path_in_bucket(upload_target)
         with open(file_to_upload, "rb") as f:
             file_in_bucket_to_upload_path.write(f)

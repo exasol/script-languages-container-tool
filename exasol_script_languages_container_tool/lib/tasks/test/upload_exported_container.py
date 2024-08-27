@@ -1,10 +1,16 @@
 import pathlib
 
 import luigi
-from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import JsonPickleParameter
+from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
+    JsonPickleParameter,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.export.export_info import ExportInfo
-from exasol_script_languages_container_tool.lib.tasks.test.upload_file_to_bucket_fs import UploadFileToBucketFS
+from exasol_script_languages_container_tool.lib.tasks.export.export_info import (
+    ExportInfo,
+)
+from exasol_script_languages_container_tool.lib.tasks.test.upload_file_to_bucket_fs import (
+    UploadFileToBucketFS,
+)
 
 
 class UploadExportedContainer(UploadFileToBucketFS):
@@ -16,14 +22,16 @@ class UploadExportedContainer(UploadFileToBucketFS):
         return "/exa/logs/cored/bucketfsd*"
 
     def get_pattern_to_wait_for(self):
-        return self.export_info.name + ".*extracted"
+        return self.export_info.name + ".*extracted"  # pylint: disable=no-member
 
     def get_file_to_upload(self):
-        file = self.export_info.cache_file
+        file = self.export_info.cache_file  # pylint: disable=no-member
         return file
 
     def get_upload_target(self):
-        return "myudfs/" + self.export_info.name + ".tar.gz"
+        return (
+            "myudfs/" + self.export_info.name + ".tar.gz"  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def get_sync_time_estimation(self) -> int:
         return 1 * 60

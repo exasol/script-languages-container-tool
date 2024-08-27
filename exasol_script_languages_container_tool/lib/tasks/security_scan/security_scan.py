@@ -1,21 +1,26 @@
+import tarfile
 from pathlib import Path
 from typing import Dict
 
 import luigi
-
-import tarfile
-
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorsBaseTask
-from exasol_integration_test_docker_environment.lib.base.info import Info
-from exasol_integration_test_docker_environment.lib.config.build_config import build_config
-
-from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import DockerFlavorBuildBase
-
-from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan_parameter import SecurityScanParameter
-
 from docker.models.containers import Container
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorsBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.info import Info
+from exasol_integration_test_docker_environment.lib.config.build_config import (
+    build_config,
+)
 
-from exasol_script_languages_container_tool.lib.utils.tar_safe_extract import safe_extract
+from exasol_script_languages_container_tool.lib.tasks.build.docker_flavor_build_base import (
+    DockerFlavorBuildBase,
+)
+from exasol_script_languages_container_tool.lib.tasks.security_scan.security_scan_parameter import (
+    SecurityScanParameter,
+)
+from exasol_script_languages_container_tool.lib.utils.tar_safe_extract import (
+    safe_extract,
+)
 
 
 class ScanResult(Info):
@@ -34,16 +39,20 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         self.security_report_target = luigi.LocalTarget(str(report_path))
 
     def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(
-            SecurityScanner, report_path=self.report_path)  # type: Dict[str,SecurityScanner]
+        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
+            SecurityScanner, report_path=self.report_path
+        )  # type: Dict[str,SecurityScanner]
         self.security_scanner_futures = self.register_dependencies(tasks)
 
     def run_task(self):
         security_scanner_results = self.get_values_from_futures(
-            self.security_scanner_futures)
+            self.security_scanner_futures
+        )
 
         self.write_report(security_scanner_results)
-        all_result = AllScanResult(security_scanner_results, Path(self.security_report_target.path))
+        all_result = AllScanResult(
+            security_scanner_results, Path(self.security_report_target.path)
+        )
         self.return_object(all_result)
 
     def write_report(self, security_scanner: Dict[str, ScanResult]):
@@ -51,14 +60,18 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
             for key, value in security_scanner.items():
                 out_file.write("\n")
-                out_file.write(f"============ START SECURITY SCAN REPORT - <{key}> ====================")
+                out_file.write(
+                    f"============ START SECURITY SCAN REPORT - <{key}> ===================="
+                )
                 out_file.write("\n")
                 out_file.write(f"Successful:{value.is_ok}\n")
                 out_file.write(f"Full report:{value.report_dir}\n")
                 out_file.write(f"Summary:\n")
                 out_file.write(value.summary)
                 out_file.write("\n")
-                out_file.write(f"============ END SECURITY SCAN REPORT - <{key}> ====================")
+                out_file.write(
+                    f"============ END SECURITY SCAN REPORT - <{key}> ===================="
+                )
                 out_file.write("\n")
 
 
@@ -82,44 +95,62 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
         result = ScanResult(is_ok=False, summary="", report_dir=report_path_abs)
         assert len(task_results.values()) == 1
         for task_result in task_results.values():
-            self.logger.info(f"Running security run on image: {task_result.get_target_complete_name()}, report path: "
-                             f"{report_path_abs}")
+            self.logger.info(
+                f"Running security run on image: {task_result.get_target_complete_name()}, report path: "
+                f"{report_path_abs}"
+            )
 
             report_local_path = "/report"
             with self._get_docker_client() as docker_client:
-                result_container = docker_client.containers.run(task_result.get_target_complete_name(),
-                                                                command=report_local_path,
-                                                                detach=True, stderr=True)
+                result_container = docker_client.containers.run(
+                    task_result.get_target_complete_name(),
+                    command=report_local_path,
+                    detach=True,
+                    stderr=True,
+                )
                 try:
                     logs = result_container.logs(follow=True).decode("UTF-8")
                     result_container_result = result_container.wait()
-                    #We don't use mount binding here to exchange the report files, but download them from the container
-                    #Thus we avoid that the files are created by root
-                    self._write_report(result_container, report_path_abs, report_local_path)
-                    result = ScanResult(is_ok=(result_container_result["StatusCode"] == 0),
-                                        summary=logs, report_dir=report_path_abs)
+                    # We don't use mount binding here to exchange the report files, but download them from the container
+                    # Thus we avoid that the files are created by root
+                    self._write_report(
+                        result_container, report_path_abs, report_local_path
+                    )
+                    result = ScanResult(
+                        is_ok=(result_container_result["StatusCode"] == 0),
+                        summary=logs,
+                        report_dir=report_path_abs,
+                    )
                 finally:
                     result_container.remove()
 
         self.return_object(result)
 
-    def _write_report(self, container: Container, report_path_abs: Path, report_local_path: str):
-        tar_file_path = report_path_abs / 'report.tar'
-        with open(tar_file_path, 'wb') as tar_file:
+    def _write_report(
+        self, container: Container, report_path_abs: Path, report_local_path: str
+    ):
+        tar_file_path = report_path_abs / "report.tar"
+        with open(tar_file_path, "wb") as tar_file:
             bits, stat = container.get_archive(report_local_path)
             for chunk in bits:
                 tar_file.write(chunk)
         with tarfile.open(tar_file_path) as tar_file:
-            safe_extract(tar_file, path=report_path_abs)
+            safe_extract(tar_file, path=report_path_abs)  # type: ignore
 
 
 class AllScanResult(Info):
-    def __init__(self, scan_results_per_flavor: Dict[str, ScanResult], report_path: Path):
+    def __init__(
+        self, scan_results_per_flavor: Dict[str, ScanResult], report_path: Path
+    ):
         self.scan_results_per_flavor = scan_results_per_flavor
-        self.scans_are_ok = all(scan_result.is_ok
-                                for scan_result
-                                in scan_results_per_flavor.values())
+        self.scans_are_ok = all(
+            scan_result.is_ok for scan_result in scan_results_per_flavor.values()
+        )
         self.report_path = report_path
 
     def get_error_scans_msg(self):
-        return [f"{key}: '{value.summary}'" for key, value in self.scan_results_per_flavor.items() if not value.is_ok]
+        return [
+            f"{key}: '{value.summary}'"
+            for key, value in self.scan_results_per_flavor.items()
+            if not value.is_ok
+        ]

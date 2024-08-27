@@ -7,6 +7,31 @@ You can build, export and upload script-language container from so-called flavor
 which are description how to build the script language container. You can find pre-defined flavors 
 in the [script-languages-release](https://github.com/exasol/script-languages-release) repository. 
 There we also described how you could customize these flavors to your needs.
+<h1 align="center">Exasol Toolbox</h1>
+
+<p align="center">
+Building script-language container for extending Exasol UDFs.
+</p>
+
+<p align="center">
+
+<a href="https://github.com/exasol/script-languages-container-tool/actions/workflows/ci.yml">
+    <img src="https://github.com/exasol/script-languages-container-tool/actions/workflows/main.yml/badge.svg?branch=main" alt="Checks Main">
+</a>
+<a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/pypi/l/exasol-script-languages-container-tool" alt="License">
+</a>
+<a href="https://pypi.org/project/exasol-script-languages-container-tool/">
+    <img src="https://img.shields.io/pypi/dm/exasol-script-languages-container-tool" alt="Downloads">
+</a>
+<a href="https://pypi.org/project/exasol-script-languages-container-tool/">
+    <img src="https://img.shields.io/pypi/pyversions/exasol-script-languages-container-tool" alt="Supported Python Versions">
+</a>
+<a href="https://pypi.org/project/exasol-script-languages-container-tool/">
+    <img src="https://img.shields.io/pypi/v/exasol-script-languages-container-tool" alt="PyPi Package">
+</a>
+</p>
+
 
 ## In a Nutshell
 

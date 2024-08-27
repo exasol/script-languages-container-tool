@@ -1,49 +1,65 @@
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import click
-from exasol_integration_test_docker_environment.cli.cli import cli
-from exasol_integration_test_docker_environment.cli.options.build_options import build_options
-from exasol_integration_test_docker_environment.cli.options.docker_repository_options import docker_repository_options
-from exasol_integration_test_docker_environment.cli.options.system_options import system_options, luigi_logging_options
-from exasol_integration_test_docker_environment.cli.termination_handler import TerminationHandler
+from exasol_integration_test_docker_environment.cli.cli import cli  # type: ignore
+from exasol_integration_test_docker_environment.cli.options.build_options import (
+    build_options,
+)
+from exasol_integration_test_docker_environment.cli.options.docker_repository_options import (
+    docker_repository_options,
+)
+from exasol_integration_test_docker_environment.cli.options.system_options import (
+    luigi_logging_options,
+    system_options,
+)
+from exasol_integration_test_docker_environment.cli.termination_handler import (
+    TerminationHandler,
+)
 from exasol_integration_test_docker_environment.lib.api.common import add_options
 
-from exasol_script_languages_container_tool.cli.options.test_container_options import test_container_options
+from exasol_script_languages_container_tool.cli.options.test_container_options import (
+    test_container_options,
+)
 from exasol_script_languages_container_tool.lib import api
 
 
 @cli.command(short_help="Pushes the test container docker image to the registry.")
 @add_options(test_container_options)
-@click.option("--force-push", type=bool, default=False, help="Push images also if they already exist.")
+@click.option(
+    "--force-push",
+    type=bool,
+    default=False,
+    help="Push images also if they already exist.",
+)
 @click.option("--push-all", type=bool, default=False, help="Push all images.")
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
 def push_test_container(
-        test_container_folder: str,
-        force_push: bool,
-        push_all: bool,
-        force_rebuild: bool,
-        force_rebuild_from: Tuple[str, ...],
-        force_pull: bool,
-        output_directory: str,
-        temporary_base_directory: str,
-        log_build_context_content: bool,
-        cache_directory: Optional[str],
-        build_name: Optional[str],
-        source_docker_repository_name: str,
-        source_docker_tag_prefix: str,
-        source_docker_username: Optional[str],
-        source_docker_password: Optional[str],
-        target_docker_repository_name: str,
-        target_docker_tag_prefix: str,
-        target_docker_username: Optional[str],
-        target_docker_password: Optional[str],
-        workers: int,
-        task_dependencies_dot_file: Optional[str],
-        log_level: Optional[str],
-        use_job_specific_log_file: bool
+    test_container_folder: str,
+    force_push: bool,
+    push_all: bool,
+    force_rebuild: bool,
+    force_rebuild_from: Tuple[str, ...],
+    force_pull: bool,
+    output_directory: str,
+    temporary_base_directory: str,
+    log_build_context_content: bool,
+    cache_directory: Optional[str],
+    build_name: Optional[str],
+    source_docker_repository_name: str,
+    source_docker_tag_prefix: str,
+    source_docker_username: Optional[str],
+    source_docker_password: Optional[str],
+    target_docker_repository_name: str,
+    target_docker_tag_prefix: str,
+    target_docker_username: Optional[str],
+    target_docker_password: Optional[str],
+    workers: int,
+    task_dependencies_dot_file: Optional[str],
+    log_level: Optional[str],
+    use_job_specific_log_file: bool,
 ):
     """
     Push the test container docker image to the registry.
@@ -74,5 +90,5 @@ def push_test_container(
             workers=workers,
             task_dependencies_dot_file=task_dependencies_dot_file,
             log_level=log_level,
-            use_job_specific_log_file=use_job_specific_log_file
+            use_job_specific_log_file=use_job_specific_log_file,
         )

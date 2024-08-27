@@ -1,22 +1,43 @@
 from collections import namedtuple
+from io import StringIO
 from pathlib import Path
 from typing import Optional
-from io import StringIO
 
 import docker.models.containers
 import luigi
-from exasol_integration_test_docker_environment.lib.config.docker_config import source_docker_repository_config, \
-    target_docker_repository_config
-from exasol_integration_test_docker_environment.lib.config.log_config import log_config, WriteLogFilesToConsole
+from exasol_integration_test_docker_environment.lib.base.flavor_task import (
+    FlavorBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.frozendict_to_dict import (
+    FrozenDictToDict,
+)
+from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
+    JsonPickleTarget,
+)
+from exasol_integration_test_docker_environment.lib.config.docker_config import (
+    source_docker_repository_config,
+    target_docker_repository_config,
+)
+from exasol_integration_test_docker_environment.lib.config.log_config import (
+    WriteLogFilesToConsole,
+    log_config,
+)
+from exasol_integration_test_docker_environment.lib.data.database_credentials import (
+    DatabaseCredentialsParameter,
+)
 
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import RunDBTestResult
-from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import RunDBTestParameter
-from exasol_integration_test_docker_environment.lib.base.flavor_task import FlavorBaseTask
-from exasol_integration_test_docker_environment.lib.base.frozendict_to_dict import FrozenDictToDict
-from exasol_integration_test_docker_environment.lib.base.json_pickle_target import JsonPickleTarget
-from exasol_integration_test_docker_environment.lib.data.database_credentials import DatabaseCredentialsParameter
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_test_result import (
+    RunDBTestResult,
+)
+from exasol_script_languages_container_tool.lib.tasks.test.run_db_tests_parameter import (
+    RunDBTestParameter,
+)
+from exasol_script_languages_container_tool.lib.utils.docker_utils import (
+    exec_run_and_write_to_stream,
+)
 
-from exasol_script_languages_container_tool.lib.utils.docker_utils import exec_run_and_write_to_stream
+DockerCredentials = namedtuple("DockerCredentials", "username password")
+
 
 class DockerCommandException(Exception):
     """
@@ -24,9 +45,7 @@ class DockerCommandException(Exception):
     """
 
 
-class RunDBTest(FlavorBaseTask,
-                RunDBTestParameter,
-                DatabaseCredentialsParameter):
+class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter):
     test_file = luigi.Parameter()
 
     def extend_output_path(self):
@@ -39,17 +58,23 @@ class RunDBTest(FlavorBaseTask,
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._test_container_info = self.test_environment_info.test_container_info
-        self._database_info = self.test_environment_info.database_info
+        self._test_container_info = (
+            self.test_environment_info.test_container_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        self._database_info = (
+            self.test_environment_info.database_info  # pylint: disable=no-member
+        )  # pylint: disable=no-member
 
     def _run_command(
-            self,
-            docker_client: docker.client,
-            container: docker.models.containers.Container,
-            command: str,
+        self,
+        docker_client: docker.client,
+        container: docker.models.containers.Container,
+        command: str,
     ) -> str:
         file = StringIO()
-        exit_code = exec_run_and_write_to_stream(docker_client, container, command, file, {})
+        exit_code = exec_run_and_write_to_stream(
+            docker_client, container, command, file, {}
+        )
         if exit_code != 0:
             raise DockerCommandException(f"Command returned {exit_code}: {command}")
         return file.getvalue().strip()
@@ -57,72 +82,112 @@ class RunDBTest(FlavorBaseTask,
     def run_task(self):
         self.logger.info("Running db tests")
         with self._get_docker_client() as docker_client:
-            test_container = docker_client.containers.get(self._test_container_info.container_name)
+            test_container = docker_client.containers.get(
+                self._test_container_info.container_name
+            )
             odbc_driver = self._run_command(
-                docker_client, test_container,
-                "find /downloads/ODBC -name libexaodbc\*.so",
+                docker_client,
+                test_container,
+                r"find /downloads/ODBC -name libexaodbc\*.so",
             )
             bash_cmd = self.generate_test_command(odbc_driver)
             test_output_file = self.get_log_path().joinpath("test_output")
-            exit_code = self.run_test_command(docker_client, bash_cmd, test_container, test_output_file)
+            exit_code = self.run_test_command(
+                docker_client, bash_cmd, test_container, test_output_file
+            )
             self.handle_test_result(exit_code, test_output_file)
 
     @staticmethod
     def read_test_output_file(test_output_file: Path) -> str:
-        with open(test_output_file, "r") as f:
+        with open(test_output_file) as f:
             return f.read()
 
     def handle_test_result(self, exit_code: int, test_output_file: Path) -> None:
-        is_test_ok = (exit_code == 0)
-        if log_config().write_log_files_to_console == WriteLogFilesToConsole.all :
-            self.logger.info("Test results for db tests\n%s"
-                             % self.read_test_output_file(test_output_file))
-        if log_config().write_log_files_to_console == WriteLogFilesToConsole.only_error and not is_test_ok:
-            self.logger.error("Test results for db tests\n%s"
-                             % self.read_test_output_file(test_output_file))
+        is_test_ok = exit_code == 0
+        if log_config().write_log_files_to_console == WriteLogFilesToConsole.all:
+            self.logger.info(
+                "Test results for db tests\n%s"
+                % self.read_test_output_file(test_output_file)
+            )
+        if (
+            log_config().write_log_files_to_console == WriteLogFilesToConsole.only_error
+            and not is_test_ok
+        ):
+            self.logger.error(
+                "Test results for db tests\n%s"
+                % self.read_test_output_file(test_output_file)
+            )
 
         result = RunDBTestResult(
             test_file=self.test_file,
             language=self.language,
             is_test_ok=is_test_ok,
-            test_output_file=test_output_file)
-        JsonPickleTarget(self.get_output_path().joinpath("test_result.json")).write(result, 4)
+            test_output_file=test_output_file,
+        )
+        JsonPickleTarget(self.get_output_path().joinpath("test_result.json")).write(
+            result, 4
+        )
         self.return_object(result)
 
     @staticmethod
-    def _get_docker_credentials() -> Optional[namedtuple]:
-        docker_credentials = namedtuple("DockerCredentials", "username password")
-        if source_docker_repository_config().username is not None and \
-                source_docker_repository_config().password is not None:
-            return docker_credentials(source_docker_repository_config().username,
-                                      source_docker_repository_config().password)
-        if target_docker_repository_config().username is not None and \
-                target_docker_repository_config().password is not None:
-            return docker_credentials(target_docker_repository_config().username,
-                                      target_docker_repository_config().password)
+    def _get_docker_credentials() -> Optional[DockerCredentials]:
+
+        if (
+            source_docker_repository_config().username is not None
+            and source_docker_repository_config().password is not None
+        ):
+            return DockerCredentials(
+                source_docker_repository_config().username,
+                source_docker_repository_config().password,
+            )
+        if (
+            target_docker_repository_config().username is not None
+            and target_docker_repository_config().password is not None
+        ):
+            return DockerCredentials(
+                target_docker_repository_config().username,
+                target_docker_repository_config().password,
+            )
         return None
 
-    def run_test_command(self, docker_client: docker.client, bash_cmd: str,
-                         test_container: docker.models.containers.Container,
-                         test_output_file: Path) -> int:
+    def run_test_command(
+        self,
+        docker_client: docker.client,
+        bash_cmd: str,
+        test_container: docker.models.containers.Container,
+        test_output_file: Path,
+    ) -> int:
         environment = FrozenDictToDict().convert(self.test_environment_vars)
         docker_credentials = self.__class__._get_docker_credentials()
         if docker_credentials is not None:
             environment["DOCKER_USERNAME"] = docker_credentials.username
             environment["DOCKER_PASSWORD"] = docker_credentials.password
-        environment["TEST_ENVIRONMENT_TYPE"] = self.test_environment_info.type.name
-        environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
-        environment["TEST_DOCKER_NETWORK_NAME"] = self.test_environment_info.network_info.network_name
-        if self.test_environment_info.database_info.container_info is not None:
-            environment["TEST_DOCKER_DB_CONTAINER_NAME"] = \
-                self.test_environment_info.database_info.container_info.container_name
+        environment["TEST_ENVIRONMENT_TYPE"] = (
+            self.test_environment_info.type.name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        environment["TEST_ENVIRONMENT_NAME"] = (
+            self.test_environment_info.name  # pylint: disable=no-member
+        )  # pylint: disable=no-member
+        environment["TEST_DOCKER_NETWORK_NAME"] = (
+            self.test_environment_info.network_info.network_name  # pylint: disable=no-member
+        )
+        if (
+            self.test_environment_info.database_info.container_info  # pylint: disable=no-member
+            is not None
+        ):
+            environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
+                self.test_environment_info.database_info.container_info.container_name  # pylint: disable=no-member
+            )
 
         self.logger.info(f"Writing test-log to {test_output_file}")
-        test_output = "command: " + bash_cmd + "\n" + \
-                      "environment: " + str(environment) + "\n"
+        test_output = (
+            "command: " + bash_cmd + "\n" + "environment: " + str(environment) + "\n"
+        )
         with test_output_file.open("w") as file:
             file.write(test_output)
-            exit_code = exec_run_and_write_to_stream(docker_client, test_container, bash_cmd, file, environment)
+            exit_code = exec_run_and_write_to_stream(
+                docker_client, test_container, bash_cmd, file, environment
+            )
         return exit_code
 
     def generate_test_command(self, odbc_driver: str) -> str:
@@ -136,18 +201,24 @@ class RunDBTest(FlavorBaseTask,
                 "cd /tests/test/;",
                 "python3",
                 quote(self.test_file),
-                "--server", quote(f"{host}:{port}"),
-                "--user", quote(self.db_user),
-                "--password", quote(self.db_password),
-                "--script-languages", quote(self.language_definition),
-                "--lang-path", "/tests/lang",
+                "--server",
+                quote(f"{host}:{port}"),
+                "--user",
+                quote(self.db_user),
+                "--password",
+                quote(self.db_password),
+                "--script-languages",
+                quote(self.language_definition),
+                "--lang-path",
+                "/tests/lang",
                 f"--loglevel={self.test_log_level}",
                 f"--driver={odbc_driver}",
-                "--jdbc-path", "/downloads/JDBC/exajdbc.jar",
+                "--jdbc-path",
+                "/downloads/JDBC/exajdbc.jar",
             ]
             if self.language is not None:
-                yield from [ "--lang", self.language ]
-            yield from self.test_restrictions
+                yield from ["--lang", self.language]
+            yield from self.test_restrictions  # pylint: disable=not-an-iterable
 
-        command = " ".join([ e for e in command_line() ])
+        command = " ".join([e for e in command_line()])
         return f'bash -c "{command}"'
