@@ -36,8 +36,14 @@ class ApiDockerPushTest(unittest.TestCase):
             images = local_registry.images
             print("images", images)
             images_info_list = image_infos[str(exaslct_utils.get_test_flavor())]
+            print("images_info_list", images_info_list)
             images_info_list_tags = sorted(
-                list({image_info.target_tag for image_info in images_info_list})
+                list(
+                    {
+                        f"{image_info.target_tag}_{image_info.hash}"
+                        for image_info in images_info_list
+                    }
+                )
             )
             self.assertEqual(
                 sorted(images["tags"]),
