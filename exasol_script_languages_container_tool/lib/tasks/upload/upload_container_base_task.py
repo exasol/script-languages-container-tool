@@ -62,14 +62,9 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
         except ValueError:
             release_path = Path(export_info.cache_file)
-        path_in_bucket = (
-            f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
-        )
         command_line_output_str = textwrap.dedent(
             f"""
-            Uploaded {release_path} to
-            {self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz
-
+            Uploaded {release_path} to {self._complete_url(export_info)}
 
             In SQL, you can activate the languages supported by the {flavor_name}
             flavor by using the following statements:
@@ -108,9 +103,17 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     def _url(self) -> str:
         return f"{self._get_url_prefix()}{self.database_host}:{self.bucketfs_port}"
 
+    def _complete_url(self, export_info: ExportInfo):
+        path_in_bucket = (
+            f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
+        )
+        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz"
+
     def _upload_container(self, release_info: ExportInfo):
         bucket_path = self.build_file_path_in_bucket(release_info)
-        self.logger.info(f"Upload {release_info.cache_file} to {bucket_path}")
+        self.logger.info(
+            f"Upload {release_info.cache_file} to {self._complete_url(release_info)}"
+        )
         with open(release_info.cache_file, "rb") as file:
             bucket_path.write(file)
 
