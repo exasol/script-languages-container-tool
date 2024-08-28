@@ -20,46 +20,45 @@ from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers i
 
 
 @cli_function
-def upload(
+def deploy(
     flavor_path: Tuple[str, ...],
-    database_host: str,
+    bucketfs_host: str,
     bucketfs_port: int,
-    bucketfs_username: str,
+    bucketfs_use_https: str,
+    bucketfs_user: str,
     bucketfs_name: str,
-    bucket_name: str,
-    bucketfs_password: Optional[str] = None,
-    bucketfs_https: bool = False,
-    path_in_bucket: str = "",
-    release_goal: Tuple[str, ...] = ("release",),
-    release_name: Optional[str] = None,
-    force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
-    force_pull: bool = False,
-    output_directory: str = ".build_output",
-    temporary_base_directory: str = "/tmp",
-    log_build_context_content: bool = False,
-    cache_directory: Optional[str] = None,
-    build_name: Optional[str] = None,
-    source_docker_repository_name: str = "exasol/script-language-container",
-    source_docker_tag_prefix: str = "",
-    source_docker_username: Optional[str] = None,
-    source_docker_password: Optional[str] = None,
-    target_docker_repository_name: str = "exasol/script-language-container",
-    target_docker_tag_prefix: str = "",
-    target_docker_username: Optional[str] = None,
-    target_docker_password: Optional[str] = None,
-    workers: int = 5,
-    task_dependencies_dot_file: Optional[str] = None,
-    log_level: Optional[str] = None,
-    use_job_specific_log_file: bool = True,
-    ssl_cert_path: str = "",
-    use_ssl_cert_validation: bool = True,
+    bucket: str,
+    bucketfs_password: str,
+    path_in_bucket: str,
+    release_goal: Tuple[str, ...],
+    release_name: Optional[str],
+    force_rebuild: bool,
+    force_rebuild_from: Tuple[str, ...],
+    force_pull: bool,
+    output_directory: str,
+    temporary_base_directory: str,
+    log_build_context_content: bool,
+    cache_directory: Optional[str],
+    build_name: Optional[str],
+    source_docker_repository_name: str,
+    source_docker_tag_prefix: str,
+    source_docker_username: Optional[str],
+    source_docker_password: Optional[str],
+    target_docker_repository_name: str,
+    target_docker_tag_prefix: str,
+    target_docker_username: Optional[str],
+    target_docker_password: Optional[str],
+    workers: int,
+    task_dependencies_dot_file: Optional[str],
+    log_level: Optional[str],
+    use_job_specific_log_file: bool,
+    ssl_cert_path: str,
+    use_ssl_cert_validation: bool,
 ) -> luigi.LocalTarget:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
     export them before the upload.
-    This function is deprecated. Use `deploy` instead.
     :raises api_errors.TaskFailureError: if operation is not successful.
     :return: Path to resulting report file.
     """
@@ -91,7 +90,7 @@ def upload(
     if bucketfs_password is None:
         bucketfs_password = getpass.getpass(
             "BucketFS Password for BucketFS {} and User {}:".format(
-                bucketfs_name, bucketfs_username
+                bucketfs_name, bucketfs_user
             )
         )
 
@@ -100,13 +99,13 @@ def upload(
             task_class=UploadContainers,
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
-            database_host=database_host,
+            database_host=bucketfs_host,
             bucketfs_port=bucketfs_port,
-            bucketfs_username=bucketfs_username,
+            bucketfs_username=bucketfs_user,
             bucketfs_password=bucketfs_password,
-            bucket_name=bucket_name,
+            bucket_name=bucket,
             path_in_bucket=path_in_bucket,
-            bucketfs_https=bucketfs_https,
+            bucketfs_https=bucketfs_use_https,
             release_name=release_name,
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,

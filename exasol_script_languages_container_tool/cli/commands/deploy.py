@@ -1,4 +1,6 @@
-from typing import Optional, Tuple
+import os
+from enum import Enum
+from typing import Any, Optional, Tuple
 
 import click
 from exasol_integration_test_docker_environment.cli.cli import cli  # type: ignore
@@ -25,18 +27,56 @@ from exasol_script_languages_container_tool.cli.options.goal_options import (
 )
 from exasol_script_languages_container_tool.lib import api
 
+# This text will be displayed instead of the actual value, if found in an environment
+# variable, in a prompt.
+SECRET_DISPLAY = "***"
 
-@cli.command(
-    short_help="Uploads the script-language-container to the database.Deprecated."
-)
+
+class SecretParams(Enum):
+    """
+    This enum serves as a definition of confidential parameters which values should not be
+    displayed in the console, unless the user types them in the command line.
+
+    The enum name is also the name of the environment variable where the correspondent
+    secret value can be stored.
+
+    The enum value is also the name of the cli parameter.
+    """
+
+    DB_PASSWORD = "db-pass"
+    BUCKETFS_PASSWORD = "bucketfs-password"
+
+
+def secret_callback(ctx: click.Context, param: click.Option, value: Any):
+    """
+    Here we try to get the secret parameter value from an environment variable.
+    The reason for doing this in the callback instead of using a callable default is
+    that we don't want the default to be displayed in the prompt. There seems to
+    be no way of altering this behaviour.
+    """
+    if value == SECRET_DISPLAY:
+        secret_param = SecretParams(param.opts[0][2:])
+        return os.environ.get(secret_param.name)
+    return value
+
+
+@cli.command(short_help="Deploys the script-language-container in the database.")
 @add_options(flavor_options)
-@click.option("--database-host", type=str, required=True)
+@click.option("--bucketfs-host", type=str, required=True)
 @click.option("--bucketfs-port", type=int, required=True)
-@click.option("--bucketfs-username", type=str, required=True)
+@click.option("--bucketfs-use-https", type=bool, default=False)
+@click.option("--bucketfs-user", type=str)
 @click.option("--bucketfs-name", type=str, required=True)
-@click.option("--bucket-name", type=str, required=True)
-@click.option("--bucketfs-password", type=str)
-@click.option("--bucketfs-https/--no-bucketfs-https", default=False)
+@click.option("--bucket", type=str)
+@click.option(
+    f"--{SecretParams.BUCKETFS_PASSWORD.value}",
+    type=str,
+    prompt="BucketFS password",
+    prompt_required=False,
+    hide_input=True,
+    default=SECRET_DISPLAY,
+    callback=secret_callback,
+)
 @click.option("--path-in-bucket", type=str, required=False, default="")
 @add_options(release_options)
 @click.option("--release-name", type=str, default=None)
@@ -46,15 +86,15 @@ from exasol_script_languages_container_tool.lib import api
 @add_options(luigi_logging_options)
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
-def upload(
+def deploy(
     flavor_path: Tuple[str, ...],
-    database_host: str,
+    bucketfs_host: str,
     bucketfs_port: int,
-    bucketfs_username: str,
+    bucketfs_use_https: str,
+    bucketfs_user: str,
     bucketfs_name: str,
-    bucket_name: str,
-    bucketfs_password: Optional[str],
-    bucketfs_https: bool,
+    bucket: str,
+    bucketfs_password: str,
     path_in_bucket: str,
     release_goal: Tuple[str, ...],
     release_name: Optional[str],
@@ -85,18 +125,17 @@ def upload(
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
     export them before the upload.
-    This function is deprecated. Use `deploy` instead.
     """
     with TerminationHandler():
-        result = api.upload(
+        result = api.deploy(
             flavor_path=flavor_path,
-            database_host=database_host,
+            bucketfs_host=bucketfs_host,
             bucketfs_port=bucketfs_port,
-            bucketfs_username=bucketfs_username,
+            bucketfs_user=bucketfs_user,
             bucketfs_name=bucketfs_name,
-            bucket_name=bucket_name,
+            bucket=bucket,
             bucketfs_password=bucketfs_password,
-            bucketfs_https=bucketfs_https,
+            bucketfs_use_https=bucketfs_use_https,
             path_in_bucket=path_in_bucket,
             release_goal=release_goal,
             release_name=release_name,
