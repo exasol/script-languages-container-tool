@@ -31,7 +31,7 @@ def _parse_parameters(query_string: str) -> Tuple[str, List[SLCParameter]]:
 
 
 def parse_language_definition(
-    lang_def: str,
+    lang_def: str, end_marker_bucket_path: str
 ) -> Tuple[str, Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]]:
     alias_end = lang_def.find("=")
     alias = lang_def[0:alias_end]
@@ -42,13 +42,17 @@ def parse_language_definition(
     language, slc_parameters = _parse_parameters(parsed_url.query)
 
     # fragment is supposed to be something like:
-    # 'buckets/exaudf/exaudfclient_py3'
+    # 'buckets///____end_marker_bucket_path____exaudf/exaudfclient_py3'
     # We remove the given bucket prefix 'buckets/'
-    udf_client_path_within_container = parsed_url.fragment.replace("buckets///", "")
-    if not udf_client_path_within_container:
+    end_marker_start_idx = parsed_url.fragment.find(end_marker_bucket_path)
+    if end_marker_start_idx < 0:
         raise ValueError(
-            f"URL {url} for alias '{alias}' is not in expected format: Path to udf client is empty."
+            f"URL {url} for alias '{alias}' is not in expected format: The bucket path is invalid."
         )
+
+    udf_client_path_within_container = parsed_url.fragment[
+        end_marker_start_idx + len(end_marker_bucket_path) :
+    ]
 
     slc_language = None
     for slc_language_enum in SLCLanguage:

@@ -37,12 +37,17 @@ def get_language_activation_builder(
 
     template = Template(lang_def_template)
     language_definition = template.render(
-        bucketfs_name="", bucket_name="", release_name="", path_in_bucket=""
+        bucketfs_name="",
+        bucket_name="",
+        release_name="",
+        path_in_bucket="____end_marker_bucket_path____",
     )
     languages_defs = language_definition.split(" ")
     language_def_components_list = list()
     for lang_def in languages_defs:
-        alias, url = parse_language_definition(lang_def)
+        alias, url = parse_language_definition(
+            lang_def, end_marker_bucket_path="____end_marker_bucket_path____"
+        )
         if isinstance(url, LanguageDefinitionURL):
             url.bucket_name = bucket_name
             url.bucketfs_name = bucketfs_name
