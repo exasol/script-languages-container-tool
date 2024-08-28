@@ -12,4 +12,5 @@ n/a
 
 ## Refactoring
 
-##219: Replaced deprecated bucketfs API by new API 
+#219: Replaced deprecated bucketfs API by new API
+#171: Improved api generate_language_activation
