@@ -62,10 +62,13 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
         except ValueError:
             release_path = Path(export_info.cache_file)
+        path_in_bucket = (
+            f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
+        )
         command_line_output_str = textwrap.dedent(
             f"""
             Uploaded {release_path} to
-            {self.build_file_path_in_bucket(export_info).as_udf_path()}
+            {self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz
 
 
             In SQL, you can activate the languages supported by the {flavor_name}
@@ -88,20 +91,22 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         backend = bfs.path.StorageBackend.onprem
 
         complete_release_name = self._get_complete_release_name(release_info)
-        kwargs = {
-            "backend": backend,
-            "url": f"{self._get_url_prefix()}{self.database_host}:{self.bucketfs_port}",
-            "bucket_name": self.bucket_name,
-            "service_name": self.bucketfs_name,
-            "username": self.bucketfs_username,
-            "password": self.bucketfs_password,
-            "verify": not self.ignore_certificate,
-        }
-        if self.path_in_bucket:
-            kwargs.update({"path": self.path_in_bucket})
-
-        path_in_bucket_to_upload_path = bfs.path.build_path(**kwargs)
+        verify = self.ssl_cert_path or self.use_ssl_cert_validation
+        path_in_bucket_to_upload_path = bfs.path.build_path(
+            backend=backend,
+            url=self._url,
+            bucket_name=self.bucket_name,
+            service_name=self.bucketfs_name,
+            username=self.bucketfs_username,
+            password=self.bucketfs_password,
+            verify=verify,
+            path=self.path_in_bucket or "",
+        )
         return path_in_bucket_to_upload_path / f"{complete_release_name}.tar.gz"
+
+    @property
+    def _url(self) -> str:
+        return f"{self._get_url_prefix()}{self.database_host}:{self.bucketfs_port}"
 
     def _upload_container(self, release_info: ExportInfo):
         bucket_path = self.build_file_path_in_bucket(release_info)

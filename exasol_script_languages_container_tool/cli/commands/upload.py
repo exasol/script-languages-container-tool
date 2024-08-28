@@ -42,7 +42,8 @@ from exasol_script_languages_container_tool.lib import api
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
-@click.option("--ignore-certificate/--no-ignore-certificate", default=False)
+@click.option("--ssl-cert-path", type=str, default="")
+@click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 def upload(
     flavor_path: Tuple[str, ...],
     database_host: str,
@@ -75,7 +76,8 @@ def upload(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
-    ignore_certificate: bool,
+    ssl_cert_path: str,
+    use_ssl_cert_validation: bool,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -115,7 +117,8 @@ def upload(
             task_dependencies_dot_file=task_dependencies_dot_file,
             log_level=log_level,
             use_job_specific_log_file=use_job_specific_log_file,
-            ignore_certificate=ignore_certificate,
+            ssl_cert_path=ssl_cert_path,
+            use_ssl_cert_validation=use_ssl_cert_validation,
         )
         with result.open("r") as f:
             print(f.read())
