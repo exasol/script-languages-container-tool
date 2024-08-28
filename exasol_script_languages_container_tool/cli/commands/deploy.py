@@ -64,10 +64,10 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(flavor_options)
 @click.option("--bucketfs-host", type=str, required=True)
 @click.option("--bucketfs-port", type=int, required=True)
-@click.option("--bucketfs-use-https", type=bool, default=False)
-@click.option("--bucketfs-user", type=str)
+@click.option("--bucketfs-user", type=str, required=True)
 @click.option("--bucketfs-name", type=str, required=True)
-@click.option("--bucket", type=str)
+@click.option("--bucket", type=str, required=True)
+@click.option("--bucketfs-use-https", type=bool, default=False)
 @click.option(
     f"--{SecretParams.BUCKETFS_PASSWORD.value}",
     type=str,
@@ -78,22 +78,22 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     callback=secret_callback,
 )
 @click.option("--path-in-bucket", type=str, required=False, default="")
-@add_options(release_options)
+@add_options(release_options)  # 1
 @click.option("--release-name", type=str, default=None)
-@add_options(build_options)
-@add_options(docker_repository_options)
-@add_options(system_options)
-@add_options(luigi_logging_options)
+@add_options(build_options)  # 7
+@add_options(docker_repository_options)  # 4
+@add_options(system_options)  # 2
+@add_options(luigi_logging_options)  # 2
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 def deploy(
     flavor_path: Tuple[str, ...],
     bucketfs_host: str,
     bucketfs_port: int,
-    bucketfs_use_https: str,
     bucketfs_user: str,
     bucketfs_name: str,
     bucket: str,
+    bucketfs_use_https: bool,
     bucketfs_password: str,
     path_in_bucket: str,
     release_goal: Tuple[str, ...],
