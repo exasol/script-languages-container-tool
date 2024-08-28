@@ -33,6 +33,8 @@ from exasol_script_languages_container_tool.lib import api
     "--export-path",
     type=click.Path(exists=False, file_okay=False, dir_okay=True),
     default=None,
+    help="The directory where the container file will be stored. If this parameter is omitted, only the cached"
+    " file will be created.",
 )
 @click.option("--release-name", type=str, default=None)
 @add_options(build_options)
