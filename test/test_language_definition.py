@@ -21,7 +21,7 @@ class LanguageDefintionTest(unittest.TestCase):
         self.assertEqual(
             "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
             "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3"
-            " JAVA=builtin_java PYTHON=builtin_python PYTHON3=builtin_python3 R=builtin_r",
+            " JAVA=builtin_java PYTHON3=builtin_python3 R=builtin_r",
             language_definition.generate_definition(),
         )
 
