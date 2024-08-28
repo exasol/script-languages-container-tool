@@ -54,7 +54,7 @@ class LanguageDefintionTest(unittest.TestCase):
             language_definition.generate_definition(),
         )
 
-    def test_path_in_bucket_empyt_string(self):
+    def test_path_in_bucket_empty_string(self):
         language_definition = LanguageDefinition(
             release_name="release_name",
             flavor_path=self.flavor_path,
