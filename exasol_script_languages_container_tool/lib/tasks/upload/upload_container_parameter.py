@@ -16,3 +16,5 @@ class UploadContainerParameter:
     path_in_bucket = luigi.OptionalParameter()
     bucketfs_https = luigi.BoolParameter(False)
     release_name = luigi.OptionalParameter()
+    ssl_cert_path = luigi.Parameter()
+    use_ssl_cert_validation = luigi.BoolParameter(True)

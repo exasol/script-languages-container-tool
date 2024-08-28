@@ -1,15 +1,14 @@
 import textwrap
 from pathlib import Path
 
+import exasol.bucketfs as bfs  # type: ignore
 import luigi
-import requests
 from exasol_integration_test_docker_environment.abstract_method_exception import (
     AbstractMethodException,
 )
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
-from requests.auth import HTTPBasicAuth
 
 from exasol_script_languages_container_tool.lib.tasks.export.export_info import (
     ExportInfo,
@@ -65,9 +64,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             release_path = Path(export_info.cache_file)
         command_line_output_str = textwrap.dedent(
             f"""
-            Uploaded {release_path} to
-            {self._get_upload_url(export_info, without_login=True)}
-
+            Uploaded {release_path} to {self._complete_url(export_info)}
 
             In SQL, you can activate the languages supported by the {flavor_name}
             flavor by using the following statements:
@@ -85,34 +82,40 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         )
         return command_line_output_str
 
-    def _upload_container(self, release_info: ExportInfo):
-        s = requests.session()
-        url = self._get_upload_url(release_info, without_login=True)
-        self.logger.info(f"Upload {release_info.cache_file} to {url}")
-        with open(release_info.cache_file, "rb") as file:
-            response = s.put(url, data=file, auth=self._create_auth_object())
-            response.raise_for_status()
+    def build_file_path_in_bucket(self, release_info: ExportInfo) -> bfs.path.PathLike:
+        backend = bfs.path.StorageBackend.onprem
 
-    def _create_auth_object(self) -> HTTPBasicAuth:
-        auth = HTTPBasicAuth(self.bucketfs_username, self.bucketfs_password)
-        return auth
-
-    def _get_upload_url(self, release_info: ExportInfo, without_login: bool = False):
         complete_release_name = self._get_complete_release_name(release_info)
-        if without_login:
-            login = ""
-        else:
-            login = f"""{self.bucketfs_username}:{self.bucketfs_password}@"""
+        verify = self.ssl_cert_path or self.use_ssl_cert_validation
+        path_in_bucket_to_upload_path = bfs.path.build_path(
+            backend=backend,
+            url=self._url,
+            bucket_name=self.bucket_name,
+            service_name=self.bucketfs_name,
+            username=self.bucketfs_username,
+            password=self.bucketfs_password,
+            verify=verify,
+            path=self.path_in_bucket or "",
+        )
+        return path_in_bucket_to_upload_path / f"{complete_release_name}.tar.gz"
+
+    @property
+    def _url(self) -> str:
+        return f"{self._get_url_prefix()}{self.database_host}:{self.bucketfs_port}"
+
+    def _complete_url(self, export_info: ExportInfo):
         path_in_bucket = (
             f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
         )
-        url = (
-            f"""{self._get_url_prefix()}{login}"""
-            + f"""{self.database_host}:{self.bucketfs_port}/{self.bucket_name}/{path_in_bucket}"""
-            + complete_release_name
-            + ".tar.gz"
+        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz"
+
+    def _upload_container(self, release_info: ExportInfo):
+        bucket_path = self.build_file_path_in_bucket(release_info)
+        self.logger.info(
+            f"Upload {release_info.cache_file} to {self._complete_url(release_info)}"
         )
-        return url
+        with open(release_info.cache_file, "rb") as file:
+            bucket_path.write(file)
 
     def _get_complete_release_name(self, release_info: ExportInfo):
         complete_release_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_release_name(
