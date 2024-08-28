@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Union
+from urllib.parse import urlencode
 
 
 class SLCLanguage(Enum):
@@ -12,10 +13,7 @@ class SLCLanguage(Enum):
 @dataclass
 class SLCParameter:
     key: str
-    value: str
-
-    def __str__(self) -> str:
-        return f"{self.key}={self.value}"
+    value: List[str]
 
 
 @dataclass
@@ -30,16 +28,16 @@ class LanguageDefinitionURL:
     language: SLCLanguage
 
     def __str__(self) -> str:
-        parameters = ""
-        if self.parameters:
-            parameters = "&" + "&".join(str(p) for p in self.parameters)
+        query_params = {p.key: p.value for p in self.parameters}
+        query_params["lang"] = [self.language.value.lower()]
+        query_string = urlencode(query_params)
         path_in_bucket = self.path_in_bucket
         if path_in_bucket and not path_in_bucket.endswith("/"):
             path_in_bucket = f"{path_in_bucket}/"
 
         return (
             f"{self.protocol}:///{self.bucketfs_name}/{self.bucket_name}/{path_in_bucket}"
-            f"{self.container_name}?lang={self.language.value}{parameters}#buckets/{self.bucketfs_name}/{self.bucket_name}/"
+            f"{self.container_name}?{query_string}#buckets/{self.bucketfs_name}/{self.bucket_name}/"
             f"{path_in_bucket}{self.container_name}{self.udf_client_path_within_container}"
         )
 

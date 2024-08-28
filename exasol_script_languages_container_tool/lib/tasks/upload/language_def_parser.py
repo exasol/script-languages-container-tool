@@ -1,14 +1,33 @@
 from typing import List, Tuple, Union
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
-from exasol_script_languages_container_tool.lib.api.get_language_activation_builder import (
+from exasol_script_languages_container_tool.lib.tasks.upload.language_activation import (
     BuiltInLanguageDefinitionURL,
     LanguageDefinitionURL,
     SLCLanguage,
-)
-from exasol_script_languages_container_tool.lib.api.language_activation import (
     SLCParameter,
 )
+
+
+def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL:
+    lang = url.replace("builtin_", "")
+    for slc_builtin_language in SLCLanguage:
+        if slc_builtin_language.name.lower() == lang.lower():
+            return BuiltInLanguageDefinitionURL(language=slc_builtin_language)
+    raise ValueError(f"Unknown builtin language: {url}")
+
+
+def _parse_parameters(query_string: str) -> Tuple[str, List[SLCParameter]]:
+    values = parse_qs(query_string)
+    language_list = values["lang"]
+    if len(language_list) != 1:
+        raise ValueError(
+            f"Unexpected number of languages in URL. query_string: '{query_string}'"
+        )
+    slc_parameters: List[SLCParameter] = [
+        SLCParameter(key, value) for key, value in values.items() if key != "lang"
+    ]
+    return language_list[0], slc_parameters
 
 
 def parse_language_definition(
@@ -17,24 +36,11 @@ def parse_language_definition(
     alias_end = lang_def.find("=")
     alias = lang_def[0:alias_end]
     url = lang_def[alias_end + 1 :]
-    if url.startswith("builtin"):
-        lang = url.replace("builtin_", "")
-        for slc_builtin_language in SLCLanguage:
-            if slc_builtin_language.name.lower() == lang.lower():
-                return alias, BuiltInLanguageDefinitionURL(
-                    language=slc_builtin_language
-                )
-        raise ValueError(f"Unknown builtin language: {url}")
+    if url.startswith("builtin_"):
+        return alias, _parse_builtin_language_definition(url)
     parsed_url = urlparse(url)
-    parameters = parsed_url.query.split("&")
-    language = ""
-    slc_parameters: List[SLCParameter] = list()
-    for param in parameters:
-        key, value = param.split("=")
-        if key == "lang":
-            language = value
-        else:
-            slc_parameters.append(SLCParameter(key=key, value=value))
+    language, slc_parameters = _parse_parameters(parsed_url.query)
+
     # fragment is supposed to be something like:
     # 'buckets/exaudf/exaudfclient_py3'
     # We remove the given bucket prefix 'buckets/'

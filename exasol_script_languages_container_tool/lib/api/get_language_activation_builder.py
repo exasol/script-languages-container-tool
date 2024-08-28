@@ -1,49 +1,19 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from jinja2 import Template
 
-from exasol_script_languages_container_tool.lib.api.language_activation import (
-    BuiltInLanguageDefinitionURL,
+from exasol_script_languages_container_tool.lib.tasks.upload.language_activation import (
     LanguageDefinitionComponents,
     LanguageDefinitionURL,
-    SLCLanguage,
 )
-from exasol_script_languages_container_tool.lib.utils.language_def_parser import (
+from exasol_script_languages_container_tool.lib.tasks.upload.language_activation_builder import (
+    LanguageDefinitionBuilder,
+    add_missing_builtin_languages,
+)
+from exasol_script_languages_container_tool.lib.tasks.upload.language_def_parser import (
     parse_language_definition,
 )
-
-
-class LanguageDefinitionBuilder:
-    def __init__(self, lang_def_components: List[LanguageDefinitionComponents]):
-        self.lang_def_components = lang_def_components
-        self.custom_aliases: Dict[str, str] = dict()
-
-    def add_custom_alias(self, orig_alias: str, custom_alias: str):
-        self.custom_aliases[orig_alias] = custom_alias
-
-    def generate_definition(self):
-        lang_def_components_list = self.generate_definition_components()
-        return " ".join(
-            str(lang_def_components) for lang_def_components in lang_def_components_list
-        )
-
-    def _replace_alias(self, lang_def_components: LanguageDefinitionComponents):
-        if (
-            lang_def_components.alias in self.custom_aliases.keys()
-            and not lang_def_components.is_builtin
-        ):
-            lang_def_components.alias = self.custom_aliases[lang_def_components.alias]
-        return lang_def_components
-
-    def generate_alter_session(self):
-        return f"""ALTER SESSION SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
-
-    def generate_alter_system(self):
-        return f"""ALTER SYSTEM SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
-
-    def generate_definition_components(self) -> List[LanguageDefinitionComponents]:
-        return [self._replace_alias(lang_def) for lang_def in self.lang_def_components]
 
 
 def get_language_activation_builder(
@@ -73,7 +43,7 @@ def get_language_activation_builder(
     language_def_components_list = list()
     for lang_def in languages_defs:
         alias, url = parse_language_definition(lang_def)
-        if type(url) is LanguageDefinitionURL:
+        if isinstance(url, LanguageDefinitionURL):
             url.bucket_name = bucket_name
             url.bucketfs_name = bucketfs_name
             url.path_in_bucket = path_in_bucket
@@ -83,21 +53,11 @@ def get_language_activation_builder(
         )
 
     if add_missing_builtin:
-        builtin_aliases = {slc_lang.name.upper(): slc_lang for slc_lang in SLCLanguage}
-        defined_aliases = [
-            lang_def_comp.alias.upper()
-            for lang_def_comp in language_def_components_list
-        ]
-        missing_aliases = builtin_aliases.keys() - set(defined_aliases)
-        for alias in sorted(list(missing_aliases)):
-            built_in_lang_def_comp = LanguageDefinitionComponents(
-                alias=alias,
-                url=BuiltInLanguageDefinitionURL(language=builtin_aliases[alias]),
-            )
-            language_def_components_list.append(built_in_lang_def_comp)
-    lang_def_builder = LanguageDefinitionBuilder(
-        lang_def_components=language_def_components_list
-    )
+        language_def_components_list = add_missing_builtin_languages(
+            language_def_components_list
+        )
+
+    lang_def_builder = LanguageDefinitionBuilder(language_def_components_list)
 
     if custom_aliases:
         for orig_alias, custom_alias in custom_aliases.items():
