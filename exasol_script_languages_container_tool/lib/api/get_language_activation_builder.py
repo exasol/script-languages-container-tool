@@ -11,6 +11,13 @@ from exasol_script_languages_container_tool.lib.tasks.upload.language_definition
 
 
 @dataclass
+class LanguageDefinitionURL:
+    protocol: str
+    udf_client_path: str
+    parameters: str
+
+
+@dataclass
 class LanguageDefinitionComponents:
     alias: str
     url: str
