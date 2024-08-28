@@ -48,7 +48,7 @@ class LanguageDefinition:
         return language_definition
 
     def _add_missing_builtin_language_definitions(self, language_definition):
-        builtin_aliases = {"PYTHON", "PYTHON3", "JAVA", "R"}
+        builtin_aliases = {"PYTHON3", "JAVA", "R"}
         defined_aliases = {
             alias.split("=")[0] for alias in language_definition.split(" ")
         }

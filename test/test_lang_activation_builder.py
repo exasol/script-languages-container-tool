@@ -12,6 +12,11 @@ from exasol_script_languages_container_tool.lib.api.get_language_activation_buil
     LanguageDefinitionComponents,
     get_language_activation_builder,
 )
+from exasol_script_languages_container_tool.lib.api.language_activation import (
+    BuiltInLanguageDefinitionURL,
+    LanguageDefinitionURL,
+    SLCLanguage,
+)
 
 
 class LanguageActivationBuilderTest(unittest.TestCase):
@@ -35,9 +40,16 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             [
                 LanguageDefinitionComponents(
                     alias="PYTHON3_TEST",
-                    url="localzmq+protobuf:///bfsdefault/default/some_path/my_release"
-                    "?lang=python#buckets/bfsdefault/default/some_path/my_release"
-                    "/exaudf/exaudfclient_py3",
+                    url=LanguageDefinitionURL(
+                        protocol="localzmq+protobuf",
+                        bucketfs_name="bfsdefault",
+                        bucket_name="default",
+                        container_name="my_release",
+                        path_in_bucket="some_path",
+                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        parameters=list(),
+                        language=SLCLanguage.Python3,
+                    ),
                 )
             ],
         )
@@ -57,25 +69,28 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             [
                 LanguageDefinitionComponents(
                     alias="PYTHON3_TEST",
-                    url="localzmq+protobuf:///bfsdefault/default/some_path/my_release"
-                    "?lang=python#buckets/bfsdefault/default/some_path/my_release"
-                    "/exaudf/exaudfclient_py3",
+                    url=LanguageDefinitionURL(
+                        protocol="localzmq+protobuf",
+                        bucketfs_name="bfsdefault",
+                        bucket_name="default",
+                        container_name="my_release",
+                        path_in_bucket="some_path",
+                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        parameters=list(),
+                        language=SLCLanguage.Python3,
+                    ),
                 ),
                 LanguageDefinitionComponents(
                     alias="JAVA",
-                    url="builtin_java",
-                ),
-                LanguageDefinitionComponents(
-                    alias="PYTHON",
-                    url="builtin_python",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.Java),
                 ),
                 LanguageDefinitionComponents(
                     alias="PYTHON3",
-                    url="builtin_python3",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.Python3),
                 ),
                 LanguageDefinitionComponents(
                     alias="R",
-                    url="builtin_r",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.R),
                 ),
             ],
         )
@@ -97,25 +112,28 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             [
                 LanguageDefinitionComponents(
                     alias="MY_PYTHON3",
-                    url="localzmq+protobuf:///bfsdefault/default/some_path/my_release"
-                    "?lang=python#buckets/bfsdefault/default/some_path/my_release"
-                    "/exaudf/exaudfclient_py3",
+                    url=LanguageDefinitionURL(
+                        protocol="localzmq+protobuf",
+                        bucketfs_name="bfsdefault",
+                        bucket_name="default",
+                        container_name="my_release",
+                        path_in_bucket="some_path",
+                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        parameters=list(),
+                        language=SLCLanguage.Python3,
+                    ),
                 ),
                 LanguageDefinitionComponents(
                     alias="JAVA",
-                    url="builtin_java",
-                ),
-                LanguageDefinitionComponents(
-                    alias="PYTHON",
-                    url="builtin_python",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.Java),
                 ),
                 LanguageDefinitionComponents(
                     alias="PYTHON3",
-                    url="builtin_python3",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.Python3),
                 ),
                 LanguageDefinitionComponents(
                     alias="R",
-                    url="builtin_r",
+                    url=BuiltInLanguageDefinitionURL(language=SLCLanguage.R),
                 ),
             ],
         )
@@ -137,7 +155,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             "ALTER SESSION SET SCRIPT_LANGUAGES='MY_PYTHON3="
             "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
             "?lang=python#buckets/bfsdefault/default/some_path/my_release"
-            "/exaudf/exaudfclient_py3 JAVA=builtin_java PYTHON=builtin_python "
+            "/exaudf/exaudfclient_py3 JAVA=builtin_java "
             "PYTHON3=builtin_python3 R=builtin_r';",
         )
 
@@ -158,9 +176,40 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
             "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
             "?lang=python#buckets/bfsdefault/default/some_path/my_release"
-            "/exaudf/exaudfclient_py3 JAVA=builtin_java PYTHON=builtin_python "
+            "/exaudf/exaudfclient_py3 JAVA=builtin_java "
             "PYTHON3=builtin_python3 R=builtin_r';",
         )
+
+    def test_with_custom_alias_with_builtin_with_parameter_alter_system(self):
+        with tempfile.TemporaryDirectory() as d:
+            flavor_base_path = Path(d) / "flavor_base"
+            flavor_base_path.mkdir()
+            lang_def_file = flavor_base_path / "language_definition"
+            with open(lang_def_file, "w") as f:
+                f.write(
+                    "PYTHON3_TEST=localzmq+protobuf:///{{ bucketfs_name }}/{{ bucket_name }}/{{ path_in_bucket }}"
+                    "{{ release_name }}?lang=python&my_param=hello#buckets/{{ bucketfs_name }}/{{ bucket_name }}/"
+                    "{{ path_in_bucket }}{{ release_name }}/exaudf/exaudfclient_py3"
+                )
+            lang_act_build = get_language_activation_builder(
+                flavor_path=d,
+                bucketfs_name="bfsdefault",
+                bucket_name="default",
+                container_name="my_release",
+                path_in_bucket="some_path",
+                add_missing_builtin=True,
+            )
+            lang_act_build.add_custom_alias("PYTHON3_TEST", "MY_PYTHON3")
+            lang_act_build.add_custom_alias("JAVA", "MY_JAVA")
+            alter_session = lang_act_build.generate_alter_system()
+            self.assertEqual(
+                alter_session,
+                "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
+                "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
+                "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_release"
+                "/exaudf/exaudfclient_py3 JAVA=builtin_java "
+                "PYTHON3=builtin_python3 R=builtin_r';",
+            )
 
 
 if __name__ == "__main__":
