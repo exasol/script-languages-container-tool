@@ -71,13 +71,21 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 
 ### Installation
 
+#### PyPi - recommend
+
+```
+python3 -m pip install exasol-script-languages-container-tool
+```
+
+#### From Github release
+
 Find the wheel package for a specific [release](https://github.com/exasol/script-languages-container-tool/releases) under assets.
 
 Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/$VERSION/exasol_script_languages_container_tool-$VERSION-py3-none-any.whl`. Replace $VERSION with the latest version or the specific version you are interested in.
 
 ### Usage
 
-For simplicity the following examples use the starter script version (`exaslct`). If you want to use the pure Python package, simply replace `exaslct` with `python3 -m exasol_script_languages_container_tool.main` in all examples.
+For simplicity the following examples use the script version (`exaslct`), which will be installed together with the Python package. The script is just an alias for `python3 -m exasol_script_languages_container_tool.main`.
 
 #### How to build an existing flavor?
 
