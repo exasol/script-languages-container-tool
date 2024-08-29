@@ -8,10 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python_version:
-          - 3.10
-          - 3.11
-          - 3.12
+        python_version: ["3.10", "3.11", "3.12"]
     runs-on: ubuntu-latest
     steps:
 
@@ -46,7 +43,7 @@ jobs:
         exasol_version:
           - "default"
         python_version:
-          - 3.10
+          - "3.10"
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
     runs-on: ubuntu-latest
     name: ${{ matrix.test-path.name }}
