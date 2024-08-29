@@ -5,9 +5,23 @@ on:
 
 jobs:
   test-docker-starter:
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version:
+          - 3.10
+          - 3.11
+          - 3.12
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.12.0
+        with:
+          python-version: "${{ matrix.python_version }}"
+          poetry-version: '1.8.2'
 
       - name: Test exaslct
         run: exaslct --help
@@ -42,7 +56,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@0.12.0
         with:
-          python-version: ${{ matrix.python_version }}
+          python-version: "${{ matrix.python_version }}"
           poetry-version: '1.8.2'
 
       - name: Test exaslct
