@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-
 set -euo pipefail
 
 #Force to rebuild exaslct docker image. Thus we avoid using a cached docker image (which is based on git sha)
