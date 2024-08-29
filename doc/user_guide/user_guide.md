@@ -19,13 +19,13 @@ For simplicity the following examples use the script version (`exaslct`), which 
 Create the language container and export it to the local file system
 
 ```bash
-./exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
+exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
 ```
 
 or upload it directly into the BucketFS (currently http only, https follows soon)
 
 ```bash
-./exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
+exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
                    --bucketfs-username w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
                    --bucket-name <bucket-name> --path-in-bucket <path/in/bucket>
 ```
@@ -38,7 +38,7 @@ that can be used to activate the script language container in the database.
 If you uploaded a container manually, you can generate the language activation statement with
 
 ```bash
-./exaslct generate-language-activation --flavor-path=flavors/<flavor-name> --bucketfs-name <bucketfs-name> \
+exaslct generate-language-activation --flavor-path=flavors/<flavor-name> --bucketfs-name <bucketfs-name> \
                                          --bucket-name <bucket-name> --path-in-bucket <path/in/bucket> --container-name <container-name>
 ```
 
@@ -56,7 +56,7 @@ Sometimes it is necessary to force a rebuild of a flavor.
 A typical reason to update the dependencies is to
 fix bugs and security vulnerabilities in the installed dependencies.
 To force a rebuild the command line option `--force-rebuild` can be used
-with basically all commands of `./exaslct`, except the clean commands.
+with basically all commands of `exaslct`, except the clean commands.
 
 ## Partial builds and rebuilds
 
@@ -67,7 +67,7 @@ until which the flavor should be build and for rebuilds
 you can define lower bounds from where the rebuild get forced.
 
 You can define upper bounds with the commandline option --goal
-for the `./exaslct` commands build and push.
+for the `exaslct` commands build and push.
 The build command only rebuilds the docker images,
 but does not export a new container.
 All other commands don't support the --goal option,
@@ -75,7 +75,7 @@ because they require specific images to be built,
 otherwise they would not proceed.
 
 ```bash
-./exaslct build --flavor-path=<path-to-flavor> --goal <build-stage>
+exaslct build --flavor-path=<path-to-flavor> --goal <build-stage>
 ```
 
 If you want to build several build-stages at once, you can repeat the `--goal` option.
@@ -101,7 +101,7 @@ The option `--force-rebuild-from` only has an effect together with the option `-
 without it is ignored.
 
 ```bash
-./exaslct build --flavor-path=<path-to-flavor> --force-rebuild --force-rebuild-from <build-stage>
+exaslct build --flavor-path=<path-to-flavor> --force-rebuild --force-rebuild-from <build-stage>
 ```
 
 Similar, as for the `--goal` option, you can specify multiple lower bounds
@@ -115,7 +115,7 @@ The default registry is configured to Docker Hub.
 With the command line options `--repository-name`
 you can configure your own docker registry as cache.
 The `--repository-name` option can be used with all
-`./exaslct` commands that could trigger a build,
+`exaslct` commands that could trigger a build,
 which include build, export, upload and run-db-test commands.
 Furthermore, it can be used with the push command which
 uploads the build images to the docker registry.
@@ -126,7 +126,7 @@ but also to which cache the built images should be pushed.
 You can specify the repository name, as below:
 
 ```bash
-./exaslct export --flavor-path=<path-to-flavor> --repository-name <hostname>[:port]/<user>/<repository-name>
+exaslct export --flavor-path=<path-to-flavor> --repository-name <hostname>[:port]/<user>/<repository-name>
 ```
 
 ## Testing an existing flavor
@@ -134,7 +134,7 @@ You can specify the repository name, as below:
 To test the script language container you can execute the following command:
 
 ```bash
-./exaslct run-db-test --flavor-path=flavors/<flavor-name>
+exaslct run-db-test --flavor-path=flavors/<flavor-name>
 ```
 
 **Note: you need docker in privileged mode to execute the tests**
@@ -148,13 +148,13 @@ of a flavor after working with them.
 This can be done as follows:
 
 ```bash
-./exaslct clean-flavor-images --flavor-path=flavors/<flavor-name>
+exaslct clean-flavor-images --flavor-path=flavors/<flavor-name>
 ```
 
 To remove all images of all flavors you can use:
 
 ```bash
-./exaslct clean-all-images
+exaslct clean-all-images
 ```
 
 **Please note that this script does not delete the Linux image that is used as basis for the images that were build in the previous steps.

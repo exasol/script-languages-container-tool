@@ -9,8 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test ./exaslct
-        run: ./exaslct --help
+      - name: Test exaslct
+        run: exaslct --help
 
   prep-testbed:
     runs-on: ubuntu-latest

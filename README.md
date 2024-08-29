@@ -84,13 +84,13 @@ For simplicity the following examples use the starter script version (`exaslct`)
 Create the language container and export it to the local file system
 
 ```bash
-./exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
+exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
 ```
 
 or upload it directly into the BucketFS (currently http only, https follows soon)
 
 ```bash
-./exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
+exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
                    --bucketfs-username w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
                    --bucket-name <bucket-name> --path-in-bucket <path/in/bucket>
 ```
@@ -103,7 +103,7 @@ that can be used to activate the script language container in the database.
 If you uploaded a container manually, you can generate the language activation statement with
 
 ```bash
-./exaslct generate-language-activation --flavor-path=flavors/<flavor-name> --bucketfs-name <bucketfs-name> \
+exaslct generate-language-activation --flavor-path=flavors/<flavor-name> --bucketfs-name <bucketfs-name> \
                                          --bucket-name <bucket-name> --path-in-bucket <path/in/bucket> --container-name <container-name>
 ```
 

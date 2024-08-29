@@ -10,10 +10,4 @@ if [[ $1 == "--no-rebuild" ]]; then
   shift 1
 fi
 
-if [ -n "$POETRY_BIN" ]
-then
-  PYTHONPATH=. $POETRY_BIN run python3 "${@}"
-else
-  echo "Could not find poetry!"
-  exit 1
-fi
+poetry run python3 "${@}"
