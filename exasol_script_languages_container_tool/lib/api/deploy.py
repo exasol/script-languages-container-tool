@@ -30,6 +30,8 @@ def deploy(
     bucketfs_use_https: bool = False,
     bucketfs_password: str = "***",
     path_in_bucket: str = "",
+    ssl_cert_path: str = "",
+    use_ssl_cert_validation: bool = True,
     release_goal: Tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
     force_rebuild: bool = False,
@@ -52,8 +54,6 @@ def deploy(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-    ssl_cert_path: str = "",
-    use_ssl_cert_validation: bool = True,
 ) -> luigi.LocalTarget:
     """
     This command uploads the whole script-language-container package of the flavor to the database.

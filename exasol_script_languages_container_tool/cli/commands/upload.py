@@ -27,7 +27,7 @@ from exasol_script_languages_container_tool.lib import api
 
 
 @cli.command(
-    short_help="Uploads the script-language-container to the database.Deprecated."
+    short_help="Uploads the script-language-container to the database. [Deprecated]"
 )
 @add_options(flavor_options)
 @click.option("--database-host", type=str, required=True)

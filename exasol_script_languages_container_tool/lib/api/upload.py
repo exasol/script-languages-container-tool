@@ -1,4 +1,5 @@
 import getpass
+import warnings
 from typing import Optional, Tuple
 
 import luigi
@@ -55,14 +56,9 @@ def upload(
     ssl_cert_path: str = "",
     use_ssl_cert_validation: bool = True,
 ) -> luigi.LocalTarget:
-    """
-    This command uploads the whole script-language-container package of the flavor to the database.
-    If the stages or the packaged container do not exists locally, the system will build, pull or
-    export them before the upload.
-    This function is deprecated. Use `deploy` instead.
-    :raises api_errors.TaskFailureError: if operation is not successful.
-    :return: Path to resulting report file.
-    """
+    warnings.warn(
+        "The 'upload' function is deprecated, use 'deploy' instead", DeprecationWarning
+    )
     import_build_steps(flavor_path)
     set_build_config(
         force_rebuild,

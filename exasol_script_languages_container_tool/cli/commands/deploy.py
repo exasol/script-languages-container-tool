@@ -43,7 +43,6 @@ class SecretParams(Enum):
     The enum value is also the name of the cli parameter.
     """
 
-    DB_PASSWORD = "db-pass"
     BUCKETFS_PASSWORD = "bucketfs-password"
 
 
@@ -78,14 +77,14 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     callback=secret_callback,
 )
 @click.option("--path-in-bucket", type=str, required=False, default="")
-@add_options(release_options)  # 1
-@click.option("--release-name", type=str, default=None)
-@add_options(build_options)  # 7
-@add_options(docker_repository_options)  # 4
-@add_options(system_options)  # 2
-@add_options(luigi_logging_options)  # 2
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
+@add_options(release_options)
+@click.option("--release-name", type=str, default=None)
+@add_options(build_options)
+@add_options(docker_repository_options)
+@add_options(system_options)
+@add_options(luigi_logging_options)
 def deploy(
     flavor_path: Tuple[str, ...],
     bucketfs_host: str,
@@ -96,6 +95,8 @@ def deploy(
     bucketfs_use_https: bool,
     bucketfs_password: str,
     path_in_bucket: str,
+    ssl_cert_path: str,
+    use_ssl_cert_validation: bool,
     release_goal: Tuple[str, ...],
     release_name: Optional[str],
     force_rebuild: bool,
@@ -118,8 +119,6 @@ def deploy(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
-    ssl_cert_path: str,
-    use_ssl_cert_validation: bool,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
