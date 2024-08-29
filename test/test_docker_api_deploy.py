@@ -6,9 +6,6 @@ from exasol_integration_test_docker_environment.lib.api.api_errors import (
     TaskRuntimeError,
 )
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
-from exasol_integration_test_docker_environment.testing.docker_registry import (
-    LocalDockerRegistryContextManager,
-)  # type: ignore
 
 from exasol_script_languages_container_tool.lib import api
 
@@ -29,63 +26,63 @@ class ApiDockerPushTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
-    # def test_docker_api_deploy(self):
-    #     path_in_bucket = "test"
-    #     release_name = "TEST"
-    #     bucketfs_name = "bfsdefault"
-    #     bucket_name = "default"
-    #     result = api.deploy(
-    #         flavor_path=(str(exaslct_utils.get_test_flavor()),),
-    #         bucketfs_host=self.docker_environment.database_host,
-    #         bucketfs_port=self.docker_environment.ports.bucketfs,
-    #         bucketfs_user=self.docker_environment.bucketfs_username,
-    #         bucketfs_password=self.docker_environment.bucketfs_password,
-    #         bucketfs_use_https=False,
-    #         bucketfs_name=bucketfs_name,
-    #         bucket=bucket_name,
-    #         path_in_bucket=path_in_bucket,
-    #         release_name=release_name,
-    #     )
-    #     with result.open("r") as f:
-    #         res = f.read()
-    #     self.assertIn(
-    #         f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
-    #         f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}?lang=python#buckets/"
-    #         f"{bucketfs_name}/{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}/"
-    #         f"exaudf/exaudfclient_py3",
-    #         res,
-    #     )
-    #     self.validate_file_on_bucket_fs(
-    #         bucket_name, f"{path_in_bucket}/test-flavor-release-{release_name}.tar.gz"
-    #     )
-    #
-    # def test_docker_api_deploy_without_path_in_bucket(self):
-    #     release_name = "TEST"
-    #     bucketfs_name = "bfsdefault"
-    #     bucket_name = "default"
-    #     result = api.deploy(
-    #         flavor_path=(str(exaslct_utils.get_test_flavor()),),
-    #         bucketfs_host=self.docker_environment.database_host,
-    #         bucketfs_port=self.docker_environment.ports.bucketfs,
-    #         bucketfs_user=self.docker_environment.bucketfs_username,
-    #         bucketfs_password=self.docker_environment.bucketfs_password,
-    #         bucketfs_use_https=False,
-    #         bucketfs_name=bucketfs_name,
-    #         bucket=bucket_name,
-    #         release_name=release_name,
-    #     )
-    #     with result.open("r") as f:
-    #         res = f.read()
-    #     self.assertIn(
-    #         f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
-    #         f"{bucket_name}/test-flavor-release-{release_name}?lang=python#buckets/"
-    #         f"{bucketfs_name}/{bucket_name}/test-flavor-release-{release_name}/"
-    #         f"exaudf/exaudfclient_py3",
-    #         res,
-    #     )
-    #     self.validate_file_on_bucket_fs(
-    #         bucket_name, f"test-flavor-release-{release_name}.tar.gz"
-    #     )
+    def test_docker_api_deploy(self):
+        path_in_bucket = "test"
+        release_name = "TEST"
+        bucketfs_name = "bfsdefault"
+        bucket_name = "default"
+        result = api.deploy(
+            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            bucketfs_host=self.docker_environment.database_host,
+            bucketfs_port=self.docker_environment.ports.bucketfs,
+            bucketfs_user=self.docker_environment.bucketfs_username,
+            bucketfs_password=self.docker_environment.bucketfs_password,
+            bucketfs_use_https=False,
+            bucketfs_name=bucketfs_name,
+            bucket=bucket_name,
+            path_in_bucket=path_in_bucket,
+            release_name=release_name,
+        )
+        with result.open("r") as f:
+            res = f.read()
+        self.assertIn(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
+            f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}?lang=python#buckets/"
+            f"{bucketfs_name}/{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}/"
+            f"exaudf/exaudfclient_py3",
+            res,
+        )
+        self.validate_file_on_bucket_fs(
+            bucket_name, f"{path_in_bucket}/test-flavor-release-{release_name}.tar.gz"
+        )
+
+    def test_docker_api_deploy_without_path_in_bucket(self):
+        release_name = "TEST"
+        bucketfs_name = "bfsdefault"
+        bucket_name = "default"
+        result = api.deploy(
+            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            bucketfs_host=self.docker_environment.database_host,
+            bucketfs_port=self.docker_environment.ports.bucketfs,
+            bucketfs_user=self.docker_environment.bucketfs_username,
+            bucketfs_password=self.docker_environment.bucketfs_password,
+            bucketfs_use_https=False,
+            bucketfs_name=bucketfs_name,
+            bucket=bucket_name,
+            release_name=release_name,
+        )
+        with result.open("r") as f:
+            res = f.read()
+        self.assertIn(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
+            f"{bucket_name}/test-flavor-release-{release_name}?lang=python#buckets/"
+            f"{bucketfs_name}/{bucket_name}/test-flavor-release-{release_name}/"
+            f"exaudf/exaudfclient_py3",
+            res,
+        )
+        self.validate_file_on_bucket_fs(
+            bucket_name, f"test-flavor-release-{release_name}.tar.gz"
+        )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
         release_name = "TEST"
