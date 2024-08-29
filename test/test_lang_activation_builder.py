@@ -203,7 +203,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                 alter_session,
                 "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
                 "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
-                "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_release"
+                "?my_param=hello&lang=python#buckets/bfsdefault/default/some_path/my_release"
                 "/exaudf/exaudfclient_py3 JAVA=builtin_java "
                 "PYTHON3=builtin_python3 R=builtin_r';",
             )

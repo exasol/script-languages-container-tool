@@ -1,3 +1,4 @@
+import urllib.parse
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Union
@@ -28,8 +29,8 @@ class LanguageDefinitionURL:
     language: SLCLanguage
 
     def __str__(self) -> str:
-        query_params = {p.key: p.value for p in self.parameters}
-        query_params["lang"] = [self.language.value.lower()]
+        query_params = {p.key: v for p in self.parameters for v in p.value}
+        query_params["lang"] = self.language.value.lower()
         query_string = urlencode(query_params)
         path_in_bucket = self.path_in_bucket
         if path_in_bucket and not path_in_bucket.endswith("/"):
