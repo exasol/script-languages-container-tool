@@ -1,7 +1,7 @@
 from typing import List, Tuple, Union
 from urllib.parse import parse_qs, urlparse
 
-from exasol_script_languages_container_tool.lib.tasks.upload.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_activation import (
     BuiltInLanguageDefinitionURL,
     LanguageDefinitionURL,
     SLCLanguage,

@@ -3,11 +3,11 @@ from typing import Dict, Optional
 
 from jinja2 import Template
 
-from exasol_script_languages_container_tool.lib.tasks.upload.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_activation import (
     LanguageDefinitionComponents,
     LanguageDefinitionURL,
 )
-from exasol_script_languages_container_tool.lib.tasks.upload.language_activation_builder import (
+from exasol_script_languages_container_tool.lib.models.language_activation_builder import (
     LanguageDefinitionBuilder,
     add_missing_builtin_languages,
 )

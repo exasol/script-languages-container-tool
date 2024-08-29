@@ -9,7 +9,7 @@ from exasol_script_languages_container_tool.lib.api.get_language_activation_buil
     LanguageDefinitionComponents,
     get_language_activation_builder,
 )
-from exasol_script_languages_container_tool.lib.tasks.upload.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_activation import (
     BuiltInLanguageDefinitionURL,
     LanguageDefinitionURL,
     SLCLanguage,
