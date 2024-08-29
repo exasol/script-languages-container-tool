@@ -58,7 +58,7 @@ class LanguageDefinitionComponents:
 
     @property
     def is_builtin(self) -> bool:
-        return type(self.url) is BuiltInLanguageDefinitionURL
+        return isinstance(self.url, BuiltInLanguageDefinitionURL)
 
     def __str__(self) -> str:
         return f"{self.alias}={self.url}"
