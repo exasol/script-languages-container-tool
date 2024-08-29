@@ -15,3 +15,4 @@ t.b.d.
 #219: Replaced deprecated bucketfs API by new API
 #171: Improved api generate_language_activation
 #230: Created new method `deploy` with similar parameters as in python-extension-common
+#234: Removed starter scripts

@@ -1,15 +1,8 @@
 #!/bin/bash
-  
+
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-#shellcheck source=./scripts/build/poetry_utils.sh
-source "$SCRIPT_DIR/../build/poetry_utils.sh"
-
-check_requirements
-
 set -euo pipefail
-
-init_poetry
 
 #Force to rebuild exaslct docker image. Thus we avoid using a cached docker image (which is based on git sha)
 export EXASLCT_FORCE_REBUILD=1
@@ -26,4 +19,3 @@ else
   echo "Could not find poetry!"
   exit 1
 fi
-

@@ -4,15 +4,15 @@
 
 1. [How to build an existing flavor?](#how-to-build-an-existing-flavor)
 2. [How to activate a script language container in the database](#how-to-activate-a-script-language-container-in-the-database)
-3. [Force a rebuild](#force-a-rebuild)  
+3. [Force a rebuild](#force-a-rebuild)
 4. [Partial builds or rebuilds](#partial-builds-and-rebuilds)
 5. [Using your own remote cache](#using-your-own-remote-cache)
 6. [Testing an existing flavor](#testing-an-existing-flavor)
 7. [Cleaning up after your are finished](#cleaning-up-after-you-are-finished)
 
-## Starter scripts or pure Python package?
+## Starter script or pure Python package?
 
-For simplicity the following examples use the starter script version (`exaslct`). If you want to use the pure Python package, simply replace `exaslct` with `python3 -m exasol_script_languages_container_tool.main` in all examples.
+For simplicity the following examples use the script version (`exaslct`), which will be installed together with the Python package. If you want to use the pure Python package, simply replace `exaslct` with `python3 -m exasol_script_languages_container_tool.main` in all examples.
 
 ## How to build an existing flavor?
 
@@ -25,7 +25,7 @@ Create the language container and export it to the local file system
 or upload it directly into the BucketFS (currently http only, https follows soon)
 
 ```bash
-./exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \ 
+./exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
                    --bucketfs-username w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
                    --bucket-name <bucket-name> --path-in-bucket <path/in/bucket>
 ```
@@ -52,25 +52,25 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 
 ## Force a rebuild
 
-Sometimes it is necessary to force a rebuild of a flavor. 
+Sometimes it is necessary to force a rebuild of a flavor.
 A typical reason to update the dependencies is to
 fix bugs and security vulnerabilities in the installed dependencies.
-To force a rebuild the command line option `--force-rebuild` can be used 
+To force a rebuild the command line option `--force-rebuild` can be used
 with basically all commands of `./exaslct`, except the clean commands.
 
 ## Partial builds and rebuilds
 
-In some circumstances you want to build or rebuild 
-only some parts of the flavor. Most likely during development or during CI. 
-You can specify for a build upper bounds (also called goals) 
-until which the flavor should be build and for rebuilds 
+In some circumstances you want to build or rebuild
+only some parts of the flavor. Most likely during development or during CI.
+You can specify for a build upper bounds (also called goals)
+until which the flavor should be build and for rebuilds
 you can define lower bounds from where the rebuild get forced.
 
-You can define upper bounds with the commandline option --goal 
-for the `./exaslct` commands build and push. 
-The build command only rebuilds the docker images, 
+You can define upper bounds with the commandline option --goal
+for the `./exaslct` commands build and push.
+The build command only rebuilds the docker images,
 but does not export a new container.
-All other commands don't support the --goal option, 
+All other commands don't support the --goal option,
 because they require specific images to be built,
 otherwise they would not proceed.
 
@@ -97,29 +97,29 @@ The following build-stage are currently available:
 With the option `--force-rebuild-from`, you can specify from where the rebuild should be forced.
 All previous build-stages before this wil use cached versions where possible.
 However, if a single stage is built, it will trigger a build for all following build-stages.
-The option `--force-rebuild-from` only has an effect together with the option `--force-rebuild`, 
+The option `--force-rebuild-from` only has an effect together with the option `--force-rebuild`,
 without it is ignored.
 
 ```bash
 ./exaslct build --flavor-path=<path-to-flavor> --force-rebuild --force-rebuild-from <build-stage>
 ```
 
-Similar, as for the `--goal` option, you can specify multiple lower bounds 
+Similar, as for the `--goal` option, you can specify multiple lower bounds
 by repeating the `--force-rebuild-from` with different build-stages.
 
 ## Using your own remote cache
 
-Exaslct caches images locally and remotely. 
-For remote caching exaslct can use a docker registry. 
-The default registry is configured to Docker Hub. 
-With the command line options `--repository-name` 
-you can configure your own docker registry as cache. 
-The `--repository-name` option can be used with all 
-`./exaslct` commands that could trigger a build, 
+Exaslct caches images locally and remotely.
+For remote caching exaslct can use a docker registry.
+The default registry is configured to Docker Hub.
+With the command line options `--repository-name`
+you can configure your own docker registry as cache.
+The `--repository-name` option can be used with all
+`./exaslct` commands that could trigger a build,
 which include build, export, upload and run-db-test commands.
 Furthermore, it can be used with the push command which
 uploads the build images to the docker registry.
-In this case the `--repository-name` option specifies 
+In this case the `--repository-name` option specifies
 not only from where to pull cached images during the build,
 but also to which cache the built images should be pushed.
 
@@ -157,5 +157,8 @@ To remove all images of all flavors you can use:
 ./exaslct clean-all-images
 ```
 
-**Please note that this script does not delete the Linux image that is used as basis for the images that were build in the previous steps. 
+**Please note that this script does not delete the Linux image that is used as basis for the images that were build in the previous steps.
 Furthermore, this command doesn't delete cached files in the output directory. The default path for the output directory is .build-output.**
+
+
+## Use

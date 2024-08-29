@@ -39,10 +39,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ./.github/actions/prepare_poetry_env
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.12.0
+        with:
+          python-version: ${{ matrix.python_version }}
+          poetry-version: '1.8.2'
 
-      - name: Test exaslct_with_poetry
-        run: ./scripts/test/exaslct_with_poetry.sh --help
+      - name: Test exaslct
+        run: poetry run exaslct --help
 
       - name: Run all tests
         run: ./scripts/test/run_test.sh ${{ matrix.test-path.path }}
