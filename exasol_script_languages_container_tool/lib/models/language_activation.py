@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 from urllib.parse import ParseResult, urlencode, urlunparse
 
 
@@ -19,29 +19,29 @@ class SLCParameter:
 @dataclass
 class LanguageDefinitionURL:
     protocol: str
-    bucketfs_name: str
-    bucket_name: str
-    path_in_bucket: str
-    container_name: str
+    chroot_bucketfs_name: str
+    chroot_bucket_name: str
+    udf_client_bucketfs_name: str
+    udf_client_bucket_name: str
     udf_client_path_within_container: str
     parameters: List[SLCParameter]
     language: SLCLanguage
+    chroot_path_in_bucket: str = ""
+    udf_client_path_in_bucket: str = ""
 
     def __str__(self) -> str:
         query_params = {p.key: v for p in self.parameters for v in p.value}
         query_params["lang"] = self.language.value.lower()
         query_string = urlencode(query_params)
-        path_in_bucket = self.path_in_bucket
-        if path_in_bucket and not path_in_bucket.endswith("/"):
-            path_in_bucket = f"{path_in_bucket}/"
         url = urlunparse(
             ParseResult(
                 scheme=self.protocol,
                 netloc="",
-                path=f"///{self.bucketfs_name}/{self.bucket_name}/{path_in_bucket}{self.container_name}",
+                path=f"///{self.chroot_bucketfs_name}/{self.chroot_bucket_name}/{self.chroot_path_in_bucket}",
                 params="",
                 query=query_string,
-                fragment=f"buckets/{self.bucketfs_name}/{self.bucket_name}/{path_in_bucket}{self.container_name}{self.udf_client_path_within_container}",
+                fragment=f"buckets/{self.udf_client_bucketfs_name}/{self.udf_client_bucket_name}/"
+                f"{self.udf_client_path_in_bucket}{self.udf_client_path_within_container}",
             )
         )
         return url

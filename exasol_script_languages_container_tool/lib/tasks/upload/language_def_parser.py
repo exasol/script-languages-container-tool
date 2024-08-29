@@ -66,10 +66,10 @@ def parse_language_definition(
 
     return alias, LanguageDefinitionURL(
         protocol=parsed_url.scheme,
-        bucketfs_name="",
-        bucket_name="",
-        path_in_bucket="",
-        container_name="",
+        chroot_bucketfs_name="",
+        chroot_bucket_name="",
+        udf_client_bucketfs_name="",
+        udf_client_bucket_name="",
         udf_client_path_within_container=udf_client_path_within_container,
         parameters=slc_parameters,
         language=slc_language,

@@ -49,10 +49,12 @@ def get_language_activation_builder(
             lang_def, end_marker_bucket_path="____end_marker_bucket_path____"
         )
         if isinstance(url, LanguageDefinitionURL):
-            url.bucket_name = bucket_name
-            url.bucketfs_name = bucketfs_name
-            url.path_in_bucket = path_in_bucket
-            url.container_name = container_name
+            url.chroot_bucket_name = bucket_name
+            url.chroot_bucketfs_name = bucketfs_name
+            url.chroot_path_in_bucket = f"{path_in_bucket}/{container_name}"
+            url.udf_client_bucket_name = bucket_name
+            url.udf_client_bucketfs_name = bucketfs_name
+            url.udf_client_path_in_bucket = f"{path_in_bucket}/{container_name}"
         language_def_components_list.append(
             LanguageDefinitionComponents(alias=alias, url=url)
         )
