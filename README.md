@@ -54,7 +54,6 @@ In order to use this tool, your system needs to fulfill the following prerequisi
 
 * Software
     * Linux
-      * [bash](https://www.gnu.org/software/bash/) >= 4.2
       * Python3 >= 3.10
     * [Docker](https://docs.docker.com/) >= 17.05
       * with support for [multi-stage builds required](https://docs.docker.com/develop/develop-images/multistage-build/)
@@ -71,17 +70,22 @@ Further, prerequisites might be necessary for specific tasks. These are listed u
 
 ### Installation
 
-#### PyPi - recommend
+In general, it's good practice to install the package in a virtual environment, using `venv` or `Poetry`.
 
-```
+#### Pip via PyPi
+
+```commandline
 python3 -m pip install exasol-script-languages-container-tool
 ```
 
-#### From Github release
+#### Pipx via Pypi
 
-Find the wheel package for a specific [release](https://github.com/exasol/script-languages-container-tool/releases) under assets.
+If you plan to use `exasol-script-languages-container-tool` on the command line only via the `exaslct` script, we suggest the installation via `pipx`:
 
-Install the python package with `python3 -m pip install https://github.com/exasol/script-languages-container-tool/releases/download/$VERSION/exasol_script_languages_container_tool-$VERSION-py3-none-any.whl`. Replace $VERSION with the latest version or the specific version you are interested in.
+```commandline
+pipx install exasol-script-languages-container-tool
+```
+
 
 ### Usage
 
@@ -134,23 +138,6 @@ ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucke
 * Can use Docker registries, such as Docker Hub, as a cache to avoid rebuilding image without changes
 * Can push Docker images to Docker registries
 * Run tests for you container against an Exasol DB (docker-db or external db)
-
-## Limitations
-
-* Caution with symbolic links:
-  If you use symbolic links inside any directory of the command line arguments
-  they must not point to files or directories outside the root of the path of the
-  command line argument (i.e. --flavor-path ./flavors/my_flavor/ => There must be no symbolic
-  link inside ./flavors/my_flavor point to anywhere outside of ./flavors/my_flavor).
-  Background: Local directories paths must be mounted manually to the docker container.
-  We currently support only the mounting of the given command line arguments, but we do not analyze
-  the content of those directories.
-  Plan is to fix this limitation with [#35](https://github.com/exasol/script-languages-container-tool/issues/35)
-
-
-### MacOsX Limitations
-
-* On MacOsX all arguments (flavors path, output directory, etc.) must point to locations within the current directory (background is that the MacOsX version does not support mount binding additional directories).
 
 ## Table of Contents
 
