@@ -23,7 +23,6 @@ class LanguageDefinitionURL:
     chroot_bucket_name: str
     udf_client_bucketfs_name: str
     udf_client_bucket_name: str
-    udf_client_path_within_container: str
     parameters: List[SLCParameter]
     language: SLCLanguage
     chroot_path_in_bucket: str = ""
