@@ -27,7 +27,7 @@ class LanguageDefinitionURL:
     language: SLCLanguage
     chroot_path_in_bucket: str = ""
     udf_client_path_in_bucket: str = ""
-
+udf_client_executable: str
     def __str__(self) -> str:
         query_params = {p.key: v for p in self.parameters for v in p.value}
         query_params["lang"] = self.language.value.lower()
