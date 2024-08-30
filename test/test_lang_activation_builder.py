@@ -1,6 +1,6 @@
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
@@ -41,11 +41,12 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                         protocol="localzmq+protobuf",
                         chroot_bucketfs_name="bfsdefault",
                         chroot_bucket_name="default",
-                        chroot_path_in_bucket="some_path/my_release",
+                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
                         udf_client_bucketfs_name="bfsdefault",
                         udf_client_bucket_name="default",
-                        udf_client_path_in_bucket="some_path/my_release",
-                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        udf_client_executable=PurePosixPath(
+                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        ),
                         parameters=list(),
                         language=SLCLanguage.Python3,
                     ),
@@ -72,11 +73,12 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                         protocol="localzmq+protobuf",
                         chroot_bucketfs_name="bfsdefault",
                         chroot_bucket_name="default",
-                        chroot_path_in_bucket="some_path/my_release",
+                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
                         udf_client_bucketfs_name="bfsdefault",
                         udf_client_bucket_name="default",
-                        udf_client_path_in_bucket="some_path/my_release",
-                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        udf_client_executable=PurePosixPath(
+                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        ),
                         parameters=list(),
                         language=SLCLanguage.Python3,
                     ),
@@ -117,11 +119,12 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                         protocol="localzmq+protobuf",
                         chroot_bucketfs_name="bfsdefault",
                         chroot_bucket_name="default",
-                        chroot_path_in_bucket="some_path/my_release",
+                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
                         udf_client_bucketfs_name="bfsdefault",
                         udf_client_bucket_name="default",
-                        udf_client_path_in_bucket="some_path/my_release",
-                        udf_client_path_within_container="/exaudf/exaudfclient_py3",
+                        udf_client_executable=PurePosixPath(
+                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        ),
                         parameters=list(),
                         language=SLCLanguage.Python3,
                     ),

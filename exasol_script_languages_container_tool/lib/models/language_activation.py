@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import PurePosixPath
 from typing import List, Optional, Union
 from urllib.parse import ParseResult, urlencode, urlunparse
 
@@ -25,9 +26,9 @@ class LanguageDefinitionURL:
     udf_client_bucket_name: str
     parameters: List[SLCParameter]
     language: SLCLanguage
-    chroot_path_in_bucket: str = ""
-    udf_client_path_in_bucket: str = ""
-udf_client_executable: str
+    chroot_path_in_bucket: Optional[PurePosixPath] = None
+    udf_client_executable: Optional[PurePosixPath] = None
+
     def __str__(self) -> str:
         query_params = {p.key: v for p in self.parameters for v in p.value}
         query_params["lang"] = self.language.value.lower()
@@ -36,11 +37,11 @@ udf_client_executable: str
             ParseResult(
                 scheme=self.protocol,
                 netloc="",
-                path=f"///{self.chroot_bucketfs_name}/{self.chroot_bucket_name}/{self.chroot_path_in_bucket}",
+                path=f"///{self.chroot_bucketfs_name}/{self.chroot_bucket_name}/{self.chroot_path_in_bucket or ''}",
                 params="",
                 query=query_string,
                 fragment=f"buckets/{self.udf_client_bucketfs_name}/{self.udf_client_bucket_name}/"
-                f"{self.udf_client_path_in_bucket}{self.udf_client_path_within_container}",
+                f"{self.udf_client_executable or ''}",
             )
         )
         return url

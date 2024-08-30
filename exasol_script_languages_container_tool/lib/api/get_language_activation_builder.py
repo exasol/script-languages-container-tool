@@ -1,18 +1,16 @@
-from pathlib import Path
 from typing import Dict, Optional
-
-from jinja2 import Template
 
 from exasol_script_languages_container_tool.lib.models.language_activation import (
     LanguageDefinitionComponents,
-    LanguageDefinitionURL,
 )
 from exasol_script_languages_container_tool.lib.models.language_activation_builder import (
     LanguageDefinitionBuilder,
-    add_missing_builtin_languages,
 )
 from exasol_script_languages_container_tool.lib.tasks.upload.language_def_parser import (
     parse_language_definition,
+)
+from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import (
+    LanguageDefinition,
 )
 
 
@@ -32,36 +30,21 @@ def get_language_activation_builder(
 
     if custom_aliases is None:
         custom_aliases = dict()
-    with open(Path(flavor_path) / "flavor_base" / "language_definition") as f:
-        lang_def_template = f.read()
 
-    template = Template(lang_def_template)
-    language_definition = template.render(
-        bucketfs_name="",
-        bucket_name="",
-        release_name="",
-        path_in_bucket="____end_marker_bucket_path____",
+    language_definition = LanguageDefinition(
+        release_name=container_name,
+        flavor_path=flavor_path,
+        bucketfs_name=bucketfs_name,
+        bucket_name=bucket_name,
+        path_in_bucket=path_in_bucket,
+        add_missing_builtin=add_missing_builtin,
     )
-    languages_defs = language_definition.split(" ")
+    language_definitions = language_definition.generate_definition().split(" ")
     language_def_components_list = list()
-    for lang_def in languages_defs:
-        alias, url = parse_language_definition(
-            lang_def, end_marker_bucket_path="____end_marker_bucket_path____"
-        )
-        if isinstance(url, LanguageDefinitionURL):
-            url.chroot_bucket_name = bucket_name
-            url.chroot_bucketfs_name = bucketfs_name
-            url.chroot_path_in_bucket = f"{path_in_bucket}/{container_name}"
-            url.udf_client_bucket_name = bucket_name
-            url.udf_client_bucketfs_name = bucketfs_name
-            url.udf_client_path_in_bucket = f"{path_in_bucket}/{container_name}"
+    for lang_def in language_definitions:
+        alias, url = parse_language_definition(lang_def)
         language_def_components_list.append(
             LanguageDefinitionComponents(alias=alias, url=url)
-        )
-
-    if add_missing_builtin:
-        language_def_components_list = add_missing_builtin_languages(
-            language_def_components_list
         )
 
     lang_def_builder = LanguageDefinitionBuilder(language_def_components_list)
