@@ -18,30 +18,54 @@ class SLCParameter:
 
 
 @dataclass
+class UdfClientAbsolutePath:
+    bucketfs_name: str
+    bucket_name: str
+    executable: Optional[PurePosixPath] = None
+
+    def __str__(self) -> str:
+        return (
+            f"buckets/{self.bucketfs_name}/{self.bucket_name}/"
+            f"{self.executable or ''}"
+        )
+
+
+@dataclass
+class UdfClientRelativePath:
+    executable: Optional[PurePosixPath] = None
+
+    def __str__(self) -> str:
+        return str(self.executable) if self.executable else ""
+
+
+@dataclass
+class ChrootPath:
+    bucketfs_name: str
+    bucket_name: str
+    path_in_bucket: Optional[PurePosixPath] = None
+
+    def __str__(self) -> str:
+        return f"/{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket or ''}"
+
+
+@dataclass
 class LanguageDefinitionURL:
     protocol: str
-    chroot_bucketfs_name: str
-    chroot_bucket_name: str
-    udf_client_bucketfs_name: str
-    udf_client_bucket_name: str
     parameters: List[SLCParameter]
-    language: SLCLanguage
-    chroot_path_in_bucket: Optional[PurePosixPath] = None
-    udf_client_executable: Optional[PurePosixPath] = None
+    chroot_path: ChrootPath
+    udf_client_path: Union[UdfClientAbsolutePath, UdfClientRelativePath]
 
     def __str__(self) -> str:
         query_params = {p.key: v for p in self.parameters for v in p.value}
-        query_params["lang"] = self.language.value.lower()
         query_string = urlencode(query_params)
         url = urlunparse(
             ParseResult(
                 scheme=self.protocol,
                 netloc="",
-                path=f"///{self.chroot_bucketfs_name}/{self.chroot_bucket_name}/{self.chroot_path_in_bucket or ''}",
+                path=f"//{self.chroot_path}",
                 params="",
                 query=query_string,
-                fragment=f"buckets/{self.udf_client_bucketfs_name}/{self.udf_client_bucket_name}/"
-                f"{self.udf_client_executable or ''}",
+                fragment=str(self.udf_client_path),
             )
         )
         return url

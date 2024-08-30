@@ -11,8 +11,11 @@ from exasol_script_languages_container_tool.lib.api.get_language_activation_buil
 )
 from exasol_script_languages_container_tool.lib.models.language_activation import (
     BuiltInLanguageDefinitionURL,
+    ChrootPath,
     LanguageDefinitionURL,
     SLCLanguage,
+    SLCParameter,
+    UdfClientAbsolutePath,
 )
 
 
@@ -39,16 +42,19 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                     alias="PYTHON3_TEST",
                     url=LanguageDefinitionURL(
                         protocol="localzmq+protobuf",
-                        chroot_bucketfs_name="bfsdefault",
-                        chroot_bucket_name="default",
-                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
-                        udf_client_bucketfs_name="bfsdefault",
-                        udf_client_bucket_name="default",
-                        udf_client_executable=PurePosixPath(
-                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        chroot_path=ChrootPath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        parameters=list(),
-                        language=SLCLanguage.Python3,
+                        udf_client_path=UdfClientAbsolutePath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            executable=PurePosixPath(
+                                "some_path/my_release/exaudf/exaudfclient_py3"
+                            ),
+                        ),
+                        parameters=[SLCParameter(key="lang", value=["python"])],
                     ),
                 )
             ],
@@ -71,16 +77,19 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                     alias="PYTHON3_TEST",
                     url=LanguageDefinitionURL(
                         protocol="localzmq+protobuf",
-                        chroot_bucketfs_name="bfsdefault",
-                        chroot_bucket_name="default",
-                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
-                        udf_client_bucketfs_name="bfsdefault",
-                        udf_client_bucket_name="default",
-                        udf_client_executable=PurePosixPath(
-                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        chroot_path=ChrootPath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        parameters=list(),
-                        language=SLCLanguage.Python3,
+                        udf_client_path=UdfClientAbsolutePath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            executable=PurePosixPath(
+                                "some_path/my_release/exaudf/exaudfclient_py3"
+                            ),
+                        ),
+                        parameters=[SLCParameter(key="lang", value=["python"])],
                     ),
                 ),
                 LanguageDefinitionComponents(
@@ -117,16 +126,19 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                     alias="MY_PYTHON3",
                     url=LanguageDefinitionURL(
                         protocol="localzmq+protobuf",
-                        chroot_bucketfs_name="bfsdefault",
-                        chroot_bucket_name="default",
-                        chroot_path_in_bucket=PurePosixPath("some_path/my_release"),
-                        udf_client_bucketfs_name="bfsdefault",
-                        udf_client_bucket_name="default",
-                        udf_client_executable=PurePosixPath(
-                            "some_path/my_release/exaudf/exaudfclient_py3"
+                        chroot_path=ChrootPath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        parameters=list(),
-                        language=SLCLanguage.Python3,
+                        udf_client_path=UdfClientAbsolutePath(
+                            bucketfs_name="bfsdefault",
+                            bucket_name="default",
+                            executable=PurePosixPath(
+                                "some_path/my_release/exaudf/exaudfclient_py3"
+                            ),
+                        ),
+                        parameters=[SLCParameter(key="lang", value=["python"])],
                     ),
                 ),
                 LanguageDefinitionComponents(
@@ -212,7 +224,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                 alter_session,
                 "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
                 "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
-                "?my_param=hello&lang=python#buckets/bfsdefault/default/some_path/my_release"
+                "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_release"
                 "/exaudf/exaudfclient_py3 JAVA=builtin_java "
                 "PYTHON3=builtin_python3 R=builtin_r';",
             )
