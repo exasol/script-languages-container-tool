@@ -25,7 +25,7 @@ CHROOT_PATH_PARAMETERS = [
         ),
     ),
     (
-        "/defaultbfs/default",
+        "/defaultbfs/default/",
         ChrootPath(
             bucketfs_name="defaultbfs", bucket_name="default", path_in_bucket=None
         ),
@@ -89,15 +89,21 @@ def test_lang_def_parser(
     param,
     expected_param,
 ):
-    lang_def = (
-        f"PYTHON3_TEST=localzmq+protobuf://{chroot_path}{param}#{udf_client_path}"
-    )
+    if udf_client_path:
+        lang_def = (
+            f"PYTHON3_TEST=localzmq+protobuf://{chroot_path}{param}#{udf_client_path}"
+        )
+    else:
+        lang_def = f"PYTHON3_TEST=localzmq+protobuf://{chroot_path}{param}"
+
     alias, result = parse_language_definition(lang_def)
     assert alias == "PYTHON3_TEST"
     assert isinstance(result, LanguageDefinitionURL)
     assert result.chroot_path == expected_chroot_path
     assert result.udf_client_path == expected_udf_client_path
     assert result.parameters == expected_param
+
+    assert f"{alias}={result}" == lang_def
 
 
 BUILTIN_LANGUAGES = [
@@ -117,6 +123,8 @@ def test_lang_def_parser_builtin(
     assert alias == "PYTHON3_TEST"
     assert isinstance(result, BuiltInLanguageDefinitionURL)
     assert result == expected
+
+    assert f"{alias}={result}" == lang_def
 
 
 def test_lang_def_parser_invalid_builtin():

@@ -14,11 +14,16 @@ from exasol_script_languages_container_tool.lib.models.language_activation impor
 
 
 def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL:
-    lang = url.replace("builtin_", "")
-    for slc_builtin_language in SLCLanguage:
-        if slc_builtin_language.name.lower() == lang.lower():
-            return BuiltInLanguageDefinitionURL(language=slc_builtin_language)
-    raise ValueError(f"Unknown builtin language: {url}")
+    language = url.replace("builtin_", "")
+    try:
+        slc_language = next(
+            slc_language_enum
+            for slc_language_enum in SLCLanguage
+            if slc_language_enum.name.lower() == language.lower()
+        )
+    except StopIteration:
+        raise ValueError(f"Unknown builtin language: {url}")
+    return BuiltInLanguageDefinitionURL(language=slc_language)
 
 
 def _build_udf_client_abs_path_from_fragments(
