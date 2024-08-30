@@ -72,18 +72,12 @@ def _parse_chroot_path(
 ) -> ChrootPath:
     path = PurePosixPath(p)
 
-    # Cut of leading "/"
-    if path.is_absolute():
-        path_parts = path.parts[1:]
-    else:
-        path_parts = path.parts
-
-    if len(path_parts) < 2:
+    if not path.is_absolute() or len(path.parts) < 3:
         raise ValueError(
             f"Expected format of the URL path is "
-            f"'/<bucketfs_name>/<bucket_name>/...' or"
-            f"'<bucketfs_name>/<bucket_name>/...' or"
+            f"'/<bucketfs_name>/<bucket_name>/...'"
         )
+    path_parts = path.parts[1:]
     chroot_bucketfs_name = path_parts[0]
     chroot_bucket_name = path_parts[1]
     chroot_path_in_bucket = None
