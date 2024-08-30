@@ -37,7 +37,7 @@ Building script-language container for extending Exasol UDFs.
 
 ### Prerequisites
 
-**Note**: Since version 1.0.0 the "starter scripts" shipped with previous version, which pulled the `exaslct` docker container runtime, were removed. If you can't use Python3, you still can use our [AI-lab](https://github.com/exasol/ai-lab) which provides VM images, AMI images and a docker container, all capable of building script-language-container.
+**Note**: Since version 1.0.0 the "starter scripts" shipped with previous version, which pulled the `exaslct` docker container runtime, were removed. If you can't use Python3, you still can use our [AI-lab](https://github.com/exasol/ai-lab) which provides VM images, AMI images and a Docker images, all capable of building script-language-container.
 
 #### For installation
 
