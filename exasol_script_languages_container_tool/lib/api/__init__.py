@@ -4,7 +4,6 @@ from .clean import clean_all_images, clean_flavor_images
 from .deploy import deploy
 from .export import export
 from .generate_language_activation import generate_language_activation
-from .install_starter_scripts import install_starter_scripts
 from .push import push
 from .push_test_container import push_test_container
 from .run_db_tests import run_db_test

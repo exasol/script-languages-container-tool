@@ -1,5 +1,6 @@
 import unittest
-from test.utils import get_real_test_flavor
+
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
 from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import (
     LanguageDefinition,
@@ -7,7 +8,7 @@ from exasol_script_languages_container_tool.lib.tasks.upload.language_definition
 
 
 class LanguageDefintionTest(unittest.TestCase):
-    flavor_path = str(get_real_test_flavor())
+    flavor_path = str(exaslct_utils.get_real_test_flavor())
 
     def test_add_missing_builtin_true(self):
         language_definition = LanguageDefinition(
