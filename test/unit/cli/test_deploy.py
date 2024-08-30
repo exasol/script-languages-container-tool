@@ -21,15 +21,19 @@ class DummyLocalTarget:
 
 @pytest.fixture
 def cli():
-    """
-    To prevent accidentally creating actual AWS resources, the fixture
-    tells the CliRunner to use an invalid AWS profile.
-    """
     return CliRunner(deploy)
 
 
 def test_no_flavor_path(cli):
     assert cli.run().failed and "Missing option '--flavor-path'" in cli.output
+
+
+TEST_BUCKETFS_HOST = "dummy-bucketfs-host"
+TEST_BUCKETFS_PORT = 123
+TEST_BUCKETFS_USER = "dummy-bucketfs-user"
+TEST_BUCKETFS_PASSWORD = "dummy-bucketfs-password"
+TEST_BUCKETFS_NAME = "dummy-bucketfs-name"
+TEST_BUCKET_NAME = "dummy-bucket-name"
 
 
 def test_deploy_minimum_parameters(cli):
@@ -46,27 +50,27 @@ def test_deploy_minimum_parameters(cli):
                 "--flavor-path",
                 temp_flavor_path,
                 "--bucketfs-host",
-                "dummy-bucketfs-host",
+                TEST_BUCKETFS_HOST,
                 "--bucketfs-port",
-                123,
+                TEST_BUCKETFS_PORT,
                 "--bucketfs-user",
-                "dummy-bucketfs-user",
+                TEST_BUCKETFS_USER,
                 "--bucketfs-password",
-                "dummy-bucketfs-password",
+                TEST_BUCKETFS_PASSWORD,
                 "--bucketfs-name",
-                "dummy-bucketfs-name",
+                TEST_BUCKETFS_NAME,
                 "--bucket",
-                "dummy-bucket-name",
+                TEST_BUCKET_NAME,
             )
         assert cli.succeeded and "deploy was successful" in cli.output
         mock_foo.assert_called_once_with(
             flavor_path=(temp_flavor_path,),
-            bucketfs_host="dummy-bucketfs-host",
-            bucketfs_port=123,
-            bucketfs_user="dummy-bucketfs-user",
-            bucketfs_name="dummy-bucketfs-name",
-            bucket="dummy-bucket-name",
-            bucketfs_password="dummy-bucketfs-password",
+            bucketfs_host=TEST_BUCKETFS_HOST,
+            bucketfs_port=TEST_BUCKETFS_PORT,
+            bucketfs_user=TEST_BUCKETFS_USER,
+            bucketfs_name=TEST_BUCKETFS_NAME,
+            bucket=TEST_BUCKET_NAME,
+            bucketfs_password=TEST_BUCKETFS_PASSWORD,
             bucketfs_use_https=False,
             path_in_bucket="",
             release_goal=("release",),
@@ -103,7 +107,9 @@ def test_deploy_password_in_env(cli):
     dummy_returned_target = DummyLocalTarget()
     return_mock.open.return_value = dummy_returned_target
 
-    cli.env = {"BUCKETFS_PASSWORD": "super_secret_bucketfs_password"}
+    TEST_ENV_PASSWORD = "super_secret_bucketfs_password"
+
+    cli.env = {"BUCKETFS_PASSWORD": TEST_ENV_PASSWORD}
     with patch(
         "exasol_script_languages_container_tool.lib.api.deploy",
         return_value=return_mock,
@@ -113,25 +119,25 @@ def test_deploy_password_in_env(cli):
                 "--flavor-path",
                 temp_flavor_path,
                 "--bucketfs-host",
-                "dummy-bucketfs-host",
+                TEST_BUCKETFS_HOST,
                 "--bucketfs-port",
-                123,
+                TEST_BUCKETFS_PORT,
                 "--bucketfs-user",
-                "dummy-bucketfs-user",
+                TEST_BUCKETFS_USER,
                 "--bucketfs-name",
-                "dummy-bucketfs-name",
+                TEST_BUCKETFS_NAME,
                 "--bucket",
-                "dummy-bucket-name",
+                TEST_BUCKET_NAME,
             )
         assert cli.succeeded and "deploy was successful" in cli.output
     mock_foo.assert_called_once_with(
         flavor_path=(temp_flavor_path,),
-        bucketfs_host="dummy-bucketfs-host",
-        bucketfs_port=123,
-        bucketfs_user="dummy-bucketfs-user",
-        bucketfs_name="dummy-bucketfs-name",
-        bucket="dummy-bucket-name",
-        bucketfs_password="super_secret_bucketfs_password",
+        bucketfs_host=TEST_BUCKETFS_HOST,
+        bucketfs_port=TEST_BUCKETFS_PORT,
+        bucketfs_user=TEST_BUCKETFS_USER,
+        bucketfs_name=TEST_BUCKETFS_NAME,
+        bucket=TEST_BUCKET_NAME,
+        bucketfs_password=TEST_ENV_PASSWORD,
         bucketfs_use_https=False,
         path_in_bucket="",
         release_goal=("release",),
