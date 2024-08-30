@@ -5,7 +5,8 @@
 
 | Package | Version |
 |---------|---------|
-| poetry  | 1.1.11  |
+| poetry  | 1.8.2   |
+| Python  | 3.10    |
 
 ## Runtime Dependencies
 

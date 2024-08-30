@@ -21,7 +21,9 @@ from exasol_script_languages_container_tool.lib import api
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
 FLAVORS_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "flavors"
-EXASLCT_DEFAULT_BIN = Path(Path(__file__).parent.parent, "exaslct")
+EXASLCT_DEFAULT_BIN = Path(
+    Path(__file__).parent.parent / "exasol_script_languages_container_tool", "main.py"
+)
 
 
 class ExaslctApiTestEnvironmentWithCleanup:
