@@ -1,5 +1,4 @@
 import getpass
-import warnings
 from typing import Optional, Tuple
 
 import luigi
@@ -21,16 +20,18 @@ from exasol_script_languages_container_tool.lib.tasks.upload.upload_containers i
 
 
 @cli_function
-def upload(
+def deploy(
     flavor_path: Tuple[str, ...],
-    database_host: str,
+    bucketfs_host: str,
     bucketfs_port: int,
-    bucketfs_username: str,
+    bucketfs_user: str,
     bucketfs_name: str,
-    bucket_name: str,
-    bucketfs_password: Optional[str] = None,
-    bucketfs_https: bool = False,
+    bucket: str,
+    bucketfs_use_https: bool = False,
+    bucketfs_password: str = "***",
     path_in_bucket: str = "",
+    ssl_cert_path: str = "",
+    use_ssl_cert_validation: bool = True,
     release_goal: Tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
     force_rebuild: bool = False,
@@ -53,12 +54,14 @@ def upload(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-    ssl_cert_path: str = "",
-    use_ssl_cert_validation: bool = True,
 ) -> luigi.LocalTarget:
-    warnings.warn(
-        "The 'upload' function is deprecated, use 'deploy' instead", DeprecationWarning
-    )
+    """
+    This command uploads the whole script-language-container package of the flavor to the database.
+    If the stages or the packaged container do not exists locally, the system will build, pull or
+    export them before the upload.
+    :raises api_errors.TaskFailureError: if operation is not successful.
+    :return: Path to resulting report file.
+    """
     import_build_steps(flavor_path)
     set_build_config(
         force_rebuild,
@@ -87,7 +90,7 @@ def upload(
     if bucketfs_password is None:
         bucketfs_password = getpass.getpass(
             "BucketFS Password for BucketFS {} and User {}:".format(
-                bucketfs_name, bucketfs_username
+                bucketfs_name, bucketfs_user
             )
         )
 
@@ -96,13 +99,13 @@ def upload(
             task_class=UploadContainers,
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
-            database_host=database_host,
+            database_host=bucketfs_host,
             bucketfs_port=bucketfs_port,
-            bucketfs_username=bucketfs_username,
+            bucketfs_username=bucketfs_user,
             bucketfs_password=bucketfs_password,
-            bucket_name=bucket_name,
+            bucket_name=bucket,
             path_in_bucket=path_in_bucket,
-            bucketfs_https=bucketfs_https,
+            bucketfs_https=bucketfs_use_https,
             release_name=release_name,
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
