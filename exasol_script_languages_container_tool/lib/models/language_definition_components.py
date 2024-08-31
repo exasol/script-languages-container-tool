@@ -58,8 +58,8 @@ class LanguageDefinitionURL:
         url = urlunparse(
             ParseResult(
                 scheme=self.protocol,
-                netloc="",
-                path=f"//{self.chroot_path}",
+                netloc=f"/{self.chroot_path.bucketfs_name}",
+                path=f"/{self.chroot_path.bucket_name}/{self.chroot_path.path_in_bucket or ''}",
                 params="",
                 query=query_string,
                 fragment=str(self.udf_client_path),

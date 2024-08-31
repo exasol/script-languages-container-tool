@@ -7,7 +7,7 @@ You can build, export and upload script-language container from so-called flavor
 which are description how to build the script language container. You can find pre-defined flavors
 in the [script-languages-release](https://github.com/exasol/script-languages-release) repository.
 There we also described how you could customize these flavors to your needs.
-<h1 align="center">Exasol Toolbox</h1>
+<h1 align="center">Exasol Script Languages Container Tool</h1>
 
 <p align="center">
 Building script-language container for extending Exasol UDFs.
