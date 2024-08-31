@@ -1,10 +1,10 @@
 from typing import Dict, Optional
 
-from exasol_script_languages_container_tool.lib.models.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_definition_components import (
     LanguageDefinitionComponents,
 )
-from exasol_script_languages_container_tool.lib.models.language_activation_builder import (
-    LanguageDefinitionBuilder,
+from exasol_script_languages_container_tool.lib.models.language_definitions_builder import (
+    LanguageDefinitionsBuilder,
 )
 from exasol_script_languages_container_tool.lib.tasks.upload.language_def_parser import (
     parse_language_definition,
@@ -22,10 +22,10 @@ def get_language_activation_builder(
     path_in_bucket: str = "",
     add_missing_builtin: bool = False,
     custom_aliases: Optional[Dict[str, str]] = None,
-) -> LanguageDefinitionBuilder:
+) -> LanguageDefinitionsBuilder:
     """
     Builds an object which can be used to build language activation statements, allowing custom aliases.
-    :return: An instance of class LanguageDefinitionBuilder.
+    :return: An instance of class LanguageDefinitionsBuilder.
     """
 
     if custom_aliases is None:
@@ -47,7 +47,7 @@ def get_language_activation_builder(
             LanguageDefinitionComponents(alias=alias, url=url)
         )
 
-    lang_def_builder = LanguageDefinitionBuilder(language_def_components_list)
+    lang_def_builder = LanguageDefinitionsBuilder(language_def_components_list)
 
     if custom_aliases:
         for orig_alias, custom_alias in custom_aliases.items():

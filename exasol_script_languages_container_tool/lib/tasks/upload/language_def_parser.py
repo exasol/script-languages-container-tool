@@ -2,13 +2,13 @@ from pathlib import PurePosixPath
 from typing import List, Tuple, Union
 from urllib.parse import parse_qs, urlparse
 
-from exasol_script_languages_container_tool.lib.models.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     ChrootPath,
     LanguageDefinitionURL,
     SLCLanguage,
     SLCParameter,
-    UdfClientAbsolutePath,
+    UdfClientBucketPath,
     UdfClientRelativePath,
 )
 
@@ -28,18 +28,16 @@ def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL
 
 def _build_udf_client_abs_path_from_fragments(
     fragment_parts: Tuple[str, ...]
-) -> UdfClientAbsolutePath:
-    if len(fragment_parts) < 3 or fragment_parts[0] != "buckets":
+) -> UdfClientBucketPath:
+    if len(fragment_parts) < 4 or fragment_parts[0] != "buckets":
         raise ValueError(
-            f"Expected format of the fragment in the URL for absolute udf client path is "
-            f"'/buckets/<bucketfs_name>/<bucket_name>/...' or"
-            f"'buckets/<bucketfs_name>/<bucket_name>/...' or"
+            f"Expected format of the fragment in the URL for a bucket udf client path is "
+            f"'/buckets/<bucketfs_name>/<bucket_name>/<executable>' or"
+            f" 'buckets/<bucketfs_name>/<bucket_name>/<executable>'"
         )
-    udf_client_executable = None
-    if len(fragment_parts) > 3:
-        udf_client_executable = PurePosixPath("/".join(fragment_parts[3:]))
 
-    return UdfClientAbsolutePath(
+    udf_client_executable = PurePosixPath("/".join(fragment_parts[3:]))
+    return UdfClientBucketPath(
         bucketfs_name=fragment_parts[1],
         bucket_name=fragment_parts[2],
         executable=udf_client_executable,
@@ -48,12 +46,12 @@ def _build_udf_client_abs_path_from_fragments(
 
 def _parse_udf_client_path(
     fragment: str,
-) -> Union[UdfClientRelativePath, UdfClientAbsolutePath]:
+) -> Union[UdfClientRelativePath, UdfClientBucketPath]:
     fragment_path = PurePosixPath(fragment)
     fragment_parts = fragment_path.parts
 
     if len(fragment_parts) == 0:
-        return UdfClientRelativePath(executable=None)
+        raise ValueError("Udf client executable path must not be empty.")
 
     if fragment_path.is_absolute():
         fragment_parts = fragment_path.parts[1:]  # Remove leading "/"

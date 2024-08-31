@@ -1,11 +1,11 @@
 from typing import Dict, List
 
-from exasol_script_languages_container_tool.lib.models.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_definition_components import (
     LanguageDefinitionComponents,
 )
 
 
-class LanguageDefinitionBuilder:
+class LanguageDefinitionsBuilder:
     def __init__(self, lang_def_components: List[LanguageDefinitionComponents]):
         self.lang_def_components = lang_def_components
         self.custom_aliases: Dict[str, str] = dict()

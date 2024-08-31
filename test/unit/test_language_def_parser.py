@@ -2,13 +2,13 @@ from pathlib import PurePosixPath
 
 import pytest
 
-from exasol_script_languages_container_tool.lib.models.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     ChrootPath,
     LanguageDefinitionURL,
     SLCLanguage,
     SLCParameter,
-    UdfClientAbsolutePath,
+    UdfClientBucketPath,
     UdfClientRelativePath,
 )
 from exasol_script_languages_container_tool.lib.tasks.upload.language_def_parser import (
@@ -31,12 +31,6 @@ CHROOT_PATH_PARAMETERS = [
         ),
     ),
     (
-        "/defaultbfs/default/",
-        ChrootPath(
-            bucketfs_name="defaultbfs", bucket_name="default", path_in_bucket=None
-        ),
-    ),
-    (
         "/defaultbfs/default/slc/something",
         ChrootPath(
             bucketfs_name="defaultbfs",
@@ -48,13 +42,12 @@ CHROOT_PATH_PARAMETERS = [
 UDF_CLIENT_PATH_PARAMETERS = [
     (
         "buckets/defaultbfs/default/slc/exaudf/exaudfclient",
-        UdfClientAbsolutePath(
+        UdfClientBucketPath(
             bucketfs_name="defaultbfs",
             bucket_name="default",
             executable=PurePosixPath("slc/exaudf/exaudfclient"),
         ),
     ),
-    ("", UdfClientRelativePath(executable=None)),
     (
         "exaudf/exaudfclient",
         UdfClientRelativePath(executable=PurePosixPath("exaudf/exaudfclient")),

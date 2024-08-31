@@ -18,24 +18,21 @@ class SLCParameter:
 
 
 @dataclass
-class UdfClientAbsolutePath:
+class UdfClientBucketPath:
     bucketfs_name: str
     bucket_name: str
-    executable: Optional[PurePosixPath] = None
+    executable: PurePosixPath
 
     def __str__(self) -> str:
-        return (
-            f"buckets/{self.bucketfs_name}/{self.bucket_name}/"
-            f"{self.executable or ''}"
-        )
+        return f"buckets/{self.bucketfs_name}/{self.bucket_name}/" f"{self.executable}"
 
 
 @dataclass
 class UdfClientRelativePath:
-    executable: Optional[PurePosixPath] = None
+    executable: PurePosixPath
 
     def __str__(self) -> str:
-        return str(self.executable) if self.executable else ""
+        return str(self.executable)
 
 
 @dataclass
@@ -53,7 +50,7 @@ class LanguageDefinitionURL:
     protocol: str
     parameters: List[SLCParameter]
     chroot_path: ChrootPath
-    udf_client_path: Union[UdfClientAbsolutePath, UdfClientRelativePath]
+    udf_client_path: Union[UdfClientBucketPath, UdfClientRelativePath]
 
     def __str__(self) -> str:
         query_params = {p.key: v for p in self.parameters for v in p.value}

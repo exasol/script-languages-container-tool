@@ -9,13 +9,13 @@ from exasol_script_languages_container_tool.lib.api.get_language_activation_buil
     LanguageDefinitionComponents,
     get_language_activation_builder,
 )
-from exasol_script_languages_container_tool.lib.models.language_activation import (
+from exasol_script_languages_container_tool.lib.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     ChrootPath,
     LanguageDefinitionURL,
     SLCLanguage,
     SLCParameter,
-    UdfClientAbsolutePath,
+    UdfClientBucketPath,
 )
 
 
@@ -47,7 +47,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                             bucket_name="default",
                             path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        udf_client_path=UdfClientAbsolutePath(
+                        udf_client_path=UdfClientBucketPath(
                             bucketfs_name="bfsdefault",
                             bucket_name="default",
                             executable=PurePosixPath(
@@ -82,7 +82,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                             bucket_name="default",
                             path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        udf_client_path=UdfClientAbsolutePath(
+                        udf_client_path=UdfClientBucketPath(
                             bucketfs_name="bfsdefault",
                             bucket_name="default",
                             executable=PurePosixPath(
@@ -131,7 +131,7 @@ class LanguageActivationBuilderTest(unittest.TestCase):
                             bucket_name="default",
                             path_in_bucket=PurePosixPath("some_path/my_release"),
                         ),
-                        udf_client_path=UdfClientAbsolutePath(
+                        udf_client_path=UdfClientBucketPath(
                             bucketfs_name="bfsdefault",
                             bucket_name="default",
                             executable=PurePosixPath(
@@ -188,9 +188,9 @@ class LanguageActivationBuilderTest(unittest.TestCase):
         )
         lang_act_build.add_custom_alias("PYTHON3_TEST", "MY_PYTHON3")
         lang_act_build.add_custom_alias("JAVA", "MY_JAVA")
-        alter_session = lang_act_build.generate_alter_system()
+        alter_system = lang_act_build.generate_alter_system()
         self.assertEqual(
-            alter_session,
+            alter_system,
             "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
             "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
             "?lang=python#buckets/bfsdefault/default/some_path/my_release"
@@ -219,9 +219,9 @@ class LanguageActivationBuilderTest(unittest.TestCase):
             )
             lang_act_build.add_custom_alias("PYTHON3_TEST", "MY_PYTHON3")
             lang_act_build.add_custom_alias("JAVA", "MY_JAVA")
-            alter_session = lang_act_build.generate_alter_system()
+            alter_system = lang_act_build.generate_alter_system()
             self.assertEqual(
-                alter_session,
+                alter_system,
                 "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
                 "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
                 "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_release"
