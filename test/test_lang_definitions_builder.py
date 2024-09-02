@@ -5,13 +5,13 @@ from pathlib import Path, PurePosixPath
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
-from exasol_script_languages_container_tool.lib.api.get_language_definition_builder import (
-    LanguageDefinitionComponents,
+from exasol.slc.api.get_language_definition_builder import (
     get_language_definition_builder,
 )
-from exasol_script_languages_container_tool.lib.models.language_definition_components import (
+from exasol.slc.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     ChrootPath,
+    LanguageDefinitionComponents,
     LanguageDefinitionURL,
     SLCLanguage,
     SLCParameter,

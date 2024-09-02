@@ -6,7 +6,7 @@ from exasol_integration_test_docker_environment.testing.docker_registry import (
     LocalDockerRegistryContextManager,
 )  # type: ignore
 
-from exasol_script_languages_container_tool.lib import api
+from exasol.slc import api
 
 
 class ApiDockerPushTest(unittest.TestCase):

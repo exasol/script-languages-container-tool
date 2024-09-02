@@ -2,9 +2,7 @@ import unittest
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
-from exasol_script_languages_container_tool.lib.tasks.upload.language_definition import (
-    LanguageDefinition,
-)
+from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinition
 
 
 class LanguageDefintionTest(unittest.TestCase):

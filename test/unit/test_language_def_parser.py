@@ -2,7 +2,10 @@ from pathlib import PurePosixPath
 
 import pytest
 
-from exasol_script_languages_container_tool.lib.models.language_definition_components import (
+from exasol.slc.internal.tasks.upload.language_def_parser import (
+    parse_language_definition,
+)
+from exasol.slc.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     ChrootPath,
     LanguageDefinitionURL,
@@ -10,9 +13,6 @@ from exasol_script_languages_container_tool.lib.models.language_definition_compo
     SLCParameter,
     UdfClientBucketPath,
     UdfClientRelativePath,
-)
-from exasol_script_languages_container_tool.lib.tasks.upload.language_def_parser import (
-    parse_language_definition,
 )
 
 CHROOT_PATH_PARAMETERS = [

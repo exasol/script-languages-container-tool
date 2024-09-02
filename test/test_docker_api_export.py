@@ -6,7 +6,7 @@ from pathlib import Path
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
-from exasol_script_languages_container_tool.lib import api
+from exasol.slc import api
 
 
 class ApiDockerExportTest(unittest.TestCase):

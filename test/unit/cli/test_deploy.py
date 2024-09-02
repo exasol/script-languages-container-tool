@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from exasol_script_languages_container_tool.cli.commands.deploy import deploy
+from exasol.slc.tool.commands.deploy import deploy
 
 
 class DummyLocalTarget:
@@ -42,7 +42,7 @@ def test_deploy_minimum_parameters(cli):
     return_mock.open.return_value = dummy_returned_target
 
     with patch(
-        "exasol_script_languages_container_tool.lib.api.deploy",
+        "exasol.slc.api.deploy",
         return_value=return_mock,
     ) as mock_foo:
         with tempfile.TemporaryDirectory() as temp_flavor_path:
@@ -111,7 +111,7 @@ def test_deploy_password_in_env(cli):
 
     cli.env = {"BUCKETFS_PASSWORD": TEST_ENV_PASSWORD}
     with patch(
-        "exasol_script_languages_container_tool.lib.api.deploy",
+        "exasol.slc.api.deploy",
         return_value=return_mock,
     ) as mock_foo:
         with tempfile.TemporaryDirectory() as temp_flavor_path:
