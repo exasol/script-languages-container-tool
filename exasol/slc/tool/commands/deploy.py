@@ -157,5 +157,23 @@ def deploy(
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
         )
-        with result.open("r") as f:
-            print(f.read())
+        for flavor_name, lang_def_builds_per_release in result.items():
+            for release, deploy_result in lang_def_builds_per_release.items():
+                print(
+                    f"""
+                Uploaded release='{release}' located at {deploy_result.release_path} to {deploy_result.upload_url}
+
+                In SQL, you can activate the languages supported by the {flavor_name}
+                flavor by using the following statements:
+
+
+                To activate the flavor only for the current session:
+
+                {deploy_result.language_definition_builder.generate_alter_session()}
+
+
+                To activate the flavor on the system:
+
+                {deploy_result.language_definition_builder.generate_alter_system()}
+                """
+                )

@@ -31,8 +31,9 @@ class ApiDockerPushTest(unittest.TestCase):
         release_name = "TEST"
         bucketfs_name = "bfsdefault"
         bucket_name = "default"
+        flavor_path = exaslct_utils.get_test_flavor()
         result = api.deploy(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            flavor_path=(str(flavor_path),),
             bucketfs_host=self.docker_environment.database_host,
             bucketfs_port=self.docker_environment.ports.bucketfs,
             bucketfs_user=self.docker_environment.bucketfs_username,
@@ -43,15 +44,35 @@ class ApiDockerPushTest(unittest.TestCase):
             path_in_bucket=path_in_bucket,
             release_name=release_name,
         )
-        with result.open("r") as f:
-            res = f.read()
-        self.assertIn(
+        self.assertIn(str(flavor_path), result.keys())
+
+        self.assertEqual(len(result), 1)
+        self.assertIn(str(flavor_path), result.keys())
+        self.assertEqual(len(result[str(flavor_path)]), 1)
+        deploy_result = result[str(flavor_path)]["release"]
+        expected_alter_session_cmd = (
             f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
             f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}?lang=python#buckets/"
             f"{bucketfs_name}/{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}/"
-            f"exaudf/exaudfclient_py3",
-            res,
+            f"exaudf/exaudfclient_py3';"
         )
+        result_alter_session_cmd = (
+            deploy_result.language_definition_builder.generate_alter_session()
+        )
+
+        self.assertEqual(result_alter_session_cmd, expected_alter_session_cmd)
+
+        self.assertIn(
+            f".build_output/cache/exports/test-flavor-release-",
+            deploy_result.release_path,
+        )
+
+        self.assertEqual(
+            deploy_result.upload_url,
+            f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
+            f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}.tar.gz",
+        )
+
         self.validate_file_on_bucket_fs(
             bucket_name, f"{path_in_bucket}/test-flavor-release-{release_name}.tar.gz"
         )
@@ -60,8 +81,9 @@ class ApiDockerPushTest(unittest.TestCase):
         release_name = "TEST"
         bucketfs_name = "bfsdefault"
         bucket_name = "default"
+        flavor_path = exaslct_utils.get_test_flavor()
         result = api.deploy(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            flavor_path=(str(flavor_path),),
             bucketfs_host=self.docker_environment.database_host,
             bucketfs_port=self.docker_environment.ports.bucketfs,
             bucketfs_user=self.docker_environment.bucketfs_username,
@@ -71,15 +93,33 @@ class ApiDockerPushTest(unittest.TestCase):
             bucket=bucket_name,
             release_name=release_name,
         )
-        with result.open("r") as f:
-            res = f.read()
-        self.assertIn(
+        self.assertIn(str(flavor_path), result.keys())
+        self.assertEqual(len(result), 1)
+        self.assertIn(str(flavor_path), result.keys())
+        self.assertEqual(len(result[str(flavor_path)]), 1)
+        deploy_result = result[str(flavor_path)]["release"]
+        expected_alter_session_cmd = (
             f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{bucketfs_name}/"
             f"{bucket_name}/test-flavor-release-{release_name}?lang=python#buckets/"
             f"{bucketfs_name}/{bucket_name}/test-flavor-release-{release_name}/"
-            f"exaudf/exaudfclient_py3",
-            res,
+            f"exaudf/exaudfclient_py3';"
         )
+        result_alter_session_cmd = (
+            deploy_result.language_definition_builder.generate_alter_session()
+        )
+        self.assertEqual(result_alter_session_cmd, expected_alter_session_cmd)
+
+        self.assertIn(
+            f".build_output/cache/exports/test-flavor-release-",
+            deploy_result.release_path,
+        )
+
+        self.assertEqual(
+            deploy_result.upload_url,
+            f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
+            f"{bucket_name}/test-flavor-release-{release_name}.tar.gz",
+        )
+
         self.validate_file_on_bucket_fs(
             bucket_name, f"test-flavor-release-{release_name}.tar.gz"
         )

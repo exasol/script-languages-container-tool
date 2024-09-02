@@ -1,7 +1,6 @@
 import getpass
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
-import luigi
 from exasol_integration_test_docker_environment.lib.api.common import (
     cli_function,
     generate_root_task,
@@ -14,7 +13,8 @@ from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_
     DependencyLoggerBaseTask,
 )
 
-from exasol.slc.internal.tasks.upload.upload_containers import UploadContainers
+from exasol.slc.internal.tasks.upload.deploy_containers import DeployContainers
+from exasol.slc.models.deploy_result import DeployResult
 
 
 @cli_function
@@ -52,13 +52,14 @@ def deploy(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-) -> luigi.LocalTarget:
+) -> Dict[str, Dict[str, DeployResult]]:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
-    If the stages or the packaged container do not exists locally, the system will build, pull or
+    If the stages or the packaged container do not exist locally, the system will build, pull or
     export them before the upload.
     :raises api_errors.TaskFailureError: if operation is not successful.
-    :return: Path to resulting report file.
+    :return: A dictionary with an instance of class DeployResult for each release for each deployed flavor.
+             For example { "flavors/standard-flavor" : {"release" : DeployResult(...) } }
     """
     import_build_steps(flavor_path)
     set_build_config(
@@ -94,7 +95,7 @@ def deploy(
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(
-            task_class=UploadContainers,
+            task_class=DeployContainers,
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
             database_host=bucketfs_host,
