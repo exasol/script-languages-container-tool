@@ -13,12 +13,20 @@ class SLCLanguage(Enum):
 
 @dataclass
 class SLCParameter:
+    """
+    Key value pair of a parameter passed to the Udf client. For example: `lang=java`
+    """
+
     key: str
     value: List[str]
 
 
 @dataclass
 class UdfClientBucketPath:
+    """
+    Path to the udf client relative to a BucketFS path. For example `buckets/bfsdefault/default/exaudf/exaudfclient_py3`
+    """
+
     bucketfs_name: str
     bucket_name: str
     executable: PurePosixPath
@@ -29,6 +37,11 @@ class UdfClientBucketPath:
 
 @dataclass
 class UdfClientRelativePath:
+    """
+    Path to the udf client relative to the Script Languages Container root path.
+    For example `/exaudf/exaudfclient_py3`
+    """
+
     executable: PurePosixPath
 
     def __str__(self) -> str:
@@ -37,6 +50,10 @@ class UdfClientRelativePath:
 
 @dataclass
 class ChrootPath:
+    """
+    Path to the Script Languages Container root directory in the BucketFS. For example: `/bfsdefault/default/my_slc`
+    """
+
     bucketfs_name: str
     bucket_name: str
     path_in_bucket: Optional[PurePosixPath] = None
@@ -47,6 +64,10 @@ class ChrootPath:
 
 @dataclass
 class LanguageDefinitionURL:
+    """
+    Contains all necessary components of the Language Definition URL.
+    """
+
     protocol: str
     parameters: List[SLCParameter]
     chroot_path: ChrootPath
@@ -70,6 +91,10 @@ class LanguageDefinitionURL:
 
 @dataclass
 class BuiltInLanguageDefinitionURL:
+    """
+    Contains the language of the Builtin Language Definition.
+    """
+
     language: SLCLanguage
 
     def __str__(self) -> str:
@@ -78,6 +103,11 @@ class BuiltInLanguageDefinitionURL:
 
 @dataclass
 class LanguageDefinitionComponents:
+    """
+    Contains the alias and the Language Definition URL if custom Script Languages Container or BuiltIn Language
+    Definition if BuiltIn language.
+    """
+
     alias: str
     url: Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]
 

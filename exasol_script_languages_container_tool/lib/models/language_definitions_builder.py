@@ -6,6 +6,11 @@ from exasol_script_languages_container_tool.lib.models.language_definition_compo
 
 
 class LanguageDefinitionsBuilder:
+    """
+    Provides generation of "ALTER SESSION", "ALTER SYSTEM" commands and pure language definitions string
+    replacing the aliases provides in the source Language Definition Components with custom aliases.
+    """
+
     def __init__(self, lang_def_components: List[LanguageDefinitionComponents]):
         self.lang_def_components = lang_def_components
         self.custom_aliases: Dict[str, str] = dict()

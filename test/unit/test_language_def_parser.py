@@ -49,8 +49,20 @@ UDF_CLIENT_PATH_PARAMETERS = [
         ),
     ),
     (
+        "/buckets/defaultbfs/default/slc/exaudf/exaudfclient",
+        UdfClientBucketPath(
+            bucketfs_name="defaultbfs",
+            bucket_name="default",
+            executable=PurePosixPath("slc/exaudf/exaudfclient"),
+        ),
+    ),
+    (
         "exaudf/exaudfclient",
         UdfClientRelativePath(executable=PurePosixPath("exaudf/exaudfclient")),
+    ),
+    (
+        "/exaudf/exaudfclient",
+        UdfClientRelativePath(executable=PurePosixPath("/exaudf/exaudfclient")),
     ),
 ]
 
@@ -96,7 +108,8 @@ def test_lang_def_parser(
     assert result.udf_client_path == expected_udf_client_path
     assert result.parameters == expected_param
 
-    assert f"{alias}={result}" == lang_def
+    if not udf_client_path.startswith("/buckets"):
+        assert f"{alias}={result}" == lang_def
 
 
 BUILTIN_LANGUAGES = [

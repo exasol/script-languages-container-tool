@@ -29,7 +29,7 @@ def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL
 def _build_udf_client_abs_path_from_fragments(
     fragment_parts: Tuple[str, ...]
 ) -> UdfClientBucketPath:
-    if len(fragment_parts) < 4 or fragment_parts[0] != "buckets":
+    if len(fragment_parts) < 4:
         raise ValueError(
             f"Expected format of the fragment in the URL for a bucket udf client path is "
             f"'/buckets/<bucketfs_name>/<bucket_name>/<executable>' or"
@@ -50,18 +50,19 @@ def _parse_udf_client_path(
     fragment_path = PurePosixPath(fragment)
     fragment_parts = fragment_path.parts
 
-    if len(fragment_parts) == 0:
+    if len(fragment_parts) == 0 or (
+        fragment_path.is_absolute() and len(fragment_parts) == 1
+    ):
         raise ValueError("Udf client executable path must not be empty.")
 
     if fragment_path.is_absolute():
         fragment_parts = fragment_path.parts[1:]  # Remove leading "/"
-        return _build_udf_client_abs_path_from_fragments(fragment_parts)
-    elif fragment_parts[0] == "buckets":
+
+    if fragment_parts[0] == "buckets":
         return _build_udf_client_abs_path_from_fragments(fragment_parts)
     else:
-        udf_client_path = UdfClientRelativePath(
-            executable=PurePosixPath("/".join(fragment_parts))
-        )
+        # Use original path from URL as is
+        udf_client_path = UdfClientRelativePath(executable=fragment_path)
     return udf_client_path
 
 
