@@ -14,7 +14,7 @@ from exasol_script_languages_container_tool.lib.tasks.upload.language_definition
 )
 
 
-def get_language_activation_builder(
+def get_language_definition_builder(
     flavor_path: str,
     bucketfs_name: str,
     bucket_name: str,
