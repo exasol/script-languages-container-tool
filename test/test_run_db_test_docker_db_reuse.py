@@ -1,6 +1,5 @@
 import os
 import unittest
-from pathlib import Path
 from typing import Dict, List
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error

@@ -9,6 +9,7 @@ t.b.d.
 ## Features
 
 #218: Added an option to ignore certificate errors for upload command
+#231: Extended LanguageDefinitionComponents
 
 ## Refactoring
 
@@ -16,3 +17,4 @@ t.b.d.
 #171: Improved api generate_language_activation
 #230: Created new method `deploy` with similar parameters as in python-extension-common
 #234: Removed starter scripts
+#237: Changed paths of package

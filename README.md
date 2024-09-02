@@ -89,7 +89,7 @@ pipx install exasol-script-languages-container-tool
 
 ### Usage
 
-For simplicity the following examples use the script version (`exaslct`), which will be installed together with the Python package. The script is just an alias for `python3 -m exasol_script_languages_container_tool.main`.
+For simplicity the following examples use the script version (`exaslct`), which will be installed together with the Python package. The script is just an alias for `python3 -m exasol.slc.tool.main`.
 
 #### How to build an existing flavor?
 

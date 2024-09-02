@@ -8,8 +8,8 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
     param_names_of_click_call,
 )
 
-from exasol_script_languages_container_tool.cli import commands
-from exasol_script_languages_container_tool.lib import api
+from exasol.slc import api
+from exasol.slc.tool import commands
 
 
 def test_api_arguments():
