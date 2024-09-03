@@ -99,15 +99,15 @@ Create the language container and export it to the local file system
 exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
 ```
 
-or upload it directly into the BucketFS (currently http only, https follows soon)
+or deploy it directly to the BucketFS (both http and https are supported)
 
 ```bash
-exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
-                   --bucketfs-username w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
-                   --bucket-name <bucket-name> --path-in-bucket <path/in/bucket>
+exaslct deploy --flavor-path=flavors/<flavor-name> --bucketfs-host <hostname-or-ip> --bucketfs-port <port> \
+                   --bucketfs-user w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
+                   --bucket <bucket-name> --path-in-bucket <path/in/bucket> --bucketfs-use-https 1
 ```
 
-Once it is successfully uploaded, it will print the ALTER SESSION statement
+Once it is successfully deployed, it will print the ALTER SESSION statement
 that can be used to activate the script language container in the database.
 
 #### How to activate a script language container in the database
