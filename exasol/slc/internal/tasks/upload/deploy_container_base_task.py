@@ -1,4 +1,3 @@
-import textwrap
 from pathlib import Path
 
 import exasol.bucketfs as bfs  # type: ignore
@@ -45,7 +44,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
     def run_task(self):
         export_info = self.get_values_from_future(self.export_info_future)
-        self._upload_container(export_info)
+        path_in_bucket = self._upload_container(export_info)
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,
@@ -68,7 +67,8 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         lang_def_builder = LanguageDefinitionsBuilder(language_def_components_list)
         result = DeployResult(
             release_path=str(release_path),
-            upload_url=self._complete_url(export_info),
+            human_readable_upload_location=self._complete_url(export_info),
+            bucket_path=path_in_bucket,
             language_definition_builder=lang_def_builder,
         )
         self.return_object(result)
@@ -100,13 +100,14 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         )
         return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz"
 
-    def _upload_container(self, release_info: ExportInfo):
+    def _upload_container(self, release_info: ExportInfo) -> bfs.path.PathLike:
         bucket_path = self.build_file_path_in_bucket(release_info)
         self.logger.info(
             f"Upload {release_info.cache_file} to {self._complete_url(release_info)}"
         )
         with open(release_info.cache_file, "rb") as file:
             bucket_path.write(file)
+        return bucket_path
 
     def _get_complete_release_name(self, release_info: ExportInfo):
         complete_release_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_release_name(

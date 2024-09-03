@@ -1,6 +1,7 @@
 import subprocess
 import unittest
 
+import exasol.bucketfs as bfs  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.api.api_errors import (
     TaskRuntimeError,
@@ -68,9 +69,29 @@ class ApiDockerPushTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            deploy_result.upload_url,
+            deploy_result.human_readable_upload_location,
             f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
             f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}.tar.gz",
+        )
+
+        expected_path_in_bucket = (
+            bfs.path.build_path(
+                backend=bfs.path.StorageBackend.onprem,
+                url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
+                bucket_name=bucket_name,
+                service_name=bucketfs_name,
+                username="w",
+                password=self.docker_environment.bucketfs_password,
+                verify=False,
+                path=path_in_bucket,
+            )
+            / f"test-flavor-release-{release_name}.tar.gz"
+        )
+
+        # Compare UDF path of `bucket_path` until bfs.path.PathLike implements comparison
+        self.assertEqual(
+            expected_path_in_bucket.as_udf_path(),
+            deploy_result.bucket_path.as_udf_path(),
         )
 
         self.validate_file_on_bucket_fs(
@@ -115,9 +136,28 @@ class ApiDockerPushTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            deploy_result.upload_url,
+            deploy_result.human_readable_upload_location,
             f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
             f"{bucket_name}/test-flavor-release-{release_name}.tar.gz",
+        )
+
+        expected_path_in_bucket = (
+            bfs.path.build_path(
+                backend=bfs.path.StorageBackend.onprem,
+                url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
+                bucket_name=bucket_name,
+                service_name=bucketfs_name,
+                username="w",
+                password=self.docker_environment.bucketfs_password,
+                verify=False,
+            )
+            / f"test-flavor-release-{release_name}.tar.gz"
+        )
+
+        # Compare UDF path of `bucket_path` until bfs.path.PathLike implements comparison
+        self.assertEqual(
+            expected_path_in_bucket.as_udf_path(),
+            deploy_result.bucket_path.as_udf_path(),
         )
 
         self.validate_file_on_bucket_fs(
