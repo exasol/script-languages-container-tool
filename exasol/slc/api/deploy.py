@@ -14,6 +14,7 @@ from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_
 )
 
 from exasol.slc.internal.tasks.upload.deploy_containers import DeployContainers
+from exasol.slc.internal.tasks.upload.deploy_info import toDeployResult
 from exasol.slc.models.deploy_result import DeployResult
 
 
@@ -111,10 +112,27 @@ def deploy(
             use_ssl_cert_validation=use_ssl_cert_validation,
         )
 
-    return run_task(
+    deploy_infos = run_task(
         root_task_generator,
         workers=workers,
         task_dependencies_dot_file=task_dependencies_dot_file,
         log_level=log_level,
         use_job_specific_log_file=use_job_specific_log_file,
     )
+
+    return {
+        flavor: {
+            release: toDeployResult(
+                deploy_info,
+                bucket_name=bucket,
+                bucketfs_name=bucketfs_name,
+                bucketfs_username=bucketfs_user,
+                bucketfs_password=bucketfs_password,
+                ssl_cert_path=ssl_cert_path,
+                use_ssl_cert_validation=use_ssl_cert_validation,
+                path_in_bucket=path_in_bucket,
+            )
+            for release, deploy_info in deploy_info_per_release.items()
+        }
+        for flavor, deploy_info_per_release in deploy_infos.items()
+    }

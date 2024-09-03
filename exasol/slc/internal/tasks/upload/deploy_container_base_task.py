@@ -9,6 +9,7 @@ from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
 
+from exasol.slc.internal.tasks.upload.deploy_info import DeployInfo
 from exasol.slc.internal.tasks.upload.language_def_parser import (
     parse_language_definition,
 )
@@ -16,7 +17,6 @@ from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinit
 from exasol.slc.internal.tasks.upload.upload_container_parameter import (
     UploadContainerParameter,
 )
-from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.export_info import ExportInfo
 from exasol.slc.models.language_definition_components import (
     LanguageDefinitionComponents,
@@ -59,16 +59,18 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             language_def_components_list.append(
                 LanguageDefinitionComponents(alias=alias, url=url)
             )
+
+        lang_def_builder = LanguageDefinitionsBuilder(language_def_components_list)
         try:
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
         except ValueError:
             release_path = Path(export_info.cache_file)
 
-        lang_def_builder = LanguageDefinitionsBuilder(language_def_components_list)
-        result = DeployResult(
+        result = DeployInfo(
             release_path=str(release_path),
-            human_readable_upload_location=self._complete_url(export_info),
-            bucket_path=path_in_bucket,
+            url=self._url,
+            complete_release_name=self._get_complete_release_name(export_info),
+            human_readable_location=self._complete_url(export_info),
             language_definition_builder=lang_def_builder,
         )
         self.return_object(result)
