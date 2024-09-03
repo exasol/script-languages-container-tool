@@ -123,7 +123,10 @@ def deploy(
     return {
         flavor: {
             release: toDeployResult(
-                deploy_info,
+                deploy_info=deploy_info,
+                bucketfs_use_https=bucketfs_use_https,
+                bucketfs_host=bucketfs_host,
+                bucketfs_port=bucketfs_port,
                 bucket_name=bucket,
                 bucketfs_name=bucketfs_name,
                 bucketfs_username=bucketfs_user,

@@ -9,7 +9,6 @@ from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBu
 @dataclass
 class DeployInfo:
     release_path: str
-    url: str
     complete_release_name: str
     human_readable_location: str
     language_definition_builder: LanguageDefinitionsBuilder
@@ -17,6 +16,9 @@ class DeployInfo:
 
 def toDeployResult(
     deploy_info: DeployInfo,
+    bucketfs_use_https: bool,
+    bucketfs_host: str,
+    bucketfs_port: int,
     bucket_name: str,
     bucketfs_name: str,
     bucketfs_username: str,
@@ -29,10 +31,13 @@ def toDeployResult(
     verify = ssl_cert_path or use_ssl_cert_validation
 
     complete_release_name = deploy_info.complete_release_name
+
+    url_prefix = "https://" if bucketfs_use_https else "http://"
+    url = f"{url_prefix}{bucketfs_host}:{bucketfs_port}"
     bucket_path = (
         bfs.path.build_path(
             backend=backend,
-            url=deploy_info.url,
+            url=url,
             bucket_name=bucket_name,
             service_name=bucketfs_name,
             username=bucketfs_username,

@@ -68,7 +68,6 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
         result = DeployInfo(
             release_path=str(release_path),
-            url=self._url,
             complete_release_name=self._get_complete_release_name(export_info),
             human_readable_location=self._complete_url(export_info),
             language_definition_builder=lang_def_builder,
