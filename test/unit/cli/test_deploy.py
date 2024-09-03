@@ -1,14 +1,14 @@
 import tempfile
 from test.unit.cli import CliRunner
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
+import exasol.bucketfs as bfs  # type: ignore
 import pytest
 
 from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
     LanguageDefinitionComponents,
-    LanguageDefinitionURL,
     SLCLanguage,
 )
 from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBuilder
@@ -49,7 +49,8 @@ def test_deploy_minimum_parameters(cli):
         TEST_DUMMY_FLAVOR: {
             TEST_DUMMY_FLAVOR: DeployResult(
                 release_path=TEST_RELEASE_PATH,
-                upload_url=TEST_UPLOAD_URL,
+                human_readable_upload_location=TEST_UPLOAD_URL,
+                bucket_path=None,
                 language_definition_builder=TEST_LANG_DEF_BUILDER,
             )
         }
@@ -123,7 +124,8 @@ def test_deploy_password_in_env(cli):
         TEST_DUMMY_FLAVOR: {
             TEST_DUMMY_FLAVOR: DeployResult(
                 release_path=TEST_RELEASE_PATH,
-                upload_url=TEST_UPLOAD_URL,
+                human_readable_upload_location=TEST_UPLOAD_URL,
+                bucket_path=None,
                 language_definition_builder=TEST_LANG_DEF_BUILDER,
             )
         }

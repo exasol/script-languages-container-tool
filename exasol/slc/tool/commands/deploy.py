@@ -161,7 +161,7 @@ def deploy(
             for release, deploy_result in lang_def_builds_per_release.items():
                 print(
                     f"""
-                Uploaded release='{release}' located at {deploy_result.release_path} to {deploy_result.upload_url}
+                Uploaded release='{release}' located at {deploy_result.release_path} to {deploy_result.human_readable_upload_location}
 
                 In SQL, you can activate the languages supported by the {flavor_name}
                 flavor by using the following statements:
