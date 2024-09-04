@@ -1,10 +1,14 @@
-# Script-Languages-Container-Tool 1.0.0, released t.b.d.
+# Script-Languages-Container-Tool 1.0.0, released 2024-09-04
 
-Code name: t.b.d.
+Code name: Major refactoring and new deployment API
 
 ## Summary
 
-t.b.d.
+This release changed the directory structure and aimed to separate the public and internal modules.
+Also, the project now uses the `exasol-toolbox` to execute code quality CI jobs. There are new functions which
+simplify the deployments of Script Language Containers on BucketFS.
+The new API improves the generation of the Language Activation commands and provides new objects which contain
+more detailed information about the installed Script Language Containers in BucketFS.
 
 ## Features
 

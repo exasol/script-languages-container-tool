@@ -2,6 +2,20 @@
 
 EXASLCT is the build tool for the script language container.  This document is about the inner working of EXASLCT.
 
+## Preparations
+
+This project uses [pre-commit](https://pre-commit.com/) to run certain Githooks for validation. You don't have to install `pre-commit` as it will be installed with the `exasol-toolbox`.
+You can activate the Githooks simply by running:
+```commandline
+pre-commit install
+```
+
+However, if you don't want to run all the checks during every commit, you can use:
+```
+poetry run nox -s check
+```
+to run all available checks on the project.
+
 ## About the Script Language Containers
 
 The Script Language Containers are getting build from several Dockerfiles which depend on each other.  These Dockerfiles need to install all necessary dependencies for the [script client](https://github.com/exasol/script-languages/tree/master/exaudfclient/base), compile the script client and install all necessary dependencies for the flavor and the customizations of the user.
