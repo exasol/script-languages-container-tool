@@ -119,9 +119,9 @@ class ExportContainerBaseTask(FlavorBaseTask):
             file_name = (
                 f"""{self.get_flavor_name()}_{self.release_goal}{suffix}.tar.gz"""
             )
-            output_file = Path(self.export_path, file_name)
+            output_file = Path(str(self.export_path), file_name)
             output_checksum_file = Path(
-                self.export_path, file_name + "." + CHECKSUM_ALGORITHM
+                str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
             )
             if not output_file.exists() or not output_checksum_file.exists() or is_new:
                 output_file.parent.mkdir(exist_ok=True, parents=True)
