@@ -113,8 +113,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             )
 
         result = RunDBTestResult(
-            test_file=self.test_file,
-            language=self.language,
+            test_file=str(self.test_file),
+            language=str(self.language),
             is_test_ok=is_test_ok,
             test_output_file=test_output_file,
         )
