@@ -1,0 +1,13 @@
+{
+  "language_definitions": [
+    {
+      "protocol": "localzmq+protobuf",
+      "default_alias": "JAVA",
+      "language": "java",
+      "parameters": [],
+      "udf_client_path": {
+        "executable": "/exaudf/exaudfclient"
+      }
+    }
+  ]
+}
