@@ -101,7 +101,8 @@ def parse_language_definition(
     if parsed_url.hostname:
         raise ValueError(f"Invalid language definition: '{lang_def}'")
     slc_parameters = [
-        SLCParameter(key, value) for key, value in parse_qs(parsed_url.query).items()
+        SLCParameter(key=key, value=value)
+        for key, value in parse_qs(parsed_url.query).items()
     ]
     try:
         udf_client_path = _parse_udf_client_path(parsed_url.fragment)
