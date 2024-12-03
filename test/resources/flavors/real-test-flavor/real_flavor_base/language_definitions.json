@@ -2,7 +2,7 @@
   "language_definitions": [
     {
       "protocol": "localzmq+protobuf",
-      "default_alias": "JAVA",
+      "aliases": ["JAVA"],
       "language": "java",
       "parameters": [],
       "udf_client_path": {

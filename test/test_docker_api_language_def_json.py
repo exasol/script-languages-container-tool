@@ -120,7 +120,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
-                        default_alias="JAVA",
+                        aliases=["JAVA"],
                         language=SLCLanguage.Java,
                         udf_client_path=UdfClientRelativePath(
                             executable="/exaudf/exaudfclient"

@@ -16,7 +16,7 @@ class LanguageDefinition(BaseModel):
     """
 
     protocol: str
-    default_alias: str
+    aliases: List[str]
     language: SLCLanguage
     parameters: List[SLCParameter]
     udf_client_path: UdfClientRelativePath
