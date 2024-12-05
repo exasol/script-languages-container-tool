@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "language_definitions": [
     {
       "protocol": "localzmq+protobuf",

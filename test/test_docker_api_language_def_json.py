@@ -1,5 +1,6 @@
 import json
 import shutil
+import tarfile
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory, tempdir
@@ -57,21 +58,13 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
 
             # Extract the file content from the tar stream
             import io
-            import tarfile
 
             file_content = None
 
             with TemporaryDirectory() as d:
                 tar_file_path = Path(d) / "tmp.tar"
-                with open(tar_file_path, "wb") as f:
-                    for chunk in tar_stream:
-                        f.write(chunk)
-                with tarfile.open(tar_file_path) as tar:
-                    for member in tar.getmembers():
-                        f = tar.extractfile(member)
-                        if f:
-                            file_content = f.read()
-                            break
+                self.write_tar_file(tar_file_path, tar_stream)
+                file_content = self.read_tar_file_content(file_content, tar_file_path)
 
             return file_content.decode("utf-8") if file_content else None
 
@@ -79,6 +72,20 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             # Stop and remove the container
             container.stop()
             container.remove()
+
+    def write_tar_file(self, tar_file_path, tar_stream):
+        with open(tar_file_path, "wb") as f:
+            for chunk in tar_stream:
+                f.write(chunk)
+
+    def read_tar_file_content(self, file_content, tar_file_path):
+        with tarfile.open(tar_file_path) as tar:
+            for member in tar.getmembers():
+                f = tar.extractfile(member)
+                if f:
+                    file_content = f.read()
+                    break
+        return file_content
 
     def test_docker_build(self):
         flavor_path = exaslct_utils.get_test_flavor()
@@ -117,6 +124,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
+                schema_version=1,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
@@ -127,7 +135,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                         ),
                         parameters=[],
                     )
-                ]
+                ],
             ),
         )
 
@@ -146,16 +154,13 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             with open(lang_def_json_path, "w") as f:
                 f.write(json.dumps(lang_def_invalid))
 
-            throwed_exception = False
-            try:
-                build(
-                    flavor_path=(str(temp_flavor_path),),
-                    source_docker_repository_name=self.test_environment.docker_repository_name,
-                    target_docker_repository_name=self.test_environment.docker_repository_name,
-                )
-            except pydantic_core._pydantic_core.ValidationError as e:
-                throwed_exception = True
-            self.assertTrue(throwed_exception)
+            self.assertRaises(
+                pydantic_core._pydantic_core.ValidationError,
+                build,
+                flavor_path=(str(temp_flavor_path),),
+                source_docker_repository_name=self.test_environment.docker_repository_name,
+                target_docker_repository_name=self.test_environment.docker_repository_name,
+            )
 
 
 if __name__ == "__main__":

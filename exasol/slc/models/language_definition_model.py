@@ -27,4 +27,6 @@ class LanguageDefinitionsModel(BaseModel):
     Contains information about all supported languages and the respective path of the UDF client of an Script-Languages-Container.
     """
 
+    schema_version: int
+
     language_definitions: List[LanguageDefinition]
