@@ -60,8 +60,8 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_language_definition(self) -> str:
         """
-        Called by the constructor to get a language definition file which will be validated against to
-        the language definition JSON and (if validations succeeded) copied to the temporary build directory.
+        Called by the constructor to get a language definition file which will be validated against
+        the language definition JSON Schema and (if validations succeeded) copied to the temporary build directory.
         :return: string with source path of language definition JSON or an empty string
         """
         return ""
