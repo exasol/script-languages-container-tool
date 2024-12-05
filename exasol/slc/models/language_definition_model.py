@@ -1,13 +1,15 @@
 from dataclasses import dataclass
-from typing import Annotated, List
+from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from exasol.slc.models.language_definition_common import (
     SLCLanguage,
     SLCParameter,
     UdfClientRelativePath,
 )
+
+LANGUAGE_DEFINITON_SCHEMA_VERSION = 1
 
 
 class LanguageDefinition(BaseModel):

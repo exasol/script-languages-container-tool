@@ -15,7 +15,10 @@ from exasol_integration_test_docker_environment.lib.docker.images.create.docker_
     DockerAnalyzeImageTask,
 )
 
-from exasol.slc.models.language_definition_model import LanguageDefinitionsModel
+from exasol.slc.models.language_definition_model import (
+    LANGUAGE_DEFINITON_SCHEMA_VERSION,
+    LanguageDefinitionsModel,
+)
 
 
 class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
@@ -106,9 +109,13 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         result.update(self.additional_build_directories_mapping)
         if language_definition := self.get_language_definition():
             lang_def_path = self.get_path_in_flavor_path() / language_definition
-            LanguageDefinitionsModel.model_validate_json(
+            model = LanguageDefinitionsModel.model_validate_json(
                 lang_def_path.read_text(), strict=True
             )
+            if model.schema_version != LANGUAGE_DEFINITON_SCHEMA_VERSION:
+                raise RuntimeError(
+                    f"Unsupported schema version. Version from JSON: {model.schema_version}. Expected: {LANGUAGE_DEFINITON_SCHEMA_VERSION}"
+                )
             result.update({"language_definitions.json": str(lang_def_path)})
         return result
 
