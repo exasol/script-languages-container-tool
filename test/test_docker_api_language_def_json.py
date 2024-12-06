@@ -6,12 +6,12 @@ from pathlib import Path
 from tempfile import TemporaryDirectory, tempdir
 
 import docker  # type: ignore
-import pydantic_core
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
 )
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
+from pydantic import ValidationError
 
 from exasol.slc.api import build
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
@@ -155,7 +155,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                 f.write(json.dumps(lang_def_invalid))
 
             self.assertRaises(
-                pydantic_core._pydantic_core.ValidationError,
+                ValidationError,
                 build,
                 flavor_path=(str(temp_flavor_path),),
                 source_docker_repository_name=self.test_environment.docker_repository_name,
