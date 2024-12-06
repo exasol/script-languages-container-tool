@@ -1,24 +1,13 @@
 from dataclasses import dataclass
-from enum import Enum
 from pathlib import PurePosixPath
 from typing import List, Optional, Union
 from urllib.parse import ParseResult, urlencode, urlunparse
 
-
-class SLCLanguage(Enum):
-    Java = "java"
-    Python3 = "python"
-    R = "r"
-
-
-@dataclass
-class SLCParameter:
-    """
-    Key value pair of a parameter passed to the Udf client. For example: `lang=java`
-    """
-
-    key: str
-    value: List[str]
+from exasol.slc.models.language_definition_common import (
+    SLCLanguage,
+    SLCParameter,
+    UdfClientRelativePath,
+)
 
 
 @dataclass
@@ -33,19 +22,6 @@ class UdfClientBucketPath:
 
     def __str__(self) -> str:
         return f"buckets/{self.bucketfs_name}/{self.bucket_name}/" f"{self.executable}"
-
-
-@dataclass
-class UdfClientRelativePath:
-    """
-    Path to the udf client relative to the Script Languages Container root path.
-    For example `/exaudf/exaudfclient_py3`
-    """
-
-    executable: PurePosixPath
-
-    def __str__(self) -> str:
-        return str(self.executable)
 
 
 @dataclass

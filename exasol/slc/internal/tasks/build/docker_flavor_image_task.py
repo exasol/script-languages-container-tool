@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -13,6 +13,11 @@ from exasol_integration_test_docker_environment.lib.config.docker_config import 
 )
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_analyze_task import (
     DockerAnalyzeImageTask,
+)
+
+from exasol.slc.models.language_definition_model import (
+    LANGUAGE_DEFINITON_SCHEMA_VERSION,
+    LanguageDefinitionsModel,
 )
 
 
@@ -56,7 +61,15 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         """
         return {}
 
-    def get_path_in_flavor(self):
+    def get_language_definition(self) -> str:
+        """
+        Called by the constructor to get a language definition file which will be validated against
+        the language definition JSON Schema and (if validations succeeded) copied to the temporary build directory.
+        :return: string with source path of language definition JSON or an empty string
+        """
+        return ""
+
+    def get_path_in_flavor(self) -> Optional[Path]:
         """
         Called by the constructor to get the path to the build context of the build step within the flavor path.
         Sub classes need to implement this method.
@@ -94,18 +107,26 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         build_step_path = self.get_build_step_path()
         result = {self.build_step: str(build_step_path)}
         result.update(self.additional_build_directories_mapping)
+        if language_definition := self.get_language_definition():
+            lang_def_path = self.get_path_in_flavor_path() / language_definition
+            model = LanguageDefinitionsModel.model_validate_json(
+                lang_def_path.read_text(), strict=True
+            )
+            if model.schema_version != LANGUAGE_DEFINITON_SCHEMA_VERSION:
+                raise RuntimeError(
+                    f"Unsupported schema version. Version from JSON: {model.schema_version}. Expected: {LANGUAGE_DEFINITON_SCHEMA_VERSION}"
+                )
+            result.update({"language_definitions.json": str(lang_def_path)})
         return result
 
-    def get_build_step_path(self):
-        path_in_flavor = (  # pylint: disable=assignment-from-none
-            self.get_path_in_flavor()
-        )
-        if path_in_flavor is None:
-            build_step_path_in_flavor = Path(self.build_step)
+    def get_build_step_path(self) -> Path:
+        return self.get_path_in_flavor_path() / self.get_build_step()
+
+    def get_path_in_flavor_path(self) -> Path:
+        if path_in_flavor := self.get_path_in_flavor():
+            return Path(self.flavor_path) / path_in_flavor
         else:
-            build_step_path_in_flavor = Path(path_in_flavor).joinpath(self.build_step)
-        build_step_path = Path(self.flavor_path).joinpath(build_step_path_in_flavor)
-        return build_step_path
+            return Path(self.flavor_path)
 
     def get_dockerfile(self) -> str:
         return str(self.get_build_step_path().joinpath("Dockerfile"))

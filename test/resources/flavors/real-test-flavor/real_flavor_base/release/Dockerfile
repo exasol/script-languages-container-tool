@@ -42,3 +42,5 @@ RUN true # workaround for https://github.com/moby/moby/issues/37965
 COPY --from={{build_run}} /build_info /build_info
 RUN true # workaround for https://github.com/moby/moby/issues/37965
 
+COPY language_definitions.json /build_info/language_definitions.json
+RUN true # workaround for https://github.com/moby/moby/issues/37965

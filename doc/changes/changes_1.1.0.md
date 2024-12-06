@@ -8,7 +8,7 @@ t.b.d.
 
 ## Features
 
-n/a
+ - #245: Implemented support for Json for language definition
 
 ## Refactoring
 
