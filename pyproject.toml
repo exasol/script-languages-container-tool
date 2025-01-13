@@ -31,11 +31,10 @@ python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
-exasol-integration-test-docker-environment = "^3.1.0"
+exasol-integration-test-docker-environment = "^3.2.0"
 exasol-bucketfs="^0.13.0"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
-setuptools="^75.8.0"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
