@@ -29,8 +29,8 @@ jobs:
       - uses: actions/checkout@v4
       - id: set-matrix
         run: |
-          ALL_TEST=`bash ./scripts/test/get_all_tests.sh`
-          echo "matrix=$ALL_TEST" >> "$GITHUB_OUTPUT"
+          ALL_TESTS=`bash ./scripts/test/get_all_tests.sh`
+          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
