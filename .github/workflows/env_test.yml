@@ -11,7 +11,7 @@ jobs:
       - id: set-matrix
         run: |
           sudo apt-get install jq
-          echo "::set-output name=matrix::$(bash ./scripts/test/ci_tests/get_ci_envs.sh)"
+          echo "matrix=$(bash ./scripts/test/ci_tests/get_ci_envs.sh)" >> "$GITHUB_OUTPUT"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 

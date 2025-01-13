@@ -12,4 +12,4 @@ t.b.d.
 
 ## Refactoring
 
-n/a
+ - #254: Replaced `set-output` GH command

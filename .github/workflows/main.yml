@@ -30,7 +30,7 @@ jobs:
       - id: set-matrix
         run: |
           sudo apt-get install jq
-          echo "::set-output name=matrix::$(bash ./scripts/test/get_all_tests.sh)"
+          echo "matrix=$(bash ./scripts/test/get_all_tests.sh)" >> >> "$GITHUB_OUTPUT"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
