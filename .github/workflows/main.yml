@@ -29,8 +29,8 @@ jobs:
       - uses: actions/checkout@v4
       - id: set-matrix
         run: |
-          sudo apt-get install jq
-          echo "matrix=$(bash ./scripts/test/get_all_tests.sh)" >> >> "$GITHUB_OUTPUT"
+          ALL_TEST=`bash ./scripts/test/get_all_tests.sh`
+          echo "matrix=$ALL_TEST" >> "$GITHUB_OUTPUT"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
