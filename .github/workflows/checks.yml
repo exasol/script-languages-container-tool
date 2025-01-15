@@ -115,19 +115,3 @@ jobs:
           name: security-python${{ matrix.python-version }}
           path: .security.json
           include-hidden-files: true
-
-  Format:
-    name: Format Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.20.0
-        with:
-          python-version: "3.9"
-
-      - name: Run format check
-        run: poetry run nox -s project:format
