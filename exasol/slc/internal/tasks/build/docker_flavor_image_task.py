@@ -78,10 +78,10 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         return None
 
     def get_source_repository_name(self) -> str:
-        return source_docker_repository_config().repository_name
+        return source_docker_repository_config().repository_name  # type: ignore
 
     def get_target_repository_name(self) -> str:
-        return target_docker_repository_config().repository_name
+        return target_docker_repository_config().repository_name  # type: ignore
 
     def get_source_image_tag(self):
         if source_docker_repository_config().tag_prefix != "":
@@ -124,9 +124,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_path_in_flavor_path(self) -> Path:
         if path_in_flavor := self.get_path_in_flavor():
-            return Path(self.flavor_path) / path_in_flavor
+            return Path(self.flavor_path) / path_in_flavor  # type: ignore
         else:
-            return Path(self.flavor_path)
+            return Path(self.flavor_path)  # type: ignore
 
     def get_dockerfile(self) -> str:
         return str(self.get_build_step_path().joinpath("Dockerfile"))

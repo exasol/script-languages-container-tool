@@ -77,8 +77,8 @@ class DummyExecFactory(DbOsExecFactory):
 class TestRunnerDBTestTask(
     FlavorBaseTask, SpawnTestEnvironmentParameter, RunDBTestsInTestConfigParameter
 ):
-    reuse_uploaded_container = luigi.BoolParameter(False, significant=False)
-    release_goal = luigi.Parameter()
+    reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
+    release_goal: str = luigi.Parameter()  # type: ignore
 
     def __init__(self, *args, **kwargs):
         self.test_environment_info = None
@@ -198,7 +198,7 @@ class TestRunnerDBTestTask(
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
             release_name=export_info.name,
-            flavor_path=self.flavor_path,
+            flavor_path=self.flavor_path,  # type: ignore
             bucket_name="myudfs",
             bucketfs_name="bfsdefault",
             path_in_bucket="",
@@ -214,10 +214,10 @@ class TestRunnerDBTestTask(
             db_password=database_credentials.db_password,
             bucketfs_write_password=database_credentials.bucketfs_write_password,
         )
-        test_output_future = yield from self.run_dependencies(task)
-        test_output = self.get_values_from_future(
+        test_output_future: Any = yield from self.run_dependencies(task)  # type: ignore
+        test_output: RunDBTestsInTestConfigResult = self.get_values_from_future(
             test_output_future
-        )  # type: RunDBTestsInTestConfigResult
+        )  # type: ignore
         return test_output
 
     @staticmethod

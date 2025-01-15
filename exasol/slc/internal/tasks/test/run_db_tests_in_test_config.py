@@ -58,19 +58,19 @@ class RunDBTestsInTestConfig(
         )
         generic_language_test_output_future = yield from self.run_dependencies(
             generic_language_test_task
-        )
-        return self.get_values_from_future(generic_language_test_output_future)
+        )  # type: ignore
+        return self.get_values_from_future(generic_language_test_output_future)  # type: ignore
 
     def run_test_files(
         self,
     ) -> Generator[RunDBGenericLanguageTest, Any, RunDBTestFilesResult]:
         test_files_task = self.create_child_task_with_common_params(RunDBTestFiles)
-        test_files_output_future = yield from self.run_dependencies(test_files_task)
-        return self.get_values_from_future(test_files_output_future)
+        test_files_output_future = yield from self.run_dependencies(test_files_task)  # type: ignore
+        return self.get_values_from_future(test_files_output_future)  # type: ignore
 
     def run_test_folder(
         self,
     ) -> Generator[RunDBGenericLanguageTest, Any, RunDBTestFoldersResult]:
         test_folder_task = self.create_child_task_with_common_params(RunDBTestFolder)
-        test_folder_output_future = yield from self.run_dependencies(test_folder_task)
-        return self.get_values_from_future(test_folder_output_future)
+        test_folder_output_future = yield from self.run_dependencies(test_folder_task)  # type: ignore
+        return self.get_values_from_future(test_folder_output_future)  # type: ignore

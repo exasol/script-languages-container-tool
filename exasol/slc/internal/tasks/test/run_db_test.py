@@ -1,3 +1,4 @@
+# pylint: disable=attr-defined
 from collections import namedtuple
 from io import StringIO
 from pathlib import Path
@@ -156,9 +157,9 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         if docker_credentials is not None:
             environment["DOCKER_USERNAME"] = docker_credentials.username
             environment["DOCKER_PASSWORD"] = docker_credentials.password
-        environment["TEST_ENVIRONMENT_TYPE"] = (
-            self.test_environment_info.type.name  # pylint: disable=no-member
-        )  # pylint: disable=no-member
+
+        env_type: str = self.test_environment_info.type.name  # type: ignore # pylint: disable=no-member
+        environment["TEST_ENVIRONMENT_TYPE"] = env_type
         environment["TEST_ENVIRONMENT_NAME"] = (
             self.test_environment_info.name  # pylint: disable=no-member
         )  # pylint: disable=no-member

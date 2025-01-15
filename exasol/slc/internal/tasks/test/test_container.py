@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -27,9 +27,9 @@ STATUS_INDENT = 2
 class TestContainerParameter(
     RunDBTestsInTestConfigParameter, GeneralRunDBTestParameter
 ):
-    release_goals = luigi.ListParameter(["release"])
-    languages = luigi.ListParameter([None])
-    reuse_uploaded_container = luigi.BoolParameter(False, significant=False)
+    release_goals: List[str] = luigi.ListParameter(["release"])  # type: ignore
+    languages: List[Optional[str]] = luigi.ListParameter([None])  # type: ignore
+    reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
 
 
 class TestStatusPrinter:
