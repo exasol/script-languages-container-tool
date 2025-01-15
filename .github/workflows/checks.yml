@@ -22,21 +22,6 @@ jobs:
         run: |
           poetry run version-check exasol/slc/version.py
 
-  Documentation:
-    name: Docs
-    needs: [ Version-Check ]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.20.0
-
-      - name: Build Documentation
-        run: |
-          poetry run python -m nox -s docs:build
 
   build-matrix:
     name: Generate Build Matrix
