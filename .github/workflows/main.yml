@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
 
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         run: poetry run exaslct --help
 
   prep-testbed:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - id: set-matrix
@@ -50,7 +50,7 @@ jobs:
         python_version:
           - "3.10"
         test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     name: ${{ matrix.test-path.name }}
     steps:
       - uses: actions/checkout@v4
