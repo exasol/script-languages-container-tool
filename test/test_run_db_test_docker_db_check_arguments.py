@@ -41,6 +41,10 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         if environment_info_json_path.exists():
             with environment_info_json_path.open() as f:
                 return EnvironmentInfo.from_json(f.read())
+        else:
+            raise FileNotFoundError(
+                f"Environment info not found at {environment_info_json_path}"
+            )
 
     def assert_mem_disk_size(self, mem_size: str, disk_size: str):
         env_info = self._get_environment_info()
