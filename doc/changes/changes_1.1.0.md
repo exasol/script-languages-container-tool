@@ -12,4 +12,4 @@ t.b.d.
 
 ## Refactoring
 
- - #254: Replaced `set-output` GH command and updated Python Toolbox
+ - #254: Replaced `set-output` GH command and updated Python Toolbox and ITDE
