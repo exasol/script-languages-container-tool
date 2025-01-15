@@ -1,4 +1,3 @@
-# pylint: disable=attr-defined
 from collections import namedtuple
 from io import StringIO
 from pathlib import Path
