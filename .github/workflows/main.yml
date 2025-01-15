@@ -4,11 +4,16 @@ on:
   push:
 
 jobs:
+  build-matrix:
+    name: Generate Build Matrix
+    uses: ./.github/workflows/matrix-python.yml
+
   test-exaslct-alias-script:
+    needs: build-matrix
     strategy:
       fail-fast: false
-      matrix:
-        python_version: ["3.10", "3.11", "3.12"]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
     runs-on: ubuntu-latest
     steps:
 
