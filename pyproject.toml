@@ -62,6 +62,13 @@ module = ["exasol_integration_test_docker_environment.*", "luigi.*", "docker.*",
             "humanfriendly", "configobj", "exasol.bucketfs", "toml"]
 ignore_missing_imports = true
 
+[tool.black]
+line-length = 88
+verbose = false
+include = "\\.pyi?$"
+
+[tool.isort]
+profile = "black"
 
 [tool.pylint.'MESSAGES CONTROL']
 max-line-length = 120
