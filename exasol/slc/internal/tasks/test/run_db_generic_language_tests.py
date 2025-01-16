@@ -52,6 +52,6 @@ class RunDBGenericLanguageTest(
             language=language,
             directory=test_folder,
         )
-        test_result_future = yield from self.run_dependencies(task)
+        test_result_future = yield from self.run_dependencies(task)  # type: ignore
         test_result = self.get_values_from_future(test_result_future)
-        return test_result
+        return test_result  # type: ignore

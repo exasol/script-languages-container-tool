@@ -49,10 +49,10 @@ class RunDBTestsInDirectory(
     def run_tests(self) -> Generator[RunDBTest, Any, List[RunDBTestResult]]:
         test_results = []
         for test_task_config in self.tasks:
-            test_result_future = yield from self.run_dependencies(test_task_config)
+            test_result_future = yield from self.run_dependencies(test_task_config)  # type: ignore
             test_result = self.get_values_from_future(test_result_future)
             test_results.append(test_result)
-        return test_results
+        return test_results  # type: ignore
 
     def create_test_tasks_from_directory(self, directory: str):
         with self._get_docker_client() as docker_client:

@@ -10,7 +10,7 @@ from exasol.slc.models.export_info import ExportInfo
 class UploadExportedContainer(UploadFileToBucketFS):
     release_name = luigi.Parameter()
     release_goal = luigi.Parameter()
-    export_info = JsonPickleParameter(ExportInfo, significant=False)  # type: ExportInfo
+    export_info = JsonPickleParameter(ExportInfo, significant=False)  # type: ignore
 
     def get_log_file(self):
         return "/exa/logs/cored/bucketfsd*"

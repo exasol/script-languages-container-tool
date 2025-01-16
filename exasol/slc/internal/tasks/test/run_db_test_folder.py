@@ -49,11 +49,9 @@ class RunDBTestFolder(
             language=language,
             directory=test_folder,
         )
-        test_result_future = yield from self.run_dependencies(task)
-        test_result = self.get_values_from_future(
-            test_result_future
-        )  # type: RunDBTestDirectoryResult
+        test_result_future = yield from self.run_dependencies(task)  # type: ignore
+        test_result = self.get_values_from_future(test_result_future)  # type: ignore
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
             test_result, 4
         )
-        return test_result
+        return test_result  # type: ignore

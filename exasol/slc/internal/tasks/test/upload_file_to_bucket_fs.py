@@ -45,7 +45,7 @@ class UploadFileToBucketFS(DockerBaseTask):
     environment_name = luigi.Parameter()
     test_environment_info = JsonPickleParameter(
         EnvironmentInfo, significant=False
-    )  # type: EnvironmentInfo
+    )  # type: ignore
     reuse_uploaded = luigi.BoolParameter(False, significant=False)
     bucketfs_write_password = luigi.Parameter(
         significant=False, visibility=luigi.parameter.ParameterVisibility.HIDDEN

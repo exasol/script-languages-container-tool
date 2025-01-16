@@ -23,7 +23,7 @@ class UploadContainerTask(UploadContainerBaseTask):
         RequiredTaskInfo,
         visibility=luigi.parameter.ParameterVisibility.HIDDEN,
         significant=True,
-    )  # type: RequiredTaskInfo
+    )  # type: ignore
 
     def get_export_task(self):
         module = importlib.import_module(

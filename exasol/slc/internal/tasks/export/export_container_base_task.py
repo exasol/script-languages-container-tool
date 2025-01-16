@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 import humanfriendly
 import luigi
@@ -50,7 +51,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
         )
         self._release_task_future = self.register_dependency(self.get_release_task())
 
-    def get_release_task(self) -> BaseTask:
+    def get_release_task(self) -> Optional[BaseTask]:
         pass
 
     def run_task(self):
