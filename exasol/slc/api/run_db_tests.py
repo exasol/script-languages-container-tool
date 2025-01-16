@@ -18,9 +18,9 @@ from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_
 from exasol_integration_test_docker_environment.lib.data.environment_type import (
     EnvironmentType,
 )
-from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import (
+from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import (  # pylint: disable=line-too-long
     DbOsAccess,
-)  # pylint: disable=line-too-long
+)
 
 from exasol.slc.api import api_errors
 from exasol.slc.internal.tasks.test.test_container import TestContainer
