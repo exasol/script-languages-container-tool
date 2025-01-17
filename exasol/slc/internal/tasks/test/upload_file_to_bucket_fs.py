@@ -27,12 +27,12 @@ from exasol_integration_test_docker_environment.lib.base.still_running_logger im
 from exasol_integration_test_docker_environment.lib.data.environment_info import (
     EnvironmentInfo,
 )
-from exasol_integration_test_docker_environment.lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker import (
+from exasol_integration_test_docker_environment.lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker import (  # pylint: disable=line-too-long
     DockerDBLogBasedBucketFSSyncChecker,
-)  # pylint: disable=line-too-long
-from exasol_integration_test_docker_environment.lib.test_environment.database_setup.time_based_bucketfs_sync_waiter import (
+)
+from exasol_integration_test_docker_environment.lib.test_environment.database_setup.time_based_bucketfs_sync_waiter import (  # pylint: disable=line-too-long
     TimeBasedBucketFSSyncWaiter,
-)  # pylint: disable=line-too-long
+)
 
 
 @dataclasses.dataclass
