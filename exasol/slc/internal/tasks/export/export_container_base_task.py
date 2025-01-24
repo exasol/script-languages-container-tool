@@ -48,12 +48,6 @@ class ExportContainerBaseTask(FlavorBaseTask):
         self._release_task_future: Optional[AbstractTaskFuture] = None
         super().__init__(*args, **kwargs)
 
-        if self.export_path is not None:
-            assert isinstance(self.export_path, str)
-        if self.release_name is not None:
-            assert isinstance(self.release_name, str)
-        assert isinstance(self.release_goal, str)
-
     def register_required(self) -> None:
         self._export_directory_future = self.register_dependency(
             self.create_child_task(task_class=CreateExportDirectory)

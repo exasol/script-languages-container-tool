@@ -22,11 +22,6 @@ class DockerSave(FlavorsBaseTask, DockerSaveParameter):
     def __init__(self, *args, **kwargs) -> None:
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.force_save, bool)
-        assert isinstance(self.save_all, bool)
-        assert isinstance(self.save_path, str)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
 
     def register_required(self) -> None:
         tasks: Dict[str, DockerFlavorSave] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
@@ -48,11 +43,6 @@ class DockerFlavorSave(DockerFlavorBuildBase, DockerSaveParameter):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        assert isinstance(self.force_save, bool)
-        assert isinstance(self.save_all, bool)
-        assert isinstance(self.save_path, str)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
 
     def get_goals(self) -> Set[str]:
         return set(self.goals)

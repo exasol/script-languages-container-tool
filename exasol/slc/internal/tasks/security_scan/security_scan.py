@@ -35,9 +35,6 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
     def __init__(self, *args, **kwargs) -> None:
         self.security_scanner_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.flavor_paths, tuple)
-        assert all(isinstance(x, str) for x in self.flavor_paths)
-        assert isinstance(self.report_path, str)
         report_path = Path(self.report_path).joinpath("security_report")
         self.security_report_target: luigi.LocalTarget = luigi.LocalTarget(
             str(report_path)
@@ -86,10 +83,6 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
 
 class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.report_path, str)
 
     def get_goals(self) -> Set[str]:
         return {"security_scan"}

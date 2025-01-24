@@ -19,10 +19,6 @@ class DockerFlavorBuildBase(FlavorBaseTask, DockerBuildBase):
 
     # TODO order pull for images which share dependencies
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.flavor_path, str)
-
     # pylint: disable=no-member
     def get_goal_class_map(self) -> Dict[str, DockerAnalyzeImageTask]:
         flavor_path: str = self.flavor_path  # type: ignore

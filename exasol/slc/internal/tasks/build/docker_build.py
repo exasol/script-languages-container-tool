@@ -29,11 +29,6 @@ class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
     def __init__(self, *args, **kwargs) -> None:
         self._images_futures: Optional[AbstractTaskFuture] = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
-        assert isinstance(self.shortcut_build, bool)
-        assert isinstance(self.flavor_paths, tuple)
-        assert all(isinstance(x, str) for x in self.flavor_paths)
 
     def register_required(self) -> None:
         tasks = self.create_tasks_for_flavors_with_common_params(DockerFlavorBuild)
@@ -54,13 +49,6 @@ class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
 
 
 class DockerFlavorBuild(DockerFlavorBuildBase, DockerBuildParameter):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
-        assert isinstance(self.shortcut_build, bool)
-        assert isinstance(self.flavor_path, str)
 
     def get_goals(self) -> Set[str]:
         return set(self.goals)

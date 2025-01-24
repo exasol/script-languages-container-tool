@@ -27,12 +27,6 @@ class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
     def __init__(self, *args, **kwargs) -> None:
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
-        assert isinstance(self.flavor_paths, tuple)
-        assert all(isinstance(x, self.flavor_paths) for x in self.flavor_paths)
-        assert isinstance(self.force_push, bool)
-        assert isinstance(self.push_all, bool)
 
     def register_required(self) -> None:
         tasks: Dict[
@@ -60,11 +54,6 @@ class DockerFlavorPush(DockerFlavorBuildBase, DockerPushParameter):
     def __init__(self, *args, **kwargs) -> None:
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.goals, tuple)
-        assert all(isinstance(x, str) for x in self.goals)
-        assert isinstance(self.flavor_path, str)
-        assert isinstance(self.force_push, bool)
-        assert isinstance(self.push_all, bool)
 
     def get_goals(self) -> Set[str]:
         return set(self.goals)

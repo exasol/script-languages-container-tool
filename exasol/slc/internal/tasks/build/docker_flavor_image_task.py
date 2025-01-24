@@ -34,9 +34,6 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             self.get_additional_build_directories_mapping()
         )
         super().__init__(*args, **kwargs)
-        assert isinstance(self.flavor_path, str)
-        assert isinstance(self.timeout, int)
-        assert isinstance(self.no_cache, bool)
 
     def is_rebuild_requested(self) -> bool:
         config = build_config()

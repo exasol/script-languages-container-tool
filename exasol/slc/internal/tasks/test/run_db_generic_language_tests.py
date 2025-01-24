@@ -11,9 +11,6 @@ from exasol_integration_test_docker_environment.lib.base.json_pickle_target impo
 from exasol_integration_test_docker_environment.lib.data.database_credentials import (
     DatabaseCredentialsParameter,
 )
-from exasol_integration_test_docker_environment.lib.data.environment_info import (
-    EnvironmentInfo,
-)
 
 from exasol.slc.internal.tasks.test.run_db_test_in_directory import (
     RunDBTestsInDirectory,
@@ -34,19 +31,6 @@ class RunDBGenericLanguageTest(
     ActualRunDBTestParameter,
     DatabaseCredentialsParameter,
 ):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.flavor_path, str)
-        assert isinstance(self.generic_language_tests, tuple)
-        assert all(isinstance(x, str) for x in self.generic_language_tests)
-        assert isinstance(self.release_goal, str)
-        assert isinstance(self.language_definition, str)
-        assert isinstance(self.test_environment_info, EnvironmentInfo)
-        assert isinstance(self.timeout, int)
-        assert isinstance(self.no_cache, bool)
-        assert isinstance(self.db_user, str)
-        assert isinstance(self.db_password, str)
-        assert isinstance(self.bucketfs_write_password, str)
 
     def extend_output_path(self) -> Tuple[str, ...]:
         return tuple(self.caller_output_path) + ("generic",)

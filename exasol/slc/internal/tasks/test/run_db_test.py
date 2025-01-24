@@ -33,9 +33,6 @@ from exasol_integration_test_docker_environment.lib.data.database_credentials im
 from exasol_integration_test_docker_environment.lib.data.database_info import (
     DatabaseInfo,
 )
-from exasol_integration_test_docker_environment.lib.data.environment_info import (
-    EnvironmentInfo,
-)
 from exasol_integration_test_docker_environment.lib.data.environment_type import (
     EnvironmentType,
 )
@@ -66,20 +63,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        assert isinstance(self.test_environment_info, EnvironmentInfo)
-        assert isinstance(self.flavor_path, str)
-        if self.language is not None:
-            assert isinstance(self.language, str)
 
-        assert isinstance(self.release_goal, str)
-        assert isinstance(self.language_definition, str)
-        assert isinstance(self.timeout, int)
-        assert isinstance(self.no_cache, bool)
-        assert isinstance(self.db_user, str)
-        assert isinstance(self.db_password, str)
-        assert isinstance(self.bucketfs_write_password, str)
-
-        self._test_container_info: ContainerInfo = (
+        self._test_container_info: Optional[ContainerInfo] = (
             self.test_environment_info.test_container_info
         )
         self._database_info: DatabaseInfo = self.test_environment_info.database_info

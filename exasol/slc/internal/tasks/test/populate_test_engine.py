@@ -13,11 +13,6 @@ class PopulateTestEngine(PopulateTestDataToDatabase):
     def __init__(self, *args, **kwargs) -> None:
         self.security_scanner_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.timeout, int)
-        assert isinstance(self.no_cache, bool)
-        assert isinstance(self.db_user, str)
-        assert isinstance(self.db_password, str)
-        assert isinstance(self.bucketfs_write_password, str)
 
     def get_data_path_within_test_container(self) -> PurePath:
         return PurePath(TEST_DATA_TARGET) / "enginedb_small"

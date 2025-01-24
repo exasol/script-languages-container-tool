@@ -40,14 +40,6 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
         self.command_line_output_target = luigi.LocalTarget(
             str(command_line_output_path)
         )
-        assert isinstance(self.flavor_paths, tuple)
-        assert all(isinstance(x, str) for x in self.flavor_paths)
-        assert isinstance(self.release_goals, tuple)
-        assert all(isinstance(x, str) for x in self.release_goals)
-        if self.release_name is not None:
-            assert isinstance(self.release_name, str)
-        if self.export_path is not None:
-            assert isinstance(self.export_path, str)
 
     def register_required(self) -> None:
         tasks: Dict[
@@ -100,17 +92,6 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
 
 
 class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainerParameter):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        assert isinstance(self.flavor_path, str)
-        assert isinstance(self.release_goals, tuple)
-        assert all(isinstance(x, str) for x in self.release_goals)
-        if self.release_name is not None:
-            assert isinstance(self.release_name, str)
-        if self.export_path is not None:
-            assert isinstance(self.export_path, str)
 
     def get_goals(self) -> Set[str]:
         return set(self.release_goals)

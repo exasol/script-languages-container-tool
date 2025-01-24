@@ -26,10 +26,6 @@ class ExportContainerTask(ExportContainerBaseTask):
         significant=True,
     )  # type: ignore
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.required_task_info, RequiredTaskInfo)
-
     def get_release_task(self) -> BaseTask:
         module = importlib.import_module(
             self.required_task_info.module_name  # pylint: disable=no-member

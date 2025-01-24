@@ -21,12 +21,6 @@ from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 class CleanImageTask(DockerBaseTask):
     image_id: str = luigi.Parameter()  # type: ignore
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.image_id, str)
-        assert isinstance(self.timeout, int)
-        assert isinstance(self.no_cache, bool)
-
     def run_task(self) -> Generator[BaseTask, None, None]:
         self.logger.info("Try to remove dependent images of %s" % self.image_id)
         yield from self.run_dependencies(
