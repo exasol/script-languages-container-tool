@@ -1,8 +1,9 @@
 import pathlib
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, Optional
 
 import luigi
 from docker.models.containers import ExecResult
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.db_os_executor import (
     DbOsExecFactory,
     DbOsExecutor,
@@ -12,9 +13,6 @@ from exasol_integration_test_docker_environment.lib.base.db_os_executor import (
 )
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
-)
-from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
-    JsonPickleParameter,
 )
 from exasol_integration_test_docker_environment.lib.data.database_credentials import (
     DatabaseCredentials,
@@ -59,7 +57,7 @@ class DummyExecutor(DbOsExecutor):
     def exec(self, cmd: str) -> ExecResult:
         raise RuntimeError("Not supposed to be called.")
 
-    def prepare(self):
+    def prepare(self) -> None:
         pass
 
     def __enter__(self):
@@ -80,15 +78,15 @@ class TestRunnerDBTestTask(
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
     release_goal: str = luigi.Parameter()  # type: ignore
 
-    def __init__(self, *args, **kwargs):
-        self.test_environment_info = None
+    def __init__(self, *args, **kwargs) -> None:
+        self.test_environment_info: Optional[EnvironmentInfo] = None
         super().__init__(*args, **kwargs)
 
-    def register_required(self):
+    def register_required(self) -> None:
         self.register_export_container()
         self.register_spawn_test_environment()
 
-    def register_export_container(self):
+    def register_export_container(self) -> None:
         export_container_task = self.create_child_task(
             ExportFlavorContainer,
             release_goals=[self.release_goal],
@@ -96,7 +94,7 @@ class TestRunnerDBTestTask(
         )
         self._export_infos_future = self.register_dependency(export_container_task)
 
-    def register_spawn_test_environment(self):
+    def register_spawn_test_environment(self) -> None:
         test_environment_name = f"""{self.get_flavor_name()}_{self.release_goal}"""
         spawn_test_environment_task = self.create_child_task_with_common_params(
             SpawnTestEnvironment, environment_name=test_environment_name
@@ -105,14 +103,20 @@ class TestRunnerDBTestTask(
             spawn_test_environment_task
         )
 
-    def run_task(self):
-        export_infos = self.get_values_from_future(  # type: ignore
+    def run_task(self) -> Generator[BaseTask, None, None]:
+        export_infos: Dict[str, ExportInfo] = self.get_values_from_future(
             self._export_infos_future
-        )  # type: Dict[str,ExportInfo]
+        )  # type: ignore
+        assert isinstance(export_infos, dict)
+        assert all(isinstance(x, str) for x in export_infos.keys())
+        assert all(isinstance(x, ExportInfo) for x in export_infos.values())
+
         export_info = export_infos[self.release_goal]
-        self.test_environment_info = self.get_values_from_future(  # type: ignore
+        self.test_environment_info = self.get_values_from_future(
             self._test_environment_info_future
-        )  # type: EnvironmentInfo
+        )  # type: ignore
+        assert isinstance(self.test_environment_info, EnvironmentInfo)
+
         database_credentials = self.get_database_credentials()
         yield from self.upload_container(database_credentials, export_info)
         yield from self.populate_test_engine_data(
@@ -134,12 +138,17 @@ class TestRunnerDBTestTask(
 
     def upload_container(
         self, database_credentials: DatabaseCredentials, export_info: ExportInfo
-    ):
+    ) -> Generator[BaseTask, None, None]:
+        #
+        # Correct return type is Generator[UploadExportedContainer, Any, RunDBTestFilesResult]
+        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
+        #
         reuse = (
             self.reuse_database
             and self.reuse_uploaded_container
             and not export_info.is_new
         )
+        assert self.test_environment_info is not None
         upload_task = self.create_child_task_with_common_params(
             UploadExportedContainer,
             export_info=export_info,
@@ -154,11 +163,16 @@ class TestRunnerDBTestTask(
         )
         yield from self.run_dependencies(upload_task)
 
-    def populate_test_engine_data(  # type: ignore
+    def populate_test_engine_data(
         self,
         test_environment_info: EnvironmentInfo,
         database_credentials: DatabaseCredentials,
-    ) -> None:
+    ) -> Generator[BaseTask, None, None]:
+        #
+        # Correct return type is Generator[PopulateTestEngine, Any, RunDBTestFilesResult]
+        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
+        #
+        assert self.test_environment_info is not None
         reuse = (
             self.reuse_database_setup
             and self.test_environment_info.database_info.reused
@@ -190,7 +204,11 @@ class TestRunnerDBTestTask(
 
     def run_test(
         self, test_environment_info: EnvironmentInfo, export_info: ExportInfo
-    ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
+    ) -> Generator[BaseTask, Any, RunDBTestsInTestConfigResult]:
+        #
+        # Correct return type is Generator[RunDBTestsInTestConfig, Any, RunDBTestFilesResult]
+        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
+        #
         test_config = self.read_test_config()
         generic_language_tests = self.get_generic_language_tests(test_config)
         test_folders = self.get_test_folders(test_config)
@@ -214,10 +232,11 @@ class TestRunnerDBTestTask(
             db_password=database_credentials.db_password,
             bucketfs_write_password=database_credentials.bucketfs_write_password,
         )
-        test_output_future: Any = yield from self.run_dependencies(task)  # type: ignore
+        test_output_future: Any = yield from self.run_dependencies(task)
         test_output: RunDBTestsInTestConfigResult = self.get_values_from_future(
             test_output_future
         )  # type: ignore
+        assert isinstance(test_output, RunDBTestsInTestConfigResult)
         return test_output
 
     @staticmethod

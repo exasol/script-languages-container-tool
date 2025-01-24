@@ -26,7 +26,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
     #  In this case DockerPullOrBuildFlavorImageTask could create a DockerPullOrBuildImageTask
     #  if this would have parameters instead of abstract methods
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.build_step = (  # pylint: disable=assignment-from-no-return
             self.get_build_step()
         )
@@ -34,6 +34,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             self.get_additional_build_directories_mapping()
         )
         super().__init__(*args, **kwargs)
+        assert isinstance(self.flavor_path, str)
+        assert isinstance(self.timeout, int)
+        assert isinstance(self.no_cache, bool)
 
     def is_rebuild_requested(self) -> bool:
         config = build_config()
@@ -42,7 +45,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             or len(config.force_rebuild_from) == 0
         )
 
-    def get_build_step(self) -> str:  # type: ignore
+    def get_build_step(self) -> Optional[str]:
         """
         Called by the constructor to get the name of build step.
         Sub classes need to implement this method.
@@ -83,7 +86,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
     def get_target_repository_name(self) -> str:
         return target_docker_repository_config().repository_name  # type: ignore
 
-    def get_source_image_tag(self):
+    def get_source_image_tag(self) -> str:
         if source_docker_repository_config().tag_prefix != "":
             return (
                 f"{source_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
@@ -91,7 +94,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         else:
             return f"{self.get_image_tag()}"
 
-    def get_target_image_tag(self):
+    def get_target_image_tag(self) -> str:
         if target_docker_repository_config().tag_prefix != "":
             return (
                 f"{target_docker_repository_config().tag_prefix}_{self.get_image_tag()}"
@@ -105,7 +108,8 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_mapping_of_build_files_and_directories(self) -> Dict[str, str]:
         build_step_path = self.get_build_step_path()
-        result = {self.build_step: str(build_step_path)}
+        assert self.build_step is not None
+        result: Dict[str, str] = {self.build_step: str(build_step_path)}
         result.update(self.additional_build_directories_mapping)
         if language_definition := self.get_language_definition():
             lang_def_path = self.get_path_in_flavor_path() / language_definition
@@ -120,13 +124,17 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         return result
 
     def get_build_step_path(self) -> Path:
-        return self.get_path_in_flavor_path() / self.get_build_step()
+        if build_step_path := self.get_build_step():
+            return self.get_path_in_flavor_path() / build_step_path
+        else:
+            return self.get_path_in_flavor_path()
 
     def get_path_in_flavor_path(self) -> Path:
+        flavor_path: str = self.flavor_path  # type: ignore
         if path_in_flavor := self.get_path_in_flavor():
-            return Path(self.flavor_path) / path_in_flavor  # type: ignore
+            return Path(flavor_path) / path_in_flavor
         else:
-            return Path(self.flavor_path)  # type: ignore
+            return Path(flavor_path)
 
     def get_dockerfile(self) -> str:
         return str(self.get_build_step_path().joinpath("Dockerfile"))

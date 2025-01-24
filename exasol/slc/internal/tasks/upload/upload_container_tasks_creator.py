@@ -7,24 +7,29 @@ from exasol_integration_test_docker_environment.lib.docker.images.required_task_
     RequiredTaskInfo,
 )
 
+import exasol.slc.internal.tasks.upload.upload_containers
 from exasol.slc.internal.tasks.upload.upload_container_task import UploadContainerTask
-from exasol.slc.internal.tasks.upload.upload_containers_parameter import (
-    UploadContainersParameter,
-)
 
 
 class UploadContainerTasksCreator:
 
-    def __init__(self, task: UploadContainersParameter):
+    def __init__(
+        self,
+        task: "exasol.slc.internal.tasks.upload.upload_containers.UploadFlavorContainers",
+    ) -> None:
         self.task = task
 
-    def create_upload_tasks(self, build_tasks: Dict[str, DockerCreateImageTask]):
+    def create_upload_tasks(
+        self, build_tasks: Dict[str, DockerCreateImageTask]
+    ) -> Dict[str, UploadContainerTask]:
         return {
             release_goal: self._create_upload_task(release_goal, build_task)
             for release_goal, build_task in build_tasks.items()
         }
 
-    def _create_upload_task(self, release_goal: str, build_task: DockerCreateImageTask):
+    def _create_upload_task(
+        self, release_goal: str, build_task: DockerCreateImageTask
+    ) -> UploadContainerTask:
         required_task_info = self._create_required_task_info(build_task)
         return self.task.create_child_task_with_common_params(  # type: ignore
             UploadContainerTask,
@@ -33,7 +38,7 @@ class UploadContainerTasksCreator:
         )
 
     @staticmethod
-    def _create_required_task_info(build_task):
+    def _create_required_task_info(build_task) -> RequiredTaskInfo:
         required_task_info = RequiredTaskInfo(
             module_name=build_task.__module__,
             class_name=build_task.__class__.__name__,

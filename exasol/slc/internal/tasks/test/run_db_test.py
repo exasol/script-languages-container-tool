@@ -1,7 +1,9 @@
+# pylint: disable=no-member
+
 from collections import namedtuple
 from io import StringIO
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import docker.models.containers
 import luigi
@@ -22,8 +24,20 @@ from exasol_integration_test_docker_environment.lib.config.log_config import (
     WriteLogFilesToConsole,
     log_config,
 )
+from exasol_integration_test_docker_environment.lib.data.container_info import (
+    ContainerInfo,
+)
 from exasol_integration_test_docker_environment.lib.data.database_credentials import (
     DatabaseCredentialsParameter,
+)
+from exasol_integration_test_docker_environment.lib.data.database_info import (
+    DatabaseInfo,
+)
+from exasol_integration_test_docker_environment.lib.data.environment_info import (
+    EnvironmentInfo,
+)
+from exasol_integration_test_docker_environment.lib.data.environment_type import (
+    EnvironmentType,
 )
 
 from exasol.slc.internal.tasks.test.run_db_tests_parameter import RunDBTestParameter
@@ -40,24 +54,35 @@ class DockerCommandException(Exception):
 
 
 class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter):
-    test_file = luigi.Parameter()
+    test_file: str = luigi.Parameter()  # type: ignore
 
-    def extend_output_path(self):
+    def extend_output_path(self) -> Tuple[str, ...]:
         test_file_name = Path(self.test_file).name
         extension = []
         if self.language is not None:
             extension.append(self.language)
         extension.append(test_file_name)
-        return self.caller_output_path + tuple(extension)
+        return tuple(self.caller_output_path) + tuple(extension)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._test_container_info = (
-            self.test_environment_info.test_container_info  # pylint: disable=no-member
-        )  # pylint: disable=no-member
-        self._database_info = (
-            self.test_environment_info.database_info  # pylint: disable=no-member
-        )  # pylint: disable=no-member
+        assert isinstance(self.test_environment_info, EnvironmentInfo)
+        assert isinstance(self.flavor_path, str)
+        if self.language is not None:
+            assert isinstance(self.language, str)
+
+        assert isinstance(self.release_goal, str)
+        assert isinstance(self.language_definition, str)
+        assert isinstance(self.timeout, int)
+        assert isinstance(self.no_cache, bool)
+        assert isinstance(self.db_user, str)
+        assert isinstance(self.db_password, str)
+        assert isinstance(self.bucketfs_write_password, str)
+
+        self._test_container_info: ContainerInfo = (
+            self.test_environment_info.test_container_info
+        )
+        self._database_info: DatabaseInfo = self.test_environment_info.database_info
 
     def _run_command(
         self,
@@ -73,8 +98,9 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             raise DockerCommandException(f"Command returned {exit_code}: {command}")
         return file.getvalue().strip()
 
-    def run_task(self):
+    def run_task(self) -> None:
         self.logger.info("Running db tests")
+        assert self._test_container_info is not None
         with self._get_docker_client() as docker_client:
             test_container = docker_client.containers.get(
                 self._test_container_info.container_name
@@ -157,20 +183,19 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             environment["DOCKER_USERNAME"] = docker_credentials.username
             environment["DOCKER_PASSWORD"] = docker_credentials.password
 
-        env_type: str = self.test_environment_info.type.name  # type: ignore # pylint: disable=no-member
-        environment["TEST_ENVIRONMENT_TYPE"] = env_type
-        environment["TEST_ENVIRONMENT_NAME"] = (
-            self.test_environment_info.name  # pylint: disable=no-member
-        )  # pylint: disable=no-member
-        environment["TEST_DOCKER_NETWORK_NAME"] = (
-            self.test_environment_info.network_info.network_name  # pylint: disable=no-member
+        env_type: str = (
+            self.test_environment_info.type.name
+            if isinstance(self.test_environment_info.type, EnvironmentType)
+            else self.test_environment_info.type
         )
-        if (
-            self.test_environment_info.database_info.container_info  # pylint: disable=no-member
-            is not None
-        ):
+        environment["TEST_ENVIRONMENT_TYPE"] = env_type
+        environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
+        environment["TEST_DOCKER_NETWORK_NAME"] = (
+            self.test_environment_info.network_info.network_name
+        )
+        if self.test_environment_info.database_info.container_info is not None:
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
-                self.test_environment_info.database_info.container_info.container_name  # pylint: disable=no-member
+                self.test_environment_info.database_info.container_info.container_name
             )
 
         self.logger.info(f"Writing test-log to {test_output_file}")

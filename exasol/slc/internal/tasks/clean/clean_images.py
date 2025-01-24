@@ -1,4 +1,9 @@
+from typing import Generator, List
+
+import docker.models.images
 import luigi
+from docker import DockerClient
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.docker_base_task import (
     DockerBaseTask,
 )
@@ -14,12 +19,15 @@ from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 
 
 class CleanImageTask(DockerBaseTask):
-    image_id = luigi.Parameter()
+    image_id: str = luigi.Parameter()  # type: ignore
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        assert isinstance(self.image_id, str)
+        assert isinstance(self.timeout, int)
+        assert isinstance(self.no_cache, bool)
 
-    def run_task(self):
+    def run_task(self) -> Generator[BaseTask, None, None]:
         self.logger.info("Try to remove dependent images of %s" % self.image_id)
         yield from self.run_dependencies(
             self.get_clean_image_tasks_for_dependent_images()
@@ -38,7 +46,7 @@ class CleanImageTask(DockerBaseTask):
                     )
                 )
 
-    def get_clean_image_tasks_for_dependent_images(self):
+    def get_clean_image_tasks_for_dependent_images(self) -> List["CleanImageTask"]:
         with self._get_docker_client() as docker_client:
             image_ids = [
                 str(possible_child).replace("sha256:", "")
@@ -50,7 +58,7 @@ class CleanImageTask(DockerBaseTask):
                 for image_id in image_ids
             ]
 
-    def is_child_image(self, possible_child, docker_client):
+    def is_child_image(self, possible_child, docker_client) -> bool:
         try:
             inspect = docker_client.api.inspect_image(
                 image=str(possible_child).replace("sha256:", "")
@@ -61,9 +69,9 @@ class CleanImageTask(DockerBaseTask):
 
 
 class CleanImagesStartingWith(DockerBaseTask):
-    starts_with_pattern = luigi.Parameter()
+    starts_with_pattern: str = luigi.Parameter()  # type: ignore
 
-    def register_required(self):
+    def register_required(self) -> None:
         with self._get_docker_client() as docker_client:
             image_ids = [
                 str(image.id).replace("sha256:", "")
@@ -76,7 +84,9 @@ class CleanImagesStartingWith(DockerBaseTask):
             ]
         )
 
-    def find_images_to_clean(self, docker_client):
+    def find_images_to_clean(
+        self, docker_client: DockerClient
+    ) -> List[docker.models.images.Image]:
         self.logger.info(
             "Going to remove all images starting with %s" % self.starts_with_pattern
         )

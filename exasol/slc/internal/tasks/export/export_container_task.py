@@ -1,6 +1,7 @@
 import importlib
 
 import luigi
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
     JsonPickleParameter,
 )
@@ -19,13 +20,17 @@ class ExportContainerTask(ExportContainerBaseTask):
     # don't want to wait for the push finishing before starting the build of depended images,
     # but we also need to create a ExportContainerTask for each DockerCreateImageTask of a goal
 
-    required_task_info = JsonPickleParameter(
+    required_task_info: RequiredTaskInfo = JsonPickleParameter(
         RequiredTaskInfo,
         visibility=luigi.parameter.ParameterVisibility.HIDDEN,
         significant=True,
     )  # type: ignore
 
-    def get_release_task(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        assert isinstance(self.required_task_info, RequiredTaskInfo)
+
+    def get_release_task(self) -> BaseTask:
         module = importlib.import_module(
             self.required_task_info.module_name  # pylint: disable=no-member
         )  # pylint: disable=no-member
@@ -37,5 +42,5 @@ class ExportContainerTask(ExportContainerBaseTask):
             **self.required_task_info.params  # pylint: disable=no-member
         )
 
-    def get_release_goal(self):
+    def get_release_goal(self) -> str:
         return self.release_goal

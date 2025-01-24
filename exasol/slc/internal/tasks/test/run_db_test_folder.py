@@ -1,5 +1,6 @@
-from typing import Any, Generator
+from typing import Any, Generator, Optional, Tuple
 
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
@@ -30,10 +31,10 @@ class RunDBTestFolder(
     DatabaseCredentialsParameter,
 ):
 
-    def extend_output_path(self):
-        return self.caller_output_path + ("test_folder",)
+    def extend_output_path(self) -> Tuple[str, ...]:
+        return tuple(self.caller_output_path) + ("test_folder",)
 
-    def run_task(self):
+    def run_task(self) -> Generator[BaseTask, None, None]:
         results = []
         for language in self.languages:  # pylint: disable=not-an-iterable
             for test_folder in self.test_folders:  # pylint: disable=not-an-iterable
@@ -42,16 +43,21 @@ class RunDBTestFolder(
         self.return_object(RunDBTestFoldersResult(test_results=results))
 
     def run_test(
-        self, language: str, test_folder: str
-    ) -> Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
+        self, language: Optional[str], test_folder: str
+    ) -> Generator[BaseTask, Any, RunDBTestDirectoryResult]:
+        #
+        # Correct return type is Generator[RunDBTestsInDirectory, Any, List[RunDBTestResult]]
+        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
+        #
         task = self.create_child_task_with_common_params(
             RunDBTestsInDirectory,
             language=language,
             directory=test_folder,
         )
-        test_result_future = yield from self.run_dependencies(task)  # type: ignore
-        test_result = self.get_values_from_future(test_result_future)  # type: ignore
+        test_result_future = yield from self.run_dependencies(task)
+        test_result = self.get_values_from_future(test_result_future)
+        assert isinstance(test_result, RunDBTestDirectoryResult)
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
             test_result, 4
         )
-        return test_result  # type: ignore
+        return test_result

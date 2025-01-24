@@ -1,17 +1,19 @@
+from typing import Optional
+
 import luigi
 
 
 class UploadContainerParameter:
-    database_host = luigi.Parameter()
-    bucketfs_port = luigi.IntParameter()
-    bucketfs_username = luigi.Parameter(significant=False)
-    bucketfs_password = luigi.Parameter(
+    database_host: str = luigi.Parameter()  # type: ignore
+    bucketfs_port: int = luigi.IntParameter()  # type: ignore
+    bucketfs_username: str = luigi.Parameter(significant=False)  # type: ignore
+    bucketfs_password: str = luigi.Parameter(
         significant=False, visibility=luigi.parameter.ParameterVisibility.HIDDEN
-    )
-    bucketfs_name = luigi.Parameter()
-    bucket_name = luigi.Parameter()
-    path_in_bucket = luigi.OptionalParameter()
-    bucketfs_https = luigi.BoolParameter(False)
-    release_name = luigi.OptionalParameter()
-    ssl_cert_path = luigi.Parameter()
-    use_ssl_cert_validation = luigi.BoolParameter(True)
+    )  # type: ignore
+    bucketfs_name: str = luigi.Parameter()  # type: ignore
+    bucket_name: str = luigi.Parameter()  # type: ignore
+    path_in_bucket: Optional[str] = luigi.OptionalParameter()  # type: ignore
+    bucketfs_https: bool = luigi.BoolParameter(False)  # type: ignore
+    release_name: Optional[str] = luigi.OptionalParameter()  # type: ignore
+    ssl_cert_path: str = luigi.Parameter()  # type: ignore
+    use_ssl_cert_validation: bool = luigi.BoolParameter(True)  # type: ignore

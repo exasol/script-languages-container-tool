@@ -1,10 +1,14 @@
 import textwrap
 from pathlib import Path
+from typing import Any, Optional
 
 import exasol.bucketfs as bfs  # type: ignore
 import luigi
 from exasol_integration_test_docker_environment.abstract_method_exception import (
     AbstractMethodException,
+)
+from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
+    AbstractTaskFuture,
 )
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -22,25 +26,27 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     # TODO add error checks and propose reasons for the error
     # TODO extract bucketfs interaction into own module
 
-    release_goal = luigi.Parameter()
+    release_goal: str = luigi.Parameter()  # type: ignore
 
-    def __init__(self, *args, **kwargs):
-        self.export_info_future = None
+    def __init__(self, *args, **kwargs) -> None:
+        self.export_info_future: Optional[AbstractTaskFuture] = None
         super().__init__(*args, **kwargs)
 
-    def register_required(self):
-        task = self.get_export_task()
-        self.export_info_future = self.register_dependency(task)
+    def register_required(self) -> None:
+        if task := self.get_export_task():
+            self.export_info_future = self.register_dependency(task)
 
-    def get_export_task(self):
+    def get_export_task(self) -> Optional[Any]:
         raise AbstractMethodException()
 
-    def run_task(self):
+    def run_task(self) -> None:
+        assert self.export_info_future is not None
         export_info = self.get_values_from_future(self.export_info_future)
+        assert isinstance(export_info, ExportInfo)
         self._upload_container(export_info)
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
-            flavor_path=self.flavor_path,
+            flavor_path=self.flavor_path,  # type: ignore
             bucketfs_name=self.bucketfs_name,
             bucket_name=self.bucket_name,
             path_in_bucket=self.path_in_bucket,
@@ -52,7 +58,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
     def generate_command_line_output_str(
         self, language_definition: LanguageDefinition, export_info: ExportInfo
-    ):
+    ) -> str:
         flavor_name = self.get_flavor_name()
         try:
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
@@ -99,7 +105,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     def _url(self) -> str:
         return f"{self._get_url_prefix()}{self.database_host}:{self.bucketfs_port}"
 
-    def _complete_url(self, export_info: ExportInfo):
+    def _complete_url(self, export_info: ExportInfo) -> str:
         path_in_bucket = (
             f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
         )
@@ -113,19 +119,19 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         with open(release_info.cache_file, "rb") as file:
             bucket_path.write(file)
 
-    def _get_complete_release_name(self, release_info: ExportInfo):
+    def _get_complete_release_name(self, release_info: ExportInfo) -> str:
         complete_release_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_release_name(
             release_info)}"""
         return complete_release_name
 
-    def _get_release_name(self, release_info: ExportInfo):
+    def _get_release_name(self, release_info: ExportInfo) -> str:
         if self.release_name is None:
             release_name = release_info.hash
         else:
             release_name = self.release_name
         return release_name
 
-    def _get_url_prefix(self):
+    def _get_url_prefix(self) -> str:
         if self.bucketfs_https:
             url_prefix = "https://"
         else:
