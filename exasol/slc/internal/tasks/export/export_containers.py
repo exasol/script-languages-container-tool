@@ -44,9 +44,9 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
         assert all(isinstance(x, str) for x in self.flavor_paths)
         assert isinstance(self.release_goals, tuple)
         assert all(isinstance(x, str) for x in self.release_goals)
-        if self.release_name is None:
+        if self.release_name is not None:
             assert isinstance(self.release_name, str)
-        if self.export_path is None:
+        if self.export_path is not None:
             assert isinstance(self.export_path, str)
 
     def register_required(self) -> None:
@@ -107,9 +107,9 @@ class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainerParameter):
         assert isinstance(self.flavor_path, str)
         assert isinstance(self.release_goals, tuple)
         assert all(isinstance(x, str) for x in self.release_goals)
-        if self.release_name is None:
+        if self.release_name is not None:
             assert isinstance(self.release_name, str)
-        if self.export_path is None:
+        if self.export_path is not None:
             assert isinstance(self.export_path, str)
 
     def get_goals(self) -> Set[str]:
