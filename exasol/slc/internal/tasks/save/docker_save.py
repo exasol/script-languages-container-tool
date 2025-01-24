@@ -41,9 +41,6 @@ class DockerSave(FlavorsBaseTask, DockerSaveParameter):
 
 class DockerFlavorSave(DockerFlavorBuildBase, DockerSaveParameter):
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     def get_goals(self) -> Set[str]:
         return set(self.goals)
 
