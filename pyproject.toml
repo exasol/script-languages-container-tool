@@ -58,7 +58,7 @@ testpaths = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml"]
+module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml", "exasol.bucketfs"] # 'exasol.bucketfs` can be removed after https://github.com/exasol/bucketfs-python/issues/191 was fixed
 ignore_missing_imports = true
 
 [tool.black]
