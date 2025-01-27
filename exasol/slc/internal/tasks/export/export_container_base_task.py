@@ -41,6 +41,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
     export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_goal: str = luigi.Parameter(None)  # type: ignore
+    cleanup_docker_images: bool = luigi.BoolParameter(False)  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
         self._export_directory_future: Optional[AbstractTaskFuture] = None
@@ -168,6 +169,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             extract_dir = self._extract_exported_container(
                 log_path, export_file, temp_directory
             )
+            Path(export_file).unlink(missing_ok=False)
             self._modify_extracted_container(extract_dir)
             self._pack_release_file(log_path, extract_dir, release_file)
             self._compute_checksum(release_file, checksum_file)
@@ -209,6 +211,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             for chunk in generator:
                 still_running_logger.log()
                 file.write(chunk)
+
         return export_file
 
     def _pack_release_file(
@@ -240,6 +243,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             f"adding manifest to '{tmp_release_file}'",
             log_path.joinpath("pack_release_file.log"),
         )
+        shutil.rmtree(extract_dir)
         command = f"""gzip {tmp_release_file}"""
         self.run_command(
             command,

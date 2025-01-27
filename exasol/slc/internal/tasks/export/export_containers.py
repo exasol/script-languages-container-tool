@@ -26,6 +26,7 @@ class ExportContainerParameter(Config):
     release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
     export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
+    cleanup_docker_images: bool = luigi.BoolParameter(False)  # type: ignore
     # TOOD force export
 
 
