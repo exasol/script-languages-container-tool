@@ -57,7 +57,7 @@ jobs:
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
