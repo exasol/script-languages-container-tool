@@ -2,7 +2,7 @@ import json
 import shutil
 import tarfile
 import unittest
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory, tempdir
 
 import docker  # type: ignore
@@ -87,7 +87,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                     break
         return file_content
 
-    def test_docker_build(self):
+    def test_docker_build(self) -> None:
         flavor_path = exaslct_utils.get_test_flavor()
         image_infos = build(
             flavor_path=(str(flavor_path),),
@@ -131,7 +131,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                         aliases=["JAVA"],
                         language=SLCLanguage.Java,
                         udf_client_path=UdfClientRelativePath(
-                            executable="/exaudf/exaudfclient"
+                            executable=PurePosixPath("/exaudf/exaudfclient")
                         ),
                         parameters=[],
                     )

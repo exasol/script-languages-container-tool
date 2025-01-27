@@ -37,7 +37,7 @@ def run_db_test(
     generic_language_test: Tuple[str, ...] = tuple(),
     test_folder: Tuple[str, ...] = tuple(),
     test_file: Tuple[str, ...] = tuple(),
-    test_language: Tuple[str, ...] = (None,),  # type: ignore
+    test_language: Tuple[Optional[str], ...] = (None,),
     test: Tuple[str, ...] = tuple(),
     environment_type: str = "docker_db",
     max_start_attempts: int = 2,

@@ -1,15 +1,18 @@
+# pylint: disable=not-an-iterable
+from typing import Dict, Generator, Optional, Set, Tuple
+
 import luigi
+from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
+    AbstractTaskFuture,
+)
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorsBaseTask,
 )
-from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
-    JsonPickleTarget,
-)
-from exasol_integration_test_docker_environment.lib.base.pickle_target import (
-    PickleTarget,
+from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
+    ImageInfo,
 )
 from luigi import Config
-from luigi.format import Nop
 
 from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
     DockerFlavorBuildBase,
@@ -17,32 +20,46 @@ from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
 
 
 class DockerBuildParameter(Config):
-    goals = luigi.ListParameter()
-    shortcut_build = luigi.BoolParameter(True)
+    goals: Tuple[str, ...] = luigi.ListParameter()  # type: ignore
+    shortcut_build: bool = luigi.BoolParameter(True)  # type: ignore
 
 
 class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
 
-    def __init__(self, *args, **kwargs):
-        self._images_futures = None
+    def __init__(self, *args, **kwargs) -> None:
+        self._images_futures: Optional[AbstractTaskFuture] = None
         super().__init__(*args, **kwargs)
 
-    def register_required(self):
+    def register_required(self) -> None:
         tasks = self.create_tasks_for_flavors_with_common_params(DockerFlavorBuild)
         self._images_futures = self.register_dependencies(tasks)
 
-    def run_task(self):
-        image_info = self.get_values_from_futures(self._images_futures)
-        self.return_object(image_info)
+    def run_task(self) -> None:
+        image_infos: Dict[str, Dict[str, ImageInfo]] = self.get_values_from_futures(
+            self._images_futures
+        )
+        assert isinstance(image_infos, dict)
+        assert all(isinstance(x, str) for x in image_infos.keys())
+        assert all(isinstance(x, dict) for x in image_infos.values())
+        assert all(isinstance(y, str) for x in image_infos.values() for y in x.keys())
+        assert all(
+            isinstance(y, ImageInfo) for x in image_infos.values() for y in x.values()
+        )
+        self.return_object(image_infos)
 
 
 class DockerFlavorBuild(DockerFlavorBuildBase, DockerBuildParameter):
 
-    def get_goals(self):
-        return self.goals
+    def get_goals(self) -> Set[str]:
+        return set(self.goals)
 
-    def run_task(self):
+    def run_task(self) -> Generator[BaseTask, None, None]:
         build_tasks = self.create_build_tasks(self.shortcut_build)
         image_info_futures = yield from self.run_dependencies(build_tasks)
-        image_infos = self.get_values_from_futures(image_info_futures)
+        image_infos: Dict[str, ImageInfo] = self.get_values_from_futures(
+            image_info_futures
+        )
+        assert isinstance(image_infos, dict)
+        assert all(isinstance(x, str) for x in image_infos.keys())
+        assert all(isinstance(x, ImageInfo) for x in image_infos.values())
         self.return_object(image_infos)

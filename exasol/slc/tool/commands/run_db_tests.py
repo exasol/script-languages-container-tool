@@ -145,7 +145,7 @@ def run_db_test(
     generic_language_test: Tuple[str, ...],
     test_folder: Tuple[str, ...],
     test_file: Tuple[str, ...],
-    test_language: Tuple[str, ...],
+    test_language: Tuple[Optional[str], ...],
     test: Tuple[str, ...],
     environment_type: str,
     max_start_attempts: int,

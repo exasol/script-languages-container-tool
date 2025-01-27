@@ -3,7 +3,7 @@ from tarfile import TarFile
 from typing import List, Optional
 
 
-def is_within_directory(directory, target):
+def is_within_directory(directory: str, target: str) -> bool:
     abs_directory = os.path.abspath(directory)
     abs_target = os.path.abspath(target)
 

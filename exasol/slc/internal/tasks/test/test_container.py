@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional, TextIO, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -27,16 +27,18 @@ STATUS_INDENT = 2
 class TestContainerParameter(
     RunDBTestsInTestConfigParameter, GeneralRunDBTestParameter
 ):
-    release_goals: List[str] = luigi.ListParameter(["release"])  # type: ignore
-    languages: List[Optional[str]] = luigi.ListParameter([None])  # type: ignore
+    release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
+    languages: Tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
 
 
 class TestStatusPrinter:
-    def __init__(self, file):
+    def __init__(self, file: TextIO) -> None:
         self.file = file
 
-    def print_status_for_all_tests(self, test_results: Dict[str, FlavorTestResult]):
+    def print_status_for_all_tests(
+        self, test_results: Dict[str, FlavorTestResult]
+    ) -> None:
         for flavor, test_result_of_flavor in test_results.items():
             print(
                 f"- Tests: {self.get_status_string(test_result_of_flavor.tests_are_ok)}",
@@ -48,7 +50,7 @@ class TestStatusPrinter:
 
     def print_status_for_flavor(
         self, flavor_path: str, test_result_of_flavor: FlavorTestResult, indent: int
-    ):
+    ) -> None:
         print(
             self.get_indent_str(indent)
             + f"- Tests for flavor {flavor_path}: {self.get_status_string(test_result_of_flavor.tests_are_ok)}",
@@ -69,7 +71,7 @@ class TestStatusPrinter:
         release_goal: str,
         test_results_of_release_goal: RunDBTestsInTestConfigResult,
         indent: int,
-    ):
+    ) -> None:
         print(
             self.get_indent_str(indent)
             + f"- Tests for release goal {release_goal}: "
@@ -88,7 +90,7 @@ class TestStatusPrinter:
 
     def print_status_for_test_files(
         self, test_result_of_flavor: RunDBTestsInTestConfigResult, indent: int
-    ):
+    ) -> None:
         for (
             test_results_for_test_files
         ) in test_result_of_flavor.test_files_output.test_results:
@@ -101,7 +103,7 @@ class TestStatusPrinter:
 
     def print_status_for_test_folders(
         self, test_result_of_flavor: RunDBTestsInTestConfigResult, indent: int
-    ):
+    ) -> None:
         for (
             test_results_for_test_folder
         ) in test_result_of_flavor.test_folders_output.test_results:
@@ -115,7 +117,7 @@ class TestStatusPrinter:
 
     def print_status_for_generic_language_tests(
         self, test_result_of_flavor: RunDBTestsInTestConfigResult, indent: int
-    ):
+    ) -> None:
         for (
             test_results_for_test_folder
         ) in test_result_of_flavor.generic_language_tests_output.test_results:
@@ -128,18 +130,18 @@ class TestStatusPrinter:
             )
 
     @staticmethod
-    def get_indent_str(indent: int):
+    def get_indent_str(indent: int) -> str:
         return " " * indent
 
     @staticmethod
-    def get_status_string(status: bool):
+    def get_status_string(status: bool) -> str:
         return "OK" if status else "FAILED"
 
 
 class TestContainer(
     FlavorsBaseTask, TestContainerParameter, SpawnTestEnvironmentParameter
 ):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.test_results_futures = None
         super().__init__(*args, **kwargs)
         command_line_output_path = self.get_output_path().joinpath(
@@ -149,16 +151,20 @@ class TestContainer(
             str(command_line_output_path)
         )
 
-    def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
+    def register_required(self) -> None:
+        tasks: Dict[str, TestFlavorContainer] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             TestFlavorContainer
-        )  # type: Dict[str,TestFlavorContainer]
+        )  # type: ignore
         self.test_results_futures = self.register_dependencies(tasks)
 
-    def run_task(self):
-        test_results = self.get_values_from_futures(  # type: ignore
+    def run_task(self) -> None:
+        test_results: Dict[str, FlavorTestResult] = self.get_values_from_futures(
             self.test_results_futures
-        )  # type: Dict[str,FlavorTestResult]
+        )
+        assert isinstance(test_results, dict)
+        assert all(isinstance(x, str) for x in test_results.keys())
+        assert all(isinstance(x, FlavorTestResult) for x in test_results.values())
+
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
             test_results, 4
         )
@@ -177,28 +183,35 @@ class TestFlavorContainer(
     FlavorBaseTask, TestContainerParameter, SpawnTestEnvironmentParameter
 ):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.test_result_futures = None
         super().__init__(*args, **kwargs)
 
-    def register_required(self):
+    def register_required(self) -> None:
         tasks = {
             release_goal: self.generate_tasks_for_flavor(release_goal)
             for release_goal in self.release_goals  # type: ignore  # pylint: disable=not-an-iterable
         }
         self.test_result_futures = self.register_dependencies(tasks)
 
-    def generate_tasks_for_flavor(self, release_goal: str):
+    def generate_tasks_for_flavor(self, release_goal: str) -> TestRunnerDBTestTask:
         task = self.create_child_task_with_common_params(
             TestRunnerDBTestTask, release_goal=release_goal
         )
         return task
 
-    def run_task(self):
-        test_results = self.get_values_from_futures(  # type: ignore
-            self.test_result_futures
-        )  # type: Dict[str,RunDBTestsInTestConfigResult]
-        result = FlavorTestResult(self.flavor_path, test_results)
+    def run_task(self) -> None:
+        test_results: Dict[str, RunDBTestsInTestConfigResult] = (
+            self.get_values_from_futures(self.test_result_futures)
+        )
+        assert isinstance(test_results, dict)
+        assert all(isinstance(x, str) for x in test_results.keys())
+        assert all(
+            isinstance(x, RunDBTestsInTestConfigResult) for x in test_results.values()
+        )
+
+        flavor_path: str = self.flavor_path  # type: ignore
+        result = FlavorTestResult(flavor_path, test_results)
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
             test_results, 4
         )

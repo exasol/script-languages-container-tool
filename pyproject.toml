@@ -31,8 +31,8 @@ python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
-exasol-integration-test-docker-environment = "^3.3.0"
-exasol-bucketfs="^0.13.0"
+exasol-integration-test-docker-environment = "^3.4.0"
+exasol-bucketfs="^1.0.0"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
 
@@ -58,8 +58,7 @@ testpaths = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["exasol_integration_test_docker_environment.*", "luigi.*", "docker.*",
-            "humanfriendly", "configobj", "exasol.bucketfs", "toml"]
+module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml", "exasol.bucketfs"] # 'exasol.bucketfs` can be removed after https://github.com/exasol/bucketfs-python/issues/191 was fixed
 ignore_missing_imports = true
 
 [tool.black]

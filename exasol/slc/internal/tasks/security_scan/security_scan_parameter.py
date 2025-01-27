@@ -5,4 +5,4 @@ from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_
 
 
 class SecurityScanParameter(DependencyLoggerBaseTask):
-    report_path = luigi.Parameter()
+    report_path: str = luigi.Parameter()  # type: ignore

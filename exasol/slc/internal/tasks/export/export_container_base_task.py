@@ -5,10 +5,13 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import humanfriendly
 import luigi
+from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
+    AbstractTaskFuture,
+)
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -35,31 +38,34 @@ CHECKSUM_ALGORITHM = "sha512sum"
 
 
 class ExportContainerBaseTask(FlavorBaseTask):
-    logger = logging.getLogger("luigi-interface")
-    export_path = luigi.OptionalParameter(None)
-    release_name = luigi.OptionalParameter(None)
-    release_goal = luigi.Parameter(None)
+    export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
+    release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
+    release_goal: str = luigi.Parameter(None)  # type: ignore
 
-    def __init__(self, *args, **kwargs):
-        self._export_directory_future = None
-        self._release_task_future = None
+    def __init__(self, *args, **kwargs) -> None:
+        self._export_directory_future: Optional[AbstractTaskFuture] = None
+        self._release_task_future: Optional[AbstractTaskFuture] = None
         super().__init__(*args, **kwargs)
 
-    def register_required(self):
+    def register_required(self) -> None:
         self._export_directory_future = self.register_dependency(
             self.create_child_task(task_class=CreateExportDirectory)
         )
-        self._release_task_future = self.register_dependency(self.get_release_task())
+        if release_task := self.get_release_task():
+            self._release_task_future = self.register_dependency(release_task)
 
     def get_release_task(self) -> Optional[BaseTask]:
         pass
 
-    def run_task(self):
-        image_info_of_release_image = (  # type: ignore
-            self._release_task_future.get_output()
-        )  # type: ImageInfo
+    def run_task(self) -> None:
+        assert self._export_directory_future is not None
+        assert self._release_task_future is not None
+        image_info_of_release_image: ImageInfo = self._release_task_future.get_output()
+        assert isinstance(image_info_of_release_image, ImageInfo)
         cache_file, release_complete_name, release_image_name = (
-            self._get_cache_file_path(image_info_of_release_image)
+            self._get_cache_file_path(
+                image_info_of_release_image, self._export_directory_future
+            )
         )
         checksum_file = Path(str(cache_file) + "." + CHECKSUM_ALGORITHM)
         self._remove_cached_exported_file_if_requested(cache_file, checksum_file)
@@ -86,8 +92,8 @@ class ExportContainerBaseTask(FlavorBaseTask):
         release_complete_name: str,
         cache_file: Path,
         is_new: bool,
-        output_file: Path,
-    ):
+        output_file: Optional[Path],
+    ) -> ExportInfo:
         export_info = ExportInfo(
             cache_file=str(cache_file),
             complete_name=release_complete_name,
@@ -97,20 +103,24 @@ class ExportContainerBaseTask(FlavorBaseTask):
             depends_on_image=image_info_of_release_image,
             release_goal=str(self.release_goal),
             release_name=str(self.release_name),
-            output_file=str(output_file),
+            output_file=str(output_file) if output_file else None,
         )
         return export_info
 
-    def _get_cache_file_path(self, image_info_of_release_image):
+    def _get_cache_file_path(
+        self,
+        image_info_of_release_image: ImageInfo,
+        export_directory_future: AbstractTaskFuture,
+    ) -> Tuple[Path, str, str]:
         release_image_name = image_info_of_release_image.get_target_complete_name()
-        export_path = Path(self._export_directory_future.get_output()).absolute()
+        export_path = Path(export_directory_future.get_output()).absolute()
         release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.hash}"""
         cache_file = Path(export_path, release_complete_name + ".tar.gz").absolute()
         return cache_file, release_complete_name, release_image_name
 
     def _copy_cache_file_to_output_path(
         self, cache_file: Path, checksum_file: Path, is_new: bool
-    ):
+    ) -> Optional[Path]:
         output_file = None
         if self.export_path is not None:
             if self.release_name is not None:
@@ -132,7 +142,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _remove_cached_exported_file_if_requested(
         self, release_file: Path, checksum_file: Path
-    ):
+    ) -> None:
         if release_file.exists() and (
             build_config().force_rebuild
             or build_config().force_pull
@@ -145,7 +155,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _export_release(
         self, release_image_name: str, release_file: Path, checksum_file: Path
-    ):
+    ) -> None:
         self.logger.info("Create container file %s", release_file)
         temp_directory = tempfile.mkdtemp(
             prefix="release_archive_", dir=build_config().temporary_base_directory
@@ -164,7 +174,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
         finally:
             shutil.rmtree(temp_directory)
 
-    def _compute_checksum(self, release_file: Path, checksum_file: Path):
+    def _compute_checksum(self, release_file: Path, checksum_file: Path) -> None:
         self.logger.info("Compute checksum for container file %s", release_file)
         command = f"""{CHECKSUM_ALGORITHM} '{release_file}'"""
         completed_process = subprocess.run(shlex.split(command), capture_output=True)
@@ -176,7 +186,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _create_and_export_container(
         self, release_image_name: str, temp_directory: str
-    ):
+    ) -> str:
         self.logger.info("Export container %s", release_image_name)
         with self._get_docker_client() as docker_client:
             container = docker_client.containers.create(image=release_image_name)
@@ -189,7 +199,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
 
     def _export_container(
         self, container, release_image_name: str, temp_directory: str
-    ):
+    ) -> str:
         generator = container.export(chunk_size=humanfriendly.parse_size("10mb"))
         export_file = temp_directory + "/export.tar"
         with open(export_file, "wb") as file:
@@ -201,7 +211,9 @@ class ExportContainerBaseTask(FlavorBaseTask):
                 file.write(chunk)
         return export_file
 
-    def _pack_release_file(self, log_path: Path, extract_dir: str, release_file: Path):
+    def _pack_release_file(
+        self, log_path: Path, extract_dir: str, release_file: Path
+    ) -> None:
         self.logger.info("Pack container file %s", release_file)
         extract_content = " ".join(f"'{file}'" for file in os.listdir(extract_dir))
         if not str(release_file).endswith("tar.gz"):
@@ -236,13 +248,13 @@ class ExportContainerBaseTask(FlavorBaseTask):
         )
 
     @staticmethod
-    def _modify_extracted_container(extract_dir: str):
+    def _modify_extracted_container(extract_dir: str) -> None:
         os.symlink("/conf/resolv.conf", f"""{extract_dir}/etc/resolv.conf""")
         os.symlink("/conf/hosts", f"""{extract_dir}/etc/hosts""")
 
     def _extract_exported_container(
         self, log_path: Path, export_file: str, temp_directory: str
-    ):
+    ) -> str:
         self.logger.info("Extract exported file %s", export_file)
         extract_dir = temp_directory + "/extract"
         os.makedirs(extract_dir)
@@ -267,7 +279,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
         )
         return extract_dir
 
-    def run_command(self, command: str, description: str, log_file_path: Path):
+    def run_command(self, command: str, description: str, log_file_path: Path) -> None:
         with subprocess.Popen(
             shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         ) as process:
@@ -276,9 +288,11 @@ class ExportContainerBaseTask(FlavorBaseTask):
             ) as log_handler:
                 still_running_logger = StillRunningLogger(self.logger, description)
                 log_handler.handle_log_lines((command + "\n").encode("utf-8"))
-                for line in iter(process.stdout.readline, b""):  # type: ignore
-                    still_running_logger.log()
-                    log_handler.handle_log_lines(line)
+
+                if stdout := process.stdout:
+                    for line in iter(stdout.readline, b""):
+                        still_running_logger.log()
+                        log_handler.handle_log_lines(line)
                 process.wait(timeout=60 * 2)
                 return_code_log_line = "return code %s" % process.returncode
                 log_handler.handle_log_lines(

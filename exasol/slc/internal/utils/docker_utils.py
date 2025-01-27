@@ -1,9 +1,13 @@
 from typing import Callable, Dict, List, TextIO
 
 import docker.models.containers
+import docker.models.images
+from docker import DockerClient
 
 
-def find_images_by_tag(client, condition: Callable[[str], bool]) -> List:
+def find_images_by_tag(
+    client: DockerClient, condition: Callable[[str], bool]
+) -> List[docker.models.images.Image]:
     images = client.images.list()
     filter_images = [
         image

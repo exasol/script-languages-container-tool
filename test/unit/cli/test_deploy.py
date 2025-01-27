@@ -2,7 +2,6 @@ import tempfile
 from test.unit.cli import CliRunner
 from unittest.mock import patch
 
-import exasol.bucketfs as bfs  # type: ignore
 import pytest
 
 from exasol.slc.models.deploy_result import DeployResult

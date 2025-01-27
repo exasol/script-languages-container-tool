@@ -1,9 +1,11 @@
+from typing import Tuple
+
 import luigi
 from luigi import Config
 
 
 class DockerSaveParameter(Config):
-    force_save = luigi.BoolParameter(False)
-    save_all = luigi.BoolParameter(False)
-    save_path = luigi.Parameter()
-    goals = luigi.ListParameter([])
+    force_save: bool = luigi.BoolParameter(False)  # type: ignore
+    save_all: bool = luigi.BoolParameter(False)  # type: ignore
+    save_path: str = luigi.Parameter()  # type: ignore
+    goals: Tuple[str, ...] = luigi.ListParameter([])  # type: ignore

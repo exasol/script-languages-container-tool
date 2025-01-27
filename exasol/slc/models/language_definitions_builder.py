@@ -11,7 +11,7 @@ class LanguageDefinitionsBuilder:
     replacing the aliases provides in the source Language Definition Components with custom aliases.
     """
 
-    def __init__(self, lang_def_components: List[LanguageDefinitionComponents]):
+    def __init__(self, lang_def_components: List[LanguageDefinitionComponents]) -> None:
         self.lang_def_components = lang_def_components
         self.custom_aliases: Dict[str, str] = dict()
 

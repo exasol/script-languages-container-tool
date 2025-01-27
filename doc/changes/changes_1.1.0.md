@@ -14,3 +14,4 @@ t.b.d.
 
  - #254: Replaced `set-output` GH command and updated Python Toolbox and ITDE
  - #257: Updated formating rules
+ - #256: Fixed type hints

@@ -1,5 +1,7 @@
-from typing import Any, Generator
+# pylint: disable=not-an-iterable
+from typing import Any, Generator, Tuple
 
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
@@ -30,12 +32,12 @@ class RunDBGenericLanguageTest(
     DatabaseCredentialsParameter,
 ):
 
-    def extend_output_path(self):
-        return self.caller_output_path + ("generic",)
+    def extend_output_path(self) -> Tuple[str, ...]:
+        return tuple(self.caller_output_path) + ("generic",)
 
-    def run_task(self):
+    def run_task(self) -> Generator[BaseTask, None, None]:
         results = []
-        for language in self.generic_language_tests:  # pylint: disable=not-an-iterable
+        for language in self.generic_language_tests:
             test_result = yield from self.run_test(language, "generic")
             results.append(test_result)
         test_results = RunDBTestFoldersResult(test_results=results)
@@ -46,12 +48,18 @@ class RunDBGenericLanguageTest(
 
     def run_test(
         self, language: str, test_folder: str
-    ) -> Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
+    ) -> Generator[BaseTask, Any, RunDBTestDirectoryResult]:
+        #
+        # Correct return type is Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]
+        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
+        #
+
         task = self.create_child_task_with_common_params(
             RunDBTestsInDirectory,
             language=language,
             directory=test_folder,
         )
-        test_result_future = yield from self.run_dependencies(task)  # type: ignore
+        test_result_future = yield from self.run_dependencies(task)
         test_result = self.get_values_from_future(test_result_future)
-        return test_result  # type: ignore
+        assert isinstance(test_result, RunDBTestDirectoryResult)
+        return test_result

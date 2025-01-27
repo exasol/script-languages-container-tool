@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
@@ -10,7 +10,7 @@ from exasol_integration_test_docker_environment.lib.data.environment_info import
 
 
 class GeneralRunDBTestParameter:
-    test_restrictions: List[str] = luigi.ListParameter([])  # type: ignore
+    test_restrictions: Tuple[str, ...] = luigi.ListParameter([])  # type: ignore
     test_environment_vars: Dict[str, str] = luigi.DictParameter({}, significant=False)  # type: ignore
     test_log_level: str = luigi.Parameter("critical", significant=False)  # type: ignore
 
@@ -28,19 +28,19 @@ class RunDBTestParameter(ActualRunDBTestParameter):
 
 
 class RunDBGenericLanguageTestParameter(GeneralRunDBTestParameter):
-    generic_language_tests: List[str] = luigi.ListParameter([])  # type: ignore
+    generic_language_tests: Tuple[str, ...] = luigi.ListParameter([])  # type: ignore
 
 
 class RunDBLanguageTestParameter(GeneralRunDBTestParameter):
-    languages: List[Optional[str]] = luigi.ListParameter([None])  # type: ignore
+    languages: Tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
 
 
 class RunDBTestFolderParameter(RunDBLanguageTestParameter):
-    test_folders: List[str] = luigi.ListParameter([])  # type: ignore
+    test_folders: Tuple[str, ...] = luigi.ListParameter([])  # type: ignore
 
 
 class RunDBTestFilesParameter(RunDBLanguageTestParameter):
-    test_files: List[str] = luigi.ListParameter([])  # type: ignore
+    test_files: Tuple[str, ...] = luigi.ListParameter([])  # type: ignore
 
 
 class RunDBTestsInTestConfigParameter(

@@ -1,6 +1,8 @@
 import importlib
+from typing import Any
 
 import luigi
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
     JsonPickleParameter,
 )
@@ -19,13 +21,13 @@ class UploadContainerTask(UploadContainerBaseTask):
     # don't want to wait for the push finishing before starting the build of depended images,
     # but we also need to create a UploadContainerTask for each ExportContainerTask of a goal
 
-    required_task_info = JsonPickleParameter(
+    required_task_info: RequiredTaskInfo = JsonPickleParameter(
         RequiredTaskInfo,
         visibility=luigi.parameter.ParameterVisibility.HIDDEN,
         significant=True,
     )  # type: ignore
 
-    def get_export_task(self):
+    def get_export_task(self) -> BaseTask:
         module = importlib.import_module(
             self.required_task_info.module_name  # pylint: disable=no-member
         )

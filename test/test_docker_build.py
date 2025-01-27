@@ -2,7 +2,7 @@ import unittest
 
 import docker
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.testing import utils  # type: ignore
+from exasol_integration_test_docker_environment.testing import utils
 
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 

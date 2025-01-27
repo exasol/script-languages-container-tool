@@ -19,7 +19,7 @@ class ExportInfo(Info):
         depends_on_image: ImageInfo,
         output_file: Optional[str] = None,
         release_name: Optional[str] = None,
-    ):
+    ) -> None:
         self.release_name = release_name
         self.output_file = output_file
         self.release_goal = release_goal

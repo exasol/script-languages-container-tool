@@ -11,6 +11,6 @@ class ExportContainerResult(Info):
         self,
         export_infos: Dict[str, Dict[str, ExportInfo]],
         command_line_output_path: Path,
-    ):
+    ) -> None:
         self.export_infos = export_infos
         self.command_line_output_path = command_line_output_path

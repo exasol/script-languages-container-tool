@@ -5,7 +5,7 @@ from typing import List
 class RunDBTestResult:
     def __init__(
         self, test_file: str, language: str, is_test_ok: bool, test_output_file: Path
-    ):
+    ) -> None:
         self.test_output_file = str(test_output_file)
         self.test_file = str(test_file)
         self.is_ok = is_test_ok
@@ -13,7 +13,7 @@ class RunDBTestResult:
 
 
 class RunDBTestCollectionResult:
-    def __init__(self, language: str, test_results: List[RunDBTestResult]):
+    def __init__(self, language: str, test_results: List[RunDBTestResult]) -> None:
         self.language = language
         self.test_results = test_results
         self.tests_are_ok = all(test_result.is_ok for test_result in test_results)
@@ -22,13 +22,13 @@ class RunDBTestCollectionResult:
 class RunDBTestDirectoryResult(RunDBTestCollectionResult):
     def __init__(
         self, test_folder: str, language: str, test_results: List[RunDBTestResult]
-    ):
+    ) -> None:
         super().__init__(language, test_results)
         self.test_folder = test_folder
 
 
 class RunDBTestFilesResult:
-    def __init__(self, test_results: List[RunDBTestCollectionResult]):
+    def __init__(self, test_results: List[RunDBTestCollectionResult]) -> None:
         self.test_results = test_results
         self.tests_are_ok = all(
             test_result.tests_are_ok for test_result in test_results
@@ -36,7 +36,7 @@ class RunDBTestFilesResult:
 
 
 class RunDBTestFoldersResult:
-    def __init__(self, test_results: List[RunDBTestDirectoryResult]):
+    def __init__(self, test_results: List[RunDBTestDirectoryResult]) -> None:
         self.test_results = test_results
         self.tests_are_ok = all(
             test_result.tests_are_ok for test_result in test_results
@@ -51,7 +51,7 @@ class RunDBTestsInTestConfigResult:
         generic_language_tests_output: RunDBTestFoldersResult,
         test_folders_output: RunDBTestFoldersResult,
         test_files_output: RunDBTestFilesResult,
-    ):
+    ) -> None:
         self.release_goal = release_goal
         self.flavor_path = str(flavor_path)
         self.test_files_output = test_files_output

@@ -1,15 +1,24 @@
+# pylint: disable=not-an-iterable
 import tarfile
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Generator, Set
 
 import luigi
 from docker.models.containers import Container
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorsBaseTask,
 )
 from exasol_integration_test_docker_environment.lib.config.build_config import (
     build_config,
 )
+from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_create_task import (
+    DockerCreateImageTask,
+)
+from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
+    ImageInfo,
+)
+from luigi import LocalTarget
 
 from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
     DockerFlavorBuildBase,
@@ -23,22 +32,29 @@ from exasol.slc.models.security_scan_result import AllScanResult, ScanResult
 
 class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.security_scanner_futures = None
         super().__init__(*args, **kwargs)
         report_path = Path(self.report_path).joinpath("security_report")
-        self.security_report_target = luigi.LocalTarget(str(report_path))
+        self.security_report_target: luigi.LocalTarget = luigi.LocalTarget(
+            str(report_path)
+        )
 
-    def register_required(self):
-        tasks = self.create_tasks_for_flavors_with_common_params(  # type: ignore
+    def register_required(self) -> None:
+        tasks: Dict[
+            str, SecurityScanner
+        ] = self.create_tasks_for_flavors_with_common_params(
             SecurityScanner, report_path=self.report_path
-        )  # type: Dict[str,SecurityScanner]
+        )  # type: ignore
         self.security_scanner_futures = self.register_dependencies(tasks)
 
-    def run_task(self):
-        security_scanner_results = self.get_values_from_futures(
+    def run_task(self) -> None:
+        security_scanner_results: Dict[str, ScanResult] = self.get_values_from_futures(
             self.security_scanner_futures
         )
+        assert isinstance(security_scanner_results, dict)
+        assert all(isinstance(x, str) for x in security_scanner_results.keys())
+        assert all(isinstance(x, ScanResult) for x in security_scanner_results.values())
 
         self.write_report(security_scanner_results)
         all_result = AllScanResult(
@@ -46,7 +62,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         )
         self.return_object(all_result)
 
-    def write_report(self, security_scanner: Dict[str, ScanResult]):
+    def write_report(self, security_scanner: Dict[str, ScanResult]) -> None:
         with self.security_report_target.open("w") as out_file:
 
             for key, value in security_scanner.items():
@@ -68,24 +84,28 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
 class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
 
-    def get_goals(self):
+    def get_goals(self) -> Set[str]:
         return {"security_scan"}
 
-    def get_release_task(self):
+    def get_release_task(self) -> Dict[str, DockerCreateImageTask]:
         return self.create_build_tasks(not build_config().force_rebuild)
 
-    def run_task(self):
+    def run_task(self) -> Generator[BaseTask, None, None]:
         tasks = self.get_release_task()
 
         tasks_futures = yield from self.run_dependencies(tasks)
-        task_results = self.get_values_from_futures(tasks_futures)
-        flavor_path = Path(self.flavor_path)
+        image_infos: Dict[str, ImageInfo] = self.get_values_from_futures(tasks_futures)
+        assert isinstance(image_infos, dict)
+        assert all(isinstance(x, str) for x in image_infos.keys())
+        assert all(isinstance(x, ImageInfo) for x in image_infos.values())
+
+        flavor_path = Path(self.flavor_path)  # type: ignore
         report_path = Path(self.report_path).joinpath(flavor_path.name)
         report_path.mkdir(parents=True, exist_ok=True)
         report_path_abs = report_path.absolute()
         result = ScanResult(is_ok=False, summary="", report_dir=report_path_abs)
-        assert len(task_results.values()) == 1
-        for task_result in task_results.values():
+        assert len(image_infos.values()) == 1
+        for task_result in image_infos.values():
             self.logger.info(
                 f"Running security run on image: {task_result.get_target_complete_name()}, report path: "
                 f"{report_path_abs}"
@@ -119,7 +139,7 @@ class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
 
     def _write_report(
         self, container: Container, report_path_abs: Path, report_local_path: str
-    ):
+    ) -> None:
         tar_file_path = report_path_abs / "report.tar"
         with open(tar_file_path, "wb") as tar_file:
             bits, stat = container.get_archive(report_local_path)

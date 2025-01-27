@@ -13,7 +13,7 @@ class LanguageDefinition:
         bucket_name: str,
         path_in_bucket: Optional[str],
         add_missing_builtin: bool = False,
-    ):
+    ) -> None:
         self.path_in_bucket = path_in_bucket
         self.bucket_name = bucket_name
         self.bucketfs_name = bucketfs_name
@@ -21,7 +21,7 @@ class LanguageDefinition:
         self.release_name = release_name
         self.add_missing_builtin = add_missing_builtin
 
-    def generate_definition(self):
+    def generate_definition(self) -> str:
         language_definition = self._render_language_definition()
         if self.add_missing_builtin:
             language_definition = self._add_missing_builtin_language_definitions(
@@ -29,7 +29,7 @@ class LanguageDefinition:
             )
         return language_definition.strip()
 
-    def _render_language_definition(self):
+    def _render_language_definition(self) -> str:
         path_in_bucket = self.path_in_bucket if self.path_in_bucket is not None else ""
         if path_in_bucket != "" and not path_in_bucket.endswith("/"):
             path_in_bucket = path_in_bucket + "/"
@@ -47,7 +47,7 @@ class LanguageDefinition:
         )
         return language_definition
 
-    def _add_missing_builtin_language_definitions(self, language_definition):
+    def _add_missing_builtin_language_definitions(self, language_definition) -> str:
         builtin_aliases = {"PYTHON3", "JAVA", "R"}
         defined_aliases = {
             alias.split("=")[0] for alias in language_definition.split(" ")
@@ -60,8 +60,8 @@ class LanguageDefinition:
         language_definition = f"{language_definition} {additional_language_defintions}"
         return language_definition
 
-    def generate_alter_session(self):
+    def generate_alter_session(self) -> str:
         return f"""ALTER SESSION SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
 
-    def generate_alter_system(self):
+    def generate_alter_system(self) -> str:
         return f"""ALTER SYSTEM SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
