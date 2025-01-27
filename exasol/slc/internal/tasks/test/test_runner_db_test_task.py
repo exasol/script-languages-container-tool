@@ -140,7 +140,7 @@ class TestRunnerDBTestTask(
         self, database_credentials: DatabaseCredentials, export_info: ExportInfo
     ) -> Generator[BaseTask, None, None]:
         #
-        # Correct return type is Generator[UploadExportedContainer, Any, RunDBTestFilesResult]
+        # Correct return type is Generator[UploadExportedContainer, Any, None]
         # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
         #
         reuse = (
@@ -169,7 +169,7 @@ class TestRunnerDBTestTask(
         database_credentials: DatabaseCredentials,
     ) -> Generator[BaseTask, None, None]:
         #
-        # Correct return type is Generator[PopulateTestEngine, Any, RunDBTestFilesResult]
+        # Correct return type is Generator[PopulateTestEngine, Any, None]
         # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
         #
         assert self.test_environment_info is not None
@@ -206,7 +206,7 @@ class TestRunnerDBTestTask(
         self, test_environment_info: EnvironmentInfo, export_info: ExportInfo
     ) -> Generator[BaseTask, Any, RunDBTestsInTestConfigResult]:
         #
-        # Correct return type is Generator[RunDBTestsInTestConfig, Any, RunDBTestFilesResult]
+        # Correct return type is Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]
         # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
         #
         test_config = self.read_test_config()

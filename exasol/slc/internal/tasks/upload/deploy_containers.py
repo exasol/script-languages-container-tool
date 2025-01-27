@@ -27,10 +27,6 @@ class DeployContainers(FlavorsBaseTask, UploadContainersParameter):
     def __init__(self, *args, **kwargs) -> None:
         self.lang_def_builders_futures = None
         super().__init__(*args, **kwargs)
-        assert isinstance(self.release_goals, tuple)
-        assert all(isinstance(x, tuple) for x in self.release_goals)
-        assert isinstance(self.flavor_paths, tuple)
-        assert all(isinstance(x, str) for x in self.flavor_paths)
 
     def register_required(self) -> None:
         tasks: Dict[str, DeployFlavorContainers] = (
@@ -46,12 +42,6 @@ class DeployContainers(FlavorsBaseTask, UploadContainersParameter):
 
 
 class DeployFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        assert isinstance(self.release_goals, tuple)
-        assert all(isinstance(x, tuple) for x in self.release_goals)
-        assert isinstance(self.flavor_path, str)
 
     def get_goals(self) -> Set[str]:
         return set(self.release_goals)

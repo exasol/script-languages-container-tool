@@ -10,10 +10,6 @@ from exasol.slc.internal.tasks.test.test_container_content import TEST_DATA_TARG
 
 class PopulateTestEngine(PopulateTestDataToDatabase):
 
-    def __init__(self, *args, **kwargs) -> None:
-        self.security_scanner_futures = None
-        super().__init__(*args, **kwargs)
-
     def get_data_path_within_test_container(self) -> PurePath:
         return PurePath(TEST_DATA_TARGET) / "enginedb_small"
 

@@ -1,4 +1,4 @@
-from typing import Any, Generator, TypeVar
+from typing import Any, Generator
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (

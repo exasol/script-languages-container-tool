@@ -58,7 +58,7 @@ testpaths = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml", "exasol.bucketfs"]
+module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml"]
 ignore_missing_imports = true
 
 [tool.black]

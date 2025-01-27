@@ -57,7 +57,7 @@ class RunDBTestFiles(
         self, language: str, test_file: str
     ) -> Generator[BaseTask, Any, RunDBTestResult]:
         #
-        # Correct return type is Generator[RunDBTestsInDirectory, Any, List[RunDBTestResult]]
+        # Correct return type is Generator[RunDBTestsInDirectory, Any, RunDBTestResult]
         # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
         #
 
