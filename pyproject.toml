@@ -32,7 +32,7 @@ importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
 exasol-integration-test-docker-environment = "^3.4.0"
-exasol-bucketfs="^0.13.0"
+exasol-bucketfs="^1.0.0"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
 
