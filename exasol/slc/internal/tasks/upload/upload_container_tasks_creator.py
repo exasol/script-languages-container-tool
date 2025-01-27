@@ -1,5 +1,6 @@
 from typing import Dict
 
+from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_create_task import (
     DockerCreateImageTask,
 )
@@ -7,7 +8,6 @@ from exasol_integration_test_docker_environment.lib.docker.images.required_task_
     RequiredTaskInfo,
 )
 
-import exasol.slc.internal.tasks.upload.upload_containers
 from exasol.slc.internal.tasks.upload.upload_container_task import UploadContainerTask
 
 
@@ -15,7 +15,7 @@ class UploadContainerTasksCreator:
 
     def __init__(
         self,
-        task: "exasol.slc.internal.tasks.upload.upload_containers.UploadFlavorContainers",
+        task: BaseTask,
     ) -> None:
         self.task = task
 
