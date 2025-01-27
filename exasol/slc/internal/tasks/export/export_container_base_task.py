@@ -38,7 +38,6 @@ CHECKSUM_ALGORITHM = "sha512sum"
 
 
 class ExportContainerBaseTask(FlavorBaseTask):
-    task_logger = logging.getLogger("luigi-interface")
     export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_goal: str = luigi.Parameter(None)  # type: ignore
@@ -149,7 +148,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             or build_config().force_pull
             or not checksum_file.exists()
         ):
-            self.task_logger.info("Removed container file %s", release_file)
+            self.logger.info("Removed container file %s", release_file)
             os.remove(release_file)
             if checksum_file.exists():
                 os.remove(checksum_file)
@@ -157,7 +156,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _export_release(
         self, release_image_name: str, release_file: Path, checksum_file: Path
     ) -> None:
-        self.task_logger.info("Create container file %s", release_file)
+        self.logger.info("Create container file %s", release_file)
         temp_directory = tempfile.mkdtemp(
             prefix="release_archive_", dir=build_config().temporary_base_directory
         )
@@ -176,7 +175,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
             shutil.rmtree(temp_directory)
 
     def _compute_checksum(self, release_file: Path, checksum_file: Path) -> None:
-        self.task_logger.info("Compute checksum for container file %s", release_file)
+        self.logger.info("Compute checksum for container file %s", release_file)
         command = f"""{CHECKSUM_ALGORITHM} '{release_file}'"""
         completed_process = subprocess.run(shlex.split(command), capture_output=True)
         completed_process.check_returncode()
@@ -188,7 +187,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _create_and_export_container(
         self, release_image_name: str, temp_directory: str
     ) -> str:
-        self.task_logger.info("Export container %s", release_image_name)
+        self.logger.info("Export container %s", release_image_name)
         with self._get_docker_client() as docker_client:
             container = docker_client.containers.create(image=release_image_name)
             try:
@@ -215,7 +214,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _pack_release_file(
         self, log_path: Path, extract_dir: str, release_file: Path
     ) -> None:
-        self.task_logger.info("Pack container file %s", release_file)
+        self.logger.info("Pack container file %s", release_file)
         extract_content = " ".join(f"'{file}'" for file in os.listdir(extract_dir))
         if not str(release_file).endswith("tar.gz"):
             raise ValueError(
@@ -256,7 +255,7 @@ class ExportContainerBaseTask(FlavorBaseTask):
     def _extract_exported_container(
         self, log_path: Path, export_file: str, temp_directory: str
     ) -> str:
-        self.task_logger.info("Extract exported file %s", export_file)
+        self.logger.info("Extract exported file %s", export_file)
         extract_dir = temp_directory + "/extract"
         os.makedirs(extract_dir)
         excludes = " ".join(
