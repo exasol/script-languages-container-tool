@@ -13,10 +13,15 @@ class DockerRunDBTestExternalDBTest(unittest.TestCase):
         self.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
             self, exaslct_utils.EXASLCT_DEFAULT_BIN
         )
+        self.itde_test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            self, exaslct_utils.ITDE_DEFAULT_BIN
+        )
         self.test_environment.clean_images()
         self.docker_environment_name = self.__class__.__name__
-        self.docker_environments = self.test_environment.spawn_docker_test_environments(
-            self.docker_environment_name
+        self.docker_environments = (
+            self.itde_test_environment.spawn_docker_test_environments(
+                self.docker_environment_name
+            )
         )
         # localhost gets translated in exaslct to the Gateway address of the docker environment network,
         # because thats typically the IP Adress of the bridge to the host,

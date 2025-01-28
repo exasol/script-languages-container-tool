@@ -14,10 +14,16 @@ class DockerUploadTest(unittest.TestCase):
         cls.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
             cls, exaslct_utils.EXASLCT_DEFAULT_BIN
         )
+        cls.itde_test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
+            cls, exaslct_utils.ITDE_DEFAULT_BIN
+        )
         cls.test_environment.clean_images()
+
         cls.docker_environment_name = cls.__name__
-        cls.docker_environments = cls.test_environment.spawn_docker_test_environments(
-            cls.docker_environment_name
+        cls.docker_environments = (
+            cls.itde_test_environment.spawn_docker_test_environments(
+                cls.docker_environment_name
+            )
         )
         if "GOOGLE_CLOUD_BUILD" in os.environ:
             cls.docker_environment = cls.docker_environments.google_cloud_environment
