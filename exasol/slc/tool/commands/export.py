@@ -38,8 +38,7 @@ from exasol.slc.tool.options.goal_options import release_options
 @add_options(system_options)
 @add_options(luigi_logging_options)
 @click.option(
-    "--cleanup-docker-images",
-    type=bool,
+    "--cleanup-docker-images/--no-cleanup-docker-images",
     default=False,
     help="Clean up the docker images during the export."
     " This might be helpful to save disk space for large containers.",
