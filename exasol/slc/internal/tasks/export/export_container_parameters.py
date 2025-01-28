@@ -18,4 +18,3 @@ class ExportContainerParameter(ExportContainerParameterBase):
 
 class ExportContainersParameter(ExportContainerParameterBase):
     release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
-    # TOOD force export

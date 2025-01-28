@@ -88,9 +88,17 @@ class ExportContainerToCacheTask(
             yield from self._cleanup_docker_image_if_needed()
         self.return_object(is_new)
 
-    def cleanup_task(self, success):
+    def _cleanup_tmp_directory(self):
         if self._tmp_directory is not None:
             shutil.rmtree(self._tmp_directory)
+
+    def on_failure(self, exception):
+        super().on_failure(exception)
+        self._cleanup_tmp_directory()
+
+    def on_success(self):
+        super().on_success()
+        self._cleanup_tmp_directory()
 
     def _export_release(
         self, release_image_name: str, release_file: Path, checksum_file: Path
