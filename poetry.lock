@@ -703,22 +703,20 @@ files = [
 
 [[package]]
 name = "exasol-bucketfs"
-version = "1.0.0"
+version = "1.0.1"
 description = "BucketFS utilities for the Python programming language"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "exasol_bucketfs-1.0.0-py3-none-any.whl", hash = "sha256:14db00aecbc0568e2da4558349931b004020e4846ea5257ae5b1b5ddfe638357"},
-    {file = "exasol_bucketfs-1.0.0.tar.gz", hash = "sha256:286a07f62f7becffee241bad97a5af9dc715a9d8a2203ff4b12a3f01e15f925d"},
+    {file = "exasol_bucketfs-1.0.1-py3-none-any.whl", hash = "sha256:cc28e1f869694c79cf78ab3c34a553c580cc0881f17dafdf6d735d7f4f16ea85"},
+    {file = "exasol_bucketfs-1.0.1.tar.gz", hash = "sha256:384fa43f2986e97dcd21aa3a8340153f5e2bc0badeef631f4e31fbcc5064d562"},
 ]
 
 [package.dependencies]
 attrs = ">=23.2.0"
 exasol-saas-api = ">=0.3.0"
 httpx = ">=0.27.0"
-joblib = ">=1.0.1"
 requests = ">=2.24.0"
-typeguard = ">=4.3.0"
 
 [[package]]
 name = "exasol-error-reporting"
@@ -1251,17 +1249,6 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
-
-[[package]]
-name = "joblib"
-version = "1.4.2"
-description = "Lightweight pipelining with Python functions"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "joblib-1.4.2-py3-none-any.whl", hash = "sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6"},
-    {file = "joblib-1.4.2.tar.gz", hash = "sha256:2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e"},
-]
 
 [[package]]
 name = "jsonpickle"
@@ -2928,24 +2915,6 @@ files = [
 ]
 
 [[package]]
-name = "typeguard"
-version = "4.4.1"
-description = "Run-time type checker for Python"
-optional = false
-python-versions = ">=3.9"
-files = [
-    {file = "typeguard-4.4.1-py3-none-any.whl", hash = "sha256:9324ec07a27ec67fc54a9c063020ca4c0ae6abad5e9f0f9804ca59aee68c6e21"},
-    {file = "typeguard-4.4.1.tar.gz", hash = "sha256:0d22a89d00b453b47c49875f42b6601b961757541a2e1e0ef517b6e24213c21b"},
-]
-
-[package.dependencies]
-typing-extensions = ">=4.10.0"
-
-[package.extras]
-doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme (>=1.3.0)"]
-test = ["coverage[toml] (>=7)", "mypy (>=1.2.0)", "pytest (>=7)"]
-
-[[package]]
 name = "typer"
 version = "0.15.1"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
@@ -3134,4 +3103,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4"
-content-hash = "362ded3d15b26e3075ef615ad946e1539474997f87675d8b94d5d8fb49286f60"
+content-hash = "349a911d8ba54fee644eb0c87ddfdc1099f0a2bb2e01e33adb349dd8831a241d"

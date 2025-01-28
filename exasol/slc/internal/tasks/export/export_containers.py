@@ -1,6 +1,6 @@
 # pylint: disable=not-an-iterable
 from pathlib import Path
-from typing import Dict, Generator, Optional, Set, Tuple
+from typing import Dict, Generator, Set
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
@@ -10,10 +10,12 @@ from exasol_integration_test_docker_environment.lib.base.flavor_task import (
 from exasol_integration_test_docker_environment.lib.config.build_config import (
     build_config,
 )
-from luigi import Config
 
 from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
     DockerFlavorBuildBase,
+)
+from exasol.slc.internal.tasks.export.export_container_parameters import (
+    ExportContainersParameter,
 )
 from exasol.slc.internal.tasks.export.export_container_tasks_creator import (
     ExportContainerTasksCreator,
@@ -22,14 +24,7 @@ from exasol.slc.models.export_container_result import ExportContainerResult
 from exasol.slc.models.export_info import ExportInfo
 
 
-class ExportContainerParameter(Config):
-    release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
-    export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
-    release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
-    # TOOD force export
-
-
-class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
+class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
 
     def __init__(self, *args, **kwargs) -> None:
         self.export_info_futures = None
@@ -91,7 +86,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainerParameter):
                     out_file.write("\n")
 
 
-class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainerParameter):
+class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainersParameter):
 
     def get_goals(self) -> Set[str]:
         return set(self.release_goals)

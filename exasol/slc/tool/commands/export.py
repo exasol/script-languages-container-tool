@@ -37,6 +37,12 @@ from exasol.slc.tool.options.goal_options import release_options
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
+@click.option(
+    "--cleanup-docker-images/--no-cleanup-docker-images",
+    default=False,
+    help="Clean up the docker images during the export."
+    " This might be helpful to save disk space for large containers.",
+)
 def export(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],
@@ -62,6 +68,7 @@ def export(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
+    cleanup_docker_images: bool,
 ):
     """
     This command exports the whole script-language-container package of the flavor,
@@ -94,6 +101,7 @@ def export(
             task_dependencies_dot_file=task_dependencies_dot_file,
             log_level=log_level,
             use_job_specific_log_file=use_job_specific_log_file,
+            cleanup_docker_images=cleanup_docker_images,
         )
         with open(export_result.command_line_output_path) as f:
             print(f.read())
