@@ -159,6 +159,3 @@ exaslct clean-all-images
 
 **Please note that this script does not delete the Linux image that is used as basis for the images that were build in the previous steps.
 Furthermore, this command doesn't delete cached files in the output directory. The default path for the output directory is .build-output.**
-
-
-## Use
