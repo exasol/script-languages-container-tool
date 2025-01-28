@@ -9,6 +9,7 @@ t.b.d.
 ## Features
 
  - #245: Implemented support for Json for language definition
+ - #263: Extended language_definitions.json with deprecation fields
 
 ## Refactoring
 
