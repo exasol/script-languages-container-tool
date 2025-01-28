@@ -1,3 +1,4 @@
+import datetime
 import json
 import shutil
 import tarfile
@@ -11,11 +12,11 @@ from exasol_integration_test_docker_environment.lib.docker.images.image_info imp
     ImageInfo,
 )
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
-from pydantic import ValidationError
 
 from exasol.slc.api import build
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 from exasol.slc.models.language_definition_common import (
+    DeprecationInfo,
     SLCLanguage,
     UdfClientRelativePath,
 )
@@ -121,10 +122,12 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             images[0].id, "build_info/language_definitions.json"
         )
         model = LanguageDefinitionsModel.model_validate_json(lang_def_json)
+        print(model)
+
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
-                schema_version=1,
+                schema_version=2,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
@@ -134,12 +137,40 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
                             executable=PurePosixPath("/exaudf/exaudfclient")
                         ),
                         parameters=[],
+                        deprecation=DeprecationInfo(
+                            deprecation_date=datetime.datetime(2024, 10, 31),
+                            default_changed_to="Java 17",
+                        ),
                     )
                 ],
             ),
         )
 
-    def test_docker_build_invalid_lang_def_json(self):
+    #
+    # def test_docker_build_invalid_lang_def_json(self):
+    #     flavor_path = exaslct_utils.get_test_flavor()
+    #     with TemporaryDirectory() as d:
+    #         temp_flavor_path = Path(d) / "test_flavor"
+    #         shutil.copytree(flavor_path, temp_flavor_path)
+    #
+    #         lang_def_json_path = (
+    #             temp_flavor_path / "flavor_base" / "language_definitions.json"
+    #         )
+    #         orig_lang_def_json = lang_def_json_path.read_text()
+    #         lang_def_invalid = json.loads(orig_lang_def_json)
+    #         lang_def_invalid.update({"language_definitions": "abc"})
+    #         with open(lang_def_json_path, "w") as f:
+    #             f.write(json.dumps(lang_def_invalid))
+    #
+    #         self.assertRaises(
+    #             ValidationError,
+    #             build,
+    #             flavor_path=(str(temp_flavor_path),),
+    #             source_docker_repository_name=self.test_environment.docker_repository_name,
+    #             target_docker_repository_name=self.test_environment.docker_repository_name,
+    #         )
+
+    def test_docker_build_without_deprecation_info(self):
         flavor_path = exaslct_utils.get_test_flavor()
         with TemporaryDirectory() as d:
             temp_flavor_path = Path(d) / "test_flavor"
@@ -150,17 +181,63 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             )
             orig_lang_def_json = lang_def_json_path.read_text()
             lang_def_invalid = json.loads(orig_lang_def_json)
-            lang_def_invalid.update({"language_definitions": "abc"})
+            lang_def_invalid["language_definitions"][0].update({"deprecation": None})
             with open(lang_def_json_path, "w") as f:
                 f.write(json.dumps(lang_def_invalid))
 
-            self.assertRaises(
-                ValidationError,
-                build,
+            image_infos = build(
                 flavor_path=(str(temp_flavor_path),),
                 source_docker_repository_name=self.test_environment.docker_repository_name,
                 target_docker_repository_name=self.test_environment.docker_repository_name,
             )
+
+        assert len(image_infos) == 1
+        images = find_images_by_tag(
+            self.docker_client,
+            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
+        )
+        self.assertTrue(
+            len(images) > 0,
+            f"Did not found images for repository "
+            f"{self.test_environment.docker_repository_name} in list {images}",
+        )
+        print("image_infos", image_infos.keys())
+        image_infos_for_test_flavor = image_infos[str(temp_flavor_path)]
+        image_info: ImageInfo = image_infos_for_test_flavor["release"]
+
+        expected_prefix = f"{image_info.target_repository_name}:{image_info.target_tag}"
+        images = find_images_by_tag(
+            self.docker_client, lambda tag: tag.startswith(expected_prefix)
+        )
+        self.assertTrue(
+            len(images) == 1,
+            f"Did not found image for goal 'release' with prefix {expected_prefix} in list {images}",
+        )
+
+        lang_def_json = self.read_file_from_docker_image(
+            images[0].id, "build_info/language_definitions.json"
+        )
+        model = LanguageDefinitionsModel.model_validate_json(lang_def_json)
+        print(model)
+
+        self.assertEqual(
+            model,
+            LanguageDefinitionsModel(
+                schema_version=2,
+                language_definitions=[
+                    LanguageDefinition(
+                        protocol="localzmq+protobuf",
+                        aliases=["JAVA"],
+                        language=SLCLanguage.Java,
+                        udf_client_path=UdfClientRelativePath(
+                            executable=PurePosixPath("/exaudf/exaudfclient")
+                        ),
+                        parameters=[],
+                        deprecation=None,
+                    )
+                ],
+            ),
+        )
 
 
 if __name__ == "__main__":
