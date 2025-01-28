@@ -1,8 +1,8 @@
 import click
-from exasol_integration_test_docker_environment.cli.cli import cli
 from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol.slc import api
+from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.flavor_options import single_flavor_options
 
 
