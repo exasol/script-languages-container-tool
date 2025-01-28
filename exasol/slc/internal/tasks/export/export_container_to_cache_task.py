@@ -84,6 +84,8 @@ class ExportContainerToCacheTask(
                 self.release_image_name, cache_file, checksum_file
             )
             is_new = True
+        else:
+            yield from self._cleanup_docker_image_if_needed()
         self.return_object(is_new)
 
     def cleanup_task(self, success):
