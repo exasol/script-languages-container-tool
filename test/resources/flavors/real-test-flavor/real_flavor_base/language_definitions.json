@@ -8,6 +8,10 @@
       "parameters": [],
       "udf_client_path": {
         "executable": "/exaudf/exaudfclient"
+      },
+      "deprecation": {
+        "deprecation_date": "2024-10-31",
+        "default_changed_to": "Java 17"
       }
     }
   ]

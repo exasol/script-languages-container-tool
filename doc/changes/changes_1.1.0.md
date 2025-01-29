@@ -9,6 +9,7 @@ t.b.d.
 ## Features
 
  - #245: Implemented support for Json for language definition
+ - #263: Extended language_definitions.json with deprecation fields
 
 ## Refactoring
 
@@ -17,3 +18,7 @@ t.b.d.
  - #256: Fixed type hints
  - #358: Minimize disk space during export
  - #253: Fixed help text for exaslct
+
+## Documentation
+
+ - #243: Removed incomplete title in user guide

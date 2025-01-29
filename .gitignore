@@ -145,3 +145,5 @@ TAGS
 
 .lint.json
 .lint.txt
+
+*.dot

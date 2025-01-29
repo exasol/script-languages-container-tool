@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+import datetime
 from enum import Enum
 from pathlib import PurePosixPath
 from typing import List
@@ -31,3 +31,14 @@ class UdfClientRelativePath(BaseModel):
 
     def __str__(self) -> str:
         return str(self.executable)
+
+
+class DeprecationInfo(BaseModel):
+    """
+    Deprecation info for the language.
+    For example: deprecation_date="2024-10-31" default_changed_to="Java 17"
+    """
+
+    deprecation_date: datetime.date
+
+    default_changed_to: str
