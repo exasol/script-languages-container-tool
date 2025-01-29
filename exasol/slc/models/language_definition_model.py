@@ -10,7 +10,7 @@ from exasol.slc.models.language_definition_common import (
     UdfClientRelativePath,
 )
 
-LANGUAGE_DEFINITON_SCHEMA_VERSION = 2
+LANGUAGE_DEFINITON_SCHEMA_VERSION = 1
 
 
 class LanguageDefinition(BaseModel):

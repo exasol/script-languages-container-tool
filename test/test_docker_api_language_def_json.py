@@ -12,6 +12,7 @@ from exasol_integration_test_docker_environment.lib.docker.images.image_info imp
     ImageInfo,
 )
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
+from pydantic import ValidationError
 
 from exasol.slc.api import build
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
@@ -127,7 +128,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
-                schema_version=2,
+                schema_version=1,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
@@ -146,29 +147,28 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             ),
         )
 
-    #
-    # def test_docker_build_invalid_lang_def_json(self):
-    #     flavor_path = exaslct_utils.get_test_flavor()
-    #     with TemporaryDirectory() as d:
-    #         temp_flavor_path = Path(d) / "test_flavor"
-    #         shutil.copytree(flavor_path, temp_flavor_path)
-    #
-    #         lang_def_json_path = (
-    #             temp_flavor_path / "flavor_base" / "language_definitions.json"
-    #         )
-    #         orig_lang_def_json = lang_def_json_path.read_text()
-    #         lang_def_invalid = json.loads(orig_lang_def_json)
-    #         lang_def_invalid.update({"language_definitions": "abc"})
-    #         with open(lang_def_json_path, "w") as f:
-    #             f.write(json.dumps(lang_def_invalid))
-    #
-    #         self.assertRaises(
-    #             ValidationError,
-    #             build,
-    #             flavor_path=(str(temp_flavor_path),),
-    #             source_docker_repository_name=self.test_environment.docker_repository_name,
-    #             target_docker_repository_name=self.test_environment.docker_repository_name,
-    #         )
+    def test_docker_build_invalid_lang_def_json(self):
+        flavor_path = exaslct_utils.get_test_flavor()
+        with TemporaryDirectory() as d:
+            temp_flavor_path = Path(d) / "test_flavor"
+            shutil.copytree(flavor_path, temp_flavor_path)
+
+            lang_def_json_path = (
+                temp_flavor_path / "flavor_base" / "language_definitions.json"
+            )
+            orig_lang_def_json = lang_def_json_path.read_text()
+            lang_def_invalid = json.loads(orig_lang_def_json)
+            lang_def_invalid.update({"language_definitions": "abc"})
+            with open(lang_def_json_path, "w") as f:
+                f.write(json.dumps(lang_def_invalid))
+
+            self.assertRaises(
+                ValidationError,
+                build,
+                flavor_path=(str(temp_flavor_path),),
+                source_docker_repository_name=self.test_environment.docker_repository_name,
+                target_docker_repository_name=self.test_environment.docker_repository_name,
+            )
 
     def test_docker_build_without_deprecation_info(self):
         flavor_path = exaslct_utils.get_test_flavor()
