@@ -1,6 +1,5 @@
 from typing import Optional, Tuple
 
-from exasol_integration_test_docker_environment.cli.cli import cli  # type: ignore
 from exasol_integration_test_docker_environment.cli.options.build_options import (
     build_options,
 )
@@ -17,6 +16,7 @@ from exasol_integration_test_docker_environment.cli.termination_handler import (
 from exasol_integration_test_docker_environment.lib.api.common import add_options
 
 from exasol.slc import api
+from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.flavor_options import flavor_options
 
 

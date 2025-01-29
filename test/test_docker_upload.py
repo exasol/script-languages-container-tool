@@ -14,19 +14,21 @@ class DockerUploadTest(unittest.TestCase):
         cls.test_environment = exaslct_utils.ExaslctTestEnvironmentWithCleanUp(
             cls, exaslct_utils.EXASLCT_DEFAULT_BIN
         )
-        cls.test_environment.clean_images()
-        cls.docker_environment_name = cls.__name__
-        cls.docker_environments = cls.test_environment.spawn_docker_test_environments(
-            cls.docker_environment_name
+        cls.itde_test_environment = exaslct_utils.ExaslctApiTestEnvironmentWithCleanup(
+            cls, False
         )
-        if "GOOGLE_CLOUD_BUILD" in os.environ:
-            cls.docker_environment = cls.docker_environments.google_cloud_environment
-        else:
-            cls.docker_environment = cls.docker_environments.on_host_docker_environment
+        cls.test_environment.clean_images()
+
+        cls.docker_environment_name = cls.__name__
+        cls.docker_environment = (
+            cls.itde_test_environment.spawn_docker_test_environment(
+                cls.docker_environment_name
+            )
+        )
 
     @classmethod
     def tearDownClass(cls):
-        utils.close_environments(cls.docker_environments, cls.test_environment)
+        utils.close_environments(cls.docker_environment, cls.test_environment)
 
     def test_docker_upload_with_path_in_bucket(self):
         self.path_in_bucket = "test"

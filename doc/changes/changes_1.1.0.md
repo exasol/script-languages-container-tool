@@ -16,3 +16,4 @@ t.b.d.
  - #257: Updated formating rules
  - #256: Fixed type hints
  - #358: Minimize disk space during export
+ - #253: Fixed help text for exaslct
