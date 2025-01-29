@@ -1,10 +1,10 @@
-# Script-Languages-Container-Tool 1.1.0, released t.b.d.
+# 1.1.0 - 2025-01-29
 
-Code name: t.b.d.
+Code name: Language Definition and Export optimization
 
 ## Summary
 
-t.b.d.
+This release optimizes the export step to minimize disk space. Also, it adds support for the `language_definitions.json`. Besides this it also contains some refactorings.
 
 ## Features
 
