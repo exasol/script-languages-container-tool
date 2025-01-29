@@ -223,7 +223,7 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
-                schema_version=2,
+                schema_version=1,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
