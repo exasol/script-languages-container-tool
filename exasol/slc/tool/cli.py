@@ -6,7 +6,7 @@ def cli():
     """
     EXASLCT - Exasol Script Languages Container Tool
 
-    Build, deploy, pull and test Exasol Script-Languages-Container
+    Build, deploy, push and test Exasol Script-Languages-Container
 
     Examples:
 
