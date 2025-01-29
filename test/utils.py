@@ -22,7 +22,6 @@ RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
 FLAVORS_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "flavors"
 EXASLCT_DEFAULT_BIN = "exaslct"
-ITDE_DEFAULT_BIN = "itde"
 
 
 class ExaslctApiTestEnvironmentWithCleanup:
