@@ -1,7 +1,6 @@
 import datetime
 from enum import Enum
 from pathlib import PurePosixPath
-from typing import List
 
 from pydantic import BaseModel
 
@@ -18,7 +17,7 @@ class SLCParameter(BaseModel):
     """
 
     key: str
-    value: List[str]
+    value: str
 
 
 class UdfClientRelativePath(BaseModel):

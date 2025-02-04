@@ -27,7 +27,7 @@ def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL
 
 
 def _build_udf_client_abs_path_from_fragments(
-    fragment_parts: Tuple[str, ...]
+    fragment_parts: Tuple[str, ...],
 ) -> UdfClientBucketPath:
     if len(fragment_parts) < 4:
         raise ValueError(
@@ -101,8 +101,9 @@ def parse_language_definition(
     if parsed_url.hostname:
         raise ValueError(f"Invalid language definition: '{lang_def}'")
     slc_parameters = [
-        SLCParameter(key=key, value=value)
+        SLCParameter(key=key, value=v)
         for key, value in parse_qs(parsed_url.query).items()
+        for v in value
     ]
     try:
         udf_client_path = _parse_udf_client_path(parsed_url.fragment)

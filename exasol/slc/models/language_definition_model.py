@@ -10,7 +10,7 @@ from exasol.slc.models.language_definition_common import (
     UdfClientRelativePath,
 )
 
-LANGUAGE_DEFINITON_SCHEMA_VERSION = 1
+LANGUAGE_DEFINITON_SCHEMA_VERSION = 2
 
 
 class LanguageDefinition(BaseModel):
@@ -20,7 +20,6 @@ class LanguageDefinition(BaseModel):
 
     protocol: str
     aliases: List[str]
-    language: SLCLanguage
     parameters: List[SLCParameter]
     udf_client_path: UdfClientRelativePath
     deprecation: Optional[DeprecationInfo]

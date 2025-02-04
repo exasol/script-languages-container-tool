@@ -58,7 +58,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
                                 "some_path/my_release/exaudf/exaudfclient_py3"
                             ),
                         ),
-                        parameters=[SLCParameter(key="lang", value=["python"])],
+                        parameters=[SLCParameter(key="lang", value="python")],
                     ),
                 )
             ],
@@ -98,7 +98,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
                                 "some_path/my_release/exaudf/exaudfclient_py3"
                             ),
                         ),
-                        parameters=[SLCParameter(key="lang", value=["python"])],
+                        parameters=[SLCParameter(key="lang", value="python")],
                     ),
                 ),
                 LanguageDefinitionComponents(
@@ -154,7 +154,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
                                 "some_path/my_release/exaudf/exaudfclient_py3"
                             ),
                         ),
-                        parameters=[SLCParameter(key="lang", value=["python"])],
+                        parameters=[SLCParameter(key="lang", value="python")],
                     ),
                 ),
                 LanguageDefinitionComponents(
