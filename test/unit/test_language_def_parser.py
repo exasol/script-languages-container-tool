@@ -67,14 +67,14 @@ UDF_CLIENT_PATH_PARAMETERS = [
 ]
 
 PARAMETERS = [
-    ("?lang=java", [SLCParameter(key="lang", value=["java"])]),
-    ("?lang=python", [SLCParameter(key="lang", value=["python"])]),
-    ("?lang=r", [SLCParameter(key="lang", value=["r"])]),
+    ("?lang=java", [SLCParameter(key="lang", value="java")]),
+    ("?lang=python", [SLCParameter(key="lang", value="python")]),
+    ("?lang=r", [SLCParameter(key="lang", value="r")]),
     (
         "?lang=java&my_param=something",
         [
-            SLCParameter(key="lang", value=["java"]),
-            SLCParameter(key="my_param", value=["something"]),
+            SLCParameter(key="lang", value="java"),
+            SLCParameter(key="my_param", value="something"),
         ],
     ),
     ("", list()),

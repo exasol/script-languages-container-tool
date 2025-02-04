@@ -4,8 +4,7 @@
     {
       "protocol": "localzmq+protobuf",
       "aliases": ["JAVA"],
-      "language": "java",
-      "parameters": [],
+      "parameters": [{"key": "lang", "value": "java"}],
       "udf_client_path": {
         "executable": "/exaudf/exaudfclient"
       },

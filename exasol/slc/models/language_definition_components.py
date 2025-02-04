@@ -50,7 +50,7 @@ class LanguageDefinitionURL:
     udf_client_path: Union[UdfClientBucketPath, UdfClientRelativePath]
 
     def __str__(self) -> str:
-        query_params = {p.key: v for p in self.parameters for v in p.value}
+        query_params = [(p.key, p.value) for p in self.parameters]
         query_string = urlencode(query_params)
         url = urlunparse(
             ParseResult(

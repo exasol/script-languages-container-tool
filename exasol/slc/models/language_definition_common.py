@@ -18,7 +18,7 @@ class SLCParameter(BaseModel):
     """
 
     key: str
-    value: List[str]
+    value: str
 
 
 class UdfClientRelativePath(BaseModel):
