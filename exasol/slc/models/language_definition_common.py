@@ -1,7 +1,6 @@
 import datetime
 from enum import Enum
 from pathlib import PurePosixPath
-from typing import List
 
 from pydantic import BaseModel
 

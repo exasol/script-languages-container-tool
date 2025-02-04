@@ -19,6 +19,7 @@ from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 from exasol.slc.models.language_definition_common import (
     DeprecationInfo,
     SLCLanguage,
+    SLCParameter,
     UdfClientRelativePath,
 )
 from exasol.slc.models.language_definition_model import (
@@ -128,16 +129,15 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
-                schema_version=1,
+                schema_version=2,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
                         aliases=["JAVA"],
-                        language=SLCLanguage.Java,
+                        parameters=[SLCParameter(key="lang", value="java")],
                         udf_client_path=UdfClientRelativePath(
                             executable=PurePosixPath("/exaudf/exaudfclient")
                         ),
-                        parameters=[],
                         deprecation=DeprecationInfo(
                             deprecation_date=datetime.datetime(2024, 10, 31),
                             default_changed_to="Java 17",
@@ -223,16 +223,15 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
         self.assertEqual(
             model,
             LanguageDefinitionsModel(
-                schema_version=1,
+                schema_version=2,
                 language_definitions=[
                     LanguageDefinition(
                         protocol="localzmq+protobuf",
                         aliases=["JAVA"],
-                        language=SLCLanguage.Java,
+                        parameters=[SLCParameter(key="lang", value="java")],
                         udf_client_path=UdfClientRelativePath(
                             executable=PurePosixPath("/exaudf/exaudfclient")
                         ),
-                        parameters=[],
                         deprecation=None,
                     )
                 ],
