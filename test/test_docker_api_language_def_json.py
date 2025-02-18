@@ -4,21 +4,20 @@ import shutil
 import tarfile
 import unittest
 from pathlib import Path, PurePosixPath
-from tempfile import TemporaryDirectory, tempdir
+from tempfile import TemporaryDirectory
 
 import docker  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
 )
-from exasol_integration_test_docker_environment.testing import utils  # type: ignore
+from exasol_integration_test_docker_environment.testing import utils
 from pydantic import ValidationError
 
 from exasol.slc.api import build
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 from exasol.slc.models.language_definition_common import (
     DeprecationInfo,
-    SLCLanguage,
     SLCParameter,
     UdfClientRelativePath,
 )

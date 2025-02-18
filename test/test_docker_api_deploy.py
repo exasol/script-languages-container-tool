@@ -3,7 +3,7 @@ import unittest
 
 import exasol.bucketfs as bfs  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.lib.api.api_errors import (
+from exasol_integration_test_docker_environment.lib.models.api_errors import (
     TaskRuntimeError,
 )
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore

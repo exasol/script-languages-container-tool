@@ -6,14 +6,14 @@ from pathlib import Path
 import docker
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from configobj import ConfigObj
-from exasol_integration_test_docker_environment.lib.data.environment_info import (
-    EnvironmentInfo,
-)
 from exasol_integration_test_docker_environment.lib.docker.container.utils import (
     remove_docker_container,
 )
 from exasol_integration_test_docker_environment.lib.docker.volumes.utils import (
     remove_docker_volumes,
+)
+from exasol_integration_test_docker_environment.lib.models.data.environment_info import (
+    EnvironmentInfo,
 )
 
 

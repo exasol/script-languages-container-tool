@@ -1,5 +1,7 @@
 import click
-from exasol_integration_test_docker_environment.lib.api.common import add_options
+from exasol_integration_test_docker_environment.lib.utils.cli_function_decorators import (
+    add_options,
+)
 
 from exasol.slc import api
 from exasol.slc.tool.cli import cli

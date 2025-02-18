@@ -1,9 +1,11 @@
 from typing import Optional, Tuple
 
 from exasol_integration_test_docker_environment.lib import api
-from exasol_integration_test_docker_environment.lib.api.common import cli_function
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
+)
+from exasol_integration_test_docker_environment.lib.utils.api_function_decorators import (
+    cli_function,
 )
 
 from exasol.slc.internal.tasks.test.test_container_content import (

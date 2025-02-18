@@ -20,11 +20,11 @@ from exasol_integration_test_docker_environment.lib.base.flavor_task import (
 from exasol_integration_test_docker_environment.lib.base.still_running_logger import (
     StillRunningLogger,
 )
-from exasol_integration_test_docker_environment.lib.config.build_config import (
-    build_config,
-)
 from exasol_integration_test_docker_environment.lib.logging.command_log_handler import (
     CommandLogHandler,
+)
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
+    build_config,
 )
 
 from exasol.slc.internal.tasks.clean.clean_images import CleanExaslcFlavorImages

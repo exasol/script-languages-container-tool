@@ -7,7 +7,7 @@ from exasol_integration_test_docker_environment.lib.base.base_task import BaseTa
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorsBaseTask,
 )
-from exasol_integration_test_docker_environment.lib.config.build_config import (
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
     build_config,
 )
 

@@ -16,24 +16,24 @@ from exasol_integration_test_docker_environment.lib.base.frozendict_to_dict impo
 from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
     JsonPickleTarget,
 )
-from exasol_integration_test_docker_environment.lib.config.docker_config import (
+from exasol_integration_test_docker_environment.lib.models.config.docker_config import (
     source_docker_repository_config,
     target_docker_repository_config,
 )
-from exasol_integration_test_docker_environment.lib.config.log_config import (
+from exasol_integration_test_docker_environment.lib.models.config.log_config import (
     WriteLogFilesToConsole,
     log_config,
 )
-from exasol_integration_test_docker_environment.lib.data.container_info import (
+from exasol_integration_test_docker_environment.lib.models.data.container_info import (
     ContainerInfo,
 )
-from exasol_integration_test_docker_environment.lib.data.database_credentials import (
+from exasol_integration_test_docker_environment.lib.models.data.database_credentials import (
     DatabaseCredentialsParameter,
 )
-from exasol_integration_test_docker_environment.lib.data.database_info import (
+from exasol_integration_test_docker_environment.lib.models.data.database_info import (
     DatabaseInfo,
 )
-from exasol_integration_test_docker_environment.lib.data.environment_type import (
+from exasol_integration_test_docker_environment.lib.models.data.environment_type import (
     EnvironmentType,
 )
 

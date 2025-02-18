@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
-from exasol_integration_test_docker_environment.lib.config.build_config import (
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
     build_config,
 )
 
