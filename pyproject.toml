@@ -31,7 +31,7 @@ python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
-exasol-integration-test-docker-environment = { path = "../integration-test-docker-environment/dist/exasol_integration_test_docker_environment-4.0.0-py3-none-any.whl" }
+exasol-integration-test-docker-environment = "^4.0.0"
 exasol-bucketfs="^1.0.1"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
