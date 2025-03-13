@@ -1,18 +1,19 @@
+from abc import abstractmethod
 from pathlib import Path
 from typing import Dict, Optional
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
-from exasol_integration_test_docker_environment.lib.config.build_config import (
-    build_config,
-)
-from exasol_integration_test_docker_environment.lib.config.docker_config import (
-    source_docker_repository_config,
-    target_docker_repository_config,
-)
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_analyze_task import (
     DockerAnalyzeImageTask,
+)
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
+    build_config,
+)
+from exasol_integration_test_docker_environment.lib.models.config.docker_config import (
+    source_docker_repository_config,
+    target_docker_repository_config,
 )
 
 from exasol.slc.models.language_definition_model import (
@@ -42,13 +43,13 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             or len(config.force_rebuild_from) == 0
         )
 
-    def get_build_step(self) -> Optional[str]:
+    def get_build_step(self) -> str:
         """
         Called by the constructor to get the name of build step.
         Sub classes need to implement this method.
         :return: dictionaries with destination path as keys and source paths in values
         """
-        pass
+        return ""
 
     def get_additional_build_directories_mapping(self) -> Dict[str, str]:
         """

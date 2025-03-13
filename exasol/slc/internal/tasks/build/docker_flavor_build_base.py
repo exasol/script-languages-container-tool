@@ -1,4 +1,4 @@
-from typing import Dict, Set
+from typing import Dict, List, Set
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -28,7 +28,9 @@ class DockerFlavorBuildBase(FlavorBaseTask, DockerBuildBase):
             for subclass in DockerFlavorAnalyzeImageTask.__subclasses__()
             if subclass.__module__ == module_name_for_build_steps
         ]
-        goal_class_map = {task.get_build_step(): task for task in available_tasks}
+        goal_class_map: Dict[str, DockerAnalyzeImageTask] = {
+            task.get_build_step(): task for task in available_tasks
+        }
         return goal_class_map
 
     def get_default_goals(self) -> Set[str]:

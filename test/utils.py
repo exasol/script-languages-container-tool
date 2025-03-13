@@ -2,7 +2,7 @@ from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any, Dict, List, Optional
 
-from exasol_integration_test_docker_environment.lib.data.test_container_content_description import (
+from exasol_integration_test_docker_environment.lib.models.data.test_container_content_description import (
     TestContainerContentDescription,
 )
 from exasol_integration_test_docker_environment.testing import (

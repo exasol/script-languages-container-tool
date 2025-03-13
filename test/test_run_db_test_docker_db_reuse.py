@@ -1,6 +1,5 @@
-import os
 import unittest
-from typing import Dict, List
+from typing import Dict
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient

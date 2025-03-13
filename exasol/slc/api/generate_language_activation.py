@@ -2,7 +2,9 @@ import textwrap
 from pathlib import Path
 from typing import Tuple
 
-from exasol_integration_test_docker_environment.lib.api.common import cli_function
+from exasol_integration_test_docker_environment.lib.utils.api_function_decorators import (
+    cli_function,
+)
 
 from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinition
 

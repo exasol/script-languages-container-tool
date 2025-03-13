@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.testing import utils  # type: ignore
+from exasol_integration_test_docker_environment.testing import utils
 
 
 class DockerSaveTest(unittest.TestCase):

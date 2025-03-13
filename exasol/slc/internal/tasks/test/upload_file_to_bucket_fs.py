@@ -24,7 +24,7 @@ from exasol_integration_test_docker_environment.lib.base.still_running_logger im
     StillRunningLogger,
     StillRunningLoggerThread,
 )
-from exasol_integration_test_docker_environment.lib.data.environment_info import (
+from exasol_integration_test_docker_environment.lib.models.data.environment_info import (
     EnvironmentInfo,
 )
 from exasol_integration_test_docker_environment.lib.test_environment.database_setup.docker_db_log_based_bucket_sync_checker import (  # pylint: disable=line-too-long

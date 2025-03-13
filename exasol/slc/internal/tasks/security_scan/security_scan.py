@@ -9,14 +9,14 @@ from exasol_integration_test_docker_environment.lib.base.base_task import BaseTa
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorsBaseTask,
 )
-from exasol_integration_test_docker_environment.lib.config.build_config import (
-    build_config,
-)
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_create_task import (
     DockerCreateImageTask,
 )
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
+)
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
+    build_config,
 )
 from luigi import LocalTarget
 

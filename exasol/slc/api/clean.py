@@ -1,15 +1,23 @@
 from typing import Optional, Tuple
 
-from exasol_integration_test_docker_environment.lib.api.common import (
-    cli_function,
-    generate_root_task,
-    import_build_steps,
-    run_task,
-    set_docker_repository_config,
-    set_output_directory,
-)
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import (
     DependencyLoggerBaseTask,
+)
+from exasol_integration_test_docker_environment.lib.base.import_build_step import (
+    import_build_steps,
+)
+from exasol_integration_test_docker_environment.lib.base.run_task import (
+    generate_root_task,
+    run_task,
+)
+from exasol_integration_test_docker_environment.lib.models.config.build_config import (
+    set_output_directory,
+)
+from exasol_integration_test_docker_environment.lib.models.config.docker_config import (
+    set_docker_repository_config,
+)
+from exasol_integration_test_docker_environment.lib.utils.api_function_decorators import (
+    cli_function,
 )
 
 from exasol.slc.internal.tasks.clean.clean_images import (

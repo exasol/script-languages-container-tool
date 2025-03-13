@@ -3,7 +3,6 @@ import unittest
 from pathlib import Path, PurePosixPath
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc.api.get_language_definition_builder import (
     get_language_definition_builder,

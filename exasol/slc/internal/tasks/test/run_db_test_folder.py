@@ -7,7 +7,7 @@ from exasol_integration_test_docker_environment.lib.base.flavor_task import (
 from exasol_integration_test_docker_environment.lib.base.json_pickle_target import (
     JsonPickleTarget,
 )
-from exasol_integration_test_docker_environment.lib.data.database_credentials import (
+from exasol_integration_test_docker_environment.lib.models.data.database_credentials import (
     DatabaseCredentialsParameter,
 )
 
