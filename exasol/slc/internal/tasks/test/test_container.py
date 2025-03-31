@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Optional, TextIO, Tuple
+from typing import Dict, Optional, TextIO, Tuple, Union
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -17,7 +17,12 @@ from exasol.slc.internal.tasks.test.run_db_tests_parameter import (
     GeneralRunDBTestParameter,
     RunDBTestsInTestConfigParameter,
 )
-from exasol.slc.internal.tasks.test.test_runner_db_test_task import TestRunnerDBTestTask
+from exasol.slc.internal.tasks.test.test_runner_db_test_from_existing_container_file_task import (
+    TestRunnerDBTestFromExistingContainerFileTask,
+)
+from exasol.slc.internal.tasks.test.test_runner_db_test_with_export_task import (
+    TestRunnerDBTestWithExportTask,
+)
 from exasol.slc.models.run_db_test_result import RunDBTestsInTestConfigResult
 from exasol.slc.models.test_result import AllTestsResult, FlavorTestResult
 
@@ -30,6 +35,7 @@ class TestContainerParameter(
     release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
     languages: Tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
+    use_existing_container: str = luigi.OptionalParameter()  # type: ignore
 
 
 class TestStatusPrinter:
@@ -194,10 +200,20 @@ class TestFlavorContainer(
         }
         self.test_result_futures = self.register_dependencies(tasks)
 
-    def generate_tasks_for_flavor(self, release_goal: str) -> TestRunnerDBTestTask:
-        task = self.create_child_task_with_common_params(
-            TestRunnerDBTestTask, release_goal=release_goal
-        )
+    def generate_tasks_for_flavor(
+        self, release_goal: str
+    ) -> Union[
+        TestRunnerDBTestWithExportTask, TestRunnerDBTestFromExistingContainerFileTask
+    ]:
+        if self.use_existing_container is None:
+            task = self.create_child_task_with_common_params(
+                TestRunnerDBTestWithExportTask, release_goal=release_goal
+            )
+        else:
+            task = self.create_child_task_with_common_params(
+                TestRunnerDBTestFromExistingContainerFileTask, release_goal=release_goal
+            )
+
         return task
 
     def run_task(self) -> None:
