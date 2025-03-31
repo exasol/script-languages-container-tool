@@ -139,6 +139,19 @@ exaslct run-db-test --flavor-path=flavors/<flavor-name>
 
 **Note: you need docker in privileged mode to execute the tests**
 
+### Testing an existing container file
+
+You can test an existing container file (*.tar.gz) with the following command:
+
+```bash
+exaslct run-db-test --flavor-path=flavors/<flavor-name> --use-existing-container <path-to-file>
+```
+
+With this additional option, `exaslct` won't build and export the container again, which might be a faster approach if you have access to the container file, but for some reason the internal cache and/or the docker image has been deleted.
+
+**Note**: `exaslct` won't check if the given container file is compatible with the given flavor path. If this is not the case, the tests probably will fail.
+
+
 ## Cleaning up after you are finished
 
 The creation of scripting language container creates or downloads several docker images
