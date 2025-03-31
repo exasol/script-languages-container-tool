@@ -54,11 +54,7 @@ class RunDBTestsInTestConfig(
 
     def run_generic_language_test(
         self,
-    ) -> Generator[BaseTask, Any, RunDBTestFoldersResult]:
-        #
-        # Correct return type is Generator[RunDBGenericLanguageTest, Any, RunDBTestFilesResult]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    ) -> Generator[RunDBGenericLanguageTest, Any, RunDBTestFoldersResult]:
         generic_language_test_task = self.create_child_task_with_common_params(
             RunDBGenericLanguageTest
         )
@@ -73,11 +69,7 @@ class RunDBTestsInTestConfig(
 
     def run_test_files(
         self,
-    ) -> Generator[BaseTask, Any, RunDBTestFilesResult]:
-        #
-        # Correct return type is Generator[RunDBGenericLanguageTest, Any, RunDBTestFilesResult]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    ) -> Generator[RunDBTestFiles, Any, RunDBTestFilesResult]:
         test_files_task = self.create_child_task_with_common_params(RunDBTestFiles)
         test_files_output_future = yield from self.run_dependencies(test_files_task)
         run_db_test_file_result = self.get_values_from_future(test_files_output_future)
@@ -86,11 +78,7 @@ class RunDBTestsInTestConfig(
 
     def run_test_folder(
         self,
-    ) -> Generator[BaseTask, Any, RunDBTestFoldersResult]:
-        #
-        # Correct return type is Generator[RunDBGenericLanguageTest, Any, RunDBTestFilesResult]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    ) -> Generator[RunDBTestFolder, Any, RunDBTestFoldersResult]:
         test_folder_task = self.create_child_task_with_common_params(RunDBTestFolder)
         test_folder_output_future = yield from self.run_dependencies(test_folder_task)
         run_db_test_folder_result = self.get_values_from_future(
