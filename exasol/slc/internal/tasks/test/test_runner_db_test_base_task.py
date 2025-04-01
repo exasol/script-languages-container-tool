@@ -39,15 +39,15 @@ from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_
     SpawnTestEnvironment,
 )
 
+from exasol.slc.internal.tasks.test.container_file_under_test_info import (
+    ContainerFileUnderTestInfo,
+)
 from exasol.slc.internal.tasks.test.populate_test_engine import PopulateTestEngine
 from exasol.slc.internal.tasks.test.run_db_tests_in_test_config import (
     RunDBTestsInTestConfig,
 )
 from exasol.slc.internal.tasks.test.run_db_tests_parameter import (
     RunDBTestsInTestConfigParameter,
-)
-from exasol.slc.internal.tasks.test.test_container_file_info import (
-    TestContainerFileInfo,
 )
 from exasol.slc.internal.tasks.test.upload_exported_container import (
     UploadExportedContainer,
@@ -95,11 +95,11 @@ class TestRunnerDBTestBaseTask(
             spawn_test_environment_task
         )
 
-    def _get_test_container_file_info(self) -> TestContainerFileInfo:
+    def _get_container_file_under_test_info(self) -> ContainerFileUnderTestInfo:
         raise AbstractMethodException()
 
     def run_task(self) -> Generator[BaseTask, None, None]:
-        test_container_file_info = self._get_test_container_file_info()
+        container_file_under_test_info = self._get_container_file_under_test_info()
 
         self.test_environment_info = self.get_values_from_future(
             self._test_environment_info_future
@@ -108,31 +108,31 @@ class TestRunnerDBTestBaseTask(
 
         database_credentials = self.get_database_credentials()
         yield from self._upload_container(
-            database_credentials, test_container_file_info
+            database_credentials, container_file_under_test_info
         )
         yield from self.populate_test_engine_data(
             self.test_environment_info, database_credentials
         )
         test_results = yield from self.run_test(
-            self.test_environment_info, test_container_file_info.target_name
+            self.test_environment_info, container_file_under_test_info.target_name
         )
         self.return_object(test_results)
 
     def _upload_container(
         self,
         database_credentials: DatabaseCredentials,
-        test_container_file_info: TestContainerFileInfo,
+        container_file_under_test_info: ContainerFileUnderTestInfo,
     ) -> Generator[UploadExportedContainer, None, None]:
         reuse = (
             self.reuse_database
             and self.reuse_uploaded_container
-            and not test_container_file_info.is_new
+            and not container_file_under_test_info.is_new
         )
         assert self.test_environment_info is not None
         upload_task = self.create_child_task_with_common_params(
             UploadExportedContainer,
-            file_to_upload=test_container_file_info.container_file,
-            target_name=test_container_file_info.target_name,
+            file_to_upload=container_file_under_test_info.container_file,
+            target_name=container_file_under_test_info.target_name,
             environment_name=self.test_environment_info.name,
             test_environment_info=self.test_environment_info,
             reuse_uploaded=reuse,
