@@ -24,7 +24,7 @@ class TestRunnerDBTestWithExportTask(TestRunnerDBTestBaseTask):
         )
         self._export_infos_future = self.register_dependency(export_container_task)
 
-    def get_test_container_file_info(self) -> TestContainerFileInfo:
+    def _get_test_container_file_info(self) -> TestContainerFileInfo:
 
         export_infos: Dict[str, ExportInfo] = self.get_values_from_future(
             self._export_infos_future

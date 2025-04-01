@@ -14,7 +14,7 @@ class TestRunnerDBTestFromExistingContainerFileTask(TestRunnerDBTestBaseTask):
     def register_required(self) -> None:
         self.register_spawn_test_environment()
 
-    def get_test_container_file_info(self) -> TestContainerFileInfo:
+    def _get_test_container_file_info(self) -> TestContainerFileInfo:
         return TestContainerFileInfo(
             container_file=self.use_existing_container,
             target_name=self.get_flavor_name(),
