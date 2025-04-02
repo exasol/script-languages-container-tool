@@ -51,6 +51,7 @@ def export(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     cleanup_docker_images: bool = False,
+    compression: bool = True,
 ) -> ExportContainerResult:
     """
     This command exports the whole script-language-container package of the flavor,
@@ -93,6 +94,7 @@ def export(
             export_path=export_path,
             release_name=release_name,
             cleanup_docker_images=cleanup_docker_images,
+            compression=compression,
         )
 
     return run_task(

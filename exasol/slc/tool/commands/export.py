@@ -45,6 +45,11 @@ from exasol.slc.tool.options.goal_options import release_options
     help="Clean up the docker images during the export."
     " This might be helpful to save disk space for large containers.",
 )
+@click.option(
+    "--compression/--no-compression",
+    default=True,
+    help="If set to --compression, a '.tar.gz' file will be created. Otherwise a '.tar' will be created.",
+)
 def export(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],
@@ -71,6 +76,7 @@ def export(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     cleanup_docker_images: bool,
+    compression: bool,
 ):
     """
     This command exports the whole script-language-container package of the flavor,
@@ -104,6 +110,7 @@ def export(
             log_level=log_level,
             use_job_specific_log_file=use_job_specific_log_file,
             cleanup_docker_images=cleanup_docker_images,
+            compression=compression,
         )
         with open(export_result.command_line_output_path) as f:
             print(f.read())
