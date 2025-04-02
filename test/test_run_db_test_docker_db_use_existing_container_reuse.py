@@ -8,7 +8,7 @@ from exasol_integration_test_docker_environment.lib.docker.container.utils impor
 )
 
 
-class DockerRunDBTestDockerDBTest(unittest.TestCase):
+class DockerRunDBTestDockerUseExistingContainerReuse(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
@@ -58,6 +58,15 @@ class DockerRunDBTestDockerDBTest(unittest.TestCase):
                 self._db_container_name,
             )
 
+        exported_container_file = self._build_container_file()
+
+        run_command(str(exported_container_file))
+        old_ids = container_ids()
+        run_command(str(exported_container_file))
+        new_ids = container_ids()
+        self.assertEqual(old_ids, new_ids)
+
+    def _build_container_file(self):
         command = [
             self.test_environment.executable,
             "export",
@@ -70,13 +79,7 @@ class DockerRunDBTestDockerDBTest(unittest.TestCase):
         )
         self.assertEqual(len(exported_container_file_glob), 1)
         exported_container_file = exported_container_file_glob[0]
-
-        # Now run run-db-test with --use-existing-container
-        run_command(str(exported_container_file))
-        old_ids = container_ids()
-        run_command(str(exported_container_file))
-        new_ids = container_ids()
-        self.assertEqual(old_ids, new_ids)
+        return exported_container_file
 
 
 if __name__ == "__main__":
