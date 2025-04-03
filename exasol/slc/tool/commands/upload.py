@@ -20,7 +20,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.tool.cli import cli
-from exasol.slc.tool.options import export_options
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 
