@@ -20,6 +20,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.tool.cli import cli
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 
@@ -45,11 +46,7 @@ from exasol.slc.tool.options.goal_options import release_options
     help="Clean up the docker images during the export."
     " This might be helpful to save disk space for large containers.",
 )
-@click.option(
-    "--compression/--no-compression",
-    default=True,
-    help="If set to --compression, a '.tar.gz' file will be created. Otherwise a '.tar' will be created.",
-)
+@add_options(export_options)
 def export(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],

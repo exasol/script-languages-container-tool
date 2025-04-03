@@ -97,6 +97,7 @@ def run_db_test(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
+    compression: bool = True,
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
@@ -190,6 +191,7 @@ def run_db_test(
             create_certificates=create_certificates,
             additional_db_parameter=additional_db_parameter,
             test_container_content=build_test_container_content(test_container_folder),
+            compression=compression,
         )
 
     return run_task(
