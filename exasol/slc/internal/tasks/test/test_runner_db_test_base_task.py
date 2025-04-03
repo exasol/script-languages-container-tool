@@ -1,8 +1,11 @@
 import pathlib
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Generator, Optional
 
 import luigi
 from docker.models.containers import ExecResult
+from exasol_integration_test_docker_environment.abstract_method_exception import (
+    AbstractMethodException,
+)
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.db_os_executor import (
     DbOsExecFactory,
@@ -36,7 +39,9 @@ from exasol_integration_test_docker_environment.lib.test_environment.spawn_test_
     SpawnTestEnvironment,
 )
 
-from exasol.slc.internal.tasks.export.export_containers import ExportFlavorContainer
+from exasol.slc.internal.tasks.test.container_file_under_test_info import (
+    ContainerFileUnderTestInfo,
+)
 from exasol.slc.internal.tasks.test.populate_test_engine import PopulateTestEngine
 from exasol.slc.internal.tasks.test.run_db_tests_in_test_config import (
     RunDBTestsInTestConfig,
@@ -48,7 +53,6 @@ from exasol.slc.internal.tasks.test.upload_exported_container import (
     UploadExportedContainer,
 )
 from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinition
-from exasol.slc.models.export_info import ExportInfo
 from exasol.slc.models.run_db_test_result import RunDBTestsInTestConfigResult
 
 
@@ -72,7 +76,7 @@ class DummyExecFactory(DbOsExecFactory):
         return DummyExecutor()
 
 
-class TestRunnerDBTestTask(
+class TestRunnerDBTestBaseTask(
     FlavorBaseTask, SpawnTestEnvironmentParameter, RunDBTestsInTestConfigParameter
 ):
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
@@ -81,18 +85,6 @@ class TestRunnerDBTestTask(
     def __init__(self, *args, **kwargs) -> None:
         self.test_environment_info: Optional[EnvironmentInfo] = None
         super().__init__(*args, **kwargs)
-
-    def register_required(self) -> None:
-        self.register_export_container()
-        self.register_spawn_test_environment()
-
-    def register_export_container(self) -> None:
-        export_container_task = self.create_child_task(
-            ExportFlavorContainer,
-            release_goals=[self.release_goal],
-            flavor_path=self.flavor_path,
-        )
-        self._export_infos_future = self.register_dependency(export_container_task)
 
     def register_spawn_test_environment(self) -> None:
         test_environment_name = f"""{self.get_flavor_name()}_{self.release_goal}"""
@@ -103,27 +95,53 @@ class TestRunnerDBTestTask(
             spawn_test_environment_task
         )
 
-    def run_task(self) -> Generator[BaseTask, None, None]:
-        export_infos: Dict[str, ExportInfo] = self.get_values_from_future(
-            self._export_infos_future
-        )  # type: ignore
-        assert isinstance(export_infos, dict)
-        assert all(isinstance(x, str) for x in export_infos.keys())
-        assert all(isinstance(x, ExportInfo) for x in export_infos.values())
+    def _get_container_file_under_test_info(self) -> ContainerFileUnderTestInfo:
+        raise AbstractMethodException()
 
-        export_info = export_infos[self.release_goal]
+    def run_task(self) -> Generator[BaseTask, None, None]:
+        container_file_under_test_info = self._get_container_file_under_test_info()
+
         self.test_environment_info = self.get_values_from_future(
             self._test_environment_info_future
         )  # type: ignore
         assert isinstance(self.test_environment_info, EnvironmentInfo)
 
         database_credentials = self.get_database_credentials()
-        yield from self.upload_container(database_credentials, export_info)
+        yield from self._upload_container(
+            database_credentials, container_file_under_test_info
+        )
         yield from self.populate_test_engine_data(
             self.test_environment_info, database_credentials
         )
-        test_results = yield from self.run_test(self.test_environment_info, export_info)
+        test_results = yield from self.run_test(
+            self.test_environment_info, container_file_under_test_info.target_name
+        )
         self.return_object(test_results)
+
+    def _upload_container(
+        self,
+        database_credentials: DatabaseCredentials,
+        container_file_under_test_info: ContainerFileUnderTestInfo,
+    ) -> Generator[UploadExportedContainer, None, None]:
+        reuse = (
+            self.reuse_database
+            and self.reuse_uploaded_container
+            and not container_file_under_test_info.is_new
+        )
+        assert self.test_environment_info is not None
+        upload_task = self.create_child_task_with_common_params(
+            UploadExportedContainer,
+            file_to_upload=container_file_under_test_info.container_file,
+            target_name=container_file_under_test_info.target_name,
+            environment_name=self.test_environment_info.name,
+            test_environment_info=self.test_environment_info,
+            reuse_uploaded=reuse,
+            bucketfs_write_password=database_credentials.bucketfs_write_password,
+            executor_factory=self._executor_factory(
+                self.test_environment_info.database_info
+            ),
+        )
+        yield from self.run_dependencies(upload_task)
 
     def _executor_factory(self, database_info: DatabaseInfo) -> DbOsExecFactory:
 
@@ -136,42 +154,11 @@ class TestRunnerDBTestTask(
             )
         return DummyExecFactory()
 
-    def upload_container(
-        self, database_credentials: DatabaseCredentials, export_info: ExportInfo
-    ) -> Generator[BaseTask, None, None]:
-        #
-        # Correct return type is Generator[UploadExportedContainer, Any, None]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
-        reuse = (
-            self.reuse_database
-            and self.reuse_uploaded_container
-            and not export_info.is_new
-        )
-        assert self.test_environment_info is not None
-        upload_task = self.create_child_task_with_common_params(
-            UploadExportedContainer,
-            export_info=export_info,
-            environment_name=self.test_environment_info.name,
-            test_environment_info=self.test_environment_info,
-            release_name=export_info.name,
-            reuse_uploaded=reuse,
-            bucketfs_write_password=database_credentials.bucketfs_write_password,
-            executor_factory=self._executor_factory(
-                self.test_environment_info.database_info
-            ),
-        )
-        yield from self.run_dependencies(upload_task)
-
     def populate_test_engine_data(
         self,
         test_environment_info: EnvironmentInfo,
         database_credentials: DatabaseCredentials,
-    ) -> Generator[BaseTask, None, None]:
-        #
-        # Correct return type is Generator[PopulateTestEngine, Any, None]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    ) -> Generator[PopulateTestEngine, None, None]:
         assert self.test_environment_info is not None
         reuse = (
             self.reuse_database_setup
@@ -202,20 +189,19 @@ class TestRunnerDBTestTask(
                 bucketfs_write_password=SpawnTestEnvironment.DEFAULT_BUCKETFS_WRITE_PASSWORD,
             )
 
+    def _get_uploaded_container_name(self) -> str:
+        raise AbstractMethodException()
+
     def run_test(
-        self, test_environment_info: EnvironmentInfo, export_info: ExportInfo
-    ) -> Generator[BaseTask, Any, RunDBTestsInTestConfigResult]:
-        #
-        # Correct return type is Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+        self, test_environment_info: EnvironmentInfo, uploaded_container_name: str
+    ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
         test_config = self.read_test_config()
         generic_language_tests = self.get_generic_language_tests(test_config)
         test_folders = self.get_test_folders(test_config)
         database_credentials = self.get_database_credentials()
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
-            release_name=export_info.name,
+            release_name=uploaded_container_name,
             flavor_path=self.flavor_path,  # type: ignore
             bucket_name="myudfs",
             bucketfs_name="bfsdefault",

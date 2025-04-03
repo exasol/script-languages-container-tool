@@ -8,14 +8,6 @@ from exasol_integration_test_docker_environment.lib.docker.container.utils impor
 )
 
 
-def get_docker_container_ids(*names) -> Dict[str, str]:
-    result = {}
-    with ContextDockerClient() as docker_client:
-        for name in names:
-            result[name] = docker_client.containers.get(name).id
-    return result
-
-
 class RunDBTestDockerDBReuseTest(unittest.TestCase):
 
     def setUp(self):
@@ -52,7 +44,7 @@ class RunDBTestDockerDBReuseTest(unittest.TestCase):
             )
 
         def container_ids() -> Dict[str, str]:
-            return get_docker_container_ids(
+            return exaslct_utils.get_docker_container_ids(
                 self._test_container_name,
                 self._db_container_name,
             )

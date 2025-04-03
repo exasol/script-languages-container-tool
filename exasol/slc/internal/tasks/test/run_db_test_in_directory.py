@@ -47,11 +47,7 @@ class RunDBTestsInDirectory(
         )
         self.return_object(result)
 
-    def run_tests(self) -> Generator[BaseTask, Any, List[RunDBTestResult]]:
-        #
-        # Correct return type is Generator[RunDBTest, Any, List[RunDBTestResult]]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    def run_tests(self) -> Generator[RunDBTest, Any, List[RunDBTestResult]]:
         test_results = []
         for test_task_config in self.tasks:
             test_result_future = yield from self.run_dependencies(test_task_config)

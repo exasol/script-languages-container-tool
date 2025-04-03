@@ -2,6 +2,7 @@ from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any, Dict, List, Optional
 
+from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.lib.models.data.test_container_content_description import (
     TestContainerContentDescription,
 )
@@ -222,3 +223,11 @@ def get_test_flavor() -> Path:
 def get_real_test_flavor() -> Path:
     path = FLAVORS_ROOT_DIRECTORY / "real-test-flavor"
     return path
+
+
+def get_docker_container_ids(*names) -> Dict[str, str]:
+    result = {}
+    with ContextDockerClient() as docker_client:
+        for name in names:
+            result[name] = docker_client.containers.get(name).id
+    return result

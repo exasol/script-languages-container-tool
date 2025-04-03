@@ -44,11 +44,7 @@ class RunDBTestFolder(
 
     def run_test(
         self, language: Optional[str], test_folder: str
-    ) -> Generator[BaseTask, Any, RunDBTestDirectoryResult]:
-        #
-        # Correct return type is Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]
-        # TODO: Fix after https://github.com/exasol/integration-test-docker-environment/issues/445
-        #
+    ) -> Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
         task = self.create_child_task_with_common_params(
             RunDBTestsInDirectory,
             language=language,

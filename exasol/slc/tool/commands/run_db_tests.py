@@ -136,6 +136,11 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     help="Reuse the whole test environment with docker network, test container, "
     "database, database setup and uploaded container",
 )
+@click.option(
+    "--use-existing-container",
+    type=click.Path(exists=True, file_okay=True, dir_okay=False),
+    help="""Use existing exported container (.tar.gz). The given file must be compatible with the given flavor. """,
+)
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
@@ -177,6 +182,7 @@ def run_db_test(
     reuse_uploaded_container: bool,
     reuse_test_container: bool,
     reuse_test_environment: bool,
+    use_existing_container: str,
     test_container_folder: str,
     force_rebuild: bool,
     force_rebuild_from: Tuple[str, ...],
@@ -244,6 +250,7 @@ def run_db_test(
                 reuse_uploaded_container=reuse_uploaded_container,
                 reuse_test_container=reuse_test_container,
                 reuse_test_environment=reuse_test_environment,
+                use_existing_container=use_existing_container,
                 test_container_folder=test_container_folder,
                 force_rebuild=force_rebuild,
                 force_rebuild_from=force_rebuild_from,

@@ -23,7 +23,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.12.0
         with:
           python-version: '${{ matrix.python_version }}'
-          poetry-version: '1.8.2'
+          poetry-version: '2.1.2'
 
       - name: Test exaslct
         run: poetry run exaslct --help
@@ -59,7 +59,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.12.0
         with:
           python-version: '${{ matrix.python_version }}'
-          poetry-version: '1.8.2'
+          poetry-version: '2.1.2'
 
       - name: Allow unprivileged user namespaces
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
