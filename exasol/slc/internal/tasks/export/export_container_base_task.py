@@ -112,7 +112,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         )
         return export_info
 
-    def _get_export_file_suffix(self) -> str:
+    def _get_export_file_extension(self) -> str:
         return ".tar.gz" if self.compression else ".tar"
 
     def _get_cache_file_path(
@@ -124,6 +124,6 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         export_path = Path(export_directory_future.get_output()).absolute()
         release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.hash}"""
         cache_file = Path(
-            export_path, release_complete_name + self._get_export_file_suffix()
+            export_path, release_complete_name + self._get_export_file_extension()
         ).absolute()
         return str(cache_file), release_complete_name, release_image_name

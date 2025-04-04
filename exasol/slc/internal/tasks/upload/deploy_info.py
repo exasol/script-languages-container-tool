@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import exasol.bucketfs as bfs  # type: ignore
 
+from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBuilder
 
@@ -12,6 +13,7 @@ class DeployInfo:
     complete_release_name: str
     human_readable_location: str
     language_definition_builder: LanguageDefinitionsBuilder
+    file_extension: str
 
 
 def toDeployResult(
@@ -45,7 +47,7 @@ def toDeployResult(
             verify=verify,
             path=path_in_bucket or "",
         )
-        / f"{complete_release_name}.tar.gz"
+        / f"{complete_release_name}{deploy_info.file_extension}"
     )
 
     return DeployResult(

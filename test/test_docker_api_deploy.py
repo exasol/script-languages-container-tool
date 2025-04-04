@@ -11,7 +11,7 @@ from exasol_integration_test_docker_environment.testing import utils  # type: ig
 from exasol.slc import api
 
 
-class ApiDockerPushTest(unittest.TestCase):
+class ApiDockerDeployTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
@@ -25,9 +25,9 @@ class ApiDockerPushTest(unittest.TestCase):
         )
 
     def tearDown(self):
-        utils.close_environments(self.test_environment)
+        utils.close_environments(self.test_environment, self.docker_environment)
 
-    def test_docker_api_deploy(self):
+    def _validate_deploy(self, compression: bool, expected_extension: str):
         path_in_bucket = "test"
         release_name = "TEST"
         bucketfs_name = "bfsdefault"
@@ -45,6 +45,7 @@ class ApiDockerPushTest(unittest.TestCase):
             bucket=bucket_name,
             path_in_bucket=path_in_bucket,
             release_name=release_name,
+            compression=compression,
         )
         self.assertIn(str(flavor_path), result.keys())
 
@@ -72,7 +73,7 @@ class ApiDockerPushTest(unittest.TestCase):
         self.assertEqual(
             deploy_result.human_readable_upload_location,
             f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
-            f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}.tar.gz",
+            f"{bucket_name}/{path_in_bucket}/test-flavor-release-{release_name}{expected_extension}",
         )
 
         expected_path_in_bucket = (
@@ -86,7 +87,7 @@ class ApiDockerPushTest(unittest.TestCase):
                 verify=False,
                 path=path_in_bucket,
             )
-            / f"test-flavor-release-{release_name}.tar.gz"
+            / f"test-flavor-release-{release_name}{expected_extension}"
         )
 
         # Compare UDF path of `bucket_path` until bfs.path.PathLike implements comparison
@@ -96,8 +97,16 @@ class ApiDockerPushTest(unittest.TestCase):
         )
 
         self.validate_file_on_bucket_fs(
-            bucket_name, f"{path_in_bucket}/test-flavor-release-{release_name}.tar.gz"
+            bucket_name,
+            path_in_bucket,
+            f"test-flavor-release-{release_name}{expected_extension}",
         )
+
+    def test_docker_api_deploy(self):
+        self._validate_deploy(compression=True, expected_extension=".tar.gz")
+
+    def test_docker_api_deploy_no_compression(self):
+        self._validate_deploy(compression=False, expected_extension=".tar")
 
     def test_docker_api_deploy_without_path_in_bucket(self):
         release_name = "TEST"
@@ -163,7 +172,7 @@ class ApiDockerPushTest(unittest.TestCase):
         )
 
         self.validate_file_on_bucket_fs(
-            bucket_name, f"test-flavor-release-{release_name}.tar.gz"
+            bucket_name, "", f"test-flavor-release-{release_name}.tar.gz"
         )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
@@ -187,22 +196,29 @@ class ApiDockerPushTest(unittest.TestCase):
             exception_thrown = True
         assert exception_thrown
 
-    def validate_file_on_bucket_fs(self, bucket_name: str, expected_file_path: str):
-        url = "http://w:{password}@{host}:{port}/{bucket}".format(
-            host=self.docker_environment.database_host,  # type: ignore
-            port=self.docker_environment.ports.bucketfs,  # type: ignore
-            bucket=bucket_name,
-            password=self.docker_environment.bucketfs_password,  # type: ignore
+    def validate_file_on_bucket_fs(
+        self, bucket_name: str, path: str, expected_file: str
+    ):
+        host = self.docker_environment.database_host
+        port = self.docker_environment.ports.bucketfs
+        bucketfs_username = self.docker_environment.bucketfs_username
+        bucketfs_password = self.docker_environment.bucketfs_password
+        url = f"http://{host}:{port}"
+        udf_path = bfs.path.build_path(
+            backend=bfs.path.StorageBackend.onprem,
+            url=url,
+            bucket_name=bucket_name,
+            service_name="bfsdefault",
+            path=path,
+            username=bucketfs_username,
+            password=bucketfs_password,
+            verify=True,
         )
-        cmd = ["curl", "--silent", "--show-error", "--fail", url]
-        p = subprocess.run(cmd, capture_output=True)
-        p.check_returncode()
-        found_lines = [
-            line
-            for line in p.stdout.decode("utf-8").split("\n")
-            if line == expected_file_path
+
+        container_files = [
+            file for file in udf_path.iterdir() if file.name == expected_file
         ]
-        assert len(found_lines) == 1
+        self.assertEqual(len(container_files), 1)
 
 
 if __name__ == "__main__":

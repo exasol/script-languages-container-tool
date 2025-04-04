@@ -147,6 +147,8 @@ def run_db_test(
             raise api_errors.MissingArgumentError("external_exasol_db_port")
         if external_exasol_bucketfs_port is None:
             raise api_errors.MissingArgumentError("external_exasol_bucketfs_port")
+        if external_exasol_ssh_port is None:
+            raise api_errors.MissingArgumentError("external_exasol_ssh_port")
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(

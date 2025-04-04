@@ -140,7 +140,7 @@ from exasol.slc.tool.options.test_container_options import test_container_option
 @click.option(
     "--use-existing-container",
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
-    help="""Use existing exported container (.tar.gz). The given file must be compatible with the given flavor. """,
+    help="""Use existing exported container (.tar.gz or .tar). The given file must be compatible with the given flavor. """,
 )
 @add_options(test_container_options)
 @add_options(build_options)
