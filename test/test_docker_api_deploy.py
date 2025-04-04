@@ -1,5 +1,7 @@
 import subprocess
+import tarfile
 import unittest
+from tempfile import TemporaryDirectory
 
 import exasol.bucketfs as bfs  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
@@ -100,6 +102,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucket_name,
             path_in_bucket,
             f"test-flavor-release-{release_name}{expected_extension}",
+            compression=compression,
         )
 
     def test_docker_api_deploy(self):
@@ -172,7 +175,10 @@ class ApiDockerDeployTest(unittest.TestCase):
         )
 
         self.validate_file_on_bucket_fs(
-            bucket_name, "", f"test-flavor-release-{release_name}.tar.gz"
+            bucket_name,
+            "",
+            f"test-flavor-release-{release_name}.tar.gz",
+            compression=False,
         )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
@@ -196,8 +202,44 @@ class ApiDockerDeployTest(unittest.TestCase):
             exception_thrown = True
         assert exception_thrown
 
+    def check_file_in_bucketfs(
+        self,
+        host: str,
+        port: int,
+        bucket_name: str,
+        bucketfs_username: str,
+        bucketfs_password: str,
+        path: str,
+        expected_file: str,
+        compression: bool,
+    ):
+        with TemporaryDirectory() as tmpdir:
+            if path:
+                url = f"http://{bucketfs_username}:{bucketfs_password}@{host}:{port}/{bucket_name}/{path}/{expected_file}"
+            else:
+                url = f"http://{bucketfs_username}:{bucketfs_password}@{host}:{port}/{bucket_name}/{expected_file}"
+            file_name = f"{tmpdir}/{expected_file}"
+            cmd = [
+                "curl",
+                "--silent",
+                "--show-error",
+                "--fail",
+                url,
+                "--output",
+                file_name,
+            ]
+            p = subprocess.run(cmd, capture_output=True)
+            p.check_returncode()
+
+            tar_mode = "r:gz" if compression else "r:"
+            with tarfile.open(name=file_name, mode=tar_mode) as tf:  # type: ignore
+                tf_members = tf.getmembers()
+                last_tf_member = tf_members[-1]
+                assert last_tf_member.name == "exasol-manifest.json"
+                assert last_tf_member.path == "exasol-manifest.json"
+
     def validate_file_on_bucket_fs(
-        self, bucket_name: str, path: str, expected_file: str
+        self, bucket_name: str, path: str, expected_file: str, compression: bool
     ):
         host = self.docker_environment.database_host
         port = self.docker_environment.ports.bucketfs
@@ -219,6 +261,17 @@ class ApiDockerDeployTest(unittest.TestCase):
             file for file in udf_path.iterdir() if file.name == expected_file
         ]
         self.assertEqual(len(container_files), 1)
+
+        self.check_file_in_bucketfs(
+            host=host,
+            port=port,
+            bucket_name=bucket_name,
+            bucketfs_username=bucketfs_username,
+            bucketfs_password=bucketfs_password,
+            path=path,
+            expected_file=expected_file,
+            compression=compression,
+        )
 
 
 if __name__ == "__main__":
