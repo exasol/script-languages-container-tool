@@ -202,6 +202,36 @@ class ApiDockerDeployTest(unittest.TestCase):
             exception_thrown = True
         assert exception_thrown
 
+    # def check_file_in_bucketfs(
+    #     self,
+    #     url: str,
+    #     bucket_name: str,
+    #     bucketfs_username: str,
+    #     bucketfs_password: str,
+    #     path: str,
+    #     expected_file: str,
+    #     compression: bool,
+    # ):
+    #     CREDENTIALS = {
+    #         bucket_name: {"username": bucketfs_username, "password": bucketfs_password}
+    #     }
+    #
+    #     bucketfs = Service(url, CREDENTIALS)
+    #     bucket = bucketfs[bucket_name]
+    #
+    #     with TemporaryDirectory() as tmpdir:
+    #         file = as_file(
+    #             bucket.download(f"{path}/{expected_file}"),
+    #             filename=Path(tmpdir) / expected_file,
+    #         )
+    #
+    #         tar_mode = "r:gz" if compression else "r:"
+    #         with tarfile.open(name=file, mode=tar_mode) as tf:
+    #             tf_members = tf.getmembers()
+    #             last_tf_member = tf_members[-1]
+    #             assert last_tf_member.name == "exasol-manifest.json"
+    #             assert last_tf_member.path == "exasol-manifest.json"
+
     def check_file_in_bucketfs(
         self,
         host: str,
