@@ -20,6 +20,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.tool.cli import cli
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 
@@ -45,6 +46,7 @@ from exasol.slc.tool.options.goal_options import release_options
     help="Clean up the docker images during the export."
     " This might be helpful to save disk space for large containers.",
 )
+@add_options(export_options)
 def export(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],
@@ -71,6 +73,7 @@ def export(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     cleanup_docker_images: bool,
+    compression: bool,
 ):
     """
     This command exports the whole script-language-container package of the flavor,
@@ -104,6 +107,7 @@ def export(
             log_level=log_level,
             use_job_specific_log_file=use_job_specific_log_file,
             cleanup_docker_images=cleanup_docker_images,
+            compression=compression,
         )
         with open(export_result.command_line_output_path) as f:
             print(f.read())

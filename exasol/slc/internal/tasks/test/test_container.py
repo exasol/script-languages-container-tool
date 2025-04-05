@@ -13,6 +13,9 @@ from exasol_integration_test_docker_environment.lib.test_environment.parameter.s
     SpawnTestEnvironmentParameter,
 )
 
+from exasol.slc.internal.tasks.export.export_container_parameters import (
+    ExportContainerOptionsParameter,
+)
 from exasol.slc.internal.tasks.test.run_db_tests_parameter import (
     GeneralRunDBTestParameter,
     RunDBTestsInTestConfigParameter,
@@ -30,7 +33,9 @@ STATUS_INDENT = 2
 
 
 class TestContainerParameter(
-    RunDBTestsInTestConfigParameter, GeneralRunDBTestParameter
+    RunDBTestsInTestConfigParameter,
+    GeneralRunDBTestParameter,
+    ExportContainerOptionsParameter,
 ):
     release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
     languages: Tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore

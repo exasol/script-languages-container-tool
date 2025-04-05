@@ -1,12 +1,7 @@
-from pathlib import Path
-
 import luigi
-from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
-    JsonPickleParameter,
-)
 
 from exasol.slc.internal.tasks.test.upload_file_to_bucket_fs import UploadFileToBucketFS
-from exasol.slc.models.export_info import ExportInfo
+from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 
 
 class UploadExportedContainer(UploadFileToBucketFS):
@@ -24,7 +19,11 @@ class UploadExportedContainer(UploadFileToBucketFS):
 
     def get_upload_target(self) -> str:
         return (
-            "myudfs/" + self.target_name + ".tar.gz"  # pylint: disable=no-member
+            "myudfs/"
+            + self.target_name
+            + detect_container_file_extension(
+                self.file_to_upload
+            )  # pylint: disable=no-member
         )  # pylint: disable=no-member
 
     def get_sync_time_estimation(self) -> int:

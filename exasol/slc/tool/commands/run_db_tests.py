@@ -26,6 +26,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 from exasol.slc import api
 from exasol.slc.api import api_errors
 from exasol.slc.tool.cli import cli
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 from exasol.slc.tool.options.test_container_options import test_container_options
@@ -139,13 +140,14 @@ from exasol.slc.tool.options.test_container_options import test_container_option
 @click.option(
     "--use-existing-container",
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
-    help="""Use existing exported container (.tar.gz). The given file must be compatible with the given flavor. """,
+    help="""Use existing exported container (.tar.gz or .tar). The given file must be compatible with the given flavor. """,
 )
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
+@add_options(export_options)
 def run_db_test(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],
@@ -204,6 +206,7 @@ def run_db_test(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
+    compression: bool,
 ):
     """
     This command runs the integration tests in local docker-db.
@@ -272,6 +275,7 @@ def run_db_test(
                 task_dependencies_dot_file=task_dependencies_dot_file,
                 log_level=log_level,
                 use_job_specific_log_file=use_job_specific_log_file,
+                compression=compression,
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:

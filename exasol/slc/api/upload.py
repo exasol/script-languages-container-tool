@@ -61,6 +61,7 @@ def upload(
     use_job_specific_log_file: bool = True,
     ssl_cert_path: str = "",
     use_ssl_cert_validation: bool = True,
+    compression: bool = True,
 ) -> luigi.LocalTarget:
     warnings.warn(
         "The 'upload' function is deprecated, use 'deploy' instead", DeprecationWarning
@@ -113,6 +114,7 @@ def upload(
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
+            compression=compression,
         )
 
     return run_task(

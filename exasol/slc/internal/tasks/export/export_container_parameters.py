@@ -6,7 +6,11 @@ from luigi import Config
 CHECKSUM_ALGORITHM = "sha512sum"
 
 
-class ExportContainerParameterBase(Config):
+class ExportContainerOptionsParameter:
+    compression: bool = luigi.BoolParameter(True)  # type: ignore
+
+
+class ExportContainerParameterBase(ExportContainerOptionsParameter):
     export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
     cleanup_docker_images: bool = luigi.BoolParameter(False)  # type: ignore

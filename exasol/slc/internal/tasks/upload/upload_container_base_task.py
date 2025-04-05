@@ -18,6 +18,7 @@ from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinit
 from exasol.slc.internal.tasks.upload.upload_container_parameter import (
     UploadContainerParameter,
 )
+from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 from exasol.slc.models.export_info import ExportInfo
 
 
@@ -99,7 +100,8 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             verify=verify,
             path=self.path_in_bucket or "",
         )
-        return path_in_bucket_to_upload_path / f"{complete_release_name}.tar.gz"
+        extension = detect_container_file_extension(release_info.cache_file)
+        return path_in_bucket_to_upload_path / f"{complete_release_name}{extension}"
 
     @property
     def _url(self) -> str:
@@ -109,7 +111,8 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         path_in_bucket = (
             f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
         )
-        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}.tar.gz"
+        extension = detect_container_file_extension(export_info.cache_file)
+        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}{extension}"
 
     def _upload_container(self, release_info: ExportInfo):
         bucket_path = self.build_file_path_in_bucket(release_info)
