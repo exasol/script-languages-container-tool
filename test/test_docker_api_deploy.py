@@ -178,7 +178,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucket_name,
             "",
             f"test-flavor-release-{release_name}.tar.gz",
-            compression=False,
+            compression=True,
         )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
