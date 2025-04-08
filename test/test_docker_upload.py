@@ -79,7 +79,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--path-in-bucket {self.path_in_bucket}",
                 f"--no-bucketfs-https",
                 f"--release-name {self.release_name}",
-                f"--no-compression",
+                f"--compression-strategy none",
             ]
         )
         command = f"{self.test_environment.executable} upload {arguments}"

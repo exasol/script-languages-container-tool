@@ -25,6 +25,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.api import api_errors
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
@@ -184,7 +185,7 @@ def run_db_test(
     reuse_uploaded_container: bool,
     reuse_test_container: bool,
     reuse_test_environment: bool,
-    use_existing_container: str,
+    use_existing_container: Optional[str],
     test_container_folder: str,
     force_rebuild: bool,
     force_rebuild_from: Tuple[str, ...],
@@ -206,7 +207,7 @@ def run_db_test(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
-    compression: bool,
+    compression_strategy: str,
 ):
     """
     This command runs the integration tests in local docker-db.
@@ -275,7 +276,7 @@ def run_db_test(
                 task_dependencies_dot_file=task_dependencies_dot_file,
                 log_level=log_level,
                 use_job_specific_log_file=use_job_specific_log_file,
-                compression=compression,
+                compression_strategy=CompressionStrategy[compression_strategy.upper()],
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:

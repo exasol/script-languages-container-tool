@@ -47,6 +47,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           poetry-version: 2.1.2
 
+      - name: Run Unit tests
+        run: poetry run nox -s test:unit
+
       - name: Run lint
         run: poetry run nox -s lint:code
 

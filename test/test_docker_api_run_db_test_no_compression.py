@@ -11,6 +11,7 @@ from exasol_integration_test_docker_environment.lib.models.data.environment_type
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc import api
+from exasol.slc.models.compression_strategy import CompressionStrategy
 
 
 class ApiDockerRunDbTestNoCompression(unittest.TestCase):
@@ -39,7 +40,7 @@ class ApiDockerRunDbTestNoCompression(unittest.TestCase):
             flavor_path=(str(exaslct_utils.get_test_flavor()),),
             test_container_folder=str(exaslct_utils.get_full_test_container_folder()),
             output_directory=self.test_environment.output_dir,
-            compression=False,
+            compression_strategy=CompressionStrategy.NONE,
             external_exasol_db_host=self.docker_environment.database_host,
             external_exasol_db_port=self.docker_environment.ports.database,
             external_exasol_db_user=self.docker_environment.db_username,

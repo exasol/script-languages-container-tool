@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
+from exasol.slc.models.compression_strategy import defaultCompressionStrategy
 from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.language_definition_components import (
     BuiltInLanguageDefinitionURL,
@@ -115,6 +116,7 @@ def test_deploy_minimum_parameters(cli):
             use_job_specific_log_file=True,
             ssl_cert_path="",
             use_ssl_cert_validation=True,
+            compression_strategy=defaultCompressionStrategy(),
         )
 
 
@@ -191,4 +193,5 @@ def test_deploy_password_in_env(cli):
             use_job_specific_log_file=True,
             ssl_cert_path="",
             use_ssl_cert_validation=True,
+            compression_strategy=defaultCompressionStrategy(),
         )

@@ -1,13 +1,17 @@
 from typing import Optional, Tuple
 
 import luigi
-from luigi import Config
+
+from exasol.slc.models.compression_strategy import (
+    CompressionStrategy,
+    defaultCompressionStrategy,
+)
 
 CHECKSUM_ALGORITHM = "sha512sum"
 
 
 class ExportContainerOptionsParameter:
-    compression: bool = luigi.BoolParameter(True)  # type: ignore
+    compression_strategy: CompressionStrategy = luigi.EnumParameter(enum=CompressionStrategy, default=defaultCompressionStrategy())  # type: ignore
 
 
 class ExportContainerParameterBase(ExportContainerOptionsParameter):

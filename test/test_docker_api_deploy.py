@@ -2,6 +2,7 @@ import subprocess
 import tarfile
 import unittest
 from functools import partial
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, Optional
 
@@ -13,6 +14,7 @@ from exasol_integration_test_docker_environment.lib.models.api_errors import (
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc import api
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.models.deploy_result import DeployResult
 
 
@@ -39,7 +41,12 @@ class ApiDockerDeployTest(unittest.TestCase):
         return f"test-flavor-release-{release_name}{extension}"
 
     def _build_bfs_path(
-        self, bucket_name, bucketfs_name, expected_extension, path, release_name
+        self,
+        bucket_name: str,
+        bucketfs_name: str,
+        expected_extension: str,
+        path: Optional[str],
+        release_name: str,
     ) -> bfs._path.PathLike:
         build_path_func = partial(
             bfs.path.build_path,
@@ -64,7 +71,13 @@ class ApiDockerDeployTest(unittest.TestCase):
         return expected_path_in_bucket
 
     def _run_deploy(
-        self, bucket_name, bucketfs_name, compression, flavor_path, path, release_name
+        self,
+        bucket_name: str,
+        bucketfs_name: str,
+        compression_strategy: CompressionStrategy,
+        flavor_path: Path,
+        path: Optional[str],
+        release_name: str,
     ) -> Dict[str, Dict[str, DeployResult]]:
         deploy_func = partial(
             api.deploy,
@@ -78,7 +91,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucketfs_name=bucketfs_name,
             bucket=bucket_name,
             release_name=release_name,
-            compression=compression,
+            compression_strategy=compression_strategy,
         )
         if path:
             result = deploy_func(path_in_bucket=path)
@@ -87,14 +100,22 @@ class ApiDockerDeployTest(unittest.TestCase):
         return result
 
     def _validate_deploy(
-        self, compression: bool, path: Optional[str], expected_extension: str
+        self,
+        compression_strategy: CompressionStrategy,
+        path: Optional[str],
+        expected_extension: str,
     ):
         release_name = "TEST"
         bucketfs_name = "bfsdefault"
         bucket_name = "default"
         flavor_path = exaslct_utils.get_test_flavor()
         result = self._run_deploy(
-            bucket_name, bucketfs_name, compression, flavor_path, path, release_name
+            bucket_name,
+            bucketfs_name,
+            compression_strategy,
+            flavor_path,
+            path,
+            release_name,
         )
 
         self.assertIn(str(flavor_path), result.keys())
@@ -129,11 +150,16 @@ class ApiDockerDeployTest(unittest.TestCase):
             path,
             release_name,
             expected_extension,
-            compression=compression,
+            compression_strategy=compression_strategy,
         )
 
     def _validate_upload_path(
-        self, bucket_name, deploy_result, expected_extension, path, release_name
+        self,
+        bucket_name: str,
+        deploy_result: DeployResult,
+        expected_extension: str,
+        path: Optional[str],
+        release_name: str,
     ) -> None:
         upload_path = "/".join(
             [
@@ -153,7 +179,12 @@ class ApiDockerDeployTest(unittest.TestCase):
         )
 
     def _validate_alter_session_cmd(
-        self, bucket_name, bucketfs_name, deploy_result, path, release_name
+        self,
+        bucket_name: str,
+        bucketfs_name: str,
+        deploy_result: DeployResult,
+        path: Optional[str],
+        release_name: str,
     ) -> None:
         complete_path_in_bucket = "/".join(
             [
@@ -182,7 +213,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         path: Optional[str],
         release_name: str,
         expected_extension: str,
-        compression: bool,
+        compression_strategy: CompressionStrategy,
     ):
         host = self.docker_environment.database_host
         port = self.docker_environment.ports.bucketfs
@@ -208,7 +239,9 @@ class ApiDockerDeployTest(unittest.TestCase):
             p.check_returncode()
 
             # "r:gz" / "r:" makes 'tarfile.open' to raise an exception if file is not in requested format
-            tar_mode = "r:gz" if compression else "r:"
+            tar_mode = (
+                "r:gz" if compression_strategy == CompressionStrategy.GZIP else "r:"
+            )
             with tarfile.open(name=file_name, mode=tar_mode) as tf:  # type: ignore
                 tf_members = tf.getmembers()
                 last_tf_member = tf_members[-1]
@@ -217,14 +250,24 @@ class ApiDockerDeployTest(unittest.TestCase):
 
     def test_docker_api_deploy(self):
         self._validate_deploy(
-            compression=True, path="test", expected_extension=".tar.gz"
+            compression_strategy=CompressionStrategy.GZIP,
+            path="test",
+            expected_extension=".tar.gz",
         )
 
     def test_docker_api_deploy_no_compression(self):
-        self._validate_deploy(compression=False, path="test", expected_extension=".tar")
+        self._validate_deploy(
+            compression_strategy=CompressionStrategy.NONE,
+            path="test",
+            expected_extension=".tar",
+        )
 
     def test_docker_api_deploy_without_path_in_bucket(self):
-        self._validate_deploy(compression=True, path=None, expected_extension=".tar.gz")
+        self._validate_deploy(
+            compression_strategy=CompressionStrategy.GZIP,
+            path=None,
+            expected_extension=".tar.gz",
+        )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
         release_name = "TEST"

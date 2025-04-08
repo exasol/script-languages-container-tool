@@ -21,7 +21,9 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 )
 
 from exasol.slc import api
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 
@@ -83,6 +85,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
+@add_options(export_options)
 def deploy(
     flavor_path: Tuple[str, ...],
     bucketfs_host: str,
@@ -117,6 +120,7 @@ def deploy(
     task_dependencies_dot_file: Optional[str],
     log_level: Optional[str],
     use_job_specific_log_file: bool,
+    compression_strategy: str,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -158,6 +162,7 @@ def deploy(
             use_job_specific_log_file=use_job_specific_log_file,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
+            compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
         for flavor_name, lang_def_builds_per_release in result.items():
             for release, deploy_result in lang_def_builds_per_release.items():

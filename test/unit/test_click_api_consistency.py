@@ -11,6 +11,8 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
 from exasol.slc import api
 from exasol.slc.tool import commands
 
+IGNORE_LIST = ["compression_strategy"]
+
 
 def test_api_arguments():
     """
@@ -26,6 +28,14 @@ def test_api_arguments():
         # We don't compare the annotation for the return type as this is allowed to be different between CLI and API
         if "return" in api_spec.annotations:
             del api_spec.annotations["return"]
+
+            for annotation_to_ignore in IGNORE_LIST:
+                if (
+                    annotation_to_ignore in api_spec.annotations
+                    and annotation_to_ignore in cli_spec.annotations
+                ):
+                    del api_spec.annotations[annotation_to_ignore]
+                    del cli_spec.annotations[annotation_to_ignore]
 
             assert api_spec.args == cli_spec.args
             assert api_spec.annotations == cli_spec.annotations
@@ -50,7 +60,10 @@ def test_api_default_values():
 
         for api_default_value, cli_default in zip(api_spec_defaults, cli_defaults):
             cli_param_name, cli_default_value = cli_default
-            if api_default_value != cli_default_value:
+            if (
+                api_default_value != cli_default_value
+                and cli_param_name not in IGNORE_LIST
+            ):
                 pytest.fail(
                     f"Default value for parameter '{cli_param_name}' "
                     f"for method '{api_call.__name__}' does not match. "

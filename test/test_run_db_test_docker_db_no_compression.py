@@ -58,7 +58,7 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
                 f"--external-exasol-db-user {self.docker_environment.db_username}",
                 f"--external-exasol-db-password {self.docker_environment.db_password}",
                 f"--external-exasol-bucketfs-write-password {self.docker_environment.bucketfs_password}",
-                f"--no-compression",
+                f"--compression-strategy none",
                 exaslct_utils.get_full_test_container_folder_parameter(),
             ]
         )

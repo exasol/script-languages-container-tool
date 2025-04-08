@@ -24,6 +24,10 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
 )
 
 from exasol.slc.internal.tasks.upload.upload_containers import UploadContainers
+from exasol.slc.models.compression_strategy import (
+    CompressionStrategy,
+    defaultCompressionStrategy,
+)
 
 
 @cli_function
@@ -61,7 +65,7 @@ def upload(
     use_job_specific_log_file: bool = True,
     ssl_cert_path: str = "",
     use_ssl_cert_validation: bool = True,
-    compression: bool = True,
+    compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
 ) -> luigi.LocalTarget:
     warnings.warn(
         "The 'upload' function is deprecated, use 'deploy' instead", DeprecationWarning
@@ -114,7 +118,7 @@ def upload(
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
-            compression=compression,
+            compression_strategy=compression_strategy,
         )
 
     return run_task(

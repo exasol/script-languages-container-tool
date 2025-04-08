@@ -26,7 +26,7 @@ class TestRunnerDBTestWithExportTask(
             ExportFlavorContainer,
             release_goals=[self.release_goal],
             flavor_path=self.flavor_path,
-            compression=self.compression,
+            compression_strategy=self.compression_strategy,
         )
         self._export_infos_future = self.register_dependency(export_container_task)
 

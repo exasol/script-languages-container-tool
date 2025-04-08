@@ -36,6 +36,7 @@ from exasol.slc.internal.tasks.export.export_container_parameters import (
     CHECKSUM_ALGORITHM,
     ExportContainerParameter,
 )
+from exasol.slc.models.compression_strategy import CompressionStrategy
 
 
 class CheckCacheFileTask(DependencyLoggerBaseTask):
@@ -178,7 +179,7 @@ class ExportContainerToCacheTask(
             tmp_release_file = release_file
         else:
             raise ValueError(
-                f"Unexpected release file: '{release_file}'. Expected suffix 'tar.gz' or 'tar'."
+                f"Unexpected release file: '{release_file}'. Expected suffix: 'tar.gz' or 'tar'."
             )
 
         command = (
@@ -201,12 +202,18 @@ class ExportContainerToCacheTask(
             log_path.joinpath("pack_release_file.log"),
         )
         shutil.rmtree(extract_dir)
-        if self.compression:
+        if self.compression_strategy == CompressionStrategy.GZIP:
             command = f"""gzip {tmp_release_file}"""
             self.run_command(
                 command,
                 f"Creating '{release_file}'",
                 log_path.joinpath("pack_release_file.log"),
+            )
+        elif self.compression_strategy == CompressionStrategy.NONE:
+            pass
+        else:
+            raise ValueError(
+                f"Unexpected compression_strategy: {self.compression_strategy}"
             )
 
     @staticmethod

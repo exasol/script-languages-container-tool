@@ -19,6 +19,7 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 )
 
 from exasol.slc import api
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
@@ -73,7 +74,7 @@ def export(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     cleanup_docker_images: bool,
-    compression: bool,
+    compression_strategy: str,
 ):
     """
     This command exports the whole script-language-container package of the flavor,
@@ -107,7 +108,7 @@ def export(
             log_level=log_level,
             use_job_specific_log_file=use_job_specific_log_file,
             cleanup_docker_images=cleanup_docker_images,
-            compression=compression,
+            compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
         with open(export_result.command_line_output_path) as f:
             print(f.read())
