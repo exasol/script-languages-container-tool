@@ -2,6 +2,7 @@
 
 ## Features
  - #273: Added option "use-existing-container" to run-db-test task
+ - #277: Added option to export the container to a uncompressed tar
 
 ## Refactorings
  - #275: Updated to poetry 2.1.2
