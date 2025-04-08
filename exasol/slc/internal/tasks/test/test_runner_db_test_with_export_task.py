@@ -1,5 +1,8 @@
 from typing import Dict
 
+from exasol.slc.internal.tasks.export.export_container_parameters import (
+    ExportContainerOptionsParameter,
+)
 from exasol.slc.internal.tasks.export.export_containers import ExportFlavorContainer
 from exasol.slc.internal.tasks.test.container_file_under_test_info import (
     ContainerFileUnderTestInfo,
@@ -10,7 +13,9 @@ from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
 from exasol.slc.models.export_info import ExportInfo
 
 
-class TestRunnerDBTestWithExportTask(TestRunnerDBTestBaseTask):
+class TestRunnerDBTestWithExportTask(
+    TestRunnerDBTestBaseTask, ExportContainerOptionsParameter
+):
 
     def register_required(self) -> None:
         self.register_export_container()
@@ -21,6 +26,7 @@ class TestRunnerDBTestWithExportTask(TestRunnerDBTestBaseTask):
             ExportFlavorContainer,
             release_goals=[self.release_goal],
             flavor_path=self.flavor_path,
+            compression_strategy=self.compression_strategy,
         )
         self._export_infos_future = self.register_dependency(export_container_task)
 

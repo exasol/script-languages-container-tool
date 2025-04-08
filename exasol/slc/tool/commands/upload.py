@@ -19,7 +19,9 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 )
 
 from exasol.slc import api
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
+from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 
@@ -44,6 +46,7 @@ from exasol.slc.tool.options.goal_options import release_options
 @add_options(luigi_logging_options)
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
+@add_options(export_options)
 def upload(
     flavor_path: Tuple[str, ...],
     database_host: str,
@@ -78,6 +81,7 @@ def upload(
     use_job_specific_log_file: bool,
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
+    compression_strategy: str,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -120,6 +124,7 @@ def upload(
             use_job_specific_log_file=use_job_specific_log_file,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
+            compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
         with result.open("r") as f:
             print(f.read())

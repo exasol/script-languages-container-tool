@@ -63,6 +63,41 @@ class DockerUploadTest(unittest.TestCase):
             f"{self.path_in_bucket}/test-flavor-release-{self.release_name}.tar.gz"
         )
 
+    def test_docker_upload_with_path_in_bucket_without_compression(self):
+        self.path_in_bucket = "test"
+        self.release_name = "TEST"
+        self.bucketfs_name = "bfsdefault"
+        self.bucket_name = "default"
+        arguments = " ".join(
+            [
+                f"--database-host {self.docker_environment.database_host}",
+                f"--bucketfs-port {self.docker_environment.ports.bucketfs}",
+                f"--bucketfs-username {self.docker_environment.bucketfs_username}",
+                f"--bucketfs-password {self.docker_environment.bucketfs_password}",
+                f"--bucketfs-name {self.bucketfs_name}",
+                f"--bucket-name {self.bucket_name}",
+                f"--path-in-bucket {self.path_in_bucket}",
+                f"--no-bucketfs-https",
+                f"--release-name {self.release_name}",
+                f"--compression-strategy none",
+            ]
+        )
+        command = f"{self.test_environment.executable} upload {arguments}"
+
+        completed_process = self.test_environment.run_command(
+            command, track_task_dependencies=True, capture_output=True
+        )
+        self.assertIn(
+            f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
+            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}/"
+            f"exaudf/exaudfclient_py3",
+            completed_process.stdout.decode("UTF-8"),
+        )
+        self.validate_file_on_bucket_fs(
+            f"{self.path_in_bucket}/test-flavor-release-{self.release_name}.tar"
+        )
+
     def test_docker_upload_without_path_in_bucket(self):
         self.release_name = "TEST"
         self.bucketfs_name = "bfsdefault"

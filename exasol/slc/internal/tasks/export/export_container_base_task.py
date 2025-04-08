@@ -26,6 +26,7 @@ from exasol.slc.internal.tasks.export.export_container_to_file_task import (
 from exasol.slc.internal.tasks.export.remove_cached_export_file_task import (
     RemoveCachedExportTask,
 )
+from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.models.export_info import ExportInfo
 
 
@@ -112,6 +113,16 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         )
         return export_info
 
+    def _get_export_file_extension(self) -> str:
+        if self.compression_strategy == CompressionStrategy.GZIP:
+            return ".tar.gz"
+        elif self.compression_strategy == CompressionStrategy.NONE:
+            return ".tar"
+        else:
+            raise ValueError(
+                f"Unsupported compression_strategy: {self.compression_strategy}"
+            )
+
     def _get_cache_file_path(
         self,
         image_info_of_release_image: ImageInfo,
@@ -120,5 +131,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         release_image_name = image_info_of_release_image.get_target_complete_name()
         export_path = Path(export_directory_future.get_output()).absolute()
         release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.hash}"""
-        cache_file = Path(export_path, release_complete_name + ".tar.gz").absolute()
+        cache_file = Path(
+            export_path, release_complete_name + self._get_export_file_extension()
+        ).absolute()
         return str(cache_file), release_complete_name, release_image_name

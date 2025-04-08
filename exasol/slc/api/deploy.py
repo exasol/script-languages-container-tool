@@ -23,6 +23,10 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
 
 from exasol.slc.internal.tasks.upload.deploy_containers import DeployContainers
 from exasol.slc.internal.tasks.upload.deploy_info import toDeployResult
+from exasol.slc.models.compression_strategy import (
+    CompressionStrategy,
+    defaultCompressionStrategy,
+)
 from exasol.slc.models.deploy_result import DeployResult
 
 
@@ -61,6 +65,7 @@ def deploy(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
+    compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
 ) -> Dict[str, Dict[str, DeployResult]]:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -118,6 +123,7 @@ def deploy(
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
+            compression_strategy=compression_strategy,
         )
 
     deploy_infos = run_task(

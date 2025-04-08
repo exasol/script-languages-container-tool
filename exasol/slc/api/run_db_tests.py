@@ -35,6 +35,10 @@ from exasol.slc.internal.tasks.test.test_container import TestContainer
 from exasol.slc.internal.tasks.test.test_container_content import (
     build_test_container_content,
 )
+from exasol.slc.models.compression_strategy import (
+    CompressionStrategy,
+    defaultCompressionStrategy,
+)
 from exasol.slc.models.test_result import AllTestsResult
 
 
@@ -97,6 +101,7 @@ def run_db_test(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
+    compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
@@ -146,6 +151,8 @@ def run_db_test(
             raise api_errors.MissingArgumentError("external_exasol_db_port")
         if external_exasol_bucketfs_port is None:
             raise api_errors.MissingArgumentError("external_exasol_bucketfs_port")
+        if external_exasol_ssh_port is None:
+            raise api_errors.MissingArgumentError("external_exasol_ssh_port")
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(
@@ -190,6 +197,7 @@ def run_db_test(
             create_certificates=create_certificates,
             additional_db_parameter=additional_db_parameter,
             test_container_content=build_test_container_content(test_container_folder),
+            compression_strategy=compression_strategy,
         )
 
     return run_task(

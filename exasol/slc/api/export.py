@@ -21,6 +21,10 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
 )
 
 from exasol.slc.internal.tasks.export.export_containers import ExportContainers
+from exasol.slc.models.compression_strategy import (
+    CompressionStrategy,
+    defaultCompressionStrategy,
+)
 from exasol.slc.models.export_container_result import ExportContainerResult
 
 
@@ -51,6 +55,7 @@ def export(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     cleanup_docker_images: bool = False,
+    compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
 ) -> ExportContainerResult:
     """
     This command exports the whole script-language-container package of the flavor,
@@ -93,6 +98,7 @@ def export(
             export_path=export_path,
             release_name=release_name,
             cleanup_docker_images=cleanup_docker_images,
+            compression_strategy=compression_strategy,
         )
 
     return run_task(

@@ -20,6 +20,7 @@ from exasol.slc.internal.tasks.export.export_container_parameters import (
 from exasol.slc.internal.tasks.export.export_container_to_cache_task import (
     ExportContainerToCacheTask,
 )
+from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 
 
 class ExportContainerToFileInfo(Info):
@@ -66,9 +67,8 @@ class ExportContainerToFileTask(
                 suffix = f"""_{self.release_name}"""
             else:
                 suffix = ""
-            file_name = (
-                f"""{self.get_flavor_name()}_{self.release_goal}{suffix}.tar.gz"""
-            )
+            file_extension = detect_container_file_extension(cache_file.name)
+            file_name = f"""{self.get_flavor_name()}_{self.release_goal}{suffix}{file_extension}"""
             output_file = Path(str(self.export_path), file_name)
             output_checksum_file = Path(
                 str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM

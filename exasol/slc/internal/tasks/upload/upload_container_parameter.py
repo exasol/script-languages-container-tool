@@ -2,8 +2,12 @@ from typing import Optional
 
 import luigi
 
+from exasol.slc.internal.tasks.export.export_container_parameters import (
+    ExportContainerOptionsParameter,
+)
 
-class UploadContainerParameter:
+
+class UploadContainerParameter(ExportContainerOptionsParameter):
     database_host: str = luigi.Parameter()  # type: ignore
     bucketfs_port: int = luigi.IntParameter()  # type: ignore
     bucketfs_username: str = luigi.Parameter(significant=False)  # type: ignore
