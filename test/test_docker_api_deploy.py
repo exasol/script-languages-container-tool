@@ -17,6 +17,9 @@ from exasol.slc.models.deploy_result import DeployResult
 
 
 class ApiDockerDeployTest(unittest.TestCase):
+    #
+    # Test deploy API method with different options.
+    #
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
@@ -98,49 +101,18 @@ class ApiDockerDeployTest(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertIn(str(flavor_path), result.keys())
         self.assertEqual(len(result[str(flavor_path)]), 1)
+
         deploy_result = result[str(flavor_path)]["release"]
-
-        complete_path_in_bucket = "/".join(
-            filter(
-                None,
-                [
-                    bucketfs_name,
-                    bucket_name,
-                    path,
-                    self._expected_file(release_name),
-                ],
-            )
-        )
-        expected_alter_session_cmd = (
-            f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{complete_path_in_bucket}?lang=python#buckets/"
-            f"{complete_path_in_bucket}/exaudf/exaudfclient_py3';"
-        )
-
-        result_alter_session_cmd = (
-            deploy_result.language_definition_builder.generate_alter_session()
-        )
-
-        self.assertEqual(result_alter_session_cmd, expected_alter_session_cmd)
-
         self.assertIn(
             f".build_output/cache/exports/test-flavor-release-",
             deploy_result.release_path,
         )
 
-        upload_path = "/".join(
-            filter(
-                None,
-                [
-                    bucket_name,
-                    path,
-                    self._expected_file(release_name, expected_extension),
-                ],
-            )
+        self._validate_alter_session_cmd(
+            bucket_name, bucketfs_name, deploy_result, path, release_name
         )
-        self.assertEqual(
-            deploy_result.human_readable_upload_location,
-            f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
-            f"{upload_path}",
+        self._validate_upload_path(
+            bucket_name, deploy_result, expected_extension, path, release_name
         )
 
         expected_path_in_bucket = self._build_bfs_path(
@@ -160,6 +132,50 @@ class ApiDockerDeployTest(unittest.TestCase):
             compression=compression,
         )
 
+    def _validate_upload_path(
+        self, bucket_name, deploy_result, expected_extension, path, release_name
+    ) -> None:
+        upload_path = "/".join(
+            [
+                part
+                for part in [
+                    bucket_name,
+                    path,
+                    self._expected_file(release_name, expected_extension),
+                ]
+                if part is not None
+            ]
+        )
+        self.assertEqual(
+            deploy_result.human_readable_upload_location,
+            f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}/"
+            f"{upload_path}",
+        )
+
+    def _validate_alter_session_cmd(
+        self, bucket_name, bucketfs_name, deploy_result, path, release_name
+    ) -> None:
+        complete_path_in_bucket = "/".join(
+            [
+                part
+                for part in [
+                    bucketfs_name,
+                    bucket_name,
+                    path,
+                    self._expected_file(release_name),
+                ]
+                if part is not None
+            ]
+        )
+        expected_alter_session_cmd = (
+            f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{complete_path_in_bucket}?lang=python#buckets/"
+            f"{complete_path_in_bucket}/exaudf/exaudfclient_py3';"
+        )
+        result_alter_session_cmd = (
+            deploy_result.language_definition_builder.generate_alter_session()
+        )
+        self.assertEqual(result_alter_session_cmd, expected_alter_session_cmd)
+
     def validate_file_on_bucket_fs(
         self,
         bucket_name: str,
@@ -173,7 +189,9 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucketfs_username = self.docker_environment.bucketfs_username
         bucketfs_password = self.docker_environment.bucketfs_password
         expected_file = self._expected_file(release_name, expected_extension)
-        path_in_bucket = "/".join(filter(None, [bucket_name, path, expected_file]))
+        path_in_bucket = "/".join(
+            [part for part in [bucket_name, path, expected_file] if part is not None]
+        )
         with TemporaryDirectory() as tmpdir:
             url = f"http://{bucketfs_username}:{bucketfs_password}@{host}:{port}/{path_in_bucket}"
             file_name = f"{tmpdir}/{expected_file}"
