@@ -1,30 +1,32 @@
-[tool.poetry]
+[project]
 name = "exasol-script-languages-container-tool"
-version = "3.0.0"
+version = "3.1.0"
 description = "Script Languages Container Tool"
+keywords = ['exasol', 'udf', 'script-languages']
 
+readme = 'README.md'  # Markdown files are supported
 license = "MIT"
 
 authors = [
-    "Torsten Kilias <torsten.kilias@exasol.com>"
+    { name = "Torsten Kilias", email = "Torsten Kilias <torsten.kilias@exasol.com>" },
+    { name = "Thomas Uebensee", email = "Thomas Uebensee <ext.thomas.uebensee@exasol.com>"}
 ]
 
+[tool.poetry]
 packages = [
     {include = "README.md"},
     {include = "LICENSE"},
     {include = "exasol"},
 ]
 
-readme = 'README.md'  # Markdown files are supported
+
+[project.urls]
 repository = "https://github.com/exasol/script-languages-container-tool"
 homepage = "https://github.com/exasol/script-languages-container-tool"
-keywords = ['exasol', 'udf', 'script-languages']
+documentation = "https://github.com/exasol/script-languages-container-tool"
+source = "https://github.com/exasol/script-languages-container-tool"
+issues = "https://github.com/exasol/script-languages-container-tool/issues"
 
-[tool.poetry.urls]
-"Homepage" = "https://github.com/exasol/script-languages-container-tool"
-"Documentation" = "https://github.com/exasol/script-languages-container-tool"
-"Source" = "https://github.com/exasol/script-languages-container-tool"
-"Issues" = "https://github.com/exasol/script-languages-container-tool/issues"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4"
@@ -37,7 +39,7 @@ pydantic="^2.10.2"
 jsonschema="^4.23.0"
 
 [build-system]
-requires = ["poetry_core>=1.0.0"]
+requires = ["poetry_core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
