@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 RUN mkdir /conf /buckets
 
 COPY --from={{language_deps}} /usr /usr
@@ -41,4 +41,3 @@ RUN true # workaround for https://github.com/moby/moby/issues/37965
 
 COPY --from={{build_run}} /build_info /build_info
 RUN true # workaround for https://github.com/moby/moby/issues/37965
-
