@@ -143,6 +143,11 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
     help="""Use existing exported container (.tar.gz or .tar). The given file must be compatible with the given flavor. """,
 )
+@click.option(
+    "--gpu-enabled/--no-gpu-enabled",
+    default=False,
+    help="""Enables GPU support in the spawned test DB container.""",
+)
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
@@ -209,6 +214,7 @@ def run_db_test(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     compression_strategy: str,
+    gpu_enabled: bool,
 ):
     """
     This command runs the integration tests in local docker-db.
@@ -279,6 +285,7 @@ def run_db_test(
                 use_job_specific_log_file=use_job_specific_log_file,
                 compression_strategy=CompressionStrategy[compression_strategy.upper()],
                 docker_environment_variable=docker_environment_variable,
+                gpu_enabled=gpu_enabled,
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:
