@@ -18,7 +18,7 @@ class RunDBTestDockerCredentials(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     @unittest.skipIf(
-        os.getenv("DOCKER_USER") is not None and os.getenv("DOCKER_PASSWD") is not None,
+        os.getenv("DOCKER_USER") is None or os.getenv("DOCKER_PASSWD") is None,
         "Docker credentials not configured",
     )
     def test_docker_credentials_injection_into_test_container(self):
