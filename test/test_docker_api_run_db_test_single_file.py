@@ -14,7 +14,7 @@ from exasol.slc import api
 from exasol.slc.models.compression_strategy import CompressionStrategy
 
 
-class ApiDockerRunDbTestNoCompression(unittest.TestCase):
+class ApiDockerRunDbTestSingleFile(unittest.TestCase):
     #
     # Spawn a Docker db and run test for single file.
     #
