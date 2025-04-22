@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 
 class RunDBTestResult:
@@ -13,7 +13,9 @@ class RunDBTestResult:
 
 
 class RunDBTestCollectionResult:
-    def __init__(self, language: str, test_results: List[RunDBTestResult]) -> None:
+    def __init__(
+        self, language: Optional[str], test_results: List[RunDBTestResult]
+    ) -> None:
         self.language = language
         self.test_results = test_results
         self.tests_are_ok = all(test_result.is_ok for test_result in test_results)

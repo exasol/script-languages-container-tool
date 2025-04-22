@@ -1,5 +1,5 @@
 # pylint: disable=not-an-iterable
-from typing import Any, Generator, Tuple
+from typing import Any, Generator, Optional, Tuple
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -37,16 +37,15 @@ class RunDBTestFiles(
     def run_task(self) -> Generator[BaseTask, None, None]:
         results = []
         for language in self.languages:
-            if language is not None:
-                results_for_language = []
-                for test_file in self.test_files:
-                    test_result = yield from self.run_test(language, test_file)
-                    results_for_language.append(test_result)
-                results.append(
-                    RunDBTestCollectionResult(
-                        language=language, test_results=results_for_language
-                    )
+            results_for_language = []
+            for test_file in self.test_files:
+                test_result = yield from self.run_test(language, test_file)
+                results_for_language.append(test_result)
+            results.append(
+                RunDBTestCollectionResult(
+                    language=language, test_results=results_for_language
                 )
+            )
         test_results = RunDBTestFilesResult(test_results=results)
         JsonPickleTarget(self.get_output_path().joinpath("test_results.json")).write(
             test_results, 4
@@ -54,7 +53,7 @@ class RunDBTestFiles(
         self.return_object(test_results)
 
     def run_test(
-        self, language: str, test_file: str
+        self, language: Optional[str], test_file: str
     ) -> Generator[RunDBTest, Any, RunDBTestResult]:
         task = self.create_child_task_with_common_params(
             RunDBTest,
