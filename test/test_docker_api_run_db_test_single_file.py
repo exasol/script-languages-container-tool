@@ -23,7 +23,6 @@ class ApiDockerRunDbTestSingleFile(unittest.TestCase):
         self.test_environment = exaslct_utils.ExaslctApiTestEnvironmentWithCleanup(
             self, True
         )
-        self.export_path = self.test_environment.temp_dir + "/export_dir"
         self.test_environment.clean_all_images()
 
     def tearDown(self):
