@@ -24,7 +24,7 @@ jobs:
         run: echo "Slow tests approved"
 
   prep-testbed:
-    needs: [slow-tests-approval]
+    needs: slow-tests-approval
     runs-on: ubuntu-24.04
 
     steps:
