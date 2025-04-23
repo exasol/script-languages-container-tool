@@ -2,7 +2,11 @@ name: Slow-Checks
 
 on:
   workflow_call:
-
+    secrets:
+      DOCKER_USERNAME:
+          required: true
+      DOCKER_PASSWORD:
+          required: true
 jobs:
 
   slow-tests-approval:
@@ -44,7 +48,6 @@ jobs:
 
   test-all:
     needs: prep-testbed
-    environment: ci_test
     strategy:
       fail-fast: false
       matrix:
@@ -68,5 +71,5 @@ jobs:
       - name: Run test ${{ matrix.test-path.name }}
         run: poetry run -- python ${{ matrix.test-path.path }}
         env: # Set the secret as an input
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}

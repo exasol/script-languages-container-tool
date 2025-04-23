@@ -2,7 +2,11 @@ name: Merge-Gate
 
 on:
   workflow_call:
-
+    secrets:
+      DOCKER_USERNAME:
+          required: true
+      DOCKER_PASSWORD:
+          required: true
 jobs:
 
   fast-checks:
@@ -12,6 +16,7 @@ jobs:
   slow-checks:
     name: Slow
     uses: ./.github/workflows/slow-checks.yml
+    secrets: inherit
 
   # This job ensures inputs have been executed successfully.
   approve-merge:
