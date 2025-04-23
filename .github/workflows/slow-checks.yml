@@ -29,9 +29,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
+        with:
+          poetry-version: '2.1.2'
+
       - id: set-matrix
         run: |
-          ALL_TESTS=`bash ./scripts/test/get_all_tests.sh`
+          ALL_TESTS=`poetry run -- nox -s integration-test-list`
           echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
