@@ -72,6 +72,8 @@ jobs:
 
   test-gpu:
     environment: ci_test
+    env:
+      PYTHON_VERSION: "3.10"
     strategy:
       fail-fast: false
       matrix:
@@ -85,11 +87,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
+        #Cannot use exasol/python-toolbox/.github/actions/python-environment here
+        #because pipx is not installed on int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+      - name: Setup Python (${{ env.PYTHON_VERSION }})
+        uses: actions/setup-python@v5
         with:
-          python-version: '${{ matrix.python_version }}'
-          poetry-version: '2.1.2'
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install pipx and poetry
+        run: |
+          pip install pipx
+          pipx install poetry=="2.1.2"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Setup Poetry
+        run: |
+          poetry env use python3
+          poetry install
 
       - name: Allow unprivileged user namespaces
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
