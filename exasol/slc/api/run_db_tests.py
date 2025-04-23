@@ -159,7 +159,7 @@ def run_db_test(
     docker_runtime = None
     if gpu_enabled:
         additional_db_parameter += ("-enableAcceleratorDeviceDetection=1",)
-        # docker_runtime = "nvidia"
+        docker_runtime = "nvidia"
         docker_environment_variable += ("NVIDIA_VISIBLE_DEVICES=all",)
 
     def root_task_generator() -> DependencyLoggerBaseTask:
