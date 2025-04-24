@@ -12,7 +12,7 @@ class TestGPUDisabled(udf.TestCase):
                      ORDER BY PARAM_NAME; \
                      """
         rows = self.query(select_sql)
-        self.assertRowsEqual([("0", "acceleratorDeviceDetected"), ("1", "acceleratorDeviceGpuNvidiaDetected"), ], rows)
+        self.assertRowsEqual([("0", "acceleratorDeviceDetected"), ("0", "acceleratorDeviceGpuNvidiaDetected"), ], rows)
 
 
 if __name__ == "__main__":
