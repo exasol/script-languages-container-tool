@@ -13,6 +13,9 @@ authors = [
 ]
 
 [tool.poetry]
+
+requires-poetry = ">=2.1.0"
+
 packages = [
     {include = "README.md"},
     {include = "LICENSE"},
