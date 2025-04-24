@@ -143,17 +143,17 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
     help="""Use existing exported container (.tar.gz or .tar). The given file must be compatible with the given flavor. """,
 )
-@click.option(
-    "--gpu-enabled/--no-gpu-enabled",
-    default=False,
-    help="""Enables GPU support in the spawned test DB container.""",
-)
 @add_options(test_container_options)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
 @add_options(luigi_logging_options)
 @add_options(export_options)
+@click.option(
+    "--gpu-enabled/--no-gpu-enabled",
+    default=False,
+    help="""Enables GPU support in the spawned test DB container.""",
+)
 def run_db_test(
     flavor_path: Tuple[str, ...],
     release_goal: Tuple[str, ...],
