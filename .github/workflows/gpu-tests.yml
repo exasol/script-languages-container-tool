@@ -1,0 +1,60 @@
+name: GPU Tests
+
+on:
+  workflow_call:
+
+jobs:
+
+  prep-testbed-gpu:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
+
+      - id: set-matrix
+        run: |
+          ALL_TESTS=`poetry run -- nox -s integration-test-list -- --test-set gpu-only`
+          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  test-gpu:
+    needs: prep-testbed-gpu
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version:
+          - "3.10"
+        test-path: ${{fromJson(needs.prep-testbed-gpu.outputs.matrix)}}
+    runs-on:
+      labels: int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+    name: GPU Test
+    steps:
+      - uses: actions/checkout@v4
+
+        #Cannot use exasol/python-toolbox/.github/actions/python-environment here
+        #because pipx is not installed on int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+      - name: Setup Python ('${{ matrix.python_version }}')
+        uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python_version }}'
+
+      - name: Install pipx and poetry
+        run: |
+          pip install pipx
+          pipx install poetry=="2.1.2"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Setup Poetry
+        run: |
+          poetry env use python3
+          poetry install
+
+      - name: Allow unprivileged user namespaces
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Run ${{ matrix.test-path.name }}
+        run: ./scripts/test/run_test.sh "${{ matrix.test-path.path }}"
