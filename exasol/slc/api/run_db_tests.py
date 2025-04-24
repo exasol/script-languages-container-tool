@@ -58,6 +58,7 @@ def run_db_test(
     db_os_access: str = "DOCKER_EXEC",
     create_certificates: bool = False,
     additional_db_parameter: Tuple[str, ...] = tuple(),
+    docker_environment_variable: Tuple[str, ...] = tuple(),
     external_exasol_db_host: Optional[str] = None,
     external_exasol_db_port: int = 8563,
     external_exasol_bucketfs_port: int = 2580,
@@ -198,6 +199,7 @@ def run_db_test(
             additional_db_parameter=additional_db_parameter,
             test_container_content=build_test_container_content(test_container_folder),
             compression_strategy=compression_strategy,
+            docker_environment_variables=docker_environment_variable,
         )
 
     return run_task(

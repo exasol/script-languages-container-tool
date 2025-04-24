@@ -164,6 +164,7 @@ def run_db_test(
     db_os_access: str,
     create_certificates: bool,
     additional_db_parameter: Tuple[str, ...],
+    docker_environment_variable: Tuple[str, ...],
     external_exasol_db_host: Optional[str],
     external_exasol_db_port: int,
     external_exasol_bucketfs_port: int,
@@ -277,6 +278,7 @@ def run_db_test(
                 log_level=log_level,
                 use_job_specific_log_file=use_job_specific_log_file,
                 compression_strategy=CompressionStrategy[compression_strategy.upper()],
+                docker_environment_variable=docker_environment_variable,
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:

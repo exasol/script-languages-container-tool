@@ -1,0 +1,72 @@
+name: Slow-Checks
+
+on:
+  workflow_call:
+    secrets:
+      DOCKER_USERNAME:
+          required: true
+      DOCKER_PASSWORD:
+          required: true
+jobs:
+
+  slow-tests-approval:
+    name: Approve Slow Tests
+    runs-on: ubuntu-24.04
+
+    # Even though the environment "manual-approval" will be created automatically,
+    # it still needs to be configured to require interactive review.
+    # See project settings on GitHub (Settings / Environments / manual-approval).
+    environment: manual-approval
+
+    # Replace the steps below with the required actions
+    # and/or add additional jobs if required
+    # Note:
+    #   If you add additional jobs, make sure they are added as a requirement
+    #   to the approve-merge job's input requirements (needs).
+    steps:
+      - name: Tests
+        run: echo "Slow tests approved"
+
+  prep-testbed:
+    needs: slow-tests-approval
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
+
+      - id: set-matrix
+        run: |
+          ALL_TESTS=`poetry run -- nox -s integration-test-list`
+          echo "matrix=$ALL_TESTS" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  test-all:
+    needs: prep-testbed
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version:
+          - "3.10"
+        test-path: ${{fromJson(needs.prep-testbed.outputs.matrix)}}
+    runs-on: ubuntu-24.04
+    name: ${{ matrix.test-path.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.1
+        with:
+          python-version: '${{ matrix.python_version }}'
+
+      - name: Allow unprivileged user namespaces
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Run test ${{ matrix.test-path.name }}
+        run: poetry run -- python ${{ matrix.test-path.path }}
+        env: # Set the secret as an input
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
