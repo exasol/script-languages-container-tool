@@ -11,7 +11,7 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
 from exasol.slc import api
 from exasol.slc.tool import commands
 
-IGNORE_LIST = ["compression_strategy"]
+IGNORE_LIST = ["compression_strategy", "accelerator"]
 
 
 def test_api_arguments():

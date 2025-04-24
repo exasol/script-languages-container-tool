@@ -35,6 +35,7 @@ from exasol.slc.internal.tasks.test.test_container import TestContainer
 from exasol.slc.internal.tasks.test.test_container_content import (
     build_test_container_content,
 )
+from exasol.slc.models.accelerator import Accelerator
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
     defaultCompressionStrategy,
@@ -103,7 +104,7 @@ def run_db_test(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
-    gpu_enabled: bool = False,
+    accelerator: Accelerator = Accelerator.NONE,
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
@@ -157,7 +158,7 @@ def run_db_test(
             raise api_errors.MissingArgumentError("external_exasol_ssh_port")
 
     docker_runtime = None
-    if gpu_enabled:
+    if accelerator == Accelerator.NVIDA:
         additional_db_parameter += ("-enableAcceleratorDeviceDetection=1",)
         docker_runtime = "nvidia"
         docker_environment_variable += ("NVIDIA_VISIBLE_DEVICES=all",)
