@@ -57,4 +57,4 @@ jobs:
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Run ${{ matrix.test-path.name }}
-        run: ./scripts/test/run_test.sh "${{ matrix.test-path.path }}"
+        run: poetry run -- python "${{ matrix.test-path.path }}"
