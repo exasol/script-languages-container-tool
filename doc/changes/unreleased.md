@@ -6,3 +6,7 @@
 
 ## Refactorings
  - #252: Update Github workflows from Exasol toolbox
+
+## Features
+
+ - #283: Added GPU Support for `run-db-test`
