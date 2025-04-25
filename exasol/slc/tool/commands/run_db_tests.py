@@ -25,7 +25,11 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.api import api_errors
-from exasol.slc.models.accelerator import Accelerator, defaultAccelerator
+from exasol.slc.models.accelerator import (
+    Accelerator,
+    acceleratorValues,
+    defaultAccelerator,
+)
 from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.export_options import export_options
@@ -152,10 +156,10 @@ from exasol.slc.tool.options.test_container_options import test_container_option
 @add_options(export_options)
 @click.option(
     "--accelerator",
-    type=click.Choice([a.value for a in Accelerator]),
+    type=click.Choice(acceleratorValues()),
     show_default=True,
     default=defaultAccelerator().value,
-    help=f"""Accelerator to be enabled for tests in docker-db. Possible values: {[a.value for a in Accelerator]}""",
+    help=f"""Accelerator to be enabled for tests in docker-db. Possible values: {acceleratorValues()}""",
 )
 def run_db_test(
     flavor_path: Tuple[str, ...],

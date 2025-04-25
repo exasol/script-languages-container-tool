@@ -35,7 +35,7 @@ from exasol.slc.internal.tasks.test.test_container import TestContainer
 from exasol.slc.internal.tasks.test.test_container_content import (
     build_test_container_content,
 )
-from exasol.slc.models.accelerator import Accelerator
+from exasol.slc.models.accelerator import Accelerator, defaultAccelerator
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
     defaultCompressionStrategy,
@@ -104,7 +104,7 @@ def run_db_test(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
-    accelerator: Accelerator = Accelerator.NONE,
+    accelerator: Accelerator = defaultAccelerator(),
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.

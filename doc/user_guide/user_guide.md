@@ -154,9 +154,9 @@ With this additional option, `exaslct` won't build and export the container agai
 1. `exaslct` won't check if the given container file is compatible with the given flavor path. If this is not the case, the tests probably will fail.
 2. As `exaslct` cannot check if the file was changed during different executions of `run-db-test` with options `--reuse-uploaded-container` or `--reuse-test-environment`, `exaslct` will always skip the upload if those options are set and the file already exists in BucketFS.
 
-### Testing with an Accelerator
+### Testing with an accelerator
 
-If your test environment fulfills the requirements, you can run tests with an accelerator. Currently only `nvidia` is supported:
+If your test environment fulfills the requirements, you can run tests with an accelerator. Currently, only `nvidia` is supported:
 ```bash
 exaslct run-db-test --flavor-path=flavors/<flavor-name> --accelerator nvidia
 ```
