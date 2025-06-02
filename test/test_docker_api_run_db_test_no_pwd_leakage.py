@@ -45,7 +45,7 @@ class ApiDockerRunDbTestNoPasswordLeakage(unittest.TestCase):
                     print(f"Testing {fullpath}")
                     with open(fullpath) as f:
                         for line in f:
-                            self.assertFalse(
+                            self.assertTrue(
                                 docker_password not in line,
                                 f"Found docker password in file {fullpath}",
                             )
