@@ -30,12 +30,12 @@ from exasol.slc.models.export_container_result import ExportContainerResult
 
 @cli_function
 def export(
-    flavor_path: Tuple[str, ...],
-    release_goal: Tuple[str, ...] = ("release",),
+    flavor_path: tuple[str, ...],
+    release_goal: tuple[str, ...] = ("release",),
     export_path: Optional[str] = None,
     release_name: Optional[str] = None,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",

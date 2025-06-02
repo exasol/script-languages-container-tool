@@ -1,5 +1,6 @@
 # pylint: disable=not-an-iterable
-from typing import Dict, Generator, Optional, Set, Tuple
+from collections.abc import Generator
+from typing import Dict, Optional, Set, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
@@ -20,7 +21,7 @@ from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
 
 
 class DockerBuildParameter(Config):
-    goals: Tuple[str, ...] = luigi.ListParameter()  # type: ignore
+    goals: tuple[str, ...] = luigi.ListParameter()  # type: ignore
     shortcut_build: bool = luigi.BoolParameter(True)  # type: ignore
 
 
@@ -35,7 +36,7 @@ class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
         self._images_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        image_infos: Dict[str, Dict[str, ImageInfo]] = self.get_values_from_futures(
+        image_infos: dict[str, dict[str, ImageInfo]] = self.get_values_from_futures(
             self._images_futures
         )
         assert isinstance(image_infos, dict)
@@ -50,13 +51,13 @@ class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
 
 class DockerFlavorBuild(DockerFlavorBuildBase, DockerBuildParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
         build_tasks = self.create_build_tasks(self.shortcut_build)
         image_info_futures = yield from self.run_dependencies(build_tasks)
-        image_infos: Dict[str, ImageInfo] = self.get_values_from_futures(
+        image_infos: dict[str, ImageInfo] = self.get_values_from_futures(
             image_info_futures
         )
         assert isinstance(image_infos, dict)

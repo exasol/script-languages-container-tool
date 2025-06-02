@@ -13,7 +13,7 @@ class ScanResult(Info):
 
 class AllScanResult(Info):
     def __init__(
-        self, scan_results_per_flavor: Dict[str, ScanResult], report_path: Path
+        self, scan_results_per_flavor: dict[str, ScanResult], report_path: Path
     ) -> None:
         self.scan_results_per_flavor = scan_results_per_flavor
         self.scans_are_ok = all(

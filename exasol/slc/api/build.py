@@ -28,10 +28,10 @@ from exasol.slc.internal.tasks.build.docker_build import DockerBuild
 
 @cli_function
 def build(
-    flavor_path: Tuple[str, ...],
-    goal: Tuple[str, ...] = tuple(),
+    flavor_path: tuple[str, ...],
+    goal: tuple[str, ...] = tuple(),
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",
@@ -51,7 +51,7 @@ def build(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-) -> Dict[str, ImageInfo]:
+) -> dict[str, ImageInfo]:
     """
     This command builds all stages of the script-language-container flavor.
     If stages are cached in a docker registry, they command is going to pull them,

@@ -87,7 +87,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(luigi_logging_options)
 @add_options(export_options)
 def deploy(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     bucketfs_host: str,
     bucketfs_port: int,
     bucketfs_user: str,
@@ -98,10 +98,10 @@ def deploy(
     path_in_bucket: str,
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
-    release_goal: Tuple[str, ...],
+    release_goal: tuple[str, ...],
     release_name: Optional[str],
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,

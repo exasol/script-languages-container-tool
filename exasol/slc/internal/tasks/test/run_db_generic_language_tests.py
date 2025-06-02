@@ -1,5 +1,6 @@
 # pylint: disable=not-an-iterable
-from typing import Any, Generator, Tuple
+from collections.abc import Generator
+from typing import Any, Tuple
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -32,7 +33,7 @@ class RunDBGenericLanguageTest(
     DatabaseCredentialsParameter,
 ):
 
-    def extend_output_path(self) -> Tuple[str, ...]:
+    def extend_output_path(self) -> tuple[str, ...]:
         return tuple(self.caller_output_path) + ("generic",)
 
     def run_task(self) -> Generator[BaseTask, None, None]:

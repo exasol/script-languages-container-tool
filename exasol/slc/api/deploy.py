@@ -32,7 +32,7 @@ from exasol.slc.models.deploy_result import DeployResult
 
 @cli_function
 def deploy(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     bucketfs_host: str,
     bucketfs_port: int,
     bucketfs_user: str,
@@ -43,10 +43,10 @@ def deploy(
     path_in_bucket: str = "",
     ssl_cert_path: str = "",
     use_ssl_cert_validation: bool = True,
-    release_goal: Tuple[str, ...] = ("release",),
+    release_goal: tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",
@@ -66,7 +66,7 @@ def deploy(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
-) -> Dict[str, Dict[str, DeployResult]]:
+) -> dict[str, dict[str, DeployResult]]:
     """
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exist locally, the system will build, pull or

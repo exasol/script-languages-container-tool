@@ -1,5 +1,6 @@
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional, Tuple
+from typing import Optional, Tuple
 
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
     AbstractTaskFuture,
@@ -127,7 +128,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         self,
         image_info_of_release_image: ImageInfo,
         export_directory_future: AbstractTaskFuture,
-    ) -> Tuple[str, str, str]:
+    ) -> tuple[str, str, str]:
         release_image_name = image_info_of_release_image.get_target_complete_name()
         export_path = Path(export_directory_future.get_output()).absolute()
         release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.hash}"""

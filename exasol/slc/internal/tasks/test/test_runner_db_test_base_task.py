@@ -1,5 +1,6 @@
 import pathlib
-from typing import Any, Generator, Optional
+from collections.abc import Generator
+from typing import Any, Optional
 
 import luigi
 from docker.models.containers import ExecResult

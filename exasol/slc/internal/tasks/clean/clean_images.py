@@ -1,4 +1,5 @@
-from typing import Generator, List
+from collections.abc import Generator
+from typing import List
 
 import docker.models.images
 import luigi
@@ -40,7 +41,7 @@ class CleanImageTask(DockerBaseTask):
                     )
                 )
 
-    def get_clean_image_tasks_for_dependent_images(self) -> List["CleanImageTask"]:
+    def get_clean_image_tasks_for_dependent_images(self) -> list["CleanImageTask"]:
         with self._get_docker_client() as docker_client:
             image_ids = [
                 str(possible_child).replace("sha256:", "")
@@ -80,7 +81,7 @@ class CleanImagesStartingWith(DockerBaseTask):
 
     def find_images_to_clean(
         self, docker_client: DockerClient
-    ) -> List[docker.models.images.Image]:
+    ) -> list[docker.models.images.Image]:
         self.logger.info(
             "Going to remove all images starting with %s" % self.starts_with_pattern
         )

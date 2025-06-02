@@ -162,21 +162,21 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     help=f"""Accelerator to be enabled for tests in docker-db. Possible values: {acceleratorValues()}""",
 )
 def run_db_test(
-    flavor_path: Tuple[str, ...],
-    release_goal: Tuple[str, ...],
-    generic_language_test: Tuple[str, ...],
-    test_folder: Tuple[str, ...],
-    test_file: Tuple[str, ...],
-    test_language: Tuple[Optional[str], ...],
-    test: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
+    release_goal: tuple[str, ...],
+    generic_language_test: tuple[str, ...],
+    test_folder: tuple[str, ...],
+    test_file: tuple[str, ...],
+    test_language: tuple[Optional[str], ...],
+    test: tuple[str, ...],
     environment_type: str,
     max_start_attempts: int,
     docker_db_image_version: str,
     docker_db_image_name: str,
     db_os_access: str,
     create_certificates: bool,
-    additional_db_parameter: Tuple[str, ...],
-    docker_environment_variable: Tuple[str, ...],
+    additional_db_parameter: tuple[str, ...],
+    docker_environment_variable: tuple[str, ...],
     external_exasol_db_host: Optional[str],
     external_exasol_db_port: int,
     external_exasol_bucketfs_port: int,
@@ -201,7 +201,7 @@ def run_db_test(
     use_existing_container: Optional[str],
     test_container_folder: str,
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,
@@ -303,7 +303,7 @@ def run_db_test(
             handle_missing_argument_error(e.args)
 
 
-def handle_missing_argument_error(missing_arguments: Tuple[Any, ...]):
+def handle_missing_argument_error(missing_arguments: tuple[Any, ...]):
     for e in missing_arguments:
         formatted = f"--{e}".replace("_", "-")
         print(f"Commandline parameter {formatted} not set")

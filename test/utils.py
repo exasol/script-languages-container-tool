@@ -82,7 +82,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         self,
         name: str,
         test_container_content: TestContainerContentDescription,
-        additional_parameter: Optional[Dict[str, Any]] = None,
+        additional_parameter: Optional[dict[str, Any]] = None,
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment_with_test_container(
             name=name,
@@ -91,7 +91,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         )
 
     def spawn_docker_test_environment(
-        self, name: str, additional_parameter: Optional[Dict[str, Any]] = None
+        self, name: str, additional_parameter: Optional[dict[str, Any]] = None
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment(
             name=name, additional_parameter=additional_parameter
@@ -177,7 +177,7 @@ class ExaslctTestEnvironmentWithCleanUp:
         )
 
     def spawn_docker_test_environments(
-        self, name: str, additional_parameter: Optional[List[str]] = None
+        self, name: str, additional_parameter: Optional[list[str]] = None
     ) -> SpawnedTestEnvironments:
         return self._itde_cli_test_environment.spawn_docker_test_environments(
             name, additional_parameter
@@ -225,7 +225,7 @@ def get_real_test_flavor() -> Path:
     return path
 
 
-def get_docker_container_ids(*names) -> Dict[str, str]:
+def get_docker_container_ids(*names) -> dict[str, str]:
     result = {}
     with ContextDockerClient() as docker_client:
         for name in names:

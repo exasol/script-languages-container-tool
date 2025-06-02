@@ -1,7 +1,8 @@
 # pylint: disable=not-an-iterable
 import tarfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Dict, Generator, Set
+from typing import Dict, Set
 
 import luigi
 from docker.models.containers import Container
@@ -41,7 +42,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         )
 
     def register_required(self) -> None:
-        tasks: Dict[
+        tasks: dict[
             str, SecurityScanner
         ] = self.create_tasks_for_flavors_with_common_params(
             SecurityScanner, report_path=self.report_path
@@ -49,7 +50,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         self.security_scanner_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        security_scanner_results: Dict[str, ScanResult] = self.get_values_from_futures(
+        security_scanner_results: dict[str, ScanResult] = self.get_values_from_futures(
             self.security_scanner_futures
         )
         assert isinstance(security_scanner_results, dict)
@@ -62,7 +63,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
         )
         self.return_object(all_result)
 
-    def write_report(self, security_scanner: Dict[str, ScanResult]) -> None:
+    def write_report(self, security_scanner: dict[str, ScanResult]) -> None:
         with self.security_report_target.open("w") as out_file:
 
             for key, value in security_scanner.items():
@@ -84,17 +85,17 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
 
 class SecurityScanner(DockerFlavorBuildBase, SecurityScanParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return {"security_scan"}
 
-    def get_release_task(self) -> Dict[str, DockerCreateImageTask]:
+    def get_release_task(self) -> dict[str, DockerCreateImageTask]:
         return self.create_build_tasks(not build_config().force_rebuild)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
         tasks = self.get_release_task()
 
         tasks_futures = yield from self.run_dependencies(tasks)
-        image_infos: Dict[str, ImageInfo] = self.get_values_from_futures(tasks_futures)
+        image_infos: dict[str, ImageInfo] = self.get_values_from_futures(tasks_futures)
         assert isinstance(image_infos, dict)
         assert all(isinstance(x, str) for x in image_infos.keys())
         assert all(isinstance(x, ImageInfo) for x in image_infos.values())

@@ -15,5 +15,5 @@ def defaultAccelerator() -> Accelerator:
     return Accelerator.NONE
 
 
-def acceleratorValues() -> List[str]:
+def acceleratorValues() -> list[str]:
     return [a.value for a in Accelerator]

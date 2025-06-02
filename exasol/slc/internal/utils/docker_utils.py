@@ -7,7 +7,7 @@ from docker import DockerClient
 
 def find_images_by_tag(
     client: DockerClient, condition: Callable[[str], bool]
-) -> List[docker.models.images.Image]:
+) -> list[docker.models.images.Image]:
     images = client.images.list()
     filter_images = [
         image
@@ -24,7 +24,7 @@ def exec_run_and_write_to_stream(
     container: docker.models.containers.Container,
     cmd: str,
     output_io: TextIO,
-    environment: Dict,
+    environment: dict,
 ) -> int:
     _id = client.api.exec_create(
         container=container.id, cmd=cmd, environment=environment

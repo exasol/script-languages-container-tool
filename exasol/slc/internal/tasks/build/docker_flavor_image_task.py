@@ -51,7 +51,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         """
         return ""
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         """
         Called by the constructor to get additional build directories or files which are specific to the build step.
         This mappings gets merged with the default flavor build directories mapping.
@@ -104,10 +104,10 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         flavor_name = self.get_flavor_name()
         return f"{flavor_name}-{self.build_step}"
 
-    def get_mapping_of_build_files_and_directories(self) -> Dict[str, str]:
+    def get_mapping_of_build_files_and_directories(self) -> dict[str, str]:
         build_step_path = self.get_build_step_path()
         assert self.build_step is not None
-        result: Dict[str, str] = {self.build_step: str(build_step_path)}
+        result: dict[str, str] = {self.build_step: str(build_step_path)}
         result.update(self.additional_build_directories_mapping)
         if language_definition := self.get_language_definition():
             lang_def_path = self.get_path_in_flavor_path() / language_definition

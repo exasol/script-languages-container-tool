@@ -15,7 +15,7 @@ def is_within_directory(directory: str, target: str) -> bool:
 def safe_extract(
     tar: TarFile,
     path: str = ".",
-    members: Optional[List[str]] = None,
+    members: Optional[list[str]] = None,
     *,
     numeric_owner: bool = False
 ):

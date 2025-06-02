@@ -25,4 +25,4 @@ class ExportContainerParameter(ExportContainerParameterBase):
 
 
 class ExportContainersParameter(ExportContainerParameterBase):
-    release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
+    release_goals: tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore

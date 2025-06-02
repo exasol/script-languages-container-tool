@@ -22,7 +22,7 @@ def push_test_container(
     force_push: bool = False,
     push_all: bool = False,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",

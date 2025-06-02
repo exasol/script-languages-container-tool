@@ -32,7 +32,7 @@ class TestRunnerDBTestWithExportTask(
 
     def _get_container_file_under_test_info(self) -> ContainerFileUnderTestInfo:
 
-        export_infos: Dict[str, ExportInfo] = self.get_values_from_future(
+        export_infos: dict[str, ExportInfo] = self.get_values_from_future(
             self._export_infos_future
         )  # type: ignore
         assert isinstance(export_infos, dict)

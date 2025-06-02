@@ -1,6 +1,7 @@
 # pylint: disable=not-an-iterable
+from collections.abc import Generator
 from pathlib import Path
-from typing import Dict, Generator, Set
+from typing import Dict, Set
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
@@ -37,7 +38,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
         )
 
     def register_required(self) -> None:
-        tasks: Dict[
+        tasks: dict[
             str, ExportFlavorContainer
         ] = self.create_tasks_for_flavors_with_common_params(
             ExportFlavorContainer
@@ -45,7 +46,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
         self.export_info_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        export_infos: Dict[str, Dict[str, ExportInfo]] = self.get_values_from_futures(
+        export_infos: dict[str, dict[str, ExportInfo]] = self.get_values_from_futures(
             self.export_info_futures
         )  # type: ignore
         assert isinstance(export_infos, dict)
@@ -62,7 +63,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
         self.return_object(result)
 
     def write_command_line_output(
-        self, export_infos: Dict[str, Dict[str, ExportInfo]]
+        self, export_infos: dict[str, dict[str, ExportInfo]]
     ) -> None:
         if self.command_line_output_target.exists():
             self.command_line_output_target.remove()
@@ -88,7 +89,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
 
 class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainersParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.release_goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -96,7 +97,7 @@ class ExportFlavorContainer(DockerFlavorBuildBase, ExportContainersParameter):
         tasks_creator = ExportContainerTasksCreator(self, self.export_path)
         export_tasks = tasks_creator.create_export_tasks(build_tasks)
         export_info_futures = yield from self.run_dependencies(export_tasks)
-        export_infos: Dict[str, ExportInfo] = self.get_values_from_futures(
+        export_infos: dict[str, ExportInfo] = self.get_values_from_futures(
             export_info_futures
         )
         assert isinstance(export_infos, dict)

@@ -20,8 +20,8 @@ class UploadContainerTasksCreator:
         self.task = task
 
     def create_upload_tasks(
-        self, build_tasks: Dict[str, DockerCreateImageTask]
-    ) -> Dict[str, UploadContainerTask]:
+        self, build_tasks: dict[str, DockerCreateImageTask]
+    ) -> dict[str, UploadContainerTask]:
         return {
             release_goal: self._create_upload_task(release_goal, build_task)
             for release_goal, build_task in build_tasks.items()

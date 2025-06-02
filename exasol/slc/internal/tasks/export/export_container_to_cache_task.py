@@ -3,8 +3,9 @@ import shlex
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Optional
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (

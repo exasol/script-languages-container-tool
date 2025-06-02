@@ -8,4 +8,4 @@ from exasol.slc.internal.tasks.upload.upload_container_parameter import (
 
 
 class UploadContainersParameter(UploadContainerParameter):
-    release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
+    release_goals: tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore

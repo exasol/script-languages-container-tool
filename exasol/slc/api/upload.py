@@ -32,7 +32,7 @@ from exasol.slc.models.compression_strategy import (
 
 @cli_function
 def upload(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     database_host: str,
     bucketfs_port: int,
     bucketfs_username: str,
@@ -41,10 +41,10 @@ def upload(
     bucketfs_password: Optional[str] = None,
     bucketfs_https: bool = False,
     path_in_bucket: str = "",
-    release_goal: Tuple[str, ...] = ("release",),
+    release_goal: tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",

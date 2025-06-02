@@ -9,7 +9,7 @@ from exasol.slc.models.export_info import ExportInfo
 class ExportContainerResult(Info):
     def __init__(
         self,
-        export_infos: Dict[str, Dict[str, ExportInfo]],
+        export_infos: dict[str, dict[str, ExportInfo]],
         command_line_output_path: Path,
     ) -> None:
         self.export_infos = export_infos

@@ -14,7 +14,7 @@ class RunDBTestResult:
 
 class RunDBTestCollectionResult:
     def __init__(
-        self, language: Optional[str], test_results: List[RunDBTestResult]
+        self, language: Optional[str], test_results: list[RunDBTestResult]
     ) -> None:
         self.language = language
         self.test_results = test_results
@@ -23,14 +23,14 @@ class RunDBTestCollectionResult:
 
 class RunDBTestDirectoryResult(RunDBTestCollectionResult):
     def __init__(
-        self, test_folder: str, language: str, test_results: List[RunDBTestResult]
+        self, test_folder: str, language: str, test_results: list[RunDBTestResult]
     ) -> None:
         super().__init__(language, test_results)
         self.test_folder = test_folder
 
 
 class RunDBTestFilesResult:
-    def __init__(self, test_results: List[RunDBTestCollectionResult]) -> None:
+    def __init__(self, test_results: list[RunDBTestCollectionResult]) -> None:
         self.test_results = test_results
         self.tests_are_ok = all(
             test_result.tests_are_ok for test_result in test_results
@@ -38,7 +38,7 @@ class RunDBTestFilesResult:
 
 
 class RunDBTestFoldersResult:
-    def __init__(self, test_results: List[RunDBTestDirectoryResult]) -> None:
+    def __init__(self, test_results: list[RunDBTestDirectoryResult]) -> None:
         self.test_results = test_results
         self.tests_are_ok = all(
             test_result.tests_are_ok for test_result in test_results

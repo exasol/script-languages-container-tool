@@ -27,9 +27,9 @@ from exasol.slc.models.security_scan_result import AllScanResult
 
 @cli_function
 def security_scan(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",

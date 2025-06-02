@@ -157,7 +157,7 @@ class UploadFileToBucketFS(DockerBaseTask):
         return self.reuse_uploaded and self.exist_file_in_bucketfs(upload_target)
 
     @staticmethod
-    def split_upload_target(upload_target: str) -> Tuple[str, str, str]:
+    def split_upload_target(upload_target: str) -> tuple[str, str, str]:
         upload_parts = upload_target.split("/")
         bucket_name = upload_parts[0]
         path_in_bucket = "/".join(upload_parts[1:-1])
