@@ -1,5 +1,6 @@
 # 3.3.0 - 2025-06-02
 
+This release aims to avoid leakage of security credentials in log files. Also, it updates the Python dependencies.
 ## Security
 
  - #293: Updated poetry dependencies
