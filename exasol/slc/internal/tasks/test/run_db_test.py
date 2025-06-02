@@ -166,7 +166,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         docker_credentials = self.__class__._get_docker_credentials()
         if docker_credentials is not None:
             environment["DOCKER_USERNAME"] = docker_credentials.username
-            environment["DOCKER_PASSWORD"] = docker_credentials.password
+            environment["DOCKER_PASSWORD"] = "***"
 
         env_type: str = (
             self.test_environment_info.type.name
@@ -189,6 +189,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         )
         with test_output_file.open("w") as file:
             file.write(test_output)
+            if docker_credentials is not None:
+                environment["DOCKER_PASSWORD"] = docker_credentials.password
             exit_code = exec_run_and_write_to_stream(
                 docker_client, test_container, bash_cmd, file, environment
             )

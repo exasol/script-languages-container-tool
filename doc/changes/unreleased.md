@@ -1,6 +1,5 @@
 # Unreleased
 
-
 ## Security
 
  - #293: Updated poetry dependencies
@@ -10,3 +9,4 @@
 ## Refactorings
 
  - #296: Reformat code with latest PTB
+ - #295: Do not write docker password to test_output file
