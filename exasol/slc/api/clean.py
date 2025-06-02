@@ -28,7 +28,7 @@ from exasol.slc.internal.tasks.clean.clean_images import (
 
 @cli_function
 def clean_flavor_images(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     output_directory: str = ".build_output",
     docker_repository_name: str = "exasol/script-language-container",
     docker_tag_prefix: str = "",

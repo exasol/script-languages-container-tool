@@ -16,7 +16,7 @@ def generate_language_activation(
     bucket_name: str,
     container_name: str,
     path_in_bucket: str = "",
-) -> Tuple[str, str, str]:
+) -> tuple[str, str, str]:
     """
     Generate the language activation statement.
     :return: A tuple of language definition statements: The first one is the alter session statement,

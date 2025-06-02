@@ -20,7 +20,7 @@ from exasol.slc.tool.options.test_container_options import (
 def build_test_container(
     test_container_folder: str = TEST_CONTAINER_DEFAULT_DIRECTORY,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",

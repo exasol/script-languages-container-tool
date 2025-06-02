@@ -48,7 +48,7 @@ from exasol.slc.tool.options.goal_options import release_options
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 @add_options(export_options)
 def upload(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     database_host: str,
     bucketfs_port: int,
     bucketfs_username: str,
@@ -57,10 +57,10 @@ def upload(
     bucketfs_password: Optional[str],
     bucketfs_https: bool,
     path_in_bucket: str,
-    release_goal: Tuple[str, ...],
+    release_goal: tuple[str, ...],
     release_name: Optional[str],
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,

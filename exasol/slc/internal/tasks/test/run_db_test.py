@@ -53,7 +53,7 @@ class DockerCommandException(Exception):
 class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter):
     test_file: str = luigi.Parameter()  # type: ignore
 
-    def extend_output_path(self) -> Tuple[str, ...]:
+    def extend_output_path(self) -> tuple[str, ...]:
         test_file_name = Path(self.test_file).name
         extension = []
         if self.language is not None:

@@ -27,7 +27,7 @@ def _parse_builtin_language_definition(url: str) -> BuiltInLanguageDefinitionURL
 
 
 def _build_udf_client_abs_path_from_fragments(
-    fragment_parts: Tuple[str, ...],
+    fragment_parts: tuple[str, ...],
 ) -> UdfClientBucketPath:
     if len(fragment_parts) < 4:
         raise ValueError(
@@ -91,7 +91,7 @@ def _parse_chroot_path(
 
 def parse_language_definition(
     lang_def: str,
-) -> Tuple[str, Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]]:
+) -> tuple[str, Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]]:
     alias_end = lang_def.find("=")
     alias = lang_def[0:alias_end]
     url = lang_def[alias_end + 1 :]

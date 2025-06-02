@@ -1,5 +1,6 @@
 # pylint: disable=not-an-iterable
-from typing import Dict, Generator, List, Set, Tuple
+from collections.abc import Generator
+from typing import Dict, List, Set, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
@@ -22,14 +23,14 @@ from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
 
 
 class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
-    goals: Tuple[str, ...] = luigi.ListParameter()  # type: ignore
+    goals: tuple[str, ...] = luigi.ListParameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:
-        tasks: Dict[
+        tasks: dict[
             str, DockerFlavorPush
         ] = self.create_tasks_for_flavors_with_common_params(
             DockerFlavorPush
@@ -37,7 +38,7 @@ class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
         self.image_info_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        image_infos: Dict[str, List[ImageInfo]] = self.get_values_from_futures(
+        image_infos: dict[str, list[ImageInfo]] = self.get_values_from_futures(
             self.image_info_futures
         )
         assert isinstance(image_infos, dict)
@@ -49,13 +50,13 @@ class DockerFlavorsPush(FlavorsBaseTask, DockerPushParameter):
 
 
 class DockerFlavorPush(DockerFlavorBuildBase, DockerPushParameter):
-    goals: Tuple[str, ...] = luigi.ListParameter()  # type: ignore
+    goals: tuple[str, ...] = luigi.ListParameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
         self.image_info_futures = None
         super().__init__(*args, **kwargs)
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -63,7 +64,7 @@ class DockerFlavorPush(DockerFlavorBuildBase, DockerPushParameter):
         push_task_creator = PushTaskCreatorFromBuildTasks(self)
         push_tasks = push_task_creator.create_tasks_for_build_tasks(build_tasks)
         image_info_futures = yield from self.run_dependencies(push_tasks)
-        image_infos: List[ImageInfo] = self.get_values_from_futures(image_info_futures)
+        image_infos: list[ImageInfo] = self.get_values_from_futures(image_info_futures)
         assert isinstance(image_infos, list)
         assert all(isinstance(x, ImageInfo) for x in image_infos)
         self.return_object(image_infos)

@@ -41,7 +41,7 @@ def push_test_container(
     force_push: bool,
     push_all: bool,
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,

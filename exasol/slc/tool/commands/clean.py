@@ -29,7 +29,7 @@ from exasol.slc.tool.options.flavor_options import flavor_options
 @add_options(system_options)
 @add_options(luigi_logging_options)
 def clean_flavor_images(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     output_directory: str,
     docker_repository_name: str,
     docker_tag_prefix: str,

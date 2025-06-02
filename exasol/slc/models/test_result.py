@@ -10,7 +10,7 @@ class FlavorTestResult:
     def __init__(
         self,
         flavor_path: str,
-        test_results_per_release_goal: Dict[str, RunDBTestsInTestConfigResult],
+        test_results_per_release_goal: dict[str, RunDBTestsInTestConfigResult],
     ) -> None:
         self.flavor_path = str(flavor_path)
         self.test_results_per_release_goal = test_results_per_release_goal
@@ -23,7 +23,7 @@ class FlavorTestResult:
 class AllTestsResult(Info):
     def __init__(
         self,
-        test_results_per_flavor: Dict[str, FlavorTestResult],
+        test_results_per_flavor: dict[str, FlavorTestResult],
         command_line_output_path: Path,
     ) -> None:
         self.test_results_per_flavor = test_results_per_flavor

@@ -78,7 +78,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         flavor_path: Path,
         path: Optional[str],
         release_name: str,
-    ) -> Dict[str, Dict[str, DeployResult]]:
+    ) -> dict[str, dict[str, DeployResult]]:
         deploy_func = partial(
             api.deploy,
             flavor_path=(str(flavor_path),),

@@ -46,10 +46,10 @@ from exasol.slc.tool.options.goal_options import goal_options
 @add_options(system_options)
 @add_options(luigi_logging_options)
 def build(
-    flavor_path: Tuple[str, ...],
-    goal: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
+    goal: tuple[str, ...],
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,

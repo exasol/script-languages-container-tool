@@ -1,4 +1,5 @@
-from typing import Any, Generator, List, Tuple
+from collections.abc import Generator
+from typing import Any, List, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
@@ -25,7 +26,7 @@ class RunDBTestsInDirectory(
 ):
     directory: str = luigi.Parameter()  # type: ignore
 
-    def extend_output_path(self) -> Tuple[str, ...]:
+    def extend_output_path(self) -> tuple[str, ...]:
         return tuple(self.caller_output_path) + (self.directory,)
 
     def __init__(self, *args, **kwargs) -> None:
@@ -47,7 +48,7 @@ class RunDBTestsInDirectory(
         )
         self.return_object(result)
 
-    def run_tests(self) -> Generator[RunDBTest, Any, List[RunDBTestResult]]:
+    def run_tests(self) -> Generator[RunDBTest, Any, list[RunDBTestResult]]:
         test_results = []
         for test_task_config in self.tasks:
             test_result_future = yield from self.run_dependencies(test_task_config)
@@ -56,7 +57,7 @@ class RunDBTestsInDirectory(
             test_results.append(test_result)
         return test_results
 
-    def create_test_tasks_from_directory(self, directory: str) -> List[RunDBTest]:
+    def create_test_tasks_from_directory(self, directory: str) -> list[RunDBTest]:
         assert self._test_container_info is not None
         with self._get_docker_client() as docker_client:
             test_container = docker_client.containers.get(

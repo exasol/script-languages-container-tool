@@ -49,12 +49,12 @@ from exasol.slc.tool.options.goal_options import release_options
 )
 @add_options(export_options)
 def export(
-    flavor_path: Tuple[str, ...],
-    release_goal: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
+    release_goal: tuple[str, ...],
     export_path: Optional[str],
     release_name: Optional[str],
     force_rebuild: bool,
-    force_rebuild_from: Tuple[str, ...],
+    force_rebuild_from: tuple[str, ...],
     force_pull: bool,
     output_directory: str,
     temporary_base_directory: str,

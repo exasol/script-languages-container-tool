@@ -37,8 +37,8 @@ class TestContainerParameter(
     GeneralRunDBTestParameter,
     ExportContainerOptionsParameter,
 ):
-    release_goals: Tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
-    languages: Tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
+    release_goals: tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
+    languages: tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
     use_existing_container: str = luigi.OptionalParameter()  # type: ignore
 
@@ -48,7 +48,7 @@ class TestStatusPrinter:
         self.file = file
 
     def print_status_for_all_tests(
-        self, test_results: Dict[str, FlavorTestResult]
+        self, test_results: dict[str, FlavorTestResult]
     ) -> None:
         for flavor, test_result_of_flavor in test_results.items():
             print(
@@ -163,13 +163,13 @@ class TestContainer(
         )
 
     def register_required(self) -> None:
-        tasks: Dict[str, TestFlavorContainer] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
+        tasks: dict[str, TestFlavorContainer] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             TestFlavorContainer
         )  # type: ignore
         self.test_results_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        test_results: Dict[str, FlavorTestResult] = self.get_values_from_futures(
+        test_results: dict[str, FlavorTestResult] = self.get_values_from_futures(
             self.test_results_futures
         )
         assert isinstance(test_results, dict)
@@ -222,7 +222,7 @@ class TestFlavorContainer(
         return task
 
     def run_task(self) -> None:
-        test_results: Dict[str, RunDBTestsInTestConfigResult] = (
+        test_results: dict[str, RunDBTestsInTestConfigResult] = (
             self.get_values_from_futures(self.test_result_futures)
         )
         assert isinstance(test_results, dict)

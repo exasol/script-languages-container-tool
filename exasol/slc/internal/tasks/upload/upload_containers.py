@@ -1,4 +1,5 @@
-from typing import Dict, Generator, Set
+from collections.abc import Generator
+from typing import Dict, Set
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
@@ -35,13 +36,13 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
         )
 
     def register_required(self) -> None:
-        tasks: Dict[str, UploadFlavorContainers] = (
+        tasks: dict[str, UploadFlavorContainers] = (
             self.create_tasks_for_flavors_with_common_params(UploadFlavorContainers)
         )
         self.upload_info_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        uploads: Dict[str, Dict[str, str]] = self.get_values_from_futures(
+        uploads: dict[str, dict[str, str]] = self.get_values_from_futures(
             self.upload_info_futures
         )
         assert isinstance(uploads, dict)
@@ -51,7 +52,7 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
         self.write_command_line_output(uploads)
         self.return_object(self.command_line_output_target)
 
-    def write_command_line_output(self, uploads: Dict[str, Dict[str, str]]) -> None:
+    def write_command_line_output(self, uploads: dict[str, dict[str, str]]) -> None:
         with self.command_line_output_target.open("w") as out_file:
             for releases in uploads.values():
                 for command_line_output_str in releases.values():
@@ -63,7 +64,7 @@ class UploadContainers(FlavorsBaseTask, UploadContainersParameter):
 
 class UploadFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.release_goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -75,7 +76,7 @@ class UploadFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
         command_line_output_string_futures = yield from self.run_dependencies(
             upload_tasks
         )
-        command_line_output_strings: Dict[str, str] = self.get_values_from_futures(
+        command_line_output_strings: dict[str, str] = self.get_values_from_futures(
             command_line_output_string_futures
         )
         assert all(isinstance(x, str) for x in command_line_output_strings.keys())
@@ -83,12 +84,12 @@ class UploadFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
 
         self.return_object(command_line_output_strings)
 
-    def create_upload_tasks(self, export_tasks) -> Dict[str, UploadContainerTask]:
+    def create_upload_tasks(self, export_tasks) -> dict[str, UploadContainerTask]:
         upload_tasks_creator = UploadContainerTasksCreator(self)
         upload_tasks = upload_tasks_creator.create_upload_tasks(export_tasks)
         return upload_tasks
 
-    def create_export_tasks(self, build_tasks) -> Dict[str, ExportContainerTask]:
+    def create_export_tasks(self, build_tasks) -> dict[str, ExportContainerTask]:
         export_tasks_creator = ExportContainerTasksCreator(self, export_path=None)
         export_tasks = export_tasks_creator.create_export_tasks(build_tasks)
         return export_tasks

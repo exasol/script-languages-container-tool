@@ -11,9 +11,9 @@ class LanguageDefinitionsBuilder:
     replacing the aliases provides in the source Language Definition Components with custom aliases.
     """
 
-    def __init__(self, lang_def_components: List[LanguageDefinitionComponents]) -> None:
+    def __init__(self, lang_def_components: list[LanguageDefinitionComponents]) -> None:
         self.lang_def_components = lang_def_components
-        self.custom_aliases: Dict[str, str] = dict()
+        self.custom_aliases: dict[str, str] = dict()
 
     def add_custom_alias(self, orig_alias: str, custom_alias: str):
         self.custom_aliases[orig_alias] = custom_alias
@@ -38,5 +38,5 @@ class LanguageDefinitionsBuilder:
     def generate_alter_system(self):
         return f"""ALTER SYSTEM SET SCRIPT_LANGUAGES='{self.generate_definition()}';"""
 
-    def generate_definition_components(self) -> List[LanguageDefinitionComponents]:
+    def generate_definition_components(self) -> list[LanguageDefinitionComponents]:
         return [self._replace_alias(lang_def) for lang_def in self.lang_def_components]

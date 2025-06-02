@@ -45,7 +45,7 @@ class LanguageDefinitionURL:
     """
 
     protocol: str
-    parameters: List[SLCParameter]
+    parameters: list[SLCParameter]
     chroot_path: ChrootPath
     udf_client_path: Union[UdfClientBucketPath, UdfClientRelativePath]
 

@@ -57,7 +57,7 @@ class ApiDockerRunDbTestUseExistingContainerReuse(unittest.TestCase):
         )
 
     def test_run_db_test_use_existing_container_reuse(self):
-        def container_ids() -> Dict[str, str]:
+        def container_ids() -> dict[str, str]:
             return exaslct_utils.get_docker_container_ids(
                 self._test_container_name,
                 self._db_container_name,

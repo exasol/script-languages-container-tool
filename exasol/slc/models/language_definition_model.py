@@ -19,8 +19,8 @@ class LanguageDefinition(BaseModel):
     """
 
     protocol: str
-    aliases: List[str]
-    parameters: List[SLCParameter]
+    aliases: list[str]
+    parameters: list[SLCParameter]
     udf_client_path: UdfClientRelativePath
     deprecation: Optional[DeprecationInfo]
 
@@ -32,4 +32,4 @@ class LanguageDefinitionsModel(BaseModel):
 
     schema_version: int
 
-    language_definitions: List[LanguageDefinition]
+    language_definitions: list[LanguageDefinition]

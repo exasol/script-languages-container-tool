@@ -28,12 +28,12 @@ from exasol.slc.internal.tasks.push.docker_push import DockerFlavorsPush
 
 @cli_function
 def push(
-    flavor_path: Tuple[str, ...],
-    goal: Tuple[str, ...] = tuple(),
+    flavor_path: tuple[str, ...],
+    goal: tuple[str, ...] = tuple(),
     force_push: bool = False,
     push_all: bool = False,
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",
@@ -52,7 +52,7 @@ def push(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-) -> Dict[str, List[ImageInfo]]:
+) -> dict[str, list[ImageInfo]]:
     """
     This command pushes all stages of the script-language-container flavor.
     If the stages do not exists locally, the system will build or pull them before the push.

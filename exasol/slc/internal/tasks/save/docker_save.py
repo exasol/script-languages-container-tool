@@ -1,5 +1,6 @@
 # pylint: disable=not-an-iterable
-from typing import Dict, Generator, List, Set
+from collections.abc import Generator
+from typing import Dict, List, Set
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -24,13 +25,13 @@ class DockerSave(FlavorsBaseTask, DockerSaveParameter):
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:
-        tasks: Dict[str, DockerFlavorSave] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
+        tasks: dict[str, DockerFlavorSave] = self.create_tasks_for_flavors_with_common_params(  # type: ignore
             DockerFlavorSave
         )  # type: ignore
         self.image_info_futures = self.register_dependencies(tasks)
 
     def run_task(self) -> None:
-        image_infos: Dict[str, List[ImageInfo]] = self.get_values_from_futures(
+        image_infos: dict[str, list[ImageInfo]] = self.get_values_from_futures(
             self.image_info_futures
         )
         assert isinstance(image_infos, dict)
@@ -41,7 +42,7 @@ class DockerSave(FlavorsBaseTask, DockerSaveParameter):
 
 class DockerFlavorSave(DockerFlavorBuildBase, DockerSaveParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -49,7 +50,7 @@ class DockerFlavorSave(DockerFlavorBuildBase, DockerSaveParameter):
         save_task_creator = SaveTaskCreatorFromBuildTasks(self)
         save_tasks = save_task_creator.create_tasks_for_build_tasks(build_tasks)
         image_info_futures = yield from self.run_dependencies(save_tasks)
-        image_infos: List[ImageInfo] = self.get_values_from_futures(image_info_futures)
+        image_infos: list[ImageInfo] = self.get_values_from_futures(image_info_futures)
         assert isinstance(image_infos, list)
         assert all(isinstance(x, ImageInfo) for x in image_infos)
         self.return_object(image_infos)

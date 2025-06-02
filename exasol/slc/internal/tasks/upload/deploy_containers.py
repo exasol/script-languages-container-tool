@@ -1,5 +1,6 @@
 # pylint: disable=not-an-iterable
-from typing import Dict, Generator, Set
+from collections.abc import Generator
+from typing import Dict, Set
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -29,7 +30,7 @@ class DeployContainers(FlavorsBaseTask, UploadContainersParameter):
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:
-        tasks: Dict[str, DeployFlavorContainers] = (
+        tasks: dict[str, DeployFlavorContainers] = (
             self.create_tasks_for_flavors_with_common_params(DeployFlavorContainers)
         )
         self.lang_def_builders_futures = self.register_dependencies(tasks)
@@ -43,7 +44,7 @@ class DeployContainers(FlavorsBaseTask, UploadContainersParameter):
 
 class DeployFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
 
-    def get_goals(self) -> Set[str]:
+    def get_goals(self) -> set[str]:
         return set(self.release_goals)
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -56,12 +57,12 @@ class DeployFlavorContainers(DockerFlavorBuildBase, UploadContainersParameter):
         language_definition = self.get_values_from_futures(lang_definitions_futures)
         self.return_object(language_definition)
 
-    def create_deploy_tasks(self, export_tasks) -> Dict[str, DeployContainerTask]:
+    def create_deploy_tasks(self, export_tasks) -> dict[str, DeployContainerTask]:
         deploy_tasks_creator = DeployContainerTasksCreator(self)
         deploy_tasks = deploy_tasks_creator.create_deploy_tasks(export_tasks)
         return deploy_tasks
 
-    def create_export_tasks(self, build_tasks) -> Dict[str, ExportContainerTask]:
+    def create_export_tasks(self, build_tasks) -> dict[str, ExportContainerTask]:
         export_tasks_creator = ExportContainerTasksCreator(self, export_path=None)
         export_tasks = export_tasks_creator.create_export_tasks(build_tasks)
         return export_tasks

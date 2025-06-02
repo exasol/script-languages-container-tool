@@ -28,13 +28,13 @@ from exasol.slc.internal.tasks.save.docker_save import DockerSave
 
 @cli_function
 def save(
-    flavor_path: Tuple[str, ...],
+    flavor_path: tuple[str, ...],
     save_directory: Optional[str] = None,
     force_save: bool = False,
     save_all: bool = False,
-    goal: Tuple[str, ...] = tuple(),
+    goal: tuple[str, ...] = tuple(),
     force_rebuild: bool = False,
-    force_rebuild_from: Tuple[str, ...] = tuple(),
+    force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",
@@ -53,7 +53,7 @@ def save(
     task_dependencies_dot_file: Optional[str] = None,
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
-) -> Dict[str, List[ImageInfo]]:
+) -> dict[str, list[ImageInfo]]:
     """
     This command saves all stages of the script-language-container flavor to a local directory.
     If the stages do not exists locally, the system will build or pull them before the execution of save.

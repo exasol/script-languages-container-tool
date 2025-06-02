@@ -17,7 +17,7 @@ def get_language_definition_builder(
     container_name: str,
     path_in_bucket: str = "",
     add_missing_builtin: bool = False,
-    custom_aliases: Optional[Dict[str, str]] = None,
+    custom_aliases: Optional[dict[str, str]] = None,
 ) -> LanguageDefinitionsBuilder:
     """
     Builds an object which can be used to build language activation statements, allowing custom aliases.

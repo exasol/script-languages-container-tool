@@ -20,8 +20,8 @@ class DeployContainerTasksCreator:
         self.task = task
 
     def create_deploy_tasks(
-        self, build_tasks: Dict[str, DockerCreateImageTask]
-    ) -> Dict[str, DeployContainerTask]:
+        self, build_tasks: dict[str, DockerCreateImageTask]
+    ) -> dict[str, DeployContainerTask]:
         return {
             release_goal: self._create_deploy_task(release_goal, build_task)
             for release_goal, build_task in build_tasks.items()

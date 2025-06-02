@@ -1,4 +1,5 @@
-from typing import Any, Generator, Optional, Tuple
+from collections.abc import Generator
+from typing import Any, Optional, Tuple
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -31,7 +32,7 @@ class RunDBTestFolder(
     DatabaseCredentialsParameter,
 ):
 
-    def extend_output_path(self) -> Tuple[str, ...]:
+    def extend_output_path(self) -> tuple[str, ...]:
         return tuple(self.caller_output_path) + ("test_folder",)
 
     def run_task(self) -> Generator[BaseTask, None, None]:

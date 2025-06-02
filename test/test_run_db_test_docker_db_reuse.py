@@ -43,7 +43,7 @@ class RunDBTestDockerDBReuseTest(unittest.TestCase):
                 " ".join(command), track_task_dependencies=True
             )
 
-        def container_ids() -> Dict[str, str]:
+        def container_ids() -> dict[str, str]:
             return exaslct_utils.get_docker_container_ids(
                 self._test_container_name,
                 self._db_container_name,
