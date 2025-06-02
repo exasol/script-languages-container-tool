@@ -12,7 +12,7 @@ class ApiDockerRunDbTestNoPasswordLeakage(unittest.TestCase):
     """
     Spawn a Docker db and run test and validate that Docker password was not written to build output directory.
     """
-    
+
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
         self.test_environment = exaslct_utils.ExaslctApiTestEnvironmentWithCleanup(
@@ -45,7 +45,10 @@ class ApiDockerRunDbTestNoPasswordLeakage(unittest.TestCase):
                     print(f"Testing {fullpath}")
                     with open(fullpath) as f:
                         for line in f:
-                            assert docker_password not in line
+                            self.assertFalse(
+                                docker_password not in line,
+                                f"Found docker password in file {fullpath}",
+                            )
 
 
 if __name__ == "__main__":
