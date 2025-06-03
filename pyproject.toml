@@ -49,6 +49,8 @@ build-backend = "poetry.core.masonry.api"
 toml = ">=0.10.2"
 configobj = "^5.0.8" # moved to dev dependencie so security alert does not propagate further up
 exasol-toolbox = "^1.0.1"
+aiohttp = "^3.12.7"
+tqdm = "^4.67.1"
 
 
 [tool.poetry.scripts]
@@ -63,7 +65,7 @@ testpaths = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml"]
+module = ["luigi.*", "docker.*", "humanfriendly", "configobj", "toml", "tqdm"]
 ignore_missing_imports = true
 
 [tool.black]

@@ -7,6 +7,8 @@ import nox
 # imports all nox task provided by the toolbox
 from exasol.toolbox.nox.tasks import *  # type: ignore
 
+from clean_dockerhub import call_clean_dockerhub
+
 # default actions to be run if nothing is explicitly specified with the -s option
 nox.options.sessions = ["project:fix"]
 
@@ -48,3 +50,44 @@ def run_integration_test_list(session: nox.Session):
             if "gpu" not in t.name
         ]
     print(json.dumps(tests))
+
+
+@nox.session(name="cleanup-docker-hub", python=False)
+def cleanup_docker_hub(session: nox.Session):
+    """
+    Removes docker hub tags older than `min_age_in_days` days.
+    """
+    parser = ArgumentParser(
+        usage=f"nox -s {session.name} -- --docker-repository <repository> --docker-username <username> --docker-password <password> --min-age-days <min_age_in_days>"
+    )
+    parser.add_argument(
+        "--docker-repository",
+        type=str,
+        required=True,
+        help="Docker Repository name",
+    )
+    parser.add_argument(
+        "--docker-username",
+        type=str,
+        required=True,
+        help="Docker username",
+    )
+    parser.add_argument(
+        "--docker-password",
+        type=str,
+        required=True,
+        help="Docker password/PAT",
+    )
+    parser.add_argument(
+        "--min-age-in-days",
+        type=int,
+        required=True,
+        help="Minimum age in days of tags which will be removed",
+    )
+    args = parser.parse_args(session.posargs)
+    call_clean_dockerhub(
+        docker_repository=args.docker_repository,
+        docker_username=args.docker_username,
+        docker_password=args.docker_password,
+        min_age_in_days=args.min_age_in_days,
+    )
