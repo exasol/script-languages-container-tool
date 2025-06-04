@@ -130,7 +130,7 @@ async def delete_tag(
 ) -> int:
     """
     Delete a single tag from the repository.
-    If a 429 code is returned by Docker Hub, a TooManyRequestsError is raised.
+    Raises a TooManyRequestsError if Docker Hub returns HTTP 429.
     Otherwise, the status code is returned.
     """
     url = f"{DOCKERHUB_API}/repositories/{namespace}/{repo}/tags/{tag.name}/"
@@ -174,16 +174,25 @@ async def delete_tags(
     tags_to_delete: list[Tag],
 ) -> bool:
     """
-    Delete given tags from a repository, always with 3 Http requests in parallel.
-    The method creates an aiohttp.ClientSession session, then creates all async delete tasks.
-    Whenever one tasks raises the TooManyRequestsError exception, all other tasks are cancelled,
-    and the method returns True. If no such exception is raised, the method returns False.
+    Delete the specified tags from a repository on Docker Hub. Use 3 HTTP
+    requests in parallel.
+
+    The method creates an aiohttp.ClientSession session, then creates all
+    async delete tasks.
+
+    The methods's boolen return value indicates whether a retry is required.
+    If none of the delete tasks raises a TooManyRequestsError exception then
+    the method returns needs_retry=False.
+
+    In case of any of the delete tasks raising this exception then the method
+    returns needs_retry=True.
     """
 
-    # Higher values will run deletion faster, but have higher risk of getting a 429,
+    # More parallel tasks will run deletion faster, but have higher risk of getting a 429,
     # see https://docs.docker.com/docker-hub/usage/#abuse-rate-limit
-    # Tests have shown that max deletion rate without running into rate limits is ~650 Tags/min.
-    sem = asyncio.Semaphore(2)
+    # Tests have shown that max deletion rate without running into rate limits is ~650 Tags/min.   
+    PARALLEL_TASKS = 2
+    sem = asyncio.Semaphore(PARALLEL_TASKS)    
 
     retry = False
     conn = aiohttp.TCPConnector(limit_per_host=10)
@@ -197,7 +206,7 @@ async def delete_tags(
             ]
 
             status_counter_map: dict[int, int] = {}
-            retry = False
+            needs_retry = False
 
             for delete_coro in tqdm(
                 asyncio.as_completed(tasks),
@@ -209,7 +218,7 @@ async def delete_tags(
                     status_counter_map[status] = status_counter_map.get(status, 0) + 1
                 except TooManyRequestsError as e:
                     # upon 429, cancel all pending tasks
-                    retry = True
+                    needs_retry = True
                     for t in tasks:
                         if not t.done():
                             t.cancel()
@@ -220,9 +229,9 @@ async def delete_tags(
             await asyncio.gather(*tasks, return_exceptions=True)
 
         print(
-            f"Deletion run completed. \n Status counters: \n {status_counter_map}\n Retry: {retry}",
+            f"Deletion run completed. \n Status counters: \n {status_counter_map}\n Retry: {needs_retry}",
         )
-    return retry
+    return needs_retry
 
 
 async def clean_dockerhub(
@@ -252,7 +261,7 @@ async def clean_dockerhub(
         namespace, repo, token, min_age_in_days, max_number_of_pages
     )
     if not old_tags:
-        print("No tags to delete. Exiting.")
+        print(f"Did not find any tag in repo {docker_repository} older than {min_age_in_days} days.")
         return
 
     # 2) Delete old tags. Repeat until we don't run into a rate limit
