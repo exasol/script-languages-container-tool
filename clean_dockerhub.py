@@ -173,13 +173,13 @@ async def delete_tags(
     tags_to_delete: list[Tag],
 ) -> bool:
     """
-    Delete the specified tags from a repository on Docker Hub. Use 3 HTTP
-    requests in parallel.
+    Delete the specified tags from a repository on Docker Hub. Use multiple HTTP
+    requests in parallel, see constant PARALLEL_TASKS.
 
-    The method creates an aiohttp.ClientSession session, then creates all
-    async delete tasks.
+    The method creates an aiohttp.ClientSession session and an async delete task 
+    for each tag to delete.
 
-    The methods's boolen return value indicates whether a retry is required.
+    The methods's boolean return value indicates whether a retry is required.
     If none of the delete tasks raises a TooManyRequestsError exception then
     the method returns needs_retry=False.
 
