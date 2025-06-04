@@ -3,12 +3,26 @@ import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from http import HTTPStatus
+from inspect import cleandoc
 
 import aiohttp
 from rich.console import Console
 from tqdm import tqdm
 
 DOCKERHUB_API = "https://hub.docker.com/v2"
+LIMIT_SIMULTANEOUS_CONNECTIONS_TO_SAME_ENDPOINT = 10
+"""
+The value of this constant will be used for parameter `limit_per_host` during instantiation of class
+https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.TCPConnector
+"""
+
+PAGE_SIZE = 100
+"""
+Page size when fetching existing tags from Dockhub Rest API.
+According to https://docs.docker.com/reference/api/hub/latest/#tag/repositories/paths/~1v2~1namespaces~1%7Bnamespace%7D~1repositories~1%7Brepository%7D~1tags/get
+the maximum value is 100.
+"""
 
 
 @dataclass(frozen=True)
@@ -86,17 +100,16 @@ async def fetch_old_tags(
     """
     tags: list[Tag] = []
     page = 1
-    page_size = 100
 
     console = Console()
     status_msg = f"Fetching pages for {context.docker_repository}...{{n_pages}} pages."
     with console.status(status_msg.format(n_pages=page)) as status:
         while True:
-            url = f"{context.repository_url}/tags?page={page}&page_size={page_size}"
+            url = f"{context.repository_url}/tags?page={page}&page_size={PAGE_SIZE}"
 
             headers = {"Authorization": f"JWT {token}"}
             async with session.get(url, headers=headers) as resp:
-                if resp.status == 429:
+                if resp.status == HTTPStatus.TOO_MANY_REQUESTS.value:
                     console.log("[bold yellow]Ran into rate limit.")
                     # If observing a rate limit, then simply process only the tags fetched until now.
                     break
@@ -144,9 +157,9 @@ async def delete_tag(
 
     async with semaphore:
         async with session.delete(url, headers=headers) as resp:
-            if resp.status == 204:
+            if resp.status == HTTPStatus.NO_CONTENT.value:
                 tag.deleted = True
-            elif resp.status == 429:
+            elif resp.status == HTTPStatus.TOO_MANY_REQUESTS.value:
                 # Rate limit hit
                 raise TooManyRequestsError(f"{context.docker_repository}:{tag}")
             return resp.status
@@ -161,7 +174,9 @@ async def get_old_tags(
     """
     threshold = datetime.now() - timedelta(days=context.min_age_in_days)
 
-    conn = aiohttp.TCPConnector(limit_per_host=10)
+    conn = aiohttp.TCPConnector(
+        limit_per_host=LIMIT_SIMULTANEOUS_CONNECTIONS_TO_SAME_ENDPOINT
+    )
     async with aiohttp.ClientSession(connector=conn) as session:
         old_tags = await fetch_old_tags(session, context, threshold, token)
         return old_tags
@@ -176,7 +191,7 @@ async def delete_tags(
     Delete the specified tags from a repository on Docker Hub. Use multiple HTTP
     requests in parallel, see constant PARALLEL_TASKS.
 
-    The method creates an aiohttp.ClientSession session and an async delete task 
+    The method creates an aiohttp.ClientSession session and an async delete task
     for each tag to delete.
 
     The methods's boolean return value indicates whether a retry is required.
@@ -194,7 +209,9 @@ async def delete_tags(
     sem = asyncio.Semaphore(PARALLEL_TASKS)
 
     needs_retry = False
-    conn = aiohttp.TCPConnector(limit_per_host=10)
+    conn = aiohttp.TCPConnector(
+        limit_per_host=LIMIT_SIMULTANEOUS_CONNECTIONS_TO_SAME_ENDPOINT
+    )
     async with aiohttp.ClientSession(connector=conn) as session:
         try:
             tasks = [
@@ -226,7 +243,13 @@ async def delete_tags(
             await asyncio.gather(*tasks, return_exceptions=True)
 
         print(
-            f"Deletion run completed. \n Status counters: \n {status_counter_map}\n Retry: {needs_retry}",
+            cleandoc(
+                f"""
+                Deletion run completed.
+                Status counters:
+                {status_counter_map}
+                Retry: {needs_retry}"""
+            ),
         )
     return needs_retry
 
