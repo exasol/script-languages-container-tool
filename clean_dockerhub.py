@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 import aiohttp
+from rich.console import Console
 from tqdm import tqdm
 
 DOCKERHUB_API = "https://hub.docker.com/v2"
@@ -67,39 +68,42 @@ async def fetch_old_tags(
 
     max_tags = page_size * max_number_of_pages
 
-    while True:
-        print(f"Fetching page {page} ...")
-        url = (
-            f"{DOCKERHUB_API}/repositories/"
-            f"{namespace}/{repo}/tags?page={page}&page_size={page_size}"
-        )
-        headers = {"Authorization": f"JWT {token}"}
-        async with session.get(url, headers=headers) as resp:
-            if resp.status == 429:
-                print("Ran into rate limit.")
-                # If we run into rate limit here, we process all the tags which we fetched until now.
+    console = Console()
+    status_msg = f"Fetching pages for {namespace}/{repo}...{{n_pages}} pages."
+    with console.status(status_msg.format(n_pages=page)) as status:
+        while True:
+            url = (
+                f"{DOCKERHUB_API}/repositories/"
+                f"{namespace}/{repo}/tags?page={page}&page_size={page_size}"
+            )
+            headers = {"Authorization": f"JWT {token}"}
+            async with session.get(url, headers=headers) as resp:
+                if resp.status == 429:
+                    console.log("[bold yellow]Ran into rate limit.")
+                    # If we run into rate limit here, we process all the tags which we fetched until now.
+                    break
+                resp.raise_for_status()
+                data = await resp.json()
+
+            results = data.get("results", [])
+            if not results:
                 break
-            resp.raise_for_status()
-            data = await resp.json()
 
-        results = data.get("results", [])
-        if not results:
-            break
+            for t in results:
+                # Filter tags older than threshold
+                updated = parse_iso_datetime(t["last_updated"])
+                if updated < threshold:
+                    tags.append(Tag(name=t["name"], date=updated, deleted=False))
 
-        for t in results:
-            # Filter tags older than threshold
-            updated = parse_iso_datetime(t["last_updated"])
-            if updated < threshold:
-                tags.append(Tag(name=t["name"], date=updated, deleted=False))
+            if not data.get("next"):
+                break
 
-        if not data.get("next"):
-            break
+            page += 1
+            status.update(status_msg.format(n_pages=page))
 
-        page += 1
-
-        if 0 < max_tags <= len(tags):
-            break
-
+            if 0 < max_tags <= len(tags):
+                break
+    console.log(f"[bold green]Total tags fetched: {len(tags)}")
     return tags
 
 
@@ -144,11 +148,9 @@ async def get_old_tags(
     conn = aiohttp.TCPConnector(limit_per_host=10)
     async with aiohttp.ClientSession(connector=conn) as session:
         # 2) Fetch all tags
-        print(f"Fetching tags for {namespace}/{repo} ...")
         old_tags = await fetch_old_tags(
             session, namespace, repo, threshold, token, max_number_of_pages
         )
-        print(f"Total tags fetched: {len(old_tags)}")
         return old_tags
 
 
@@ -165,8 +167,9 @@ async def delete_tags(
     and the method returns True. If no such exception is raised, the method returns False.
     """
 
-    # Values higher will run deletion faster, but have higher risk of getting a 429,
+    # Higher values will run deletion faster, but have higher risk of getting a 429,
     # see https://docs.docker.com/docker-hub/usage/#abuse-rate-limit
+    # Tests have shown that max deletion rate without running into avoid rate limits is ~650 Tags / min.
     sem = asyncio.Semaphore(2)
 
     retry = False
@@ -244,8 +247,14 @@ async def clean_dockerhub(
         tags_to_delete = [tag for tag in old_tags if not tag.deleted]
         retry = await delete_tags(namespace, repo, token, tags_to_delete)
         if retry:
-            for i in tqdm(range(60), "Waiting for rate limit."):
-                time.sleep(1)
+            console = Console()
+            log_msg = "Waiting 1 minute for rate limit cooldown...({seconds}s)"
+            with console.status(
+                log_msg.format(seconds=0), spinner="bouncingBall"
+            ) as status:
+                for i in range(60):
+                    time.sleep(1)
+                    status.update(log_msg.format(seconds=i), spinner="bouncingBall")
         else:
             break
 
