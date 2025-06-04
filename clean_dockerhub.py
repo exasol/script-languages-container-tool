@@ -20,6 +20,7 @@ class Tag:
     """
     Represents a released version of a docker image on Docker Hub.
     """
+
     name: str
     date: datetime
     deleted: bool
@@ -45,6 +46,7 @@ def parse_iso_datetime(dt_str: str) -> datetime:
     Parse an ISO8601 datetime string (with optional suffix 'Z') into a
     timezone-aware datetime.
     """
+
     def remove_timezone(dt_str: str) -> str:
         return dt_str[:-1] if dt_str.endswith("Z") else dt_str
 
@@ -57,7 +59,6 @@ def parse_iso_datetime(dt_str: str) -> datetime:
 
     normalized = remove_microseconds(remove_timezone(dt_str))
     return datetime.fromisoformat(normalized)
-
 
 
 async def fetch_old_tags(
@@ -90,7 +91,7 @@ async def fetch_old_tags(
             async with session.get(url, headers=headers) as resp:
                 if resp.status == 429:
                     console.log("[bold yellow]Ran into rate limit.")
-                    # If observing a rate limit, then simply process onle the tags fetched until now.
+                    # If observing a rate limit, then simply process only the tags fetched until now.
                     break
                 resp.raise_for_status()
                 data = await resp.json()
@@ -99,11 +100,13 @@ async def fetch_old_tags(
             if not results:
                 break
 
-            for t in results:
-                # Ignore tags older than the specified threshold
-                updated = parse_iso_datetime(t["last_updated"])
-                if updated < threshold:
-                    tags.append(Tag(name=t["name"], date=updated, deleted=False))
+            tags.extend(
+                [
+                    Tag(name=t["name"], date=t["last_updated"], deleted=False)
+                    for t in results
+                    if parse_iso_datetime(t["last_updated"]) < threshold
+                ]
+            )
 
             if not data.get("next"):
                 break
