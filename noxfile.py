@@ -1,6 +1,7 @@
 import json
 from argparse import ArgumentParser
 from enum import Enum
+from inspect import cleandoc
 
 import nox
 
@@ -84,10 +85,24 @@ def cleanup_docker_hub(session: nox.Session):
         required=True,
         help="Minimum age in days of tags which will be removed",
     )
+    parser.add_argument(
+        "--max-number-pages",
+        type=int,
+        default=100,
+        required=False,
+        help=cleandoc(
+            """Maximum number of pages.
+        The page size is fixed at 100 (maximum from Dockerhub RestAPI).
+        This means 100*MAX_NUMBER_PAGES will be deleted.
+        Tags newer than MIN_AGE_IN_DAYS do not count.
+        Use 0 for no maximum number (risk to take very long)"""
+        ),
+    )
     args = parser.parse_args(session.posargs)
     call_clean_dockerhub(
         docker_repository=args.docker_repository,
         docker_username=args.docker_username,
         docker_password=args.docker_password,
         min_age_in_days=args.min_age_in_days,
+        max_number_of_pages=args.max_number_pages,
     )
