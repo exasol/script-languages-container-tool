@@ -190,11 +190,11 @@ async def delete_tags(
 
     # More parallel tasks will run deletion faster, but have higher risk of getting a 429,
     # see https://docs.docker.com/docker-hub/usage/#abuse-rate-limit
-    # Tests have shown that max deletion rate without running into rate limits is ~650 Tags/min.   
+    # Tests have shown that max deletion rate without running into rate limits is ~650 Tags/min.
     PARALLEL_TASKS = 2
-    sem = asyncio.Semaphore(PARALLEL_TASKS)    
+    sem = asyncio.Semaphore(PARALLEL_TASKS)
 
-    retry = False
+    needs_retry = False
     conn = aiohttp.TCPConnector(limit_per_host=10)
     async with aiohttp.ClientSession(connector=conn) as session:
         try:
@@ -261,7 +261,9 @@ async def clean_dockerhub(
         namespace, repo, token, min_age_in_days, max_number_of_pages
     )
     if not old_tags:
-        print(f"Did not find any tag in repo {docker_repository} older than {min_age_in_days} days.")
+        print(
+            f"Did not find any tag in repo {docker_repository} older than {min_age_in_days} days."
+        )
         return
 
     # 2) Delete old tags. Repeat until we don't run into a rate limit
