@@ -8,7 +8,7 @@ import nox
 # imports all nox task provided by the toolbox
 from exasol.toolbox.nox.tasks import *  # type: ignore
 
-from clean_dockerhub import call_clean_dockerhub
+from clean_dockerhub import fetch_and_delete_old_tags
 
 # default actions to be run if nothing is explicitly specified with the -s option
 nox.options.sessions = ["project:fix"]
@@ -65,6 +65,7 @@ def cleanup_docker_hub(session: nox.Session):
         "--docker-repository",
         type=str,
         required=True,
+        metavar="NAMESPACE/REPO",
         help="Docker Repository name",
     )
     parser.add_argument(
@@ -83,26 +84,25 @@ def cleanup_docker_hub(session: nox.Session):
         "--min-age-in-days",
         type=int,
         required=True,
-        help="Minimum age in days of tags which will be removed",
+        help="Minimum age in days of tags to remove",
     )
     parser.add_argument(
-        "--max-number-pages",
+        "--max-number-tags",
         type=int,
-        default=100,
+        default=10000,
         required=False,
         help=cleandoc(
-            """Maximum number of pages.
+            """Maximum number of tags do be deleted.
         The page size is fixed at 100 (maximum from Dockerhub RestAPI).
-        This means 100*MAX_NUMBER_PAGES will be deleted.
         Tags newer than MIN_AGE_IN_DAYS do not count.
         Use 0 for no maximum number (risk to take very long)"""
         ),
     )
     args = parser.parse_args(session.posargs)
-    call_clean_dockerhub(
+    fetch_and_delete_old_tags(
         docker_repository=args.docker_repository,
         docker_username=args.docker_username,
         docker_password=args.docker_password,
         min_age_in_days=args.min_age_in_days,
-        max_number_of_pages=args.max_number_pages,
+        max_number_tags=args.max_number_tags,
     )

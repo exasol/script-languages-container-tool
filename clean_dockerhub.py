@@ -11,6 +11,19 @@ from tqdm import tqdm
 DOCKERHUB_API = "https://hub.docker.com/v2"
 
 
+@dataclass(frozen=True)
+class Context:
+    docker_repository: str
+    docker_username: str
+    docker_password: str
+    min_age_in_days: int
+    max_number_tags: int
+
+    @property
+    def repository_url(self):
+        return f"{DOCKERHUB_API}/repositories/{self.docker_repository}"
+
+
 class TooManyRequestsError(Exception):
     """Raised when Docker Hub returned HTTP 429 Too Many Requests."""
 
@@ -18,7 +31,7 @@ class TooManyRequestsError(Exception):
 @dataclass
 class Tag:
     """
-    Represents a released version of a docker image on Docker Hub.
+    Represents a specific tag of a docker image on Docker Hub.
     """
 
     name: str
@@ -63,11 +76,9 @@ def parse_iso_datetime(dt_str: str) -> datetime:
 
 async def fetch_old_tags(
     session: aiohttp.ClientSession,
-    namespace: str,
-    repo: str,
+    context: Context,
     threshold: datetime,
     token: str,
-    max_number_of_pages: int,
 ) -> list[Tag]:
     """
     Fetch all tags for a repository on Docker Hub, handling pagination.
@@ -77,16 +88,12 @@ async def fetch_old_tags(
     page = 1
     page_size = 100
 
-    max_tags = page_size * max_number_of_pages
-
     console = Console()
-    status_msg = f"Fetching pages for {namespace}/{repo}...{{n_pages}} pages."
+    status_msg = f"Fetching pages for {context.docker_repository}...{{n_pages}} pages."
     with console.status(status_msg.format(n_pages=page)) as status:
         while True:
-            url = (
-                f"{DOCKERHUB_API}/repositories/"
-                f"{namespace}/{repo}/tags?page={page}&page_size={page_size}"
-            )
+            url = f"{context.repository_url}/tags?page={page}&page_size={page_size}"
+
             headers = {"Authorization": f"JWT {token}"}
             async with session.get(url, headers=headers) as resp:
                 if resp.status == 429:
@@ -114,16 +121,15 @@ async def fetch_old_tags(
             page += 1
             status.update(status_msg.format(n_pages=page))
 
-            if 0 < max_tags <= len(tags):
+            if 0 < context.max_number_tags <= len(tags):
                 break
     console.log(f"[bold green]Total tags fetched: {len(tags)}")
     return tags
 
 
 async def delete_tag(
+    context: Context,
     session: aiohttp.ClientSession,
-    namespace: str,
-    repo: str,
     tag: Tag,
     token: str,
     semaphore: asyncio.Semaphore,
@@ -133,7 +139,7 @@ async def delete_tag(
     Raises a TooManyRequestsError if Docker Hub returns HTTP 429.
     Otherwise, the status code is returned.
     """
-    url = f"{DOCKERHUB_API}/repositories/{namespace}/{repo}/tags/{tag.name}/"
+    url = f"{context.repository_url}/tags/{tag.name}/"
     headers = {"Authorization": f"JWT {token}"}
 
     async with semaphore:
@@ -142,34 +148,27 @@ async def delete_tag(
                 tag.deleted = True
             elif resp.status == 429:
                 # Rate limit hit
-                raise TooManyRequestsError(f"{namespace}/{repo}:{tag}")
+                raise TooManyRequestsError(f"{context.docker_repository}:{tag}")
             return resp.status
 
 
 async def get_old_tags(
-    namespace: str,
-    repo: str,
+    context: Context,
     token: str,
-    min_age_in_days: int,
-    max_number_of_pages: int,
 ) -> list[Tag]:
     """
     Calculates the time threshold, opens a aiohttp.ClientSession session and then calls `fetch_old_tags`.
     """
-    threshold = datetime.now() - timedelta(days=min_age_in_days)
+    threshold = datetime.now() - timedelta(days=context.min_age_in_days)
 
     conn = aiohttp.TCPConnector(limit_per_host=10)
     async with aiohttp.ClientSession(connector=conn) as session:
-        # 2) Fetch all tags
-        old_tags = await fetch_old_tags(
-            session, namespace, repo, threshold, token, max_number_of_pages
-        )
+        old_tags = await fetch_old_tags(session, context, threshold, token)
         return old_tags
 
 
 async def delete_tags(
-    namespace: str,
-    repo: str,
+    context: Context,
     token: str,
     tags_to_delete: list[Tag],
 ) -> bool:
@@ -199,9 +198,7 @@ async def delete_tags(
     async with aiohttp.ClientSession(connector=conn) as session:
         try:
             tasks = [
-                asyncio.create_task(
-                    delete_tag(session, namespace, repo, tag, token, sem)
-                )
+                asyncio.create_task(delete_tag(context, session, tag, token, sem))
                 for tag in tags_to_delete
             ]
 
@@ -234,13 +231,7 @@ async def delete_tags(
     return needs_retry
 
 
-async def clean_dockerhub(
-    docker_repository: str,
-    docker_username: str,
-    docker_password: str,
-    min_age_in_days: int,
-    max_number_of_pages: int,
-) -> None:
+async def _fetch_and_delete_old_tags(context: Context) -> None:
     """
     Cleans all tags in a Docker repository which are older than `min_age_in_days` days.
     1. Gets the auth token from Docker Hub.
@@ -248,28 +239,26 @@ async def clean_dockerhub(
     3. Deletes the tags in a loop until all tags are deleted, or only errors != 429 were raised.
     """
 
-    namespace, repo = docker_repository.split("/")
-
     # 1) Authenticate
     async with aiohttp.ClientSession() as session:
 
-        token = await get_jwt_token(session, docker_username, docker_password)
+        token = await get_jwt_token(
+            session, context.docker_username, context.docker_password
+        )
         print("Authenticated successfully.")
 
     # 1) Fetch old tags
-    old_tags = await get_old_tags(
-        namespace, repo, token, min_age_in_days, max_number_of_pages
-    )
+    old_tags = await get_old_tags(context, token)
     if not old_tags:
         print(
-            f"Did not find any tag in repo {docker_repository} older than {min_age_in_days} days."
+            f"Did not find any tag in repo {context.docker_repository} older than {context.min_age_in_days} days."
         )
         return
 
     # 2) Delete old tags. Repeat until we don't run into a rate limit
     while True:
         tags_to_delete = [tag for tag in old_tags if not tag.deleted]
-        retry = await delete_tags(namespace, repo, token, tags_to_delete)
+        retry = await delete_tags(context, token, tags_to_delete)
         if retry:
             console = Console()
             log_msg = "Waiting 1 minute for rate limit cooldown...({seconds}s)"
@@ -283,19 +272,21 @@ async def clean_dockerhub(
             break
 
 
-def call_clean_dockerhub(
+def fetch_and_delete_old_tags(
     docker_repository: str,
     docker_username: str,
     docker_password: str,
     min_age_in_days: int,
-    max_number_of_pages: int,
+    max_number_tags: int,
 ):
     asyncio.run(
-        clean_dockerhub(
-            docker_repository,
-            docker_username,
-            docker_password,
-            min_age_in_days,
-            max_number_of_pages,
+        _fetch_and_delete_old_tags(
+            Context(
+                docker_repository,
+                docker_username,
+                docker_password,
+                min_age_in_days,
+                max_number_tags,
+            )
         )
     )
