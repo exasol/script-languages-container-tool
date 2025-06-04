@@ -169,7 +169,7 @@ async def delete_tags(
 
     # Higher values will run deletion faster, but have higher risk of getting a 429,
     # see https://docs.docker.com/docker-hub/usage/#abuse-rate-limit
-    # Tests have shown that max deletion rate without running into avoid rate limits is ~650 Tags / min.
+    # Tests have shown that max deletion rate without running into rate limits is ~650 Tags/min.
     sem = asyncio.Semaphore(2)
 
     retry = False
