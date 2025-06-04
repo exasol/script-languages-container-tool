@@ -12,11 +12,14 @@ DOCKERHUB_API = "https://hub.docker.com/v2"
 
 
 class TooManyRequestsError(Exception):
-    """Raised when a 429 Too Many Requests is returned by Docker Hub."""
+    """Raised when Docker Hub returned HTTP 429 Too Many Requests."""
 
 
 @dataclass
 class Tag:
+    """
+    Represents a released version of a docker image on Docker Hub.
+    """
     name: str
     date: datetime
     deleted: bool
@@ -39,15 +42,22 @@ async def get_jwt_token(
 
 def parse_iso_datetime(dt_str: str) -> datetime:
     """
-    Parse an ISO8601 datetime string (with optional 'Z') into a timezone-aware datetime.
+    Parse an ISO8601 datetime string (with optional suffix 'Z') into a
+    timezone-aware datetime.
     """
-    if dt_str.endswith("Z"):
-        dt_str = dt_str[:-1]
-    # remove microseconds as datetime.fromisoformat() always expects a fixed number of digits of microseconds,
-    # whereas the ISO string from Dockerhub returns an arbitrary number of digits.
-    pattern = re.compile(r"\.\d+$")
-    dt_str = pattern.sub("", dt_str)
-    return datetime.fromisoformat(dt_str)
+    def remove_timezone(dt_str: str) -> str:
+        return dt_str[:-1] if dt_str.endswith("Z") else dt_str
+
+    def remove_microseconds(dt_str: str) -> str:
+        """
+        datetime.fromisoformat() always expects a fixed number of digits of microseconds,
+        whereas the ISO string from Dockerhub returns an arbitrary number of digits.
+        """
+        return re.sub(r"\.\d+$", "", dt_str)
+
+    normalized = remove_microseconds(remove_timezone(dt_str))
+    return datetime.fromisoformat(normalized)
+
 
 
 async def fetch_old_tags(
@@ -59,7 +69,7 @@ async def fetch_old_tags(
     max_number_of_pages: int,
 ) -> list[Tag]:
     """
-    Fetch all tags for a repository, handling pagination.
+    Fetch all tags for a repository on Docker Hub, handling pagination.
     Returns a list of `Tag` objects.
     """
     tags: list[Tag] = []
@@ -80,7 +90,7 @@ async def fetch_old_tags(
             async with session.get(url, headers=headers) as resp:
                 if resp.status == 429:
                     console.log("[bold yellow]Ran into rate limit.")
-                    # If we run into rate limit here, we process all the tags which we fetched until now.
+                    # If observing a rate limit, then simply process onle the tags fetched until now.
                     break
                 resp.raise_for_status()
                 data = await resp.json()
@@ -90,7 +100,7 @@ async def fetch_old_tags(
                 break
 
             for t in results:
-                # Filter tags older than threshold
+                # Ignore tags older than the specified threshold
                 updated = parse_iso_datetime(t["last_updated"])
                 if updated < threshold:
                     tags.append(Tag(name=t["name"], date=updated, deleted=False))
