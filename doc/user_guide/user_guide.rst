@@ -154,7 +154,9 @@ command:
 
    exaslct run-db-test --flavor-path=flavors/<flavor-name>
 
-**Note: you need docker in privileged mode to execute the tests**
+.. important::
+
+   You need docker in privileged mode to execute the tests**
 
 Testing an existing container file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

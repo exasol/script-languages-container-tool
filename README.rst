@@ -65,7 +65,7 @@ For installation
 In order to install this tool, your system needs to provide the
 following prerequisites:
 
-- Software See `Dependencies <doc/dependencies.md>`__
+- See `Dependencies <dependencies.html>`__
 
 For running
 ^^^^^^^^^^^
@@ -173,7 +173,7 @@ to the following one:
 
    ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>?lang=<language>#buckets/<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>/exaudf/exaudfclient[_py3]';
 
-**Please, refer to the** `User Guide <doc/user_guide/user_guide.rst>`__
+**Please, refer to the** :doc:`User Guide <user_guide/user_guide>`.
 **for more detailed information, how to use exalsct.**
 
 Features

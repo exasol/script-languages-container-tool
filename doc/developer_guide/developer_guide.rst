@@ -78,8 +78,10 @@ code. As such, we typically have tasks like the following one:
 - Start Container
 - Upload something
 
-Most of these tasks produce some kind of output, for example: \* docker
-image \* a running docker container
+Most of these tasks produce some kind of output, for example:
+
+- docker image
+- a running docker container
 
 Often, other tasks then depend either on the output, or the action of
 one or more other tasks. These dependencies build a direct acyclic graph
@@ -143,7 +145,7 @@ The following graph shows the default build steps and their
 dependencies.
 
 .. image:: ./images/image-dependencies.png
-  :width: 400
+  :width: 800
   :alt: Build-Step dependencies
 
 A dependency between build steps can be either a FROM or COPY
@@ -209,9 +211,11 @@ other build steps.
 Which Caches are Available?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-EXASLCT provides three types of caching: \* docker images managed by the
-docker daemon \* file system cache with saved docker images \* docker
-registry as a remote cache
+EXASLCT provides three types of caching:
+
+#. docker images managed by the docker daemon.
+#. file system cache with saved docker images.
+#. docker registry as a remote cache.
 
 All caches can work together, the analysis phase checks in which cache
 an images is available. The different type of caches have different
@@ -245,8 +249,11 @@ for the images.
 Updating Drivers and ExaPlus
 ----------------------------
 
-EXASLCT uses drivers and SQL Client ExaPlus for tests: \* JDBC driver \*
-OBDC driver \* ExaPlus
+EXASLCT uses drivers and SQL Client ExaPlus for tests:
+
+- JDBC driver
+- OBDC driver
+- ExaPlus
 
 Instructions
 
@@ -258,7 +265,7 @@ Instructions
    `test/resources/test_container/full/build/Dockerfile <https://github.com/exasol/script-languages-container-tool/blob/main/test/resources/test_container/full/build/Dockerfile>`__.
 4. Update the path to the resp. ``*.so`` files in file
    ``lib/tasks/test/run_db_test.py``, method
-   `command_line() <https://github.com/exasol/script-languages-container-tool/blob/main/exasol_script_languages_container_tool/lib/tasks/test/run_db_test.py#L110>`__.
+   `command_line() <https://github.com/exasol/script-languages-container-tool/blob/main/exasol/slc/internal/tasks/test/run_db_test.py#L96>`__.
 
 Creating a Release
 ------------------
@@ -272,7 +279,7 @@ Prerequisites
 
 - Release tag needs to match package
 
-  For Example: \* Tag: 0.4.0 \* \`poetry version -s\`: 0.4.0
+  For Example: **Tag: 0.4.0**  \`poetry version -s\`: 0.4.0
 
 Preparing the Release
 ~~~~~~~~~~~~~~~~~~~~~
