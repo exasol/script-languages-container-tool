@@ -195,4 +195,4 @@ Features
 📚 Documentation
 ----------------
 
-For futher details, checkout the latest `documentation <https://exasol.github.io/exasol-script-languages-container-tool/>`__.
+For further details, check out latest `documentation <https://exasol.github.io/exasol-script-languages-container-tool/>`__.

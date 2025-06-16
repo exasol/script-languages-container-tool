@@ -1,8 +1,8 @@
-Script-Languages-Container-Tool Developer Guide
-===============================================
+Developer Guide
+===============
 
-EXASLCT is the build tool for the script language container. This
-document is about the inner working of EXASLCT.
+``exaslct`` is the build tool for the script language container. This
+document is about the inner working of ``exaslct``.
 
 Preparations
 ------------
@@ -71,7 +71,7 @@ Design Goals
 Programming Model
 -----------------
 
-Exaslct is a mix of a build system, test runner and infrastructure as
+``exaslct`` is a mix of a build system, test runner and infrastructure as
 code. As such, we typically have tasks like the following one:
 
 - Build Image
@@ -125,7 +125,7 @@ order of execution of dependencies is important, or the dependencies
 depend on some calculation. The dynamic dependencies allow the
 implementation of a fork-join pattern.
 
-In EXASLCT we use our own subclass of Luigi.Task, ``StoppableTask`` as
+In ``exaslct`` we use our own subclass of Luigi.Task, ``StoppableTask`` as
 base class. The StoppableTask adds profiling, recording of dependencies
 for visualization or debugging and stops if any other StoppableTask
 failed in the workflow.
@@ -202,7 +202,7 @@ DockerFlavorAnalyzeImageTask. For example:
 How Does Caching Work?
 ----------------------
 
-Exaslct was built with caching in mind, because building a flavor might
+``exaslct`` was built with caching in mind, because building a flavor might
 take very long, and many build steps don’t change that often.
 Furthermore, an end user most likely only changes the build-step
 flavor-customization which is designed to have a minimal impact on all
@@ -211,7 +211,7 @@ other build steps.
 Which Caches are Available?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-EXASLCT provides three types of caching:
+``exaslct`` provides three types of caching:
 
 #. docker images managed by the docker daemon.
 #. file system cache with saved docker images.
@@ -230,7 +230,7 @@ and needs transport over network.
 Finding the Corresponding Docker Images to the Current Build Context
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-EXASLCT computes a hash value for the whole build context of an image
+``exaslct`` computes a hash value for the whole build context of an image
 and adds the hash value to the tag of the image. Responsible for hashing
 the build context is the ``BuildContextHasher`` which uses the
 ``FileDirectoryListHasher``.
@@ -249,7 +249,7 @@ for the images.
 Updating Drivers and ExaPlus
 ----------------------------
 
-EXASLCT uses drivers and SQL Client ExaPlus for tests:
+``exaslct`` uses drivers and SQL Client ExaPlus for tests:
 
 - JDBC driver
 - OBDC driver

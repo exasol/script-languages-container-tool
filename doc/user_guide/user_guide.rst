@@ -1,5 +1,5 @@
-Script-Languages-Container-Tool User Guide
-==========================================
+User Guide
+==========
 
 Table of Contents
 -----------------
@@ -126,7 +126,7 @@ build-stages.
 Using your own remote cache
 ---------------------------
 
-Exaslct caches images locally and remotely. For remote caching exaslct
+``exaslct`` caches images locally and remotely. For remote caching exaslct
 can use a docker registry. The default registry is configured to Docker
 Hub. With the command line options ``--repository-name`` you can
 configure your own docker registry as cache. The ``--repository-name``
