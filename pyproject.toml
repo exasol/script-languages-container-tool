@@ -4,7 +4,7 @@ version = "3.3.0"
 description = "Script Languages Container Tool"
 keywords = ['exasol', 'udf', 'script-languages']
 
-readme = 'README.md'  # Markdown files are supported
+readme = 'README.rst'
 license = "MIT"
 
 authors = [
@@ -17,7 +17,7 @@ authors = [
 requires-poetry = ">=2.1.0"
 
 packages = [
-    {include = "README.md"},
+    {include = "README.rst"},
     {include = "LICENSE"},
     {include = "exasol"},
 ]

@@ -11,7 +11,7 @@ Furthermore, they contain some information which might help you during developme
 
 You can contribute to this project at several levels:
 - In any case, we recommend creating a new Github issue for bug reports or new features before implementing any changes. Thus, we can give you feedback soon.
-- If you are more experienced, we are happy about any pull request. Please check out our [developer guide](doc/developer_guide/developer_guide.md) which provides insights about architecture and design decisions.
+- If you are more experienced, we are happy about any pull request. Please check out our [developer guide](doc/developer_guide/developer_guide.rst) which provides insights about architecture and design decisions.
 
 ## Testing
 
