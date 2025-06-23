@@ -20,8 +20,8 @@ def generate_language_activation(
     """
     Generate the language activation statement.
     :return: A tuple of language definition statements: The first one is the alter session statement,
-             the second one the alter system statement; the last string contains a summary which is useful to print to
-             the user.
+    the second one the alter system statement; the last string contains a summary which is useful to print to
+    the user.
     """
 
     language_definition = LanguageDefinition(

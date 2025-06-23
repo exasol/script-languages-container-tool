@@ -1,0 +1,21 @@
+.. include:: ../README.rst
+
+
+Table of Contents
+=================
+
+.. toctree::
+   :maxdepth: 1
+
+   user_guide/user_guide
+   developer_guide/developer_guide
+   api
+   changes/changelog
+   dependencies.md
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

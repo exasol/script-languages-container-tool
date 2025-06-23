@@ -73,7 +73,7 @@ def deploy(
     export them before the upload.
     :raises api_errors.TaskFailureError: if operation is not successful.
     :return: A dictionary with an instance of class DeployResult for each release for each deployed flavor.
-             For example { "flavors/standard-flavor" : {"release" : DeployResult(...) } }
+    For example { "flavors/standard-flavor" : {"release" : DeployResult(...) } }
     """
     import_build_steps(flavor_path)
     set_build_config(
