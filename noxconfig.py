@@ -10,6 +10,7 @@ from nox import Session
 @dataclass(frozen=True)
 class Config:
     root: Path = Path(__file__).parent
+    source: Path = Path(__file__).parent / "exasol"
     doc: Path = Path(__file__).parent / "doc"
     version_file: Path = Path(__file__).parent / "exasol" / "slc" / "version.py"
     path_filters: Iterable[str] = ("dist", ".eggs", "venv", "resources")
