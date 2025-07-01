@@ -152,7 +152,7 @@ A dependency between build steps can be either a FROM or COPY
 dependencies. A FROM dependency means that the target of the arrow uses
 the source of the arrow as base image. A COPY dependency means that the
 target of the arrow `copies
-parts <https://docs.docker.com/develop/develop-images/multistage-build/>`__
+parts <https://docs.docker.com/build/building/multi-stage/>`__
 of the source of the arrow.
 
 All steps with the string “build_run” in their name, either run the
