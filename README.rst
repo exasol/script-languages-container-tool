@@ -26,7 +26,7 @@ Script-Languages-Container-Tool
     :alt: Formatter - Isort
 
 .. image:: https://img.shields.io/pypi/l/exasol-script-languages-container-tool
-     :target: https://opensource.org/licenses/MIT
+     :target: https://opensource.org/license/MIT
      :alt: License
 
 .. image:: https://img.shields.io/github/last-commit/exasol/script-languages-container-tool
@@ -59,14 +59,6 @@ were removed. If you can’t use Python3, you still can use our
 AMI images and a Docker images, all capable of building
 script-language-container.
 
-For installation
-^^^^^^^^^^^^^^^^
-
-In order to install this tool, your system needs to provide the
-following prerequisites:
-
-- See `Dependencies <dependencies.html>`__
-
 For running
 ^^^^^^^^^^^
 
@@ -82,7 +74,7 @@ prerequisites:
   - `Docker <https://docs.docker.com/>`__ >= 17.05
 
     - with support for `multi-stage builds
-      required <https://docs.docker.com/develop/develop-images/multistage-build/>`__
+      required <https://docs.docker.com/build/building/multi-stage/>`__
     - host volume mounts need to be allowed
 
 - System Setup
@@ -195,4 +187,4 @@ Features
 📚 Documentation
 ----------------
 
-For further details, check out latest `documentation <https://exasol.github.io/exasol-script-languages-container-tool/>`__.
+For further details, check out latest `documentation <https://exasol.github.io/script-languages-container-tool>`__.

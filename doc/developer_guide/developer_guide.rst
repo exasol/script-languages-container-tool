@@ -265,7 +265,7 @@ Instructions
    `test/resources/test_container/full/build/Dockerfile <https://github.com/exasol/script-languages-container-tool/blob/main/test/resources/test_container/full/build/Dockerfile>`__.
 4. Update the path to the resp. ``*.so`` files in file
    ``lib/tasks/test/run_db_test.py``, method
-   `command_line() <https://github.com/exasol/script-languages-container-tool/blob/main/exasol/slc/internal/tasks/test/run_db_test.py#L96>`__.
+   `command_line() <https://github.com/exasol/script-languages-container-tool/blob/main/exasol/slc/internal/tasks/test/run_db_test.py>`__ in line 96.
 
 Creating a Release
 ------------------
