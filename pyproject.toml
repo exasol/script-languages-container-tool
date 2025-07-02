@@ -90,3 +90,9 @@ disable = """
     consider-using-f-string,
     useless-parent-delegation
 """
+
+
+[tool.sonar]
+projectKey = "com.exasol:script-languages-container-tool"
+hostUrl = "https://sonarcloud.io"
+organization = "exasol"
