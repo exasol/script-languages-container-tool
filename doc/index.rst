@@ -11,7 +11,6 @@ Table of Contents
    developer_guide/developer_guide
    api
    changes/changelog
-   dependencies.md
 
 Indices and tables
 ==================
