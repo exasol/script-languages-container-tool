@@ -1,6 +1,7 @@
 [project]
 name = "exasol-script-languages-container-tool"
 version = "3.3.0"
+requires-python = ">=3.10,<4"
 description = "Script Languages Container Tool"
 keywords = ['exasol', 'udf', 'script-languages']
 
@@ -11,6 +12,8 @@ authors = [
     { name = "Torsten Kilias", email = "Torsten Kilias <torsten.kilias@exasol.com>" },
     { name = "Thomas Uebensee", email = "Thomas Uebensee <ext.thomas.uebensee@exasol.com>"}
 ]
+
+dynamic = ["dependencies"]
 
 [tool.poetry]
 
@@ -32,7 +35,6 @@ issues = "https://github.com/exasol/script-languages-container-tool/issues"
 
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
