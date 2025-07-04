@@ -1,6 +1,6 @@
 [project]
 name = "exasol-script-languages-container-tool"
-version = "3.3.0"
+version = "3.4.0"
 requires-python = ">=3.10,<4"
 description = "Script Languages Container Tool"
 keywords = ['exasol', 'udf', 'script-languages']
