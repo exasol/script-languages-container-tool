@@ -260,9 +260,12 @@ class TestRunnerDBTestBaseTask(
         return generic_language_tests
 
     def read_test_config(self):
-        with pathlib.Path(self.flavor_path).joinpath("flavor_base").joinpath(
-            "testconfig"
-        ).open("r") as file:
+        with (
+            pathlib.Path(self.flavor_path)
+            .joinpath("flavor_base")
+            .joinpath("testconfig")
+            .open("r") as file
+        ):
             test_config_str = file.read()
             test_config = {}
             for line in test_config_str.splitlines():

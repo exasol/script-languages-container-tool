@@ -17,7 +17,7 @@ def safe_extract(
     path: str = ".",
     members: Optional[list[str]] = None,
     *,
-    numeric_owner: bool = False
+    numeric_owner: bool = False,
 ):
     """
     This function implements a patch for the CVE-2007-4559. The patch essentially checks
