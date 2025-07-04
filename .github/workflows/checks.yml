@@ -193,6 +193,8 @@ jobs:
 
   test-exaslct-alias-script:
     needs: build-matrix
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}

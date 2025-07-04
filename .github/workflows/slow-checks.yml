@@ -12,6 +12,8 @@ jobs:
   slow-tests-approval:
     name: Approve Slow Tests
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
 
     # Even though the environment "manual-approval" will be created automatically,
     # it still needs to be configured to require interactive review.
@@ -33,9 +35,13 @@ jobs:
     name: Integrations
     uses: ./.github/workflows/integration-tests.yml
     secrets: inherit
+    permissions:
+      contents: read
 
   gpu-tests:
     needs: slow-tests-approval
     name: Integrations
     uses: ./.github/workflows/gpu-tests.yml
     secrets: inherit
+    permissions:
+      contents: read
