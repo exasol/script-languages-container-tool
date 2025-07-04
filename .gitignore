@@ -136,6 +136,8 @@ dmypy.json
 # Jetbrains
 .idea/
 
+# documentation
+.html-documentation
 
 # Project
 .build_output/
