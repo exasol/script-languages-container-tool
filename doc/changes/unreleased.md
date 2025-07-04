@@ -7,6 +7,7 @@
 ## Refactorings
 
  - #301: Update PTB and workflows and activate generation of GH pages
+ - #305: Updated exasol-bucketfs to 2.0.0 and exasol-toolbox to 1.6.0
 
 ## Security
 
