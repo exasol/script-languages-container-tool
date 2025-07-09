@@ -193,6 +193,8 @@ jobs:
 
   test-exaslct-alias-script:
     needs: build-matrix
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
@@ -205,7 +207,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@1.6.0
         with:
-          python-version: '${{ matrix.python_version }}'
+          python-version: ${{ matrix.python-version }}
 
       - name: Test exaslct
         run: poetry run exaslct --help

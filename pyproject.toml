@@ -1,6 +1,7 @@
 [project]
 name = "exasol-script-languages-container-tool"
-version = "3.3.0"
+version = "3.4.0"
+requires-python = ">=3.10,<4"
 description = "Script Languages Container Tool"
 keywords = ['exasol', 'udf', 'script-languages']
 
@@ -11,6 +12,8 @@ authors = [
     { name = "Torsten Kilias", email = "Torsten Kilias <torsten.kilias@exasol.com>" },
     { name = "Thomas Uebensee", email = "Thomas Uebensee <ext.thomas.uebensee@exasol.com>"}
 ]
+
+dynamic = ["dependencies"]
 
 [tool.poetry]
 
@@ -32,12 +35,11 @@ issues = "https://github.com/exasol/script-languages-container-tool/issues"
 
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
 exasol-integration-test-docker-environment = "^4.1.0"
-exasol-bucketfs="^1.0.1"
+exasol-bucketfs="^2.0.0"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
 
@@ -48,7 +50,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 toml = ">=0.10.2"
 configobj = "^5.0.8" # moved to dev dependencie so security alert does not propagate further up
-exasol-toolbox = "^1.0.1"
+exasol-toolbox = "^1.6.0"
 aiohttp = "^3.12.7"
 tqdm = "^4.67.1"
 

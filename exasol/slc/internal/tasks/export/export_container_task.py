@@ -35,7 +35,7 @@ class ExportContainerTask(ExportContainerBaseTask):
         )  # pylint: disable=no-member
         return self.create_child_task(
             task_class=class_,
-            **self.required_task_info.params  # pylint: disable=no-member
+            **self.required_task_info.params,  # pylint: disable=no-member
         )
 
     def get_release_goal(self) -> str:
