@@ -1,2 +1,4 @@
 poetry.lock linguist-generated=true
 setup.py linguist-generated=true
+doc/changes/changelog.md linguist-generated=true
+exasol/slc/version.py linguist-generated=true
