@@ -165,7 +165,7 @@ to the following one:
 
    ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>?lang=<language>#buckets/<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>/exaudf/exaudfclient[_py3]';
 
-**Please, refer to the** :doc:`User Guide <user_guide/user_guide>`.
+**Please, refer to the** `User Guide <https://exasol.github.io/script-languages-container-tool/main/user_guide/user_guide.html>`__.
 **for more detailed information, how to use exalsct.**
 
 Features
