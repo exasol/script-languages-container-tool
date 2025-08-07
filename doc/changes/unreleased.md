@@ -6,4 +6,4 @@
 
 ## Refactorings
 
- - #313: Updated GPU Test Query
+ - #313: Updated GPU Test Query and updated Poetry dependencies and PTB GH action
