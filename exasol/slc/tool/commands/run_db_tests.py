@@ -164,8 +164,10 @@ from exasol.slc.tool.options.test_container_options import test_container_option
 def run_db_test(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
+    generic_language_test: tuple[str, ...],
     test_folder: tuple[str, ...],
     test_file: tuple[str, ...],
+    test_language: tuple[Optional[str], ...],
     test: tuple[str, ...],
     environment_type: str,
     max_start_attempts: int,
