@@ -47,10 +47,8 @@ from exasol.slc.models.test_result import AllTestsResult
 def run_db_test(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...] = ("release",),
-    generic_language_test: tuple[str, ...] = tuple(),
     test_folder: tuple[str, ...] = tuple(),
     test_file: tuple[str, ...] = tuple(),
-    test_language: tuple[Optional[str], ...] = (None,),
     test: tuple[str, ...] = tuple(),
     environment_type: str = "docker_db",
     max_start_attempts: int = 2,
