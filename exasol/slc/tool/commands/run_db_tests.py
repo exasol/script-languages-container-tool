@@ -66,15 +66,6 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     "The test runner will run all specified test files.",
 )
 @click.option(
-    "--test-language",
-    multiple=True,
-    type=str,
-    default=[None],
-    help="Specifies with which language the test files get executed."
-    "The option can be repeated with different languages. "
-    "The test runner will run the test files with all specified languages.",
-)
-@click.option(
     "--test",
     multiple=True,
     type=str,
@@ -167,7 +158,6 @@ def run_db_test(
     generic_language_test: tuple[str, ...],
     test_folder: tuple[str, ...],
     test_file: tuple[str, ...],
-    test_language: tuple[Optional[str], ...],
     test: tuple[str, ...],
     environment_type: str,
     max_start_attempts: int,
@@ -238,7 +228,6 @@ def run_db_test(
                 generic_language_test=generic_language_test,
                 test_folder=test_folder,
                 test_file=test_file,
-                test_language=test_language,
                 test=test,
                 environment_type=environment_type,
                 max_start_attempts=max_start_attempts,
