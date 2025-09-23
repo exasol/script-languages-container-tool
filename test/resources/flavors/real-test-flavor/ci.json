@@ -1,0 +1,10 @@
+{
+    "test_config": {
+        "test_sets": [
+            {
+                "generic_language_tests": [],
+                "folders": ["selftest"]
+            }
+        ]
+    }
+}
