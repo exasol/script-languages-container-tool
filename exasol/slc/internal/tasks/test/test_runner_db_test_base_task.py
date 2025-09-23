@@ -260,23 +260,6 @@ class TestRunnerDBTestBaseTask(
             generic_language_tests = self.generic_language_tests
         return generic_language_tests
 
-    def read_test_config(self):
-        with (
-            pathlib.Path(self.flavor_path)
-            .joinpath("flavor_base")
-            .joinpath("testconfig")
-            .open("r") as file
-        ):
-            test_config_str = file.read()
-            test_config = {}
-            for line in test_config_str.splitlines():
-                if not line.startswith("#") and not line == "":
-                    split = line.split("=")
-                    key = split[0]
-                    value = "=".join(split[1:])
-                    test_config[key] = value
-        return test_config
-
     def read_ci_json(self):
         with pathlib.Path(self.flavor_path).joinpath("ci.json").open("r") as json_file:
             ci_json = json.load(json_file)
