@@ -278,12 +278,7 @@ class TestRunnerDBTestBaseTask(
         return test_config
 
     def read_ci_json(self):
-        with (
-            pathlib.Path(self.flavor_path)
-            .joinpath("flavor_base")
-            .joinpath("testconfig")
-            .open("r") as json_file
-        ):
+        with pathlib.Path(self.flavor_path).joinpath("ci.json").open("r") as json_file:
             ci_json = json.load(json_file)
             prefix_1 = prefix_2 = ""
             test_config = {"test_folders": "", "generic_language_tests": ""}
