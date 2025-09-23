@@ -1,3 +1,4 @@
+import json
 import pathlib
 from collections.abc import Generator
 from typing import Any, Optional
@@ -196,7 +197,7 @@ class TestRunnerDBTestBaseTask(
     def run_test(
         self, test_environment_info: EnvironmentInfo, uploaded_container_name: str
     ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
-        test_config = self.read_test_config()
+        test_config = self.read_ci_json()
         generic_language_tests = self.get_generic_language_tests(test_config)
         test_folders = self.get_test_folders(test_config)
         database_credentials = self.get_database_credentials()
@@ -275,3 +276,28 @@ class TestRunnerDBTestBaseTask(
                     value = "=".join(split[1:])
                     test_config[key] = value
         return test_config
+
+    def read_ci_json(self):
+        with (
+            pathlib.Path(self.flavor_path)
+            .joinpath("flavor_base")
+            .joinpath("testconfig")
+            .open("r") as json_file
+        ):
+            ci_json = json.load(json_file)
+            prefix_1 = prefix_2 = ""
+            test_config = {"test_folders": "", "generic_language_tests": ""}
+            for test_set in ci_json["test_config"]["test_sets"]:
+                folders = test_set["folders"]
+                for folder in folders:
+                    test_config["test_folders"] = (
+                        test_config["test_folders"] + prefix_1 + folder
+                    )
+                    prefix_1 = " "
+
+                for gen_lan_test in test_set["generic_language_tests"]:
+                    test_config["generic_language_tests"] = (
+                        test_config["generic_language_tests"] + prefix_2 + gen_lan_test
+                    )
+                    prefix_2 = " "
+            return test_config
