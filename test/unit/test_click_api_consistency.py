@@ -1,4 +1,6 @@
 import inspect
+import json
+from pathlib import Path
 
 import pytest
 from exasol_integration_test_docker_environment.testing.api_consistency_utils import (  # type: ignore
@@ -9,6 +11,9 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
 )
 
 from exasol.slc import api
+from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
+    read_ci_json,
+)
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]
@@ -83,3 +88,24 @@ def test_same_functions():
     )
 
     assert click_command_names == api_function_names
+
+
+def test_parse_ci_json(tmp_path: Path):
+    ci_json_data = {
+        "test_config": {
+            "test_sets": [
+                {"generic_language_tests": ["g00", "g01"], "folders": ["f00", "f01"]},
+                {"generic_language_tests": ["g10", "g11"], "folders": ["f10", "f11"]},
+                {"generic_language_tests": ["g20", "g21"], "folders": ["f20", "f21"]},
+            ]
+        }
+    }
+    expected_res = {
+        "generic_language_tests": "g00 g01 g10 g11 g20 g21",
+        "test_folders": "f00 f01 f10 f11 f20 f21",
+    }
+    json_file_path = tmp_path / "temp_data.json"
+    with open(json_file_path, "w") as json_file:
+        json.dump(ci_json_data, json_file)
+    actual_res = read_ci_json(json_file_path)
+    assert actual_res == expected_res

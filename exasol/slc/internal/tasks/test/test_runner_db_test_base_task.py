@@ -197,9 +197,10 @@ class TestRunnerDBTestBaseTask(
     def run_test(
         self, test_environment_info: EnvironmentInfo, uploaded_container_name: str
     ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
-        test_config = self.read_ci_json()
-        generic_language_tests = self.get_generic_language_tests(test_config)
-        test_folders = self.get_test_folders(test_config)
+        ci_json_file = pathlib.Path(self.flavor_path).joinpath("ci.json")
+        ci_json_dict = read_ci_json(ci_json_file)
+        generic_language_tests = self.get_generic_language_tests(ci_json_dict)
+        test_folders = self.get_test_folders(ci_json_dict)
         database_credentials = self.get_database_credentials()
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
@@ -260,11 +261,13 @@ class TestRunnerDBTestBaseTask(
             generic_language_tests = self.generic_language_tests
         return generic_language_tests
 
-    def read_ci_json(self):
-        with pathlib.Path(self.flavor_path).joinpath("ci.json").open("r") as json_file:
+
+def read_ci_json(ci_json_file: pathlib.Path):
+    test_config = {"test_folders": "", "generic_language_tests": ""}
+    if ci_json_file.exists() and ci_json_file.is_file():
+        with ci_json_file.open("r") as json_file:
             ci_json = json.load(json_file)
             prefix_1 = prefix_2 = ""
-            test_config = {"test_folders": "", "generic_language_tests": ""}
             for test_set in ci_json["test_config"]["test_sets"]:
                 folders = test_set["folders"]
                 for folder in folders:
@@ -278,4 +281,4 @@ class TestRunnerDBTestBaseTask(
                         test_config["generic_language_tests"] + prefix_2 + gen_lan_test
                     )
                     prefix_2 = " "
-            return test_config
+    return test_config
