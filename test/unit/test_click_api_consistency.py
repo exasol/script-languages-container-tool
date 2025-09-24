@@ -12,6 +12,8 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
 
 from exasol.slc import api
 from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
+    get_generic_language_tests,
+    get_test_folders,
     read_ci_json,
 )
 from exasol.slc.tool import commands
@@ -90,7 +92,7 @@ def test_same_functions():
     assert click_command_names == api_function_names
 
 
-def test_parse_ci_json(tmp_path: Path):
+def _get_ci_json_data():
     ci_json_data = {
         "test_config": {
             "test_sets": [
@@ -100,12 +102,55 @@ def test_parse_ci_json(tmp_path: Path):
             ]
         }
     }
-    expected_res = {
-        "generic_language_tests": "g00 g01 g10 g11 g20 g21",
-        "test_folders": "f00 f01 f10 f11 f20 f21",
+    return ci_json_data
+
+
+def _get_ci_json_folders():
+    ci_json_files = "f00 f01 f10 f11 f20 f21"
+    return ci_json_files
+
+
+def _get_ci_json_lang_tests():
+    ci_json_lang_tests = "g00 g01 g10 g11 g20 g21"
+    return ci_json_lang_tests
+
+
+def _get_ci_json_file_lang_tests():
+    ci_json_files = _get_ci_json_folders()
+    ci_json_lang_tests = _get_ci_json_lang_tests()
+    files_and_lang_tests = {
+        "generic_language_tests": ci_json_lang_tests,
+        "test_folders": ci_json_files,
     }
+    return files_and_lang_tests
+
+
+def _created_ci_json_file(tmp_path: Path):
+    ci_json_data = _get_ci_json_data()
     json_file_path = tmp_path / "temp_data.json"
     with open(json_file_path, "w") as json_file:
         json.dump(ci_json_data, json_file)
+    return json_file_path
+
+
+def test_get_generic_language_tests(tmp_path: Path):
+    json_file_path = _created_ci_json_file(tmp_path)
+    ci_json_dict = read_ci_json(json_file_path)
+    actual_res = get_generic_language_tests(ci_json_dict)
+    expected_res = _get_ci_json_lang_tests().split()
+    assert actual_res == expected_res
+
+
+def test_get_test_folders(tmp_path: Path):
+    json_file_path = _created_ci_json_file(tmp_path)
+    ci_json_dict = read_ci_json(json_file_path)
+    actual_res = get_test_folders(ci_json_dict)
+    expected_res = _get_ci_json_folders().split()
+    assert actual_res == expected_res
+
+
+def test_parse_ci_json(tmp_path: Path):
+    json_file_path = _created_ci_json_file(tmp_path)
     actual_res = read_ci_json(json_file_path)
+    expected_res = _get_ci_json_file_lang_tests()
     assert actual_res == expected_res
