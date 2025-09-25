@@ -199,8 +199,8 @@ class TestRunnerDBTestBaseTask(
     ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
         ci_json_file = pathlib.Path(self.flavor_path).joinpath("ci.json")
         ci_json_dict = read_ci_json(ci_json_file)
-        generic_language_tests = get_generic_language_tests(ci_json_dict)
-        test_folders = get_test_folders(ci_json_dict)
+        generic_language_tests = self.get_generic_language_tests(ci_json_dict)
+        test_folders = self.get_test_folders(ci_json_dict)
         database_credentials = self.get_database_credentials()
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
@@ -238,19 +238,28 @@ class TestRunnerDBTestBaseTask(
                     break
         return result_status
 
+    def get_test_folders(self, test_config):
+        test_folders = []
+        if test_config["test_folders"] != "":
+            test_folders = test_config["test_folders"].split(" ")
+        if self.tests_specified_in_parameters():
+            test_folders = self.test_folders
+        return test_folders
 
-def get_test_folders(ci_json_dict):
-    test_folders = []
-    if ci_json_dict["test_folders"] != "":
-        test_folders = ci_json_dict["test_folders"].split(" ")
-    return test_folders
+    def tests_specified_in_parameters(self):
+        return (
+            len(self.generic_language_tests) != 0
+            or len(self.test_folders) != 0
+            or len(self.test_files) != 0
+        )
 
-
-def get_generic_language_tests(ci_json_dict):
-    generic_language_tests = []
-    if ci_json_dict["generic_language_tests"] != "":
-        generic_language_tests = ci_json_dict["generic_language_tests"].split(" ")
-    return generic_language_tests
+    def get_generic_language_tests(self, test_config):
+        generic_language_tests = []
+        if test_config["generic_language_tests"] != "":
+            generic_language_tests = test_config["generic_language_tests"].split(" ")
+        if self.tests_specified_in_parameters():
+            generic_language_tests = self.generic_language_tests
+        return generic_language_tests
 
 
 def read_ci_json(ci_json_file: pathlib.Path):
