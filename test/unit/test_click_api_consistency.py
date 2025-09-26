@@ -14,6 +14,7 @@ from exasol.slc import api
 from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
     read_ci_json,
 )
+from exasol.slc.models.flavor_ci_model import FlavorCiConfig, TestConfig, TestSet
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]
@@ -92,20 +93,30 @@ def test_same_functions():
 
 def test_parse_ci_json(tmp_path: Path):
     ci_json_data = {
+        "build_runner": "24.04",
         "test_config": {
+            "default_test_runner": "24.04",
             "test_sets": [
-                {"generic_language_tests": ["g00", "g01"], "folders": ["f00", "f01"]},
-                {"generic_language_tests": ["g10", "g11"], "folders": ["f10", "f11"]},
-                {"generic_language_tests": ["g20", "g21"], "folders": ["f20", "f21"]},
-            ]
-        }
-    }
-    expected_res = {
-        "generic_language_tests": "g00 g01 g10 g11 g20 g21",
-        "test_folders": "f00 f01 f10 f11 f20 f21",
+                {
+                    "name": "python",
+                    "files": [],
+                    "folders": ["fld00", "fld01"],
+                    "goal": "rel",
+                    "generic_language_tests": ["py3.11", "py3.12"],
+                },
+                {
+                    "name": "python",
+                    "files": [],
+                    "folders": ["fld10", "fld11"],
+                    "goal": "rel",
+                    "generic_language_tests": ["py3.13", "py3.14"],
+                },
+            ],
+        },
     }
     json_file_path = tmp_path / "temp_data.json"
     with open(json_file_path, "w") as json_file:
         json.dump(ci_json_data, json_file)
     actual_res = read_ci_json(json_file_path)
-    assert actual_res == expected_res
+    expected_res = FlavorCiConfig.model_validate(ci_json_data)
+    assert actual_res == expected_res.test_config
