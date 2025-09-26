@@ -1,9 +1,14 @@
 {
+    "build_runner": "24.04",
     "test_config": {
+        "default_test_runner": "24.04",
         "test_sets": [
             {
-                "generic_language_tests": [],
-                "folders": ["selftest"]
+                "name": "python",
+                "goal": "rel",
+                "files": [],
+                "folders": ["selftest"],
+                "generic_language_tests": []
             }
         ]
     }
