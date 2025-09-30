@@ -247,7 +247,7 @@ class TestRunnerDBTestBaseTask(
         test_folders = []
         for test_set in test_config.test_sets:
             test_set_goal = str(test_set.goal)
-            luigi_param = TestRunnerDBTestBaseTask.release_goal
+            luigi_param = str(TestRunnerDBTestBaseTask.release_goal)
             if test_set_goal.lower() == luigi_param.lower():
                 for test_folder in test_set.folders:
                     test_folders.append(test_folder)
@@ -266,7 +266,7 @@ class TestRunnerDBTestBaseTask(
         generic_language_tests = []
         for test_set in test_config.test_sets:
             test_set_goal = str(test_set.goal)
-            luigi_param = TestRunnerDBTestBaseTask.release_goal
+            luigi_param = str(TestRunnerDBTestBaseTask.release_goal)
             if test_set_goal.lower() == luigi_param.lower():
                 for gen_lang_test in test_set.generic_language_tests:
                     generic_language_tests.append(gen_lang_test)
