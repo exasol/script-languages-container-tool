@@ -4,3 +4,4 @@
 
 - #309: Relaxed exasol-bucketfs from "^2.0.0" to ">=1,<3"
 - #289: Removed an obsolete param test-language of run-db-test
+- #290: Removed usage of testconfig by reading ci.json instead

@@ -1,4 +1,6 @@
 import inspect
+import json
+from pathlib import Path
 
 import pytest
 from exasol_integration_test_docker_environment.testing.api_consistency_utils import (  # type: ignore
@@ -9,6 +11,10 @@ from exasol_integration_test_docker_environment.testing.api_consistency_utils im
 )
 
 from exasol.slc import api
+from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
+    read_ci_json,
+)
+from exasol.slc.models.flavor_ci_model import FlavorCiConfig, TestConfig, TestSet
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]
@@ -83,3 +89,34 @@ def test_same_functions():
     )
 
     assert click_command_names == api_function_names
+
+
+def test_parse_ci_json(tmp_path: Path):
+    ci_json_data = {
+        "build_runner": "24.04",
+        "test_config": {
+            "default_test_runner": "24.04",
+            "test_sets": [
+                {
+                    "name": "python",
+                    "files": [],
+                    "folders": ["fld00", "fld01"],
+                    "goal": "rel",
+                    "generic_language_tests": ["py3.11", "py3.12"],
+                },
+                {
+                    "name": "python",
+                    "files": [],
+                    "folders": ["fld10", "fld11"],
+                    "goal": "rel",
+                    "generic_language_tests": ["py3.13", "py3.14"],
+                },
+            ],
+        },
+    }
+    json_file_path = tmp_path / "temp_data.json"
+    with open(json_file_path, "w") as json_file:
+        json.dump(ci_json_data, json_file)
+    actual_res = read_ci_json(json_file_path)
+    expected_res = FlavorCiConfig.model_validate(ci_json_data)
+    assert actual_res == expected_res.test_config

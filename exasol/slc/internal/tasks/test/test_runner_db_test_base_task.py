@@ -1,3 +1,4 @@
+import json
 import pathlib
 from collections.abc import Generator
 from typing import Any, Optional
@@ -54,6 +55,11 @@ from exasol.slc.internal.tasks.test.upload_exported_container import (
     UploadExportedContainer,
 )
 from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinition
+from exasol.slc.models.flavor_ci_model import (
+    FlavorCiConfig,
+    TestConfig,
+    TestSet,
+)
 from exasol.slc.models.run_db_test_result import RunDBTestsInTestConfigResult
 
 
@@ -196,9 +202,10 @@ class TestRunnerDBTestBaseTask(
     def run_test(
         self, test_environment_info: EnvironmentInfo, uploaded_container_name: str
     ) -> Generator[RunDBTestsInTestConfig, Any, RunDBTestsInTestConfigResult]:
-        test_config = self.read_test_config()
-        generic_language_tests = self.get_generic_language_tests(test_config)
-        test_folders = self.get_test_folders(test_config)
+        ci_json_file = pathlib.Path(self.flavor_path).joinpath("ci.json")
+        ci_test_cfg = read_ci_json(ci_json_file)
+        generic_language_tests = self.get_generic_language_tests(ci_test_cfg)
+        test_folders = self.get_test_folders(ci_test_cfg)
         database_credentials = self.get_database_credentials()
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
@@ -238,8 +245,12 @@ class TestRunnerDBTestBaseTask(
 
     def get_test_folders(self, test_config):
         test_folders = []
-        if test_config["test_folders"] != "":
-            test_folders = test_config["test_folders"].split(" ")
+        for test_set in test_config.test_sets:
+            test_set_goal = str(test_set.goal)
+            luigi_param = str(TestRunnerDBTestBaseTask.release_goal)
+            if test_set_goal.lower() == luigi_param.lower():
+                for test_folder in test_set.folders:
+                    test_folders.append(test_folder)
         if self.tests_specified_in_parameters():
             test_folders = self.test_folders
         return test_folders
@@ -253,25 +264,20 @@ class TestRunnerDBTestBaseTask(
 
     def get_generic_language_tests(self, test_config):
         generic_language_tests = []
-        if test_config["generic_language_tests"] != "":
-            generic_language_tests = test_config["generic_language_tests"].split(" ")
+        for test_set in test_config.test_sets:
+            test_set_goal = str(test_set.goal)
+            luigi_param = str(TestRunnerDBTestBaseTask.release_goal)
+            if test_set_goal.lower() == luigi_param.lower():
+                for gen_lang_test in test_set.generic_language_tests:
+                    generic_language_tests.append(gen_lang_test)
         if self.tests_specified_in_parameters():
             generic_language_tests = self.generic_language_tests
         return generic_language_tests
 
-    def read_test_config(self):
-        with (
-            pathlib.Path(self.flavor_path)
-            .joinpath("flavor_base")
-            .joinpath("testconfig")
-            .open("r") as file
-        ):
-            test_config_str = file.read()
-            test_config = {}
-            for line in test_config_str.splitlines():
-                if not line.startswith("#") and not line == "":
-                    split = line.split("=")
-                    key = split[0]
-                    value = "=".join(split[1:])
-                    test_config[key] = value
-        return test_config
+
+def read_ci_json(ci_json_file: pathlib.Path):
+    if ci_json_file.exists() and ci_json_file.is_file():
+        with ci_json_file.open("r") as json_file:
+            ci_json_str = json_file.read()
+            flavor_ci_cfg = FlavorCiConfig.model_validate_json(ci_json_str)
+            return flavor_ci_cfg.test_config
