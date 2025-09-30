@@ -246,8 +246,9 @@ class TestRunnerDBTestBaseTask(
     def get_test_folders(self, test_config):
         test_folders = []
         for test_set in test_config.test_sets:
-            for test_folder in test_set.folders:
-                test_folders.append(test_folder)
+            if test_set.goal.lower() == TestRunnerDBTestBaseTask.release_goal.lower():
+                for test_folder in test_set.folders:
+                    test_folders.append(test_folder)
         if self.tests_specified_in_parameters():
             test_folders = self.test_folders
         return test_folders
@@ -262,8 +263,9 @@ class TestRunnerDBTestBaseTask(
     def get_generic_language_tests(self, test_config):
         generic_language_tests = []
         for test_set in test_config.test_sets:
-            for gen_lang_test in test_set.generic_language_tests:
-                generic_language_tests.append(gen_lang_test)
+            if test_set.goal.lower() == TestRunnerDBTestBaseTask.release_goal.lower():
+                for gen_lang_test in test_set.generic_language_tests:
+                    generic_language_tests.append(gen_lang_test)
         if self.tests_specified_in_parameters():
             generic_language_tests = self.generic_language_tests
         return generic_language_tests
