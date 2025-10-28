@@ -6,12 +6,12 @@ on:
 jobs:
 
   prep-testbed-gpu:
-    runs-on: ubuntu-24.04
+    runs-on: int-linux-x64-2core-ubuntu24.04-1
     permissions:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@1.7.4
@@ -37,7 +37,7 @@ jobs:
       labels: int-linux-x64-4core-gpu-t4-ubuntu24.04-1
     name: GPU Test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@1.7.4
