@@ -90,6 +90,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
         complete_release_name = self._get_complete_release_name(release_info)
         verify = self.ssl_cert_path or self.use_ssl_cert_validation
+        path_in_bucket_to_upload_path = bfs.path.infer_path
         path_in_bucket_to_upload_path = bfs.path.build_path(
             backend=backend,
             url=self._url,

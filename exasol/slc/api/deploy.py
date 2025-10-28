@@ -41,6 +41,11 @@ def deploy(
     bucketfs_use_https: bool = False,
     bucketfs_password: str = "***",
     path_in_bucket: str = "",
+    saas_host: str = "",
+    saas_pat: str = "",
+    saas_database_id: str = "",
+    saas_database_name: str = "",
+    saas_account_id: str = "",
     ssl_cert_path: str = "",
     use_ssl_cert_validation: bool = True,
     release_goal: tuple[str, ...] = ("release",),
@@ -124,6 +129,11 @@ def deploy(
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=compression_strategy,
+            saas_host=saas_host,
+            saas_pat=saas_pat,
+            saas_account_id=saas_account_id,
+            saas_database_id=saas_database_id,
+            saas_database_name=saas_database_name,
         )
 
     deploy_infos = run_task(

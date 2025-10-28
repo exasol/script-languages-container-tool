@@ -77,6 +77,13 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     callback=secret_callback,
 )
 @click.option("--path-in-bucket", type=str, required=False, default="")
+
+@click.option("--saas-host", type=str, required=True)
+@click.option("--saas-pat", type=str, required=True)
+@click.option("--saas-account-id", type=str, required=True)
+@click.option("--saas-database-name", type=str, required=True)
+@click.option("--saas-database-id", type=str, required=True)
+
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 @add_options(release_options)
@@ -96,6 +103,11 @@ def deploy(
     bucketfs_use_https: bool,
     bucketfs_password: str,
     path_in_bucket: str,
+    saas_host: str,
+    saas_pat: str,
+    saas_account_id: str,
+    saas_database_name: str,
+    saas_database_id: str,
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],
@@ -121,6 +133,7 @@ def deploy(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     compression_strategy: str,
+
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -138,6 +151,11 @@ def deploy(
             bucketfs_password=bucketfs_password,
             bucketfs_use_https=bucketfs_use_https,
             path_in_bucket=path_in_bucket,
+            saas_host=saas_host,
+            saas_pat=saas_pat,
+            saas_account_id=saas_account_id,
+            saas_database_name=saas_database_name,
+            saas_database_id=saas_database_id,
             release_goal=release_goal,
             release_name=release_name,
             force_rebuild=force_rebuild,
