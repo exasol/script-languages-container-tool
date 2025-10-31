@@ -7,3 +7,4 @@
 ## Refactorings
 
  - #313: Updated GPU Test Query and updated Poetry dependencies and PTB GH action
+ - #320: Updated poetry dependencies and Github workflows by PTB 1.12.0. 
