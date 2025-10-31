@@ -77,13 +77,11 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     callback=secret_callback,
 )
 @click.option("--path-in-bucket", type=str, required=False, default="")
-
 @click.option("--saas-host", type=str, required=True)
 @click.option("--saas-pat", type=str, required=True)
 @click.option("--saas-account-id", type=str, required=True)
 @click.option("--saas-database-name", type=str, required=True)
 @click.option("--saas-database-id", type=str, required=True)
-
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 @add_options(release_options)
@@ -133,7 +131,6 @@ def deploy(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     compression_strategy: str,
-
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.

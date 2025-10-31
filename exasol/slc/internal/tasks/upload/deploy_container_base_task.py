@@ -89,17 +89,22 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         backend = bfs.path.StorageBackend.onprem
 
         complete_release_name = self._get_complete_release_name(release_info)
-        verify = self.ssl_cert_path or self.use_ssl_cert_validation
-        path_in_bucket_to_upload_path = bfs.path.infer_path
-        path_in_bucket_to_upload_path = bfs.path.build_path(
-            backend=backend,
-            url=self._url,
-            bucket_name=self.bucket_name,
-            service_name=self.bucketfs_name,
-            username=self.bucketfs_username,
-            password=self.bucketfs_password,
-            verify=verify,
-            path=self.path_in_bucket or "",
+        # verify = self.ssl_cert_path or self.use_ssl_cert_validation
+        path_in_bucket_to_upload_path = bfs.path.infer_path(
+            bucketfs_host=self.database_host,
+            bucketfs_port=self.bucketfs_port,
+            bucket=self.bucket_name,
+            bucketfs_name=self.bucketfs_name,
+            bucketfs_user=self.bucketfs_username,
+            bucketfs_password=self.bucketfs_password,
+            use_ssl_cert_validation=self.use_ssl_cert_validation,
+            ssl_trusted_ca = self.ssl_cert_path,
+            path_in_bucket=self.path_in_bucket or "",
+            saas_url= self.saas_host,
+            saas_account_id=self.saas_account_id,
+            saas_database_name=self.saas_database_name,
+            saas_database_id=self.saas_database_id,
+            saas_token=self.saas_pat,
         )
         return (
             path_in_bucket_to_upload_path

@@ -21,9 +21,8 @@ class UploadContainerParameter(ExportContainerOptionsParameter):
     release_name: Optional[str] = luigi.OptionalParameter()  # type: ignore
     ssl_cert_path: str = luigi.Parameter()  # type: ignore
     use_ssl_cert_validation: bool = luigi.BoolParameter(True)  # type: ignore
-    saas_host: str = luigi.OptionalParameter() # type: ignore
-    saas_pat: str = luigi.OptionalParameter() # type: ignore
-    saas_account_id: str = luigi.OptionalParameter() # type: ignore
-    saas_database_id: str = luigi.OptionalParameter() # type: ignore
-    saas_database_name: str = luigi.OptionalParameter() # type: ignore
-
+    saas_host: str = luigi.OptionalParameter()  # type: ignore
+    saas_pat: str = luigi.OptionalParameter()  # type: ignore
+    saas_account_id: str = luigi.OptionalParameter()  # type: ignore
+    saas_database_id: str = luigi.OptionalParameter()  # type: ignore
+    saas_database_name: str = luigi.OptionalParameter()  # type: ignore

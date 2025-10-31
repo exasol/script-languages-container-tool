@@ -47,16 +47,18 @@ class ApiDockerDeployTest(unittest.TestCase):
         expected_extension: str,
         path: Optional[str],
         release_name: str,
-    ) -> bfs._path.PathLike:
+    ) -> bfs.path.PathLike:
         build_path_func = partial(
-            bfs.path.build_path,
-            backend=bfs.path.StorageBackend.onprem,
-            url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
-            bucket_name=bucket_name,
-            service_name=bucketfs_name,
-            username="w",
-            password=self.docker_environment.bucketfs_password,
-            verify=False,
+            bfs.path.infer_path,
+            # backend=bfs.path.StorageBackend.onprem,
+            # url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
+            bucketfs_host=self.docker_environment.database_host,
+            bucketfs_port=self.docker_environment.ports.bucketfs,
+            bucket=bucket_name,
+            bucketfs_name=bucketfs_name,
+            bucketfs_user="w",
+            bucketfs_password=self.docker_environment.bucketfs_password,
+            use_ssl_cert_validation=False,
         )
         if path:
             expected_path_in_bucket = (
