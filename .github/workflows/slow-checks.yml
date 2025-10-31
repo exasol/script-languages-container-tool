@@ -8,30 +8,7 @@ on:
       DOCKER_PASSWORD:
           required: true
 jobs:
-
-  slow-tests-approval:
-    name: Approve Slow Tests
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-
-    # Even though the environment "manual-approval" will be created automatically,
-    # it still needs to be configured to require interactive review.
-    # See project settings on GitHub (Settings / Environments / manual-approval).
-    environment: manual-approval
-
-    # Replace the steps below with the required actions
-    # and/or add additional jobs if required
-    # Note:
-    #   If you add additional jobs, make sure they are added as a requirement
-    #   to the approve-merge job's input requirements (needs).
-    steps:
-      - name: Tests
-        run: echo "Slow tests approved"
-
-
   integration-tests:
-    needs: slow-tests-approval
     name: Integrations
     uses: ./.github/workflows/integration-tests.yml
     secrets: inherit
@@ -39,7 +16,6 @@ jobs:
       contents: read
 
   gpu-tests:
-    needs: slow-tests-approval
     name: Integrations
     uses: ./.github/workflows/gpu-tests.yml
     secrets: inherit
