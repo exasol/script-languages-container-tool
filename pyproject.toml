@@ -42,6 +42,7 @@ exasol-integration-test-docker-environment = "^4.1.0"
 exasol-bucketfs=">=1,<3"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
+click = ">=8.2.1, <8.3.0" #Conflict with default values in click ('Sentinel.UNSET' vs ()/None). Need a new version of ITDE before updating click.
 
 [build-system]
 requires = ["poetry_core>=2.0.0"]

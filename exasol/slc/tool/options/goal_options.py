@@ -4,6 +4,7 @@ goal_options = [
     click.option(
         "--goal",
         multiple=True,
+        default=(),
         type=str,
         help="Selects which build stage will be build or pushed. "
         "The system will build also all dependencies of the selected build stage. "
