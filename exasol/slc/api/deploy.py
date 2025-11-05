@@ -162,8 +162,7 @@ def deploy(
                 saas_account_id=saas_account_id,
                 saas_database_id=saas_database_id,
                 saas_database_name=saas_database_name,
-                saas_url=saas_host
-
+                saas_url=saas_host,
             )
             for release, deploy_info in deploy_info_per_release.items()
         }

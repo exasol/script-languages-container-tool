@@ -19,6 +19,7 @@ from noxconfig import PROJECT_CONFIG
 class TestSet(Enum):
     GPU_ONLY = "gpu-only"
     DEFAULT = "default"
+    SAAS_ONLY = "saas-only"
 
 
 @nox.session(name="integration-test-list", python=False)
@@ -44,11 +45,15 @@ def run_integration_test_list(session: nox.Session):
             for t in test_path.glob("test_*.py")
             if "gpu" in t.name
         ]
+    elif args.test_set == TestSet.SAAS_ONLY:
+        tests = [
+            {"path": str(t), "name": t.stem} for t in test_path.glob("test_*_saas.py")
+        ]
     else:
         tests = [
             {"path": str(t), "name": t.stem}
             for t in test_path.glob("test_*.py")
-            if "gpu" not in t.name
+            if "gpu" not in t.name and "saas" not in t.name
         ]
     print(json.dumps(tests))
 

@@ -4,7 +4,6 @@ from typing import Any, Optional
 import exasol.bucketfs as bfs  # type: ignore
 import luigi
 from exasol.bucketfs import SaaSBucket
-
 from exasol_integration_test_docker_environment.abstract_method_exception import (
     AbstractMethodException,
 )
@@ -52,7 +51,9 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     def get_export_task(self) -> Optional[Any]:
         raise AbstractMethodException()
 
-    def _create_human_readable_location(self, path_in_bucket:bfs.path.PathLike, export_info:ExportInfo) -> str:
+    def _create_human_readable_location(
+        self, path_in_bucket: bfs.path.PathLike, export_info: ExportInfo
+    ) -> str:
         if isinstance(path_in_bucket.bucket_api, SaaSBucket):
             return f"Account id: {path_in_bucket.bucket_api.account_id},Database id: {path_in_bucket.bucket_api.database_id}, URL: {path_in_bucket.bucket_api.url}, Path: {path_in_bucket}"
         else:
@@ -63,12 +64,17 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         export_info = self.get_values_from_future(self.export_info_future)
         assert isinstance(export_info, ExportInfo)
         path_in_bucket = self._upload_container(export_info)
+        bucket_name = self.bucket_name
+        bucketfs_name = self.bucketfs_name
+        if isinstance(path_in_bucket.bucket_api, SaaSBucket):
+            bucket_name = "default"
+            bucketfs_name = "uploads"
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
-            bucketfs_name=self.bucketfs_name,
-            bucket_name=self.bucket_name,
-            path_in_bucket=self.path_in_bucket,
+            bucketfs_name=bucketfs_name,  # uploads
+            bucket_name=bucket_name,  # default
+            path_in_bucket=self.path_in_bucket,  # /buckets/uploads/default/saastest/test-flavor-release-TEST.tar.gz
         )
         language_definitions = language_definition.generate_definition().split(" ")
         language_def_components_list = list()
@@ -83,13 +89,15 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
         except ValueError:
             release_path = Path(export_info.cache_file)
-        human_readable_location = self._create_human_readable_location(path_in_bucket, export_info)
+        human_readable_location = self._create_human_readable_location(
+            path_in_bucket, export_info
+        )
         result = DeployInfo(
             release_path=str(release_path),
             complete_release_name=self._get_complete_release_name(export_info),
-            human_readable_location= human_readable_location,
+            human_readable_location=human_readable_location,
             language_definition_builder=lang_def_builder,
-            file_extension=detect_container_file_extension(path_in_bucket.name)
+            file_extension=detect_container_file_extension(path_in_bucket.name),
         )
         self.return_object(result)
 
@@ -106,9 +114,9 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             bucketfs_user=self.bucketfs_username,
             bucketfs_password=self.bucketfs_password,
             use_ssl_cert_validation=self.use_ssl_cert_validation,
-            ssl_trusted_ca = self.ssl_cert_path,
+            ssl_trusted_ca=self.ssl_cert_path,
             path_in_bucket=self.path_in_bucket or "",
-            saas_url= self.saas_host,
+            saas_url=self.saas_host,
             saas_account_id=self.saas_account_id,
             saas_database_name=self.saas_database_name,
             saas_database_id=self.saas_database_id,

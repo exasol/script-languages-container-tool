@@ -54,7 +54,7 @@ configobj = "^5.0.8" # moved to dev dependencie so security alert does not propa
 exasol-toolbox = "^1.6.0"
 aiohttp = "^3.12.7"
 tqdm = "^4.67.1"
-
+pytest-exasol-backend = ">=1.2.2, <2"
 
 
 
