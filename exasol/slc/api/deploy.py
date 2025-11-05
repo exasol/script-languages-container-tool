@@ -33,11 +33,11 @@ from exasol.slc.models.deploy_result import DeployResult
 @cli_function
 def deploy(
     flavor_path: tuple[str, ...],
-    bucketfs_host: str,
-    bucketfs_port: int,
-    bucketfs_user: str,
-    bucketfs_name: str,
-    bucket: str,
+    bucketfs_host: str = "",
+    bucketfs_port: int = 0,
+    bucketfs_user: str = "",
+    bucketfs_name: str = "",
+    bucket: str = "",
     bucketfs_use_https: bool = False,
     bucketfs_password: str = "***",
     path_in_bucket: str = "",
@@ -158,6 +158,12 @@ def deploy(
                 ssl_cert_path=ssl_cert_path,
                 use_ssl_cert_validation=use_ssl_cert_validation,
                 path_in_bucket=path_in_bucket,
+                saas_token=saas_pat,
+                saas_account_id=saas_account_id,
+                saas_database_id=saas_database_id,
+                saas_database_name=saas_database_name,
+                saas_url=saas_host
+
             )
             for release, deploy_info in deploy_info_per_release.items()
         }

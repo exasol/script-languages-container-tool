@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 import exasol.bucketfs as bfs  # type: ignore
+from exasol.bucketfs import SaaSBucket
+from exasol.bucketfs._path import StorageBackend
 
 from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 from exasol.slc.models.deploy_result import DeployResult
@@ -28,8 +30,12 @@ def toDeployResult(
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
     path_in_bucket: str,
+    saas_token: str,
+    saas_database_id: str,
+    saas_database_name: str,
+    saas_account_id: str,
+    saas_url: str,
 ) -> DeployResult:
-    backend = bfs.path.StorageBackend.onprem
     verify = ssl_cert_path or use_ssl_cert_validation
 
     complete_release_name = deploy_info.complete_release_name
@@ -37,15 +43,19 @@ def toDeployResult(
     url_prefix = "https://" if bucketfs_use_https else "http://"
     url = f"{url_prefix}{bucketfs_host}:{bucketfs_port}"
     bucket_path = (
-        bfs.path.build_path(
-            backend=backend,
-            url=url,
-            bucket_name=bucket_name,
-            service_name=bucketfs_name,
-            username=bucketfs_username,
-            password=bucketfs_password,
-            verify=verify,
-            path=path_in_bucket or "",
+        bfs.path.infer_path(
+            bucketfs_host=url,
+            bucket=bucket_name,
+            bucketfs_name=bucketfs_name,
+            bucketfs_user=bucketfs_username,
+            bucketfs_password=bucketfs_password,
+            use_ssl_cert_validation=verify,
+            path_in_bucket=path_in_bucket or "",
+            saas_url = saas_url,
+            saas_token= saas_token,
+            saas_database_id=saas_database_id,
+            saas_account_id=saas_account_id,
+            saas_database_name=saas_database_name,
         )
         / f"{complete_release_name}{deploy_info.file_extension}"
     )
