@@ -23,7 +23,6 @@ jobs:
       contents: read
 
   saas-tests:
-    needs: slow-tests-approval
     name: Integrations
     uses: ./.github/workflows/integration-saas-tests.yml
     secrets: inherit
