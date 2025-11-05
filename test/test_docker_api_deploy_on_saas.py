@@ -24,17 +24,6 @@ def require_saas_bucketfs_params(backend_aware_saas_bucketfs_params, use_saas):
     return backend_aware_saas_bucketfs_params
 
 
-# @pytest.fixture
-# def require_saas_bucketfs_params():
-#     backend_aware_saas_bucketfs_params = {
-#         "url":"https://cloud-staging.exasol.com",
-#         "account_id":"org_KBcBm3nqUi0iqWq2",
-#         "database_id":"gkvt0tb-TzKT4tTxXmDxDQ",
-#         "pat":"exa_pat_6jXq3wX2HVHrgWQhTyAGXPRJBrkH9vGh3qr92J6d0noXm3"
-#     }
-#     return backend_aware_saas_bucketfs_params
-
-
 def _expected_file(release_name: str, extension: str = "") -> str:
     return f"test-flavor-release-{release_name}{extension}"
 
