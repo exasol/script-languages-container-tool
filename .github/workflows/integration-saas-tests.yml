@@ -11,10 +11,10 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.7.4
+        uses: exasol/python-toolbox/.github/actions/python-environment@v1
 
       - id: set-matrix
         run: |
@@ -32,7 +32,7 @@ jobs:
       matrix:
         python_version:
           - "3.10"
-        test-path: ${{fromJson(needs.prep-testbed-gpu.outputs.matrix)}}
+        test-path: ${{fromJson(needs.prep-testbed-saas.outputs.matrix)}}
     runs-on: ubuntu-24.04
     name: SAAS Test
     steps:
