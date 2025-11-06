@@ -1,16 +1,13 @@
 import tarfile
-import test.utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+import test.utils as exaslct_utils
 from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-import exasol.bucketfs as bfs  # type: ignore
+import exasol.bucketfs as bfs
 import pytest
-from exasol.bucketfs._path import StorageBackend
-from exasol_integration_test_docker_environment.lib.models.api_errors import (
-    TaskRuntimeError,
-)
+from exasol.bucketfs._path import BucketPath, StorageBackend
 
 from exasol.slc import api
 from exasol.slc.models.compression_strategy import CompressionStrategy
@@ -101,6 +98,7 @@ def _validate_human_readable_location(
     expected_path_in_bucket: bfs.path.PathLike,
     deploy_result: DeployResult,
 ) -> None:
+    assert isinstance(expected_path_in_bucket, BucketPath)
     assert (
         deploy_result.human_readable_upload_location
         == f"Account id: {expected_path_in_bucket.bucket_api.account_id},Database id: {expected_path_in_bucket.bucket_api.database_id}, URL: {expected_path_in_bucket.bucket_api.url}, Path: {expected_path_in_bucket}"

@@ -50,8 +50,6 @@ class ApiDockerDeployTest(unittest.TestCase):
     ) -> bfs.path.PathLike:
         build_path_func = partial(
             bfs.path.infer_path,
-            # backend=bfs.path.StorageBackend.onprem,
-            # url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
             bucketfs_host=self.docker_environment.database_host,
             bucketfs_port=self.docker_environment.ports.bucketfs,
             bucket=bucket_name,
@@ -62,7 +60,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         )
         if path:
             expected_path_in_bucket = (
-                build_path_func(path=path)
+                build_path_func(path_in_bucket=path)
                 / f"test-flavor-release-{release_name}{expected_extension}"
             )
         else:

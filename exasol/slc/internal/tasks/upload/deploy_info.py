@@ -1,10 +1,7 @@
 from dataclasses import dataclass
 
 import exasol.bucketfs as bfs  # type: ignore
-from exasol.bucketfs import SaaSBucket
-from exasol.bucketfs._path import StorageBackend
 
-from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBuilder
 
@@ -36,10 +33,8 @@ def toDeployResult(
     saas_account_id: str,
     saas_url: str,
 ) -> DeployResult:
-    verify = ssl_cert_path or use_ssl_cert_validation
-
+    verify = bool(ssl_cert_path) or use_ssl_cert_validation
     complete_release_name = deploy_info.complete_release_name
-
     url_prefix = "https://" if bucketfs_use_https else "http://"
     url = f"{url_prefix}{bucketfs_host}:{bucketfs_port}"
     bucket_path = (

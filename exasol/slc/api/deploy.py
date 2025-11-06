@@ -1,5 +1,5 @@
 import getpass
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import (
     DependencyLoggerBaseTask,

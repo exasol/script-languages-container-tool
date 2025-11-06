@@ -4,14 +4,12 @@ from typing import Any, Optional
 import exasol.bucketfs as bfs  # type: ignore
 import luigi
 from exasol.bucketfs import SaaSBucket
+from exasol.bucketfs._path import BucketPath
 from exasol_integration_test_docker_environment.abstract_method_exception import (
     AbstractMethodException,
 )
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
     AbstractTaskFuture,
-)
-from exasol_integration_test_docker_environment.lib.base.base_task import (
-    RequiresTaskFuture,
 )
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -54,7 +52,9 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     def _create_human_readable_location(
         self, path_in_bucket: bfs.path.PathLike, export_info: ExportInfo
     ) -> str:
-        if isinstance(path_in_bucket.bucket_api, SaaSBucket):
+        if isinstance(path_in_bucket, BucketPath) and isinstance(
+            path_in_bucket.bucket_api, SaaSBucket
+        ):
             return f"Account id: {path_in_bucket.bucket_api.account_id},Database id: {path_in_bucket.bucket_api.database_id}, URL: {path_in_bucket.bucket_api.url}, Path: {path_in_bucket}"
         else:
             return self._complete_url(export_info)
@@ -66,15 +66,17 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         path_in_bucket = self._upload_container(export_info)
         bucket_name = self.bucket_name
         bucketfs_name = self.bucketfs_name
-        if isinstance(path_in_bucket.bucket_api, SaaSBucket):
+        if isinstance(path_in_bucket, BucketPath) and isinstance(
+            path_in_bucket.bucket_api, SaaSBucket
+        ):
             bucket_name = "default"
             bucketfs_name = "uploads"
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
-            bucketfs_name=bucketfs_name,  # uploads
-            bucket_name=bucket_name,  # default
-            path_in_bucket=self.path_in_bucket,  # /buckets/uploads/default/saastest/test-flavor-release-TEST.tar.gz
+            bucketfs_name=bucketfs_name,
+            bucket_name=bucket_name,
+            path_in_bucket=self.path_in_bucket,
         )
         language_definitions = language_definition.generate_definition().split(" ")
         language_def_components_list = list()
@@ -102,10 +104,8 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         self.return_object(result)
 
     def build_file_path_in_bucket(self, release_info: ExportInfo) -> bfs.path.PathLike:
-        # backend = bfs.path.StorageBackend.onprem
 
         complete_release_name = self._get_complete_release_name(release_info)
-        # verify = self.ssl_cert_path or self.use_ssl_cert_validation
         path_in_bucket_to_upload_path = bfs.path.infer_path(
             bucketfs_host=self.database_host,
             bucketfs_port=self.bucketfs_port,
