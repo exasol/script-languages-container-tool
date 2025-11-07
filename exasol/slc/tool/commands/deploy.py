@@ -61,11 +61,11 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 
 @cli.command(short_help="Deploys the script-language-container in the database.")
 @add_options(flavor_options)
-@click.option("--bucketfs-host", type=str, required=True)
-@click.option("--bucketfs-port", type=int, required=True)
-@click.option("--bucketfs-user", type=str, required=True)
-@click.option("--bucketfs-name", type=str, required=True)
-@click.option("--bucket", type=str, required=True)
+@click.option("--bucketfs-host", type=str, required=False, default="")
+@click.option("--bucketfs-port", type=int, required=False, default=0)
+@click.option("--bucketfs-user", type=str, required=False, default="")
+@click.option("--bucketfs-name", type=str, required=False, default="")
+@click.option("--bucket", type=str, required=False, default="")
 @click.option("--bucketfs-use-https", type=bool, default=False)
 @click.option(
     f"--{SecretParams.BUCKETFS_PASSWORD.value}",
@@ -77,11 +77,11 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     callback=secret_callback,
 )
 @click.option("--path-in-bucket", type=str, required=False, default="")
-@click.option("--saas-host", type=str, required=True)
-@click.option("--saas-pat", type=str, required=True)
-@click.option("--saas-account-id", type=str, required=True)
-@click.option("--saas-database-name", type=str, required=True)
-@click.option("--saas-database-id", type=str, required=True)
+@click.option("--saas-host", type=str, required=False, default="")
+@click.option("--saas-pat", type=str, required=False, default="")
+@click.option("--saas-database-id", type=str, required=False, default="")
+@click.option("--saas-database-name", type=str, required=False, default="")
+@click.option("--saas-account-id", type=str, required=False, default="")
 @click.option("--ssl-cert-path", type=str, default="")
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 @add_options(release_options)
@@ -103,9 +103,9 @@ def deploy(
     path_in_bucket: str,
     saas_host: str,
     saas_pat: str,
-    saas_account_id: str,
-    saas_database_name: str,
     saas_database_id: str,
+    saas_database_name: str,
+    saas_account_id: str,
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],

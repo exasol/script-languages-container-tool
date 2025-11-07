@@ -31,6 +31,11 @@ TEST_BUCKETFS_PASSWORD = "dummy-bucketfs-password"
 TEST_BUCKETFS_NAME = "dummy-bucketfs-name"
 TEST_BUCKET_NAME = "dummy-bucket-name"
 
+TEST_SAAS_HOST = "https://saas-host.example.com"
+TEST_SAAS_ACCOUNT_ID = "account_id_123"
+TEST_SAAS_PAT = "saas_pat"
+TEST_SAAS_DATABASE_ID = "saas_database_id_123"
+
 TEST_RELEASE_PATH = "/release_target"
 TEST_UPLOAD_URL = "https://my_bucket/target"
 TEST_LANG_DEF_BUILDER = LanguageDefinitionsBuilder(
@@ -92,6 +97,11 @@ def test_deploy_minimum_parameters(cli):
             bucketfs_password=TEST_BUCKETFS_PASSWORD,
             bucketfs_use_https=False,
             path_in_bucket="",
+            saas_host="",
+            saas_pat="",
+            saas_account_id="",
+            saas_database_name="",
+            saas_database_id="",
             release_goal=("release",),
             release_name=None,
             force_rebuild=False,
@@ -169,6 +179,88 @@ def test_deploy_password_in_env(cli):
             bucketfs_password=TEST_ENV_PASSWORD,
             bucketfs_use_https=False,
             path_in_bucket="",
+            saas_host="",
+            saas_pat="",
+            saas_account_id="",
+            saas_database_name="",
+            saas_database_id="",
+            release_goal=("release",),
+            release_name=None,
+            force_rebuild=False,
+            force_rebuild_from=(),
+            force_pull=False,
+            output_directory=".build_output",
+            temporary_base_directory="/tmp",
+            log_build_context_content=False,
+            cache_directory=None,
+            build_name=None,
+            source_docker_repository_name="exasol/script-language-container",
+            source_docker_tag_prefix="",
+            source_docker_username=None,
+            source_docker_password=None,
+            target_docker_repository_name="exasol/script-language-container",
+            target_docker_tag_prefix="",
+            target_docker_username=None,
+            target_docker_password=None,
+            workers=5,
+            task_dependencies_dot_file=None,
+            log_level=None,
+            use_job_specific_log_file=True,
+            ssl_cert_path="",
+            use_ssl_cert_validation=True,
+            compression_strategy=defaultCompressionStrategy(),
+        )
+
+
+def test_deploy_minimum_saas_parameters(cli):
+    return_value = {
+        TEST_DUMMY_FLAVOR: {
+            TEST_DUMMY_FLAVOR: DeployResult(
+                release_path=TEST_RELEASE_PATH,
+                human_readable_upload_location=TEST_UPLOAD_URL,
+                bucket_path=None,
+                language_definition_builder=TEST_LANG_DEF_BUILDER,
+            )
+        }
+    }
+
+    with patch(
+        "exasol.slc.api.deploy",
+        return_value=return_value,
+    ) as mock_foo:
+        with tempfile.TemporaryDirectory() as temp_flavor_path:
+            cli.run(
+                "--flavor-path",
+                temp_flavor_path,
+                "--saas-host",
+                TEST_SAAS_HOST,
+                "--saas-account-id",
+                TEST_SAAS_ACCOUNT_ID,
+                "--saas-pat",
+                TEST_SAAS_PAT,
+                "--saas-database-id",
+                TEST_SAAS_DATABASE_ID,
+            )
+        assert (
+            cli.succeeded
+            and "Uploaded release='dummy-flavor' located at /release_target to https://my_bucket/target"
+            in cli.output
+        )
+        mock_foo.assert_called_once_with(
+            flavor_path=(temp_flavor_path,),
+            bucketfs_host="",
+            bucketfs_port=0,
+            bucketfs_user="",
+            bucketfs_name="",
+            bucket="",
+            bucketfs_password=None,
+            bucketfs_use_https=False,
+            path_in_bucket="",
+            saas_host=TEST_SAAS_HOST,
+            saas_pat=TEST_SAAS_PAT,
+            saas_account_id=TEST_SAAS_ACCOUNT_ID,
+            saas_database_name="",
+            saas_database_id=TEST_SAAS_DATABASE_ID,
             release_goal=("release",),
             release_name=None,
             force_rebuild=False,
