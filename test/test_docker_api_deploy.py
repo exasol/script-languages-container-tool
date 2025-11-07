@@ -1,5 +1,6 @@
 import subprocess
 import tarfile
+import test.utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import unittest
 from functools import partial
 from pathlib import Path
@@ -7,7 +8,6 @@ from tempfile import TemporaryDirectory
 from typing import Dict, Optional
 
 import exasol.bucketfs as bfs  # type: ignore
-import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.lib.models.api_errors import (
     TaskRuntimeError,
 )
