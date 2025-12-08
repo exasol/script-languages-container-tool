@@ -104,6 +104,7 @@ def run_db_test(
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
     accelerator: Accelerator = defaultAccelerator(),
+    external_exasol_bucketfs_https_port: int = 2581,
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
@@ -194,6 +195,7 @@ def run_db_test(
             external_exasol_db_host=external_exasol_db_host,
             external_exasol_db_port=external_exasol_db_port,
             external_exasol_bucketfs_http_port=external_exasol_bucketfs_port,
+            external_exasol_bucketfs_https_port=external_exasol_bucketfs_https_port,
             external_exasol_db_user=external_exasol_db_user,
             external_exasol_db_password=external_exasol_db_password,
             external_exasol_ssh_port=external_exasol_ssh_port,
