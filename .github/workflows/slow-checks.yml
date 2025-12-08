@@ -3,9 +3,9 @@ name: Slow-Checks
 on:
   workflow_call:
     secrets:
-      DOCKER_USERNAME:
+      CI4_DOCKERHUB_USERNAME:
           required: true
-      DOCKER_PASSWORD:
+      CI4_DOCKERHUB_TOKEN:
           required: true
 jobs:
   integration-tests:

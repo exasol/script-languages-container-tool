@@ -12,13 +12,13 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
     system_options,
 )
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import (
-    docker_db_options,
     external_db_options,
     test_environment_options,
 )
 from exasol_integration_test_docker_environment.cli.termination_handler import (
     TerminationHandler,
 )
+from exasol_integration_test_docker_environment.lib.test_environment.ports import Ports
 from exasol_integration_test_docker_environment.lib.utils.cli_function_decorators import (
     add_options,
 )
@@ -36,6 +36,7 @@ from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 from exasol.slc.tool.options.test_container_options import test_container_options
+from exasol.slc.tool.options.test_environment_options import docker_db_options
 
 
 @cli.command(short_help="Runs integration tests.")
@@ -152,6 +153,12 @@ from exasol.slc.tool.options.test_container_options import test_container_option
     default=defaultAccelerator().value,
     help=f"""Accelerator to be enabled for tests in docker-db. Possible values: {acceleratorValues()}""",
 )
+@click.option(
+    "--external-exasol-bucketfs-https-port",
+    type=int,
+    default=Ports.external.bucketfs_https,
+    help="""Bucketfs port of external Exasol DB.""",
+)
 def run_db_test(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
@@ -212,6 +219,7 @@ def run_db_test(
     use_job_specific_log_file: bool,
     compression_strategy: str,
     accelerator: str,
+    external_exasol_bucketfs_https_port: int,
 ):
     """
     This command runs the integration tests in local docker-db.
@@ -282,6 +290,7 @@ def run_db_test(
                 compression_strategy=CompressionStrategy[compression_strategy.upper()],
                 docker_environment_variable=docker_environment_variable,
                 accelerator=Accelerator[accelerator.upper()],
+                external_exasol_bucketfs_https_port=external_exasol_bucketfs_https_port,
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:
