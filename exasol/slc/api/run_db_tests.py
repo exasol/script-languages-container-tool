@@ -14,9 +14,6 @@ from exasol_integration_test_docker_environment.lib.base.run_task import (
     generate_root_task,
     run_task,
 )
-from exasol_integration_test_docker_environment.lib.models.api_errors import (
-    ArgumentConstraintError,
-)
 from exasol_integration_test_docker_environment.lib.models.config.build_config import (
     set_build_config,
 )
