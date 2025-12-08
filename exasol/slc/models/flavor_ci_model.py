@@ -1,8 +1,15 @@
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel
 
-from exasol.slc.models.accelerator import Accelerator
+class Accelerator(Enum):
+    """
+    This enum serves as a definition of values for possible accelerators for `run-db-tests`.
+    """
+
+    NONE = "none"
+    NVIDA = "nvidia"
 
 
 class TestSet(BaseModel):

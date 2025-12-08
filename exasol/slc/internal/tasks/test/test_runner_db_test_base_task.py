@@ -57,8 +57,6 @@ from exasol.slc.internal.tasks.test.upload_exported_container import (
 from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinition
 from exasol.slc.models.flavor_ci_model import (
     FlavorCiConfig,
-    TestConfig,
-    TestSet,
 )
 from exasol.slc.models.run_db_test_result import RunDBTestsInTestConfigResult
 

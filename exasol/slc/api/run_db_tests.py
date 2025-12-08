@@ -14,6 +14,7 @@ from exasol_integration_test_docker_environment.lib.base.run_task import (
     generate_root_task,
     run_task,
 )
+from exasol_integration_test_docker_environment.lib.models.api_errors import ArgumentConstraintError
 from exasol_integration_test_docker_environment.lib.models.config.build_config import (
     set_build_config,
 )
@@ -35,7 +36,6 @@ from exasol.slc.internal.tasks.test.test_container import TestContainer
 from exasol.slc.internal.tasks.test.test_container_content import (
     build_test_container_content,
 )
-from exasol.slc.models.accelerator import Accelerator, defaultAccelerator
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
     defaultCompressionStrategy,
@@ -59,6 +59,7 @@ def run_db_test(
     create_certificates: bool = False,
     additional_db_parameter: tuple[str, ...] = tuple(),
     docker_environment_variable: tuple[str, ...] = tuple(),
+    accelerator: tuple[str, ...] = tuple(),
     external_exasol_db_host: Optional[str] = None,
     external_exasol_db_port: int = 8563,
     external_exasol_bucketfs_port: int = 2580,
@@ -103,7 +104,6 @@ def run_db_test(
     log_level: Optional[str] = None,
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
-    accelerator: Accelerator = defaultAccelerator(),
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
@@ -156,11 +156,16 @@ def run_db_test(
         if external_exasol_ssh_port is None:
             raise api_errors.MissingArgumentError("external_exasol_ssh_port")
 
+    if len(accelerator) > 0 and accelerator != ("nvidia=all",):
+        raise ArgumentConstraintError(
+            "accelerator", "Only value 'nvidia=all' is supported"
+        )
+
     docker_runtime = None
     if accelerator == Accelerator.NVIDA:
-        additional_db_parameter += ("-enableAcceleratorDeviceDetection=1",)
-        docker_runtime = "nvidia"
-        docker_environment_variable += ("NVIDIA_VISIBLE_DEVICES=all",)
+        add_db_param_accel_detection = "-enableAcceleratorDeviceDetection=1"
+        if add_db_param_accel_detection not in additional_db_parameter:
+            additional_db_parameter += (add_db_param_accel_detection,)
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(
@@ -207,6 +212,7 @@ def run_db_test(
             compression_strategy=compression_strategy,
             docker_runtime=docker_runtime,
             docker_environment_variables=docker_environment_variable,
+            accelerator=accelerator,
         )
 
     return run_task(
