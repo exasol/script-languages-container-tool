@@ -158,13 +158,15 @@ def run_db_test(
         if external_exasol_ssh_port is None:
             raise api_errors.MissingArgumentError("external_exasol_ssh_port")
 
-    if len(accelerator) > 0 and accelerator != ("nvidia=all",):
+    nvidia_accelerator = ("nvidia=all",)
+
+    if len(accelerator) > 0 and accelerator != nvidia_accelerator:
         raise ArgumentConstraintError(
             "accelerator", "Only value 'nvidia=all' is supported"
         )
 
     docker_runtime = None
-    if accelerator == Accelerator.NVIDA:
+    if accelerator == nvidia_accelerator:
         add_db_param_accel_detection = "-enableAcceleratorDeviceDetection=1"
         if add_db_param_accel_detection not in additional_db_parameter:
             additional_db_parameter += (add_db_param_accel_detection,)
