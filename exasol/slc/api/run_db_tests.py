@@ -193,7 +193,7 @@ def run_db_test(
             max_start_attempts=max_start_attempts,
             external_exasol_db_host=external_exasol_db_host,
             external_exasol_db_port=external_exasol_db_port,
-            external_exasol_bucketfs_port=external_exasol_bucketfs_port,
+            external_exasol_bucketfs_http_port=external_exasol_bucketfs_port,
             external_exasol_db_user=external_exasol_db_user,
             external_exasol_db_password=external_exasol_db_password,
             external_exasol_ssh_port=external_exasol_ssh_port,
