@@ -12,7 +12,6 @@ from exasol_integration_test_docker_environment.cli.options.system_options impor
     system_options,
 )
 from exasol_integration_test_docker_environment.cli.options.test_environment_options import (
-    docker_db_options,
     external_db_options,
     test_environment_options,
 )
@@ -25,12 +24,18 @@ from exasol_integration_test_docker_environment.lib.utils.cli_function_decorator
 
 from exasol.slc import api
 from exasol.slc.api import api_errors
+from exasol.slc.models.accelerator import (
+    Accelerator,
+    acceleratorValues,
+    defaultAccelerator,
+)
 from exasol.slc.models.compression_strategy import CompressionStrategy
 from exasol.slc.tool.cli import cli
 from exasol.slc.tool.options.export_options import export_options
 from exasol.slc.tool.options.flavor_options import flavor_options
 from exasol.slc.tool.options.goal_options import release_options
 from exasol.slc.tool.options.test_container_options import test_container_options
+from exasol.slc.tool.options.test_environment_options import docker_db_options
 
 
 @cli.command(short_help="Runs integration tests.")
@@ -140,6 +145,13 @@ from exasol.slc.tool.options.test_container_options import test_container_option
 @add_options(system_options)
 @add_options(luigi_logging_options)
 @add_options(export_options)
+@click.option(
+    "--accelerator",
+    type=click.Choice(acceleratorValues()),
+    show_default=True,
+    default=defaultAccelerator().value,
+    help=f"""Accelerator to be enabled for tests in docker-db. Possible values: {acceleratorValues()}""",
+)
 def run_db_test(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
@@ -155,7 +167,6 @@ def run_db_test(
     create_certificates: bool,
     additional_db_parameter: tuple[str, ...],
     docker_environment_variable: tuple[str, ...],
-    accelerator: tuple[str, ...],
     external_exasol_db_host: Optional[str],
     external_exasol_db_port: int,
     external_exasol_bucketfs_port: int,
@@ -200,6 +211,7 @@ def run_db_test(
     log_level: Optional[str],
     use_job_specific_log_file: bool,
     compression_strategy: str,
+    accelerator: str,
 ):
     """
     This command runs the integration tests in local docker-db.
@@ -269,7 +281,7 @@ def run_db_test(
                 use_job_specific_log_file=use_job_specific_log_file,
                 compression_strategy=CompressionStrategy[compression_strategy.upper()],
                 docker_environment_variable=docker_environment_variable,
-                accelerator=accelerator,
+                accelerator=Accelerator[accelerator.upper()],
             )
             if result.command_line_output_path.exists():
                 with result.command_line_output_path.open("r") as f:
