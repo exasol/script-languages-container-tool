@@ -26,6 +26,7 @@ from exasol_integration_test_docker_environment.lib.models.data.environment_type
 from exasol_integration_test_docker_environment.lib.test_environment.parameter.docker_db_test_environment_parameter import (  # pylint: disable=line-too-long
     DbOsAccess,
 )
+from exasol_integration_test_docker_environment.lib.test_environment.ports import Ports
 from exasol_integration_test_docker_environment.lib.utils.api_function_decorators import (
     cli_function,
 )
@@ -60,8 +61,8 @@ def run_db_test(
     additional_db_parameter: tuple[str, ...] = tuple(),
     docker_environment_variable: tuple[str, ...] = tuple(),
     external_exasol_db_host: Optional[str] = None,
-    external_exasol_db_port: int = 8563,
-    external_exasol_bucketfs_port: int = 2580,
+    external_exasol_db_port: int = Ports.external.database,
+    external_exasol_bucketfs_port: int = Ports.external.bucketfs_http,
     external_exasol_ssh_port: Optional[int] = None,
     external_exasol_db_user: Optional[str] = None,
     external_exasol_db_password: Optional[str] = None,
@@ -104,7 +105,7 @@ def run_db_test(
     use_job_specific_log_file: bool = True,
     compression_strategy: CompressionStrategy = defaultCompressionStrategy(),
     accelerator: Accelerator = defaultAccelerator(),
-    external_exasol_bucketfs_https_port: int = 2581,
+    external_exasol_bucketfs_https_port: int = Ports.external.bucketfs_https,
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
