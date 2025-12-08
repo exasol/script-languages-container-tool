@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+
 class Accelerator(Enum):
     """
     This enum serves as a definition of values for possible accelerators for `run-db-tests`.
