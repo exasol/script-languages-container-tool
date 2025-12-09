@@ -1,4 +1,8 @@
 # 3.5.0 - 2025-12-09
+
+This release has several dependency updates, especially integration-test-docker-environment was updated to version 5.0.0.
+Besides, there are some internal improvements.
+
 ## Security
 
  - Updated lock file
