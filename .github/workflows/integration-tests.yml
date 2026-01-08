@@ -3,9 +3,9 @@ name: Integration Tests
 on:
   workflow_call:
     secrets:
-      DOCKER_USERNAME:
+      CI4_DOCKERHUB_USERNAME:
           required: true
-      DOCKER_PASSWORD:
+      CI4_DOCKERHUB_TOKEN:
           required: true
 jobs:
 
@@ -53,5 +53,5 @@ jobs:
       - name: Run test ${{ matrix.test-path.name }}
         run: poetry run -- python ${{ matrix.test-path.path }}
         env: # Set the secret as an input
-          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USER: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
+          DOCKER_PASSWD: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
