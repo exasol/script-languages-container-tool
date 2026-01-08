@@ -4,7 +4,7 @@ import unittest
 from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from test import utils as exaslct_utils
+import utils as exaslct_utils
 from typing import Dict, Optional
 
 import exasol.bucketfs as bfs  # type: ignore
