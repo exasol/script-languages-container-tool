@@ -61,11 +61,11 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 
 @cli.command(short_help="Deploys the script-language-container in the database.")
 @add_options(flavor_options)
-@click.option("--bucketfs-host", type=str, required=False, default="")
-@click.option("--bucketfs-port", type=int, required=False, default=0)
-@click.option("--bucketfs-user", type=str, required=False, default="")
-@click.option("--bucketfs-name", type=str, required=False, default="")
-@click.option("--bucket", type=str, required=False, default="")
+@click.option("--bucketfs-host", type=str, required=False, default=None)
+@click.option("--bucketfs-port", type=int, required=False, default=None)
+@click.option("--bucketfs-user", type=str, required=False, default=None)
+@click.option("--bucketfs-name", type=str, required=False, default=None)
+@click.option("--bucket", type=str, required=False, default=None)
 @click.option("--bucketfs-use-https", type=bool, default=False)
 @click.option(
     f"--{SecretParams.BUCKETFS_PASSWORD.value}",
@@ -76,13 +76,13 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     default=SECRET_DISPLAY,
     callback=secret_callback,
 )
-@click.option("--path-in-bucket", type=str, required=False, default="")
-@click.option("--saas-host", type=str, required=False, default="")
-@click.option("--saas-pat", type=str, required=False, default="")
-@click.option("--saas-database-id", type=str, required=False, default="")
-@click.option("--saas-database-name", type=str, required=False, default="")
-@click.option("--saas-account-id", type=str, required=False, default="")
-@click.option("--ssl-cert-path", type=str, default="")
+@click.option("--path-in-bucket", type=str, required=False, default=None)
+@click.option("--saas-host", type=str, required=False, default=None)
+@click.option("--saas-pat", type=str, required=False, default=None)
+@click.option("--saas-database-id", type=str, required=False, default=None)
+@click.option("--saas-database-name", type=str, required=False, default=None)
+@click.option("--saas-account-id", type=str, required=False, default=None)
+@click.option("--ssl-cert-path", type=str, required=False, default=None)
 @click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
 @add_options(release_options)
 @click.option("--release-name", type=str, default=None)
@@ -93,21 +93,21 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(export_options)
 def deploy(
     flavor_path: tuple[str, ...],
-    bucketfs_host: str,
-    bucketfs_port: int,
-    bucketfs_user: str,
-    bucketfs_name: str,
-    bucket: str,
-    bucketfs_use_https: bool,
-    bucketfs_password: str,
-    path_in_bucket: str,
-    saas_host: str,
-    saas_pat: str,
-    saas_database_id: str,
-    saas_database_name: str,
-    saas_account_id: str,
-    ssl_cert_path: str,
-    use_ssl_cert_validation: bool,
+    bucketfs_host: Optional[str],
+    bucketfs_port: Optional[int],
+    bucketfs_user: Optional[str],
+    bucketfs_name: Optional[str],
+    bucket: Optional[str],
+    bucketfs_use_https: Optional[bool],
+    bucketfs_password: Optional[str],
+    path_in_bucket: Optional[str],
+    saas_host: Optional[str],
+    saas_pat: Optional[str],
+    saas_database_id: Optional[str],
+    saas_database_name: Optional[str],
+    saas_account_id: Optional[str],
+    ssl_cert_path: Optional[str],
+    use_ssl_cert_validation: Optional[bool],
     release_goal: tuple[str, ...],
     release_name: Optional[str],
     force_rebuild: bool,
