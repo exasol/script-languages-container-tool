@@ -47,7 +47,7 @@ def deploy(
     saas_database_name: Optional[str] = None,
     saas_account_id: Optional[str] = None,
     ssl_cert_path: Optional[str] = None,
-    use_ssl_cert_validation: bool = True,
+    use_ssl_cert_validation: Optional[bool] = True,
     release_goal: tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
     force_rebuild: bool = False,

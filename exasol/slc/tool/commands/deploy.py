@@ -29,7 +29,7 @@ from exasol.slc.tool.options.goal_options import release_options
 
 # This text will be displayed instead of the actual value, if found in an environment
 # variable, in a prompt.
-SECRET_DISPLAY = "***"
+SECRET_DISPLAY = None
 
 
 class SecretParams(Enum):
