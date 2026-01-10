@@ -9,7 +9,7 @@ from exasol.slc.internal.tasks.export.export_container_parameters import (
 
 class UploadContainerParameter(ExportContainerOptionsParameter):
     database_host: str = luigi.OptionalParameter(None)  # type: ignore
-    bucketfs_port: int = luigi.OptionalParameter(None)  # type: ignore
+    bucketfs_port: int = luigi.IntParameter(-1)  # type: ignore
     bucketfs_username: str = luigi.OptionalParameter(None, significant=False)  # type: ignore
     bucketfs_password: str = luigi.OptionalParameter(
         None, significant=False, visibility=luigi.parameter.ParameterVisibility.HIDDEN
