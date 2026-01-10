@@ -1,6 +1,6 @@
 import subprocess
 import tarfile
-import test.utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import unittest
 from functools import partial
 from pathlib import Path
