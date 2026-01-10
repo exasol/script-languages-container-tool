@@ -1,3 +1,4 @@
+import getpass
 import os
 from enum import Enum
 from typing import Any, Optional, Tuple
@@ -179,6 +180,9 @@ def deploy(
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
+        bucketfs_password, saas_token = read_credentials_from_stdin(bucketfs_name, bucketfs_password, bucketfs_user,
+                                                                    saas_account_id, saas_pat)
+
         for flavor_name, lang_def_builds_per_release in result.items():
             for release, deploy_result in lang_def_builds_per_release.items():
                 print(
@@ -199,3 +203,21 @@ def deploy(
                 {deploy_result.language_definition_builder.generate_alter_system()}
                 """
                 )
+
+def read_credentials_from_stdin(bucketfs_name: Optional[str], bucketfs_password: Optional[str], bucketfs_user: Optional[str],
+                                saas_token: Optional[str], saas_account_id: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    if bucketfs_password is None and bucketfs_name is not None and bucketfs_user is not None:
+        bucketfs_password = getpass.getpass(
+            "BucketFS Password for BucketFS {} and User {}:".format(
+                bucketfs_name, bucketfs_user
+            )
+        )
+        return bucketfs_password, saas_token
+    if saas_token is None and saas_account_id is not None:
+        saas_token = getpass.getpass(
+            "SaaS Token for Account {}:".format(
+                saas_account_id
+            )
+        )
+        return bucketfs_password, saas_token
+    return bucketfs_password, saas_token

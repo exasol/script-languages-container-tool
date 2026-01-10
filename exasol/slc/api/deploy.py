@@ -1,4 +1,3 @@
-import getpass
 from typing import Optional
 
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import (
@@ -105,12 +104,6 @@ def deploy(
         target_docker_tag_prefix,
         "target",
     )
-    if bucketfs_password is None:
-        bucketfs_password = getpass.getpass(
-            "BucketFS Password for BucketFS {} and User {}:".format(
-                bucketfs_name, bucketfs_user
-            )
-        )
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(
