@@ -117,7 +117,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             bucketfs_user=self.bucketfs_username,
             bucketfs_password=self.bucketfs_password,
             use_ssl_cert_validation=self.use_ssl_cert_validation,
-            bucketfs_https=self.bucketfs_https,
+            bucketfs_use_https=self.bucketfs_https,
             ssl_trusted_ca=self.ssl_cert_path,
             path_in_bucket=self.path_in_bucket or "",
             saas_url=self.saas_host,
