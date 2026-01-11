@@ -30,7 +30,7 @@ from exasol.slc.tool.options.goal_options import release_options
 
 # This text will be displayed instead of the actual value, if found in an environment
 # variable, in a prompt.
-SECRET_DISPLAY = "***"
+SECRET_DISPLAY = "None"
 
 
 class SecretParams(Enum):
@@ -77,6 +77,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     hide_input=True,
     default=SECRET_DISPLAY,
     callback=secret_callback,
+    required=False,
 )
 @click.option("--path-in-bucket", type=str, required=False, default=None)
 @click.option("--saas-host", type=str, required=False, default=None)
@@ -88,6 +89,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     hide_input=True,
     default=SECRET_DISPLAY,
     callback=secret_callback,
+    required=False,
 )
 @click.option("--saas-database-id", type=str, required=False, default=None)
 @click.option("--saas-database-name", type=str, required=False, default=None)
