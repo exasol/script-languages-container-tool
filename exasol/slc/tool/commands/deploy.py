@@ -30,7 +30,7 @@ from exasol.slc.tool.options.goal_options import release_options
 
 # This text will be displayed instead of the actual value, if found in an environment
 # variable, in a prompt.
-SECRET_DISPLAY = None
+SECRET_DISPLAY = "***"
 
 
 class SecretParams(Enum):
@@ -45,6 +45,7 @@ class SecretParams(Enum):
     """
 
     BUCKETFS_PASSWORD = "bucketfs-password"
+    SAAS_PAT = "saas-pat"
 
 
 def secret_callback(ctx: click.Context, param: click.Option, value: Any):
@@ -67,7 +68,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @click.option("--bucketfs-user", type=str, required=False, default=None)
 @click.option("--bucketfs-name", type=str, required=False, default=None)
 @click.option("--bucket", type=str, required=False, default=None)
-@click.option("--bucketfs-use-https", type=bool, default=False)
+@click.option("--bucketfs-use-https", required=False, type=bool, default=False)
 @click.option(
     f"--{SecretParams.BUCKETFS_PASSWORD.value}",
     type=str,
@@ -79,12 +80,24 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 )
 @click.option("--path-in-bucket", type=str, required=False, default=None)
 @click.option("--saas-host", type=str, required=False, default=None)
-@click.option("--saas-pat", type=str, required=False, default=None)
+@click.option(
+    f"--{SecretParams.SAAS_PAT.value}",
+    type=str,
+    prompt="SaaS Personal Access Token",
+    prompt_required=False,
+    hide_input=True,
+    default=SECRET_DISPLAY,
+    callback=secret_callback,
+)
 @click.option("--saas-database-id", type=str, required=False, default=None)
 @click.option("--saas-database-name", type=str, required=False, default=None)
 @click.option("--saas-account-id", type=str, required=False, default=None)
 @click.option("--ssl-cert-path", type=str, required=False, default=None)
-@click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
+@click.option(
+    "--use-ssl-cert-validation/--no-use-ssl-cert-validation",
+    required=False,
+    default=True,
+)
 @add_options(release_options)
 @click.option("--release-name", type=str, default=None)
 @add_options(build_options)
@@ -99,7 +112,7 @@ def deploy(
     bucketfs_user: Optional[str],
     bucketfs_name: Optional[str],
     bucket: Optional[str],
-    bucketfs_use_https: Optional[bool],
+    bucketfs_use_https: bool,
     bucketfs_password: Optional[str],
     path_in_bucket: Optional[str],
     saas_host: Optional[str],
@@ -108,7 +121,7 @@ def deploy(
     saas_database_name: Optional[str],
     saas_account_id: Optional[str],
     ssl_cert_path: Optional[str],
-    use_ssl_cert_validation: Optional[bool],
+    use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],
     release_name: Optional[str],
     force_rebuild: bool,
@@ -180,9 +193,6 @@ def deploy(
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
-        bucketfs_password, saas_token = read_credentials_from_stdin(
-            bucketfs_name, bucketfs_password, bucketfs_user, saas_account_id, saas_pat
-        )
 
         for flavor_name, lang_def_builds_per_release in result.items():
             for release, deploy_result in lang_def_builds_per_release.items():
@@ -204,29 +214,3 @@ def deploy(
                 {deploy_result.language_definition_builder.generate_alter_system()}
                 """
                 )
-
-
-def read_credentials_from_stdin(
-    bucketfs_name: Optional[str],
-    bucketfs_password: Optional[str],
-    bucketfs_user: Optional[str],
-    saas_token: Optional[str],
-    saas_account_id: Optional[str],
-) -> tuple[Optional[str], Optional[str]]:
-    if (
-        bucketfs_password is None
-        and bucketfs_name is not None
-        and bucketfs_user is not None
-    ):
-        bucketfs_password = getpass.getpass(
-            "BucketFS Password for BucketFS {} and User {}:".format(
-                bucketfs_name, bucketfs_user
-            )
-        )
-        return bucketfs_password, saas_token
-    if saas_token is None and saas_account_id is not None:
-        saas_token = getpass.getpass(
-            "SaaS Token for Account {}:".format(saas_account_id)
-        )
-        return bucketfs_password, saas_token
-    return bucketfs_password, saas_token

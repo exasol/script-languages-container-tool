@@ -18,7 +18,7 @@ class DeployInfo:
 
 def toDeployResult(
     deploy_info: DeployInfo,
-    bucketfs_use_https: Optional[bool],
+    bucketfs_use_https: bool,
     bucketfs_host: Optional[str],
     bucketfs_port: Optional[int],
     bucket_name: Optional[str],
@@ -26,7 +26,7 @@ def toDeployResult(
     bucketfs_username: Optional[str],
     bucketfs_password: Optional[str],
     ssl_cert_path: Optional[str],
-    use_ssl_cert_validation: Optional[bool],
+    use_ssl_cert_validation: bool,
     path_in_bucket: Optional[str],
     saas_token: Optional[str],
     saas_database_id: Optional[str],
