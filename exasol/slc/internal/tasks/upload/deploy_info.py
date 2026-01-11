@@ -34,18 +34,18 @@ def toDeployResult(
     saas_account_id: Optional[str],
     saas_url: Optional[str],
 ) -> DeployResult:
-    verify = bool(ssl_cert_path) or use_ssl_cert_validation
     complete_release_name = deploy_info.complete_release_name
-    # url_prefix = "https://" if bucketfs_use_https else "http://"
-    # url = f"{url_prefix}{bucketfs_host}:{bucketfs_port}"
     bucket_path = (
         bfs.path.infer_path(
             bucketfs_host=bucketfs_host,
+            bucketfs_port=bucketfs_port,
             bucket=bucket_name,
             bucketfs_name=bucketfs_name,
             bucketfs_user=bucketfs_username,
             bucketfs_password=bucketfs_password,
-            use_ssl_cert_validation=verify if verify is not None else False,
+            bucketfs_use_https=bucketfs_use_https,
+            use_ssl_cert_validation=use_ssl_cert_validation,
+            ssl_trusted_ca=ssl_cert_path,
             path_in_bucket=path_in_bucket or "",
             saas_url=saas_url,
             saas_token=saas_token,
