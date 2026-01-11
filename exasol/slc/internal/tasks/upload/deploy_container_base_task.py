@@ -64,13 +64,16 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         export_info = self.get_values_from_future(self.export_info_future)
         assert isinstance(export_info, ExportInfo)
         path_in_bucket = self._upload_container(export_info)
-        bucket_name = self.bucket_name
-        bucketfs_name = self.bucketfs_name
-        if isinstance(path_in_bucket, BucketPath) and isinstance(
+        if self.bucketfs_name and self.bucket_name:
+            bucket_name = self.bucket_name
+            bucketfs_name = self.bucketfs_name
+        elif isinstance(path_in_bucket, BucketPath) and isinstance(
             path_in_bucket.bucket_api, SaaSBucket
         ):
             bucket_name = "default"
             bucketfs_name = "uploads"
+        else:
+            raise ValueError("Parameter bucketfs_name or bucket_name must be not None.")
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore

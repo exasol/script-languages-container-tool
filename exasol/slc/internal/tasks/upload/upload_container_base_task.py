@@ -45,6 +45,8 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         export_info = self.get_values_from_future(self.export_info_future)
         assert isinstance(export_info, ExportInfo)
         self._upload_container(export_info)
+        if not self.bucketfs_name or not self.bucket_name:
+            raise ValueError("Parameter bucketfs_name or bucket_name must be not None.")
         language_definition = LanguageDefinition(
             release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
