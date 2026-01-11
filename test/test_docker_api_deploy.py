@@ -57,6 +57,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucketfs_user="w",
             bucketfs_password=self.docker_environment.bucketfs_password,
             use_ssl_cert_validation=False,
+            bucketfs_use_https=False,
         )
         if path:
             expected_path_in_bucket = (
