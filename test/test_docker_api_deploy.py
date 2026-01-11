@@ -92,6 +92,8 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucket=bucket_name,
             release_name=release_name,
             compression_strategy=compression_strategy,
+            workers=1,
+            log_level="INFO"
         )
         if path:
             result = deploy_func(path_in_bucket=path)

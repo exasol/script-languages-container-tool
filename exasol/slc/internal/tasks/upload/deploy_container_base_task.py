@@ -117,6 +117,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             bucketfs_user=self.bucketfs_username,
             bucketfs_password=self.bucketfs_password,
             use_ssl_cert_validation=self.use_ssl_cert_validation,
+            bucketfs_https=self.bucketfs_https,
             ssl_trusted_ca=self.ssl_cert_path,
             path_in_bucket=self.path_in_bucket or "",
             saas_url=self.saas_host,
@@ -141,12 +142,19 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}{detect_container_file_extension(export_info.cache_file)}"
 
     def _upload_container(self, release_info: ExportInfo) -> bfs.path.PathLike:
-        bucket_path = self.build_file_path_in_bucket(release_info)
         self.logger.info(
             f"Upload {release_info.cache_file} to {self._complete_url(release_info)}"
         )
+        bucket_path = self.build_file_path_in_bucket(release_info)
+        self.logger.info(
+            f"Starting upload {release_info.cache_file} to {self._complete_url(release_info)}"
+        )
         with open(release_info.cache_file, "rb") as file:
             bucket_path.write(file)
+        self.logger.info(
+            f"Finished upload {release_info.cache_file} to {self._complete_url(release_info)}"
+        )
+
         return bucket_path
 
     def _get_complete_release_name(self, release_info: ExportInfo):
