@@ -15,12 +15,12 @@ jobs:
     permissions:
       contents: read
 
-#  gpu-tests:
-#    name: Integrations
-#    uses: ./.github/workflows/gpu-tests.yml
-#    secrets: inherit
-#    permissions:
-#      contents: read
+  gpu-tests:
+    name: Integrations
+    uses: ./.github/workflows/gpu-tests.yml
+    secrets: inherit
+    permissions:
+      contents: read
 
   saas-tests:
     name: Integrations
