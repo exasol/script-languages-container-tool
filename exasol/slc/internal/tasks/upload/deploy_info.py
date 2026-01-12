@@ -33,7 +33,7 @@ def toDeployResult(
     saas_database_name: Optional[str],
     saas_account_id: Optional[str],
     saas_url: Optional[str],
-) -> DeployResult:
+) -> DeployResult:  # pylint: disable=too-many-arguments
     complete_release_name = deploy_info.complete_release_name
     bucket_path = (
         bfs.path.infer_path(
