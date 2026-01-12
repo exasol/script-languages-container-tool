@@ -16,7 +16,6 @@ class DeployInfo:
     file_extension: str
 
 
-# pylint: disable=too-many-arguments
 def toDeployResult(
     deploy_info: DeployInfo,
     bucketfs_use_https: bool,
@@ -34,7 +33,7 @@ def toDeployResult(
     saas_database_name: Optional[str],
     saas_account_id: Optional[str],
     saas_url: Optional[str],
-) -> DeployResult:  # pylint: disable=too-many-arguments
+) -> DeployResult:
     complete_release_name = deploy_info.complete_release_name
     bucket_path = (
         bfs.path.infer_path(
