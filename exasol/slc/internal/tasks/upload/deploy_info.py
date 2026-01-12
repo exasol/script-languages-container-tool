@@ -16,6 +16,7 @@ class DeployInfo:
     file_extension: str
 
 
+# pylint: disable=too-many-arguments
 def toDeployResult(
     deploy_info: DeployInfo,
     bucketfs_use_https: bool,
