@@ -1,3 +1,4 @@
+import getpass
 import os
 from enum import Enum
 from typing import Any, Optional, Tuple
@@ -29,7 +30,7 @@ from exasol.slc.tool.options.goal_options import release_options
 
 # This text will be displayed instead of the actual value, if found in an environment
 # variable, in a prompt.
-SECRET_DISPLAY = "***"
+SECRET_DISPLAY = None
 
 
 class SecretParams(Enum):
@@ -44,6 +45,7 @@ class SecretParams(Enum):
     """
 
     BUCKETFS_PASSWORD = "bucketfs-password"
+    SAAS_PAT = "saas-pat"
 
 
 def secret_callback(ctx: click.Context, param: click.Option, value: Any):
@@ -61,12 +63,12 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 
 @cli.command(short_help="Deploys the script-language-container in the database.")
 @add_options(flavor_options)
-@click.option("--bucketfs-host", type=str, required=True)
-@click.option("--bucketfs-port", type=int, required=True)
-@click.option("--bucketfs-user", type=str, required=True)
-@click.option("--bucketfs-name", type=str, required=True)
-@click.option("--bucket", type=str, required=True)
-@click.option("--bucketfs-use-https", type=bool, default=False)
+@click.option("--bucketfs-host", type=str, required=False, default=None)
+@click.option("--bucketfs-port", type=int, required=False, default=None)
+@click.option("--bucketfs-user", type=str, required=False, default=None)
+@click.option("--bucketfs-name", type=str, required=False, default=None)
+@click.option("--bucket", type=str, required=False, default=None)
+@click.option("--bucketfs-use-https", required=False, type=bool, default=False)
 @click.option(
     f"--{SecretParams.BUCKETFS_PASSWORD.value}",
     type=str,
@@ -75,10 +77,29 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     hide_input=True,
     default=SECRET_DISPLAY,
     callback=secret_callback,
+    required=False,
 )
-@click.option("--path-in-bucket", type=str, required=False, default="")
-@click.option("--ssl-cert-path", type=str, default="")
-@click.option("--use-ssl-cert-validation/--no-use-ssl-cert-validation", default=True)
+@click.option("--path-in-bucket", type=str, required=False, default=None)
+@click.option("--saas-host", type=str, required=False, default=None)
+@click.option(
+    f"--{SecretParams.SAAS_PAT.value}",
+    type=str,
+    prompt="SaaS Personal Access Token",
+    prompt_required=False,
+    hide_input=True,
+    default=SECRET_DISPLAY,
+    callback=secret_callback,
+    required=False,
+)
+@click.option("--saas-database-id", type=str, required=False, default=None)
+@click.option("--saas-database-name", type=str, required=False, default=None)
+@click.option("--saas-account-id", type=str, required=False, default=None)
+@click.option("--ssl-cert-path", type=str, required=False, default=None)
+@click.option(
+    "--use-ssl-cert-validation/--no-use-ssl-cert-validation",
+    required=False,
+    default=True,
+)
 @add_options(release_options)
 @click.option("--release-name", type=str, default=None)
 @add_options(build_options)
@@ -88,15 +109,20 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(export_options)
 def deploy(
     flavor_path: tuple[str, ...],
-    bucketfs_host: str,
-    bucketfs_port: int,
-    bucketfs_user: str,
-    bucketfs_name: str,
-    bucket: str,
+    bucketfs_host: Optional[str],
+    bucketfs_port: Optional[int],
+    bucketfs_user: Optional[str],
+    bucketfs_name: Optional[str],
+    bucket: Optional[str],
     bucketfs_use_https: bool,
-    bucketfs_password: str,
-    path_in_bucket: str,
-    ssl_cert_path: str,
+    bucketfs_password: Optional[str],
+    path_in_bucket: Optional[str],
+    saas_host: Optional[str],
+    saas_pat: Optional[str],
+    saas_database_id: Optional[str],
+    saas_database_name: Optional[str],
+    saas_account_id: Optional[str],
+    ssl_cert_path: Optional[str],
     use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],
     release_name: Optional[str],
@@ -138,6 +164,11 @@ def deploy(
             bucketfs_password=bucketfs_password,
             bucketfs_use_https=bucketfs_use_https,
             path_in_bucket=path_in_bucket,
+            saas_host=saas_host,
+            saas_pat=saas_pat,
+            saas_account_id=saas_account_id,
+            saas_database_name=saas_database_name,
+            saas_database_id=saas_database_id,
             release_goal=release_goal,
             release_name=release_name,
             force_rebuild=force_rebuild,
@@ -164,6 +195,7 @@ def deploy(
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=CompressionStrategy[compression_strategy.upper()],
         )
+
         for flavor_name, lang_def_builds_per_release in result.items():
             for release, deploy_result in lang_def_builds_per_release.items():
                 print(

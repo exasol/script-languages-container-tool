@@ -1,5 +1,4 @@
-import getpass
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import (
     DependencyLoggerBaseTask,
@@ -33,15 +32,20 @@ from exasol.slc.models.deploy_result import DeployResult
 @cli_function
 def deploy(
     flavor_path: tuple[str, ...],
-    bucketfs_host: str,
-    bucketfs_port: int,
-    bucketfs_user: str,
-    bucketfs_name: str,
-    bucket: str,
+    bucketfs_host: Optional[str] = None,
+    bucketfs_port: Optional[int] = None,
+    bucketfs_user: Optional[str] = None,
+    bucketfs_name: Optional[str] = None,
+    bucket: Optional[str] = None,
     bucketfs_use_https: bool = False,
-    bucketfs_password: str = "***",
-    path_in_bucket: str = "",
-    ssl_cert_path: str = "",
+    bucketfs_password: Optional[str] = None,
+    path_in_bucket: Optional[str] = None,
+    saas_host: Optional[str] = None,
+    saas_pat: Optional[str] = None,
+    saas_database_id: Optional[str] = None,
+    saas_database_name: Optional[str] = None,
+    saas_account_id: Optional[str] = None,
+    ssl_cert_path: Optional[str] = None,
     use_ssl_cert_validation: bool = True,
     release_goal: tuple[str, ...] = ("release",),
     release_name: Optional[str] = None,
@@ -100,12 +104,6 @@ def deploy(
         target_docker_tag_prefix,
         "target",
     )
-    if bucketfs_password is None:
-        bucketfs_password = getpass.getpass(
-            "BucketFS Password for BucketFS {} and User {}:".format(
-                bucketfs_name, bucketfs_user
-            )
-        )
 
     def root_task_generator() -> DependencyLoggerBaseTask:
         return generate_root_task(
@@ -113,7 +111,7 @@ def deploy(
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
             database_host=bucketfs_host,
-            bucketfs_port=bucketfs_port,
+            bucketfs_port=str(bucketfs_port) if bucketfs_port else None,
             bucketfs_username=bucketfs_user,
             bucketfs_password=bucketfs_password,
             bucket_name=bucket,
@@ -124,6 +122,11 @@ def deploy(
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=compression_strategy,
+            saas_host=saas_host,
+            saas_pat=saas_pat,
+            saas_account_id=saas_account_id,
+            saas_database_id=saas_database_id,
+            saas_database_name=saas_database_name,
         )
 
     deploy_infos = run_task(
@@ -148,6 +151,11 @@ def deploy(
                 ssl_cert_path=ssl_cert_path,
                 use_ssl_cert_validation=use_ssl_cert_validation,
                 path_in_bucket=path_in_bucket,
+                saas_token=saas_pat,
+                saas_account_id=saas_account_id,
+                saas_database_id=saas_database_id,
+                saas_database_name=saas_database_name,
+                saas_url=saas_host,
             )
             for release, deploy_info in deploy_info_per_release.items()
         }

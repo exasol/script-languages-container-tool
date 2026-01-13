@@ -47,20 +47,21 @@ class ApiDockerDeployTest(unittest.TestCase):
         expected_extension: str,
         path: Optional[str],
         release_name: str,
-    ) -> bfs._path.PathLike:
+    ) -> bfs.path.PathLike:
         build_path_func = partial(
-            bfs.path.build_path,
-            backend=bfs.path.StorageBackend.onprem,
-            url=f"http://{self.docker_environment.database_host}:{self.docker_environment.ports.bucketfs}",
-            bucket_name=bucket_name,
-            service_name=bucketfs_name,
-            username="w",
-            password=self.docker_environment.bucketfs_password,
-            verify=False,
+            bfs.path.infer_path,
+            bucketfs_host=self.docker_environment.database_host,
+            bucketfs_port=self.docker_environment.ports.bucketfs,
+            bucket=bucket_name,
+            bucketfs_name=bucketfs_name,
+            bucketfs_user="w",
+            bucketfs_password=self.docker_environment.bucketfs_password,
+            use_ssl_cert_validation=False,
+            bucketfs_use_https=False,
         )
         if path:
             expected_path_in_bucket = (
-                build_path_func(path=path)
+                build_path_func(path_in_bucket=path)
                 / f"test-flavor-release-{release_name}{expected_extension}"
             )
         else:
@@ -92,6 +93,8 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucket=bucket_name,
             release_name=release_name,
             compression_strategy=compression_strategy,
+            workers=1,
+            log_level="INFO",
         )
         if path:
             result = deploy_func(path_in_bucket=path)

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
+from typing import Optional
 
 import exasol.bucketfs as bfs  # type: ignore
 
-from exasol.slc.internal.utils.file_utilities import detect_container_file_extension
 from exasol.slc.models.deploy_result import DeployResult
 from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBuilder
 
@@ -19,33 +19,39 @@ class DeployInfo:
 def toDeployResult(
     deploy_info: DeployInfo,
     bucketfs_use_https: bool,
-    bucketfs_host: str,
-    bucketfs_port: int,
-    bucket_name: str,
-    bucketfs_name: str,
-    bucketfs_username: str,
-    bucketfs_password: str,
-    ssl_cert_path: str,
+    bucketfs_host: Optional[str],
+    bucketfs_port: Optional[int],
+    bucket_name: Optional[str],
+    bucketfs_name: Optional[str],
+    bucketfs_username: Optional[str],
+    bucketfs_password: Optional[str],
+    ssl_cert_path: Optional[str],
     use_ssl_cert_validation: bool,
-    path_in_bucket: str,
+    path_in_bucket: Optional[str],
+    saas_token: Optional[str],
+    saas_database_id: Optional[str],
+    saas_database_name: Optional[str],
+    saas_account_id: Optional[str],
+    saas_url: Optional[str],
 ) -> DeployResult:
-    backend = bfs.path.StorageBackend.onprem
-    verify = ssl_cert_path or use_ssl_cert_validation
-
     complete_release_name = deploy_info.complete_release_name
-
-    url_prefix = "https://" if bucketfs_use_https else "http://"
-    url = f"{url_prefix}{bucketfs_host}:{bucketfs_port}"
     bucket_path = (
-        bfs.path.build_path(
-            backend=backend,
-            url=url,
-            bucket_name=bucket_name,
-            service_name=bucketfs_name,
-            username=bucketfs_username,
-            password=bucketfs_password,
-            verify=verify,
-            path=path_in_bucket or "",
+        bfs.path.infer_path(
+            bucketfs_host=bucketfs_host,
+            bucketfs_port=bucketfs_port,
+            bucket=bucket_name,
+            bucketfs_name=bucketfs_name,
+            bucketfs_user=bucketfs_username,
+            bucketfs_password=bucketfs_password,
+            bucketfs_use_https=bucketfs_use_https,
+            use_ssl_cert_validation=use_ssl_cert_validation,
+            ssl_trusted_ca=ssl_cert_path,
+            path_in_bucket=path_in_bucket or "",
+            saas_url=saas_url,
+            saas_token=saas_token,
+            saas_database_id=saas_database_id,
+            saas_account_id=saas_account_id,
+            saas_database_name=saas_database_name,
         )
         / f"{complete_release_name}{deploy_info.file_extension}"
     )
