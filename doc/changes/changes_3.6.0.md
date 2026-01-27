@@ -1,6 +1,6 @@
 # 3.6.0 - 2026-01-27
 
-This releases adds support for deploying SLC to Exasol SaaS.
+This releases added support for deploying SLCs to Exasol SaaS.
 
 ## Security
 
