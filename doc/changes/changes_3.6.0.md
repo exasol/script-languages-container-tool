@@ -1,4 +1,7 @@
 # 3.6.0 - 2026-01-27
+
+This releases adds support for deploying SLC to Exasol SaaS.
+
 ## Security
 
  - Updated lock file
