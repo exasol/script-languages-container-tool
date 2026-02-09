@@ -72,7 +72,7 @@ def _parse_chroot_path(
 
     if not path.is_absolute() or len(path.parts) < 3:
         raise ValueError(
-            "Expected format of the URL path is " "'/<bucketfs_name>/<bucket_name>/...'"
+            "Expected format of the URL path is '/<bucketfs_name>/<bucket_name>/...'"
         )
     path_parts = path.parts[1:]
     chroot_bucketfs_name = path_parts[0]

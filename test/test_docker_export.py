@@ -47,7 +47,7 @@ class DockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.repository_name),
         )
-        self.assertTrue(len(images) > 0, "Images for repository were not found. ")
+        self.assertTrue(len(images) > 0, "Images for repository were not found.")
 
     def test_docker_export_with_image_cleanup(self):
         command = f"{self.test_environment.executable} export --export-path {self.export_path} --cleanup-docker-images"
@@ -74,7 +74,7 @@ class DockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.repository_name),
         )
-        self.assertTrue(len(images) == 0, "Images for repository were not deleted. ")
+        self.assertTrue(len(images) == 0, "Images for repository were not deleted.")
 
 
 if __name__ == "__main__":

@@ -81,7 +81,7 @@ class ApiDockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertTrue(len(images) == 0, "Images for repository were not deleted. ")
+        self.assertTrue(len(images) == 0, "Images for repository were not deleted.")
 
     def test_docker_export_uncompressed(self):
         export_result = api.export(
