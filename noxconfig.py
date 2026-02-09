@@ -9,4 +9,7 @@ PROJECT_CONFIG = BaseConfig(
     project_name="slc",
     python_versions=("3.10", "3.11", "3.12", "3.13"),
     exasol_versions=(),
+    add_to_excluded_python_paths=(
+        "resources",  # Exclude "test/resources" folder. Unfortunately, `add_to_excluded_python_paths` does not work with multiple parts
+    ),
 )

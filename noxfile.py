@@ -37,7 +37,7 @@ def run_integration_test_list(session: nox.Session):
         help="Test set name",
     )
     args = parser.parse_args(session.posargs)
-    test_path = PROJECT_CONFIG.root / "test"
+    test_path = PROJECT_CONFIG.root_path / "test"
     if args.test_set == TestSet.GPU_ONLY:
         tests = [
             {"path": str(t), "name": t.stem}
