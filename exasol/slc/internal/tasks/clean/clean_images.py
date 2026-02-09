@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from typing import List
 
 import docker.models.images
 import luigi

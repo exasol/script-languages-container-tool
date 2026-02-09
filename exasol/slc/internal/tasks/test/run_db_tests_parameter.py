@@ -1,5 +1,3 @@
-from typing import Dict, Optional, Tuple
-
 import luigi
 from exasol_integration_test_docker_environment.lib.base.json_pickle_parameter import (
     JsonPickleParameter,
@@ -24,7 +22,7 @@ class ActualRunDBTestParameter(GeneralRunDBTestParameter):
 
 
 class RunDBTestParameter(ActualRunDBTestParameter):
-    language: Optional[str] = luigi.OptionalParameter()  # type: ignore
+    language: str | None = luigi.OptionalParameter()  # type: ignore
 
 
 class RunDBGenericLanguageTestParameter(GeneralRunDBTestParameter):
@@ -32,7 +30,7 @@ class RunDBGenericLanguageTestParameter(GeneralRunDBTestParameter):
 
 
 class RunDBLanguageTestParameter(GeneralRunDBTestParameter):
-    languages: tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
+    languages: tuple[str | None, ...] = luigi.ListParameter([None])  # type: ignore
 
 
 class RunDBTestFolderParameter(RunDBLanguageTestParameter):

@@ -3,7 +3,6 @@ import test.utils as exaslct_utils
 from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional
 
 import exasol.bucketfs as bfs
 import pytest
@@ -29,7 +28,7 @@ def _build_bfs_path(
     require_saas_bucketfs_params,
     release_name: str,
     expected_extension: str,
-    path: Optional[str] = None,
+    path: str | None = None,
 ) -> bfs.path.PathLike:
     saas_params = require_saas_bucketfs_params
     if path:
@@ -60,7 +59,7 @@ def _run_deploy(
     compression_strategy: CompressionStrategy,
     flavor_path: Path,
     release_name: str,
-    path_in_bucket: Optional[str],
+    path_in_bucket: str | None,
 ) -> dict[str, dict[str, DeployResult]]:
     saas_params = require_saas_bucketfs_params
     deploy_func = partial(
@@ -82,7 +81,7 @@ def _validate_alter_session_cmd(
     deploy_result: DeployResult,
     flavor_path: Path,
     release_name: str,
-    path_in_bucket: Optional[str] = None,
+    path_in_bucket: str | None = None,
 ) -> None:
     expected_alter_session_cmd = (
         f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///uploads/default/{path_in_bucket or ''}{flavor_path.name}-release-{release_name}?lang=python#buckets/uploads/default/"
@@ -131,7 +130,7 @@ def _validate_deploy(
     require_saas_bucketfs_params,
     compression_strategy: CompressionStrategy,
     expected_extension: str,
-    path_in_bucket: Optional[str] = None,
+    path_in_bucket: str | None = None,
 ):
     release_name = "TEST"
     flavor_path = exaslct_utils.get_test_flavor()
@@ -150,8 +149,7 @@ def _validate_deploy(
 
     deploy_result = result[str(flavor_path)]["release"]
     assert (
-        f".build_output/cache/exports/test-flavor-release-"
-        in deploy_result.release_path
+        ".build_output/cache/exports/test-flavor-release-" in deploy_result.release_path
     )
 
     expected_path_in_bucket = _build_bfs_path(

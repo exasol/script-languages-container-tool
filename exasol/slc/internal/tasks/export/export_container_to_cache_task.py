@@ -5,7 +5,6 @@ import subprocess
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
-from typing import Optional
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
@@ -62,8 +61,8 @@ class ExportContainerToCacheTask(
     release_image_name: str = luigi.Parameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
-        self._check_cache_file_future: Optional[AbstractTaskFuture] = None
-        self._tmp_directory: Optional[str] = None
+        self._check_cache_file_future: AbstractTaskFuture | None = None
+        self._tmp_directory: str | None = None
         super().__init__(*args, **kwargs)
 
     def register_required(self):

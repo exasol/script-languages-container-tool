@@ -43,7 +43,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
                 f"--path-in-bucket {self.path_in_bucket}",
-                f"--no-bucketfs-https",
+                "--no-bucketfs-https",
                 f"--release-name {self.release_name}",
             ]
         )
@@ -77,9 +77,9 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
                 f"--path-in-bucket {self.path_in_bucket}",
-                f"--no-bucketfs-https",
+                "--no-bucketfs-https",
                 f"--release-name {self.release_name}",
-                f"--compression-strategy none",
+                "--compression-strategy none",
             ]
         )
         command = f"{self.test_environment.executable} upload {arguments}"
@@ -110,7 +110,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucketfs-password {self.docker_environment.bucketfs_password}",
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
-                f"--no-bucketfs-https",
+                "--no-bucketfs-https",
                 f"--release-name {self.release_name}",
             ]
         )
@@ -138,10 +138,10 @@ class DockerUploadTest(unittest.TestCase):
                 f"--database-host {self.docker_environment.database_host}",
                 f"--bucketfs-port {self.docker_environment.ports.bucketfs}",
                 f"--bucketfs-username {self.docker_environment.bucketfs_username}",
-                f"--bucketfs-password invalid",
+                "--bucketfs-password invalid",
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
-                f"--no-bucketfs-https",
+                "--no-bucketfs-https",
                 f"--release-name {self.release_name}",
             ]
         )

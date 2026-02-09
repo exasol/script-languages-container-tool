@@ -1,6 +1,5 @@
 # pylint: disable=not-an-iterable
 from collections.abc import Generator
-from typing import Dict, Optional, Set, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
@@ -28,7 +27,7 @@ class DockerBuildParameter(Config):
 class DockerBuild(FlavorsBaseTask, DockerBuildParameter):
 
     def __init__(self, *args, **kwargs) -> None:
-        self._images_futures: Optional[AbstractTaskFuture] = None
+        self._images_futures: AbstractTaskFuture | None = None
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:

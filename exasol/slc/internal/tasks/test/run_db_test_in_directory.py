@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import Any, List, Tuple
+from typing import Any
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask

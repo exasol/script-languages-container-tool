@@ -1,6 +1,4 @@
-from abc import abstractmethod
 from pathlib import Path
-from typing import Dict, Optional
 
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -70,7 +68,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         """
         return ""
 
-    def get_path_in_flavor(self) -> Optional[Path]:
+    def get_path_in_flavor(self) -> Path | None:
         """
         Called by the constructor to get the path to the build context of the build step within the flavor path.
         Sub classes need to implement this method.

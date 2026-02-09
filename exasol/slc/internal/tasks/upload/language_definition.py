@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Template
 
@@ -11,7 +10,7 @@ class LanguageDefinition:
         flavor_path: str,
         bucketfs_name: str,
         bucket_name: str,
-        path_in_bucket: Optional[str],
+        path_in_bucket: str | None,
         add_missing_builtin: bool = False,
     ) -> None:
         self.path_in_bucket = path_in_bucket

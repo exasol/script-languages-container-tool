@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 from exasol_integration_test_docker_environment.lib import api
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
@@ -27,19 +25,19 @@ def push_test_container(
     output_directory: str = ".build_output",
     temporary_base_directory: str = "/tmp",
     log_build_context_content: bool = False,
-    cache_directory: Optional[str] = None,
-    build_name: Optional[str] = None,
+    cache_directory: str | None = None,
+    build_name: str | None = None,
     source_docker_repository_name: str = "exasol/script-language-container",
     source_docker_tag_prefix: str = "",
-    source_docker_username: Optional[str] = None,
-    source_docker_password: Optional[str] = None,
+    source_docker_username: str | None = None,
+    source_docker_password: str | None = None,
     target_docker_repository_name: str = "exasol/script-language-container",
     target_docker_tag_prefix: str = "",
-    target_docker_username: Optional[str] = None,
-    target_docker_password: Optional[str] = None,
+    target_docker_username: str | None = None,
+    target_docker_password: str | None = None,
     workers: int = 5,
-    task_dependencies_dot_file: Optional[str] = None,
-    log_level: Optional[str] = None,
+    task_dependencies_dot_file: str | None = None,
+    log_level: str | None = None,
     use_job_specific_log_file: bool = True,
 ) -> ImageInfo:
     """

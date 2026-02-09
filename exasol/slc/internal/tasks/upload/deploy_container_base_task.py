@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import exasol.bucketfs as bfs  # type: ignore
 import luigi
@@ -39,14 +39,14 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     release_goal: str = luigi.Parameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
-        self.export_info_future: Optional[AbstractTaskFuture] = None
+        self.export_info_future: AbstractTaskFuture | None = None
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:
         if task := self.get_export_task():
             self.export_info_future = self.register_dependency(task)
 
-    def get_export_task(self) -> Optional[Any]:
+    def get_export_task(self) -> Any | None:
         raise AbstractMethodException()
 
     def _create_human_readable_location(

@@ -135,13 +135,13 @@ def test_lang_def_parser_builtin(
 
 
 def test_lang_def_parser_invalid_builtin():
-    lang_def = f"PYTHON3_TEST=builtin_rust"
+    lang_def = "PYTHON3_TEST=builtin_rust"
     with pytest.raises(ValueError):
         _, _ = parse_language_definition(lang_def)
 
 
 def test_lang_def_parser_invalid_chroot():
-    lang_def = f"PYTHON3_TEST=localzmq+protobuf:///home/#buckets/bfsdefault/default/exaudf/exaudfclient"
+    lang_def = "PYTHON3_TEST=localzmq+protobuf:///home/#buckets/bfsdefault/default/exaudf/exaudfclient"
     with pytest.raises(ValueError):
         _, _ = parse_language_definition(lang_def)
 

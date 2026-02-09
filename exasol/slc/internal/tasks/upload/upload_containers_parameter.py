@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import luigi
 
 from exasol.slc.internal.tasks.upload.upload_container_parameter import (

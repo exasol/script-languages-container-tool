@@ -1,5 +1,3 @@
-from typing import Dict
-
 from exasol.slc.internal.tasks.export.export_container_parameters import (
     ExportContainerOptionsParameter,
 )

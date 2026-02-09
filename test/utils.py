@@ -1,6 +1,6 @@
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.lib.models.data.test_container_content_description import (
@@ -82,7 +82,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         self,
         name: str,
         test_container_content: TestContainerContentDescription,
-        additional_parameter: Optional[dict[str, Any]] = None,
+        additional_parameter: dict[str, Any] | None = None,
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment_with_test_container(
             name=name,
@@ -91,7 +91,7 @@ class ExaslctApiTestEnvironmentWithCleanup:
         )
 
     def spawn_docker_test_environment(
-        self, name: str, additional_parameter: Optional[dict[str, Any]] = None
+        self, name: str, additional_parameter: dict[str, Any] | None = None
     ) -> ExaslctDockerTestEnvironment:
         return self._itde_api_test_environement.spawn_docker_test_environment(
             name=name, additional_parameter=additional_parameter
@@ -177,7 +177,7 @@ class ExaslctTestEnvironmentWithCleanUp:
         )
 
     def spawn_docker_test_environments(
-        self, name: str, additional_parameter: Optional[list[str]] = None
+        self, name: str, additional_parameter: list[str] | None = None
     ) -> SpawnedTestEnvironments:
         return self._itde_cli_test_environment.spawn_docker_test_environments(
             name, additional_parameter

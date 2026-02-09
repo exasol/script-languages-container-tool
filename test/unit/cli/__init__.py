@@ -1,1 +1,1 @@
-from .cli_runner import CliRunner
+from .cli_runner import CliRunner as CliRunner

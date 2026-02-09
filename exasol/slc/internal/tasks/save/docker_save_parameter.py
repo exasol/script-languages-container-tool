@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import luigi
 from luigi import Config
 

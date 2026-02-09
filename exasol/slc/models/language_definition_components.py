@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from pathlib import PurePosixPath
-from typing import List, Optional, Union
 from urllib.parse import ParseResult, urlencode, urlunparse
 
 from exasol.slc.models.language_definition_common import (
@@ -32,7 +31,7 @@ class ChrootPath:
 
     bucketfs_name: str
     bucket_name: str
-    path_in_bucket: Optional[PurePosixPath] = None
+    path_in_bucket: PurePosixPath | None = None
 
     def __str__(self) -> str:
         return f"/{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket or ''}"
@@ -47,7 +46,7 @@ class LanguageDefinitionURL:
     protocol: str
     parameters: list[SLCParameter]
     chroot_path: ChrootPath
-    udf_client_path: Union[UdfClientBucketPath, UdfClientRelativePath]
+    udf_client_path: UdfClientBucketPath | UdfClientRelativePath
 
     def __str__(self) -> str:
         query_params = [(p.key, p.value) for p in self.parameters]
@@ -85,7 +84,7 @@ class LanguageDefinitionComponents:
     """
 
     alias: str
-    url: Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]
+    url: LanguageDefinitionURL | BuiltInLanguageDefinitionURL
 
     @property
     def is_builtin(self) -> bool:

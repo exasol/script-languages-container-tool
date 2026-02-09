@@ -1,6 +1,5 @@
 from pathlib import PurePath
 
-import luigi
 from exasol_integration_test_docker_environment.lib.test_environment.database_setup.populate_data import (
     PopulateTestDataToDatabase,
 )

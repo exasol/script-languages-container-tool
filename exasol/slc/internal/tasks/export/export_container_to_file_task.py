@@ -1,7 +1,6 @@
 import shutil
 from collections.abc import Generator
 from pathlib import Path
-from typing import Optional
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
@@ -61,7 +60,7 @@ class ExportContainerToFileTask(
 
     def _copy_cache_file_to_output_path(
         self, cache_file: Path, checksum_file: Path, is_new: bool
-    ) -> Optional[Path]:
+    ) -> Path | None:
         output_file = None
         if self.export_path is not None:
             if self.release_name is not None:

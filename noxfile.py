@@ -9,11 +9,10 @@ import nox
 from exasol.toolbox.nox.tasks import *  # type: ignore
 
 from clean_dockerhub import fetch_and_delete_old_tags
+from noxconfig import PROJECT_CONFIG
 
 # default actions to be run if nothing is explicitly specified with the -s option
-nox.options.sessions = ["project:fix"]
-
-from noxconfig import PROJECT_CONFIG
+nox.options.sessions = ["format:fix"]
 
 
 class TestSet(Enum):
@@ -38,7 +37,7 @@ def run_integration_test_list(session: nox.Session):
         help="Test set name",
     )
     args = parser.parse_args(session.posargs)
-    test_path = PROJECT_CONFIG.root / "test"
+    test_path = PROJECT_CONFIG.root_path / "test"
     if args.test_set == TestSet.GPU_ONLY:
         tests = [
             {"path": str(t), "name": t.stem}

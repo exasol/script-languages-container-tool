@@ -1,6 +1,5 @@
 # pylint: disable=not-an-iterable
 from collections.abc import Generator
-from typing import Dict, List, Set, Tuple
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask

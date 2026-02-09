@@ -1,6 +1,5 @@
 import os
 from tarfile import TarFile
-from typing import List, Optional
 
 
 def is_within_directory(directory: str, target: str) -> bool:
@@ -15,7 +14,7 @@ def is_within_directory(directory: str, target: str) -> bool:
 def safe_extract(
     tar: TarFile,
     path: str = ".",
-    members: Optional[list[str]] = None,
+    members: list[str] | None = None,
     *,
     numeric_owner: bool = False,
 ):

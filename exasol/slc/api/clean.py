@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 from exasol_integration_test_docker_environment.lib.base.dependency_logger_base_task import (
     DependencyLoggerBaseTask,
 )
@@ -33,8 +31,8 @@ def clean_flavor_images(
     docker_repository_name: str = "exasol/script-language-container",
     docker_tag_prefix: str = "",
     workers: int = 5,
-    task_dependencies_dot_file: Optional[str] = None,
-    log_level: Optional[str] = None,
+    task_dependencies_dot_file: str | None = None,
+    log_level: str | None = None,
     use_job_specific_log_file: bool = True,
 ) -> None:
     """
@@ -71,8 +69,8 @@ def clean_all_images(
     docker_repository_name: str = "exasol/script-language-container",
     docker_tag_prefix: str = "",
     workers: int = 5,
-    task_dependencies_dot_file: Optional[str] = None,
-    log_level: Optional[str] = None,
+    task_dependencies_dot_file: str | None = None,
+    log_level: str | None = None,
     use_job_specific_log_file: bool = True,
 ) -> None:
     """

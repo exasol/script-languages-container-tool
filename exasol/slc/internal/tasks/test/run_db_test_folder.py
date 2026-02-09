@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import Any, Optional, Tuple
+from typing import Any
 
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -44,7 +44,7 @@ class RunDBTestFolder(
         self.return_object(RunDBTestFoldersResult(test_results=results))
 
     def run_test(
-        self, language: Optional[str], test_folder: str
+        self, language: str | None, test_folder: str
     ) -> Generator[RunDBTestsInDirectory, Any, RunDBTestDirectoryResult]:
         task = self.create_child_task_with_common_params(
             RunDBTestsInDirectory,

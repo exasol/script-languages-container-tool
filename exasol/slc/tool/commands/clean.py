@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 from exasol_integration_test_docker_environment.cli.options.docker_repository_options import (
     simple_docker_repository_options,
 )
@@ -34,8 +32,8 @@ def clean_flavor_images(
     docker_repository_name: str,
     docker_tag_prefix: str,
     workers: int,
-    task_dependencies_dot_file: Optional[str],
-    log_level: Optional[str],
+    task_dependencies_dot_file: str | None,
+    log_level: str | None,
     use_job_specific_log_file: bool,
 ):
     """
@@ -66,8 +64,8 @@ def clean_all_images(
     docker_repository_name: str,
     docker_tag_prefix: str,
     workers: int,
-    task_dependencies_dot_file: Optional[str],
-    log_level: Optional[str],
+    task_dependencies_dot_file: str | None,
+    log_level: str | None,
     use_job_specific_log_file: bool,
 ):
     """

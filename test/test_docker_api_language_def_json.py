@@ -59,7 +59,6 @@ class ApiDockerBuildLangDefJsonTest(unittest.TestCase):
             tar_stream, _ = container.get_archive(file_path)
 
             # Extract the file content from the tar stream
-            import io
 
             file_content = None
 

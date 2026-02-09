@@ -1,5 +1,4 @@
 from pathlib import PurePosixPath
-from typing import Tuple, Union
 from urllib.parse import parse_qs, urlparse
 
 from exasol.slc.models.language_definition_components import (
@@ -31,9 +30,9 @@ def _build_udf_client_abs_path_from_fragments(
 ) -> UdfClientBucketPath:
     if len(fragment_parts) < 4:
         raise ValueError(
-            f"Expected format of the fragment in the URL for a bucket udf client path is "
-            f"'/buckets/<bucketfs_name>/<bucket_name>/<executable>' or"
-            f" 'buckets/<bucketfs_name>/<bucket_name>/<executable>'"
+            "Expected format of the fragment in the URL for a bucket udf client path is "
+            "'/buckets/<bucketfs_name>/<bucket_name>/<executable>' or"
+            " 'buckets/<bucketfs_name>/<bucket_name>/<executable>'"
         )
 
     udf_client_executable = PurePosixPath("/".join(fragment_parts[3:]))
@@ -46,7 +45,7 @@ def _build_udf_client_abs_path_from_fragments(
 
 def _parse_udf_client_path(
     fragment: str,
-) -> Union[UdfClientRelativePath, UdfClientBucketPath]:
+) -> UdfClientRelativePath | UdfClientBucketPath:
     fragment_path = PurePosixPath(fragment)
     fragment_parts = fragment_path.parts
 
@@ -73,8 +72,7 @@ def _parse_chroot_path(
 
     if not path.is_absolute() or len(path.parts) < 3:
         raise ValueError(
-            f"Expected format of the URL path is "
-            f"'/<bucketfs_name>/<bucket_name>/...'"
+            "Expected format of the URL path is '/<bucketfs_name>/<bucket_name>/...'"
         )
     path_parts = path.parts[1:]
     chroot_bucketfs_name = path_parts[0]
@@ -91,7 +89,7 @@ def _parse_chroot_path(
 
 def parse_language_definition(
     lang_def: str,
-) -> tuple[str, Union[LanguageDefinitionURL, BuiltInLanguageDefinitionURL]]:
+) -> tuple[str, LanguageDefinitionURL | BuiltInLanguageDefinitionURL]:
     alias_end = lang_def.find("=")
     alias = lang_def[0:alias_end]
     url = lang_def[alias_end + 1 :]

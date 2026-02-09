@@ -1,17 +1,9 @@
-import subprocess
-import tarfile
 import unittest
-from tempfile import TemporaryDirectory
 
-import docker
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.lib.models.data.environment_type import (
-    EnvironmentType,
-)
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc import api
-from exasol.slc.models.compression_strategy import CompressionStrategy
 
 
 class ApiDockerRunDbTestSingleFile(unittest.TestCase):

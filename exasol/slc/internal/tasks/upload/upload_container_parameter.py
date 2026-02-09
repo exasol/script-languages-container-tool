@@ -1,5 +1,3 @@
-from typing import Optional
-
 import luigi
 
 from exasol.slc.internal.tasks.export.export_container_parameters import (

@@ -1,7 +1,6 @@
-import json
 import pathlib
 from collections.abc import Generator
-from typing import Any, Optional
+from typing import Any
 
 import luigi
 from docker.models.containers import ExecResult
@@ -88,7 +87,7 @@ class TestRunnerDBTestBaseTask(
     release_goal: str = luigi.Parameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
-        self.test_environment_info: Optional[EnvironmentInfo] = None
+        self.test_environment_info: EnvironmentInfo | None = None
         super().__init__(*args, **kwargs)
 
     def register_spawn_test_environment(self) -> None:
@@ -182,6 +181,15 @@ class TestRunnerDBTestBaseTask(
 
     def get_database_credentials(self) -> DatabaseCredentials:
         if self.environment_type == EnvironmentType.external_db:
+            if (
+                self.external_exasol_db_user is None
+                or self.external_exasol_db_password is None
+                or self.external_exasol_bucketfs_write_password is None
+            ):
+                raise ValueError(
+                    "Parameters external_exasol_db_user/external_exasol_db_password/external_exasol_bucketfs_write_password must be set."
+                )
+
             return DatabaseCredentials(
                 db_user=self.external_exasol_db_user,
                 db_password=self.external_exasol_db_password,

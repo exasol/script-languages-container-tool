@@ -1,5 +1,3 @@
-from typing import Dict, Optional
-
 from exasol.slc.internal.tasks.upload.language_def_parser import (
     parse_language_definition,
 )
@@ -17,7 +15,7 @@ def get_language_definition_builder(
     container_name: str,
     path_in_bucket: str = "",
     add_missing_builtin: bool = False,
-    custom_aliases: Optional[dict[str, str]] = None,
+    custom_aliases: dict[str, str] | None = None,
 ) -> LanguageDefinitionsBuilder:
     """
     Builds an object which can be used to build language activation statements, allowing custom aliases.

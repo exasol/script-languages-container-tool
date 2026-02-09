@@ -1,6 +1,5 @@
 from collections.abc import Generator
 from pathlib import Path
-from typing import Optional, Tuple
 
 from exasol_integration_test_docker_environment.lib.base.abstract_task_future import (
     AbstractTaskFuture,
@@ -34,8 +33,8 @@ from exasol.slc.models.export_info import ExportInfo
 class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
 
     def __init__(self, *args, **kwargs) -> None:
-        self._export_directory_future: Optional[AbstractTaskFuture] = None
-        self._release_task_future: Optional[AbstractTaskFuture] = None
+        self._export_directory_future: AbstractTaskFuture | None = None
+        self._release_task_future: AbstractTaskFuture | None = None
         super().__init__(*args, **kwargs)
 
     def register_required(self) -> None:
@@ -45,7 +44,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         if release_task := self.get_release_task():
             self._release_task_future = self.register_dependency(release_task)
 
-    def get_release_task(self) -> Optional[BaseTask]:
+    def get_release_task(self) -> BaseTask | None:
         pass
 
     def run_task(self) -> Generator[BaseTask, None, None]:
@@ -99,7 +98,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         release_complete_name: str,
         cache_file: Path,
         is_new: bool,
-        output_file: Optional[Path],
+        output_file: Path | None,
     ) -> ExportInfo:
         export_info = ExportInfo(
             cache_file=str(cache_file),

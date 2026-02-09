@@ -50,7 +50,7 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
     def test_run_db_tests_docker_db(self):
         arguments = " ".join(
             [
-                f"--environment-type external_db",
+                "--environment-type external_db",
                 f"--external-exasol-db-host {self.docker_environment.database_host}",
                 f"--external-exasol-db-port {self.docker_environment.ports.database}",
                 f"--external-exasol-bucketfs-port {self.docker_environment.ports.bucketfs}",
@@ -58,7 +58,7 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
                 f"--external-exasol-db-user {self.docker_environment.db_username}",
                 f"--external-exasol-db-password {self.docker_environment.db_password}",
                 f"--external-exasol-bucketfs-write-password {self.docker_environment.bucketfs_password}",
-                f"--compression-strategy none",
+                "--compression-strategy none",
                 exaslct_utils.get_full_test_container_folder_parameter(),
             ]
         )
@@ -67,7 +67,7 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
             track_task_dependencies=True,
         )
 
-        self.validate_file_on_bucket_fs(f"test-flavor.tar")
+        self.validate_file_on_bucket_fs("test-flavor.tar")
 
 
 if __name__ == "__main__":
