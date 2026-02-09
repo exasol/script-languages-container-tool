@@ -182,6 +182,15 @@ class TestRunnerDBTestBaseTask(
 
     def get_database_credentials(self) -> DatabaseCredentials:
         if self.environment_type == EnvironmentType.external_db:
+            if (
+                self.external_exasol_db_user is None
+                or self.external_exasol_db_password is None
+                or self.external_exasol_bucketfs_write_password is None
+            ):
+                raise ValueError(
+                    "Parameters external_exasol_db_user/external_exasol_db_password/external_exasol_bucketfs_write_password must be set."
+                )
+
             return DatabaseCredentials(
                 db_user=self.external_exasol_db_user,
                 db_password=self.external_exasol_db_password,
