@@ -1,5 +1,3 @@
-from typing import Dict
-
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_create_task import (
     DockerCreateImageTask,

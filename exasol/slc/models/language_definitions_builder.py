@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from exasol.slc.models.language_definition_components import (
     LanguageDefinitionComponents,
 )

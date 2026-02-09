@@ -1,11 +1,7 @@
-from dataclasses import dataclass
-from typing import List, Optional
-
 from pydantic import BaseModel
 
 from exasol.slc.models.language_definition_common import (
     DeprecationInfo,
-    SLCLanguage,
     SLCParameter,
     UdfClientRelativePath,
 )
@@ -22,7 +18,7 @@ class LanguageDefinition(BaseModel):
     aliases: list[str]
     parameters: list[SLCParameter]
     udf_client_path: UdfClientRelativePath
-    deprecation: Optional[DeprecationInfo]
+    deprecation: DeprecationInfo | None
 
 
 class LanguageDefinitionsModel(BaseModel):

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 from exasol.slc.models.accelerator import Accelerator
@@ -11,7 +9,7 @@ class TestSet(BaseModel):
     folders: list[str]
     goal: str
     generic_language_tests: list[str]
-    test_runner: Optional[str] = None
+    test_runner: str | None = None
     accelerator: Accelerator = Accelerator.NONE
 
 

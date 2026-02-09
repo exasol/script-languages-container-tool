@@ -14,7 +14,7 @@ from exasol.slc import api
 from exasol.slc.internal.tasks.test.test_runner_db_test_base_task import (
     read_ci_json,
 )
-from exasol.slc.models.flavor_ci_model import FlavorCiConfig, TestConfig, TestSet
+from exasol.slc.models.flavor_ci_model import FlavorCiConfig
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]

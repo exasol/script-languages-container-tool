@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from exasol_python_test_framework import docker_db_environment, udf
+from exasol_python_test_framework import udf
 
 
 class TestGPUEnabled(udf.TestCase):
@@ -12,7 +12,13 @@ class TestGPUEnabled(udf.TestCase):
                      ORDER BY PARAM_NAME; \
                      """
         rows = self.query(select_sql)
-        self.assertRowsEqual([("1", "acceleratorDeviceDetected"), ("1", "acceleratorDeviceGpuNvidiaDetected"), ], rows)
+        self.assertRowsEqual(
+            [
+                ("1", "acceleratorDeviceDetected"),
+                ("1", "acceleratorDeviceGpuNvidiaDetected"),
+            ],
+            rows,
+        )
 
 
 if __name__ == "__main__":

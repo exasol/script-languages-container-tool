@@ -230,7 +230,7 @@ async def delete_tags(
                 try:
                     status = await delete_coro
                     status_counter_map[status] = status_counter_map.get(status, 0) + 1
-                except TooManyRequestsError as e:
+                except TooManyRequestsError:
                     # upon 429, cancel all pending tasks
                     needs_retry = True
                     for t in tasks:

@@ -1,5 +1,3 @@
-from typing import Dict
-
 from exasol.slc.internal.tasks.build.docker_flavor_image_task import (
     DockerFlavorAnalyzeImageTask,
 )
@@ -10,7 +8,7 @@ class AnalyzeUDFClientDeps(DockerFlavorAnalyzeImageTask):
     def get_build_step(self) -> str:
         return "udfclient_deps"
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         return {}
 
     def get_path_in_flavor(self):
@@ -22,7 +20,7 @@ class AnalyzeLanguageDeps(DockerFlavorAnalyzeImageTask):
     def get_build_step(self) -> str:
         return "language_deps"
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         return {}
 
     def requires_tasks(self):
@@ -37,7 +35,7 @@ class AnalyzeBuildDeps(DockerFlavorAnalyzeImageTask):
     def get_build_step(self) -> str:
         return "build_deps"
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         return {}
 
     def get_path_in_flavor(self):
@@ -52,7 +50,7 @@ class AnalyzeBuildRun(DockerFlavorAnalyzeImageTask):
     def requires_tasks(self):
         return {"build_deps": AnalyzeBuildDeps, "language_deps": AnalyzeLanguageDeps}
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         return {}
 
     def get_path_in_flavor(self):
@@ -82,7 +80,7 @@ class AnalyzeBaseTestBuildRun(DockerFlavorAnalyzeImageTask):
             "language_deps": AnalyzeLanguageDeps,
         }
 
-    def get_additional_build_directories_mapping(self) -> Dict[str, str]:
+    def get_additional_build_directories_mapping(self) -> dict[str, str]:
         return {}
 
     def get_path_in_flavor(self):

@@ -1,6 +1,5 @@
 import unittest
 from pathlib import Path
-from typing import Dict
 
 import docker
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error

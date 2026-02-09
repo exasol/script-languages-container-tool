@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Optional, TextIO, Tuple, Union
+from typing import TextIO
 
 import luigi
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
@@ -38,7 +38,7 @@ class TestContainerParameter(
     ExportContainerOptionsParameter,
 ):
     release_goals: tuple[str, ...] = luigi.ListParameter(["release"])  # type: ignore
-    languages: tuple[Optional[str], ...] = luigi.ListParameter([None])  # type: ignore
+    languages: tuple[str | None, ...] = luigi.ListParameter([None])  # type: ignore
     reuse_uploaded_container: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
     use_existing_container: str = luigi.OptionalParameter()  # type: ignore
 
@@ -207,9 +207,7 @@ class TestFlavorContainer(
 
     def generate_tasks_for_flavor(
         self, release_goal: str
-    ) -> Union[
-        TestRunnerDBTestWithExportTask, TestRunnerDBTestFromExistingContainerFileTask
-    ]:
+    ) -> TestRunnerDBTestWithExportTask | TestRunnerDBTestFromExistingContainerFileTask:
         if self.use_existing_container is None:
             task = self.create_child_task_with_common_params(
                 TestRunnerDBTestWithExportTask, release_goal=release_goal

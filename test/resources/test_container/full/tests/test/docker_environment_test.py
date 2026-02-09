@@ -41,7 +41,7 @@ class DockerDBEnvironmentTest(udf.TestCase):
                 command="nc -v -l -s 0.0.0.0 -p 7777",
             )
             host = env.get_ip_address_of_container(container)
-            self.query("select connect_container('{}',{})".format(host, 7777))
+            self.query(f"select connect_container('{host}',{7777})")
             self.assertTrue("connect" in container.logs().decode("utf-8"))
         finally:
             try:

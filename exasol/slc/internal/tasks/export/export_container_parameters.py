@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 import luigi
 
 from exasol.slc.models.compression_strategy import (
@@ -15,8 +13,8 @@ class ExportContainerOptionsParameter:
 
 
 class ExportContainerParameterBase(ExportContainerOptionsParameter):
-    export_path: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
-    release_name: Optional[str] = luigi.OptionalParameter(None)  # type: ignore
+    export_path: str | None = luigi.OptionalParameter(None)  # type: ignore
+    release_name: str | None = luigi.OptionalParameter(None)  # type: ignore
     cleanup_docker_images: bool = luigi.BoolParameter(False)  # type: ignore
 
 

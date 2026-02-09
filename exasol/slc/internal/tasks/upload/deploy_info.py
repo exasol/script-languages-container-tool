@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 import exasol.bucketfs as bfs  # type: ignore
 
@@ -19,20 +18,20 @@ class DeployInfo:
 def toDeployResult(
     deploy_info: DeployInfo,
     bucketfs_use_https: bool,
-    bucketfs_host: Optional[str],
-    bucketfs_port: Optional[int],
-    bucket_name: Optional[str],
-    bucketfs_name: Optional[str],
-    bucketfs_username: Optional[str],
-    bucketfs_password: Optional[str],
-    ssl_cert_path: Optional[str],
+    bucketfs_host: str | None,
+    bucketfs_port: int | None,
+    bucket_name: str | None,
+    bucketfs_name: str | None,
+    bucketfs_username: str | None,
+    bucketfs_password: str | None,
+    ssl_cert_path: str | None,
     use_ssl_cert_validation: bool,
-    path_in_bucket: Optional[str],
-    saas_token: Optional[str],
-    saas_database_id: Optional[str],
-    saas_database_name: Optional[str],
-    saas_account_id: Optional[str],
-    saas_url: Optional[str],
+    path_in_bucket: str | None,
+    saas_token: str | None,
+    saas_database_id: str | None,
+    saas_database_name: str | None,
+    saas_account_id: str | None,
+    saas_url: str | None,
 ) -> DeployResult:
     complete_release_name = deploy_info.complete_release_name
     bucket_path = (

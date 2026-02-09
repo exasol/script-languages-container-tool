@@ -1,7 +1,6 @@
-import json
 import pathlib
 from collections.abc import Generator
-from typing import Any, Optional
+from typing import Any
 
 import luigi
 from docker.models.containers import ExecResult
@@ -88,7 +87,7 @@ class TestRunnerDBTestBaseTask(
     release_goal: str = luigi.Parameter()  # type: ignore
 
     def __init__(self, *args, **kwargs) -> None:
-        self.test_environment_info: Optional[EnvironmentInfo] = None
+        self.test_environment_info: EnvironmentInfo | None = None
         super().__init__(*args, **kwargs)
 
     def register_spawn_test_environment(self) -> None:

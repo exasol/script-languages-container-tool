@@ -82,7 +82,7 @@ class ApiDockerRunDbTestNoCompression(unittest.TestCase):
 
     def test_run_db_test_no_compression(self):
         self._run_db_test()
-        self.validate_file_on_bucket_fs(f"test-flavor.tar")
+        self.validate_file_on_bucket_fs("test-flavor.tar")
 
 
 if __name__ == "__main__":

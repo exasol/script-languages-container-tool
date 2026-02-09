@@ -3,7 +3,6 @@
 from collections import namedtuple
 from io import StringIO
 from pathlib import Path
-from typing import Optional, Tuple
 
 import docker.models.containers
 import luigi
@@ -64,7 +63,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self._test_container_info: Optional[ContainerInfo] = (
+        self._test_container_info: ContainerInfo | None = (
             self.test_environment_info.test_container_info
         )
         self._database_info: DatabaseInfo = self.test_environment_info.database_info
@@ -135,7 +134,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         self.return_object(result)
 
     @staticmethod
-    def _get_docker_credentials() -> Optional[DockerCredentials]:
+    def _get_docker_credentials() -> DockerCredentials | None:
 
         if (
             source_docker_repository_config().username is not None

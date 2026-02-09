@@ -1,8 +1,6 @@
 import unittest
-from typing import Dict
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
-from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.lib.docker.container.utils import (
     remove_docker_container,
 )
@@ -35,7 +33,7 @@ class RunDBTestDockerDBReuseTest(unittest.TestCase):
         def run_command():
             command = [
                 f"{self.test_environment.executable}",
-                f"run-db-test",
+                "run-db-test",
                 f"{exaslct_utils.get_full_test_container_folder_parameter()}",
                 "--reuse-test-environment",
             ]

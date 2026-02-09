@@ -1,5 +1,3 @@
-from typing import Optional
-
 from exasol_integration_test_docker_environment.lib.base.info import Info
 from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
     ImageInfo,
@@ -17,8 +15,8 @@ class ExportInfo(Info):
         is_new: bool,
         release_goal: str,
         depends_on_image: ImageInfo,
-        output_file: Optional[str] = None,
-        release_name: Optional[str] = None,
+        output_file: str | None = None,
+        release_name: str | None = None,
     ) -> None:
         self.release_name = release_name
         self.output_file = output_file

@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 import click
 from exasol_integration_test_docker_environment.cli.options.build_options import (
     build_options,
@@ -48,7 +46,7 @@ from exasol.slc.tool.options.goal_options import goal_options
 @add_options(luigi_logging_options)
 def save(
     flavor_path: tuple[str, ...],
-    save_directory: Optional[str],
+    save_directory: str | None,
     force_save: bool,
     save_all: bool,
     goal: tuple[str, ...],
@@ -58,19 +56,19 @@ def save(
     output_directory: str,
     temporary_base_directory: str,
     log_build_context_content: bool,
-    cache_directory: Optional[str],
-    build_name: Optional[str],
+    cache_directory: str | None,
+    build_name: str | None,
     source_docker_repository_name: str,
     source_docker_tag_prefix: str,
-    source_docker_username: Optional[str],
-    source_docker_password: Optional[str],
+    source_docker_username: str | None,
+    source_docker_password: str | None,
     target_docker_repository_name: str,
     target_docker_tag_prefix: str,
-    target_docker_username: Optional[str],
-    target_docker_password: Optional[str],
+    target_docker_username: str | None,
+    target_docker_password: str | None,
     workers: int,
-    task_dependencies_dot_file: Optional[str],
-    log_level: Optional[str],
+    task_dependencies_dot_file: str | None,
+    log_level: str | None,
     use_job_specific_log_file: bool,
 ):
     """

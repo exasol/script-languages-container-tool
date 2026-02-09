@@ -1,5 +1,3 @@
-from typing import Dict, List, Set
-
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )

@@ -2,7 +2,6 @@
 import tarfile
 from collections.abc import Generator
 from pathlib import Path
-from typing import Dict, Set
 
 import luigi
 from docker.models.containers import Container
@@ -19,7 +18,6 @@ from exasol_integration_test_docker_environment.lib.docker.images.image_info imp
 from exasol_integration_test_docker_environment.lib.models.config.build_config import (
     build_config,
 )
-from luigi import LocalTarget
 
 from exasol.slc.internal.tasks.build.docker_flavor_build_base import (
     DockerFlavorBuildBase,
@@ -74,7 +72,7 @@ class SecurityScan(FlavorsBaseTask, SecurityScanParameter):
                 out_file.write("\n")
                 out_file.write(f"Successful:{value.is_ok}\n")
                 out_file.write(f"Full report:{value.report_dir}\n")
-                out_file.write(f"Summary:\n")
+                out_file.write("Summary:\n")
                 out_file.write(value.summary)
                 out_file.write("\n")
                 out_file.write(

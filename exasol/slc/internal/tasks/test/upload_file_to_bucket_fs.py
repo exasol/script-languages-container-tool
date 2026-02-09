@@ -1,6 +1,5 @@
 import dataclasses
 from pathlib import Path
-from typing import Tuple, Union
 
 import exasol.bucketfs as bfs
 import luigi
@@ -140,7 +139,7 @@ class UploadFileToBucketFS(DockerBaseTask):
         log_file: str,
         pattern_to_wait_for: str,
         db_os_executor: DbOsExecutor,
-    ) -> Union[DockerDBLogBasedBucketFSSyncChecker, TimeBasedBucketFSSyncWaiter]:
+    ) -> DockerDBLogBasedBucketFSSyncChecker | TimeBasedBucketFSSyncWaiter:
         if database_container is not None:
             return DockerDBLogBasedBucketFSSyncChecker(
                 database_container=database_container,

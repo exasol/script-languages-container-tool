@@ -115,10 +115,10 @@ class DockerRunDBTestDockerDBTestCheckArguments(unittest.TestCase):
         disk_size = "1.4"
         arguments = " ".join(
             [
-                f"--test-file=empty_test.py",
+                "--test-file=empty_test.py",
                 f"--db-mem-size={mem_size}GiB",
                 f"--db-disk-size={disk_size}GiB",
-                f"--reuse-test-environment",
+                "--reuse-test-environment",
                 exaslct_utils.get_full_test_container_folder_parameter(),
             ]
         )

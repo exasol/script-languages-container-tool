@@ -4,7 +4,6 @@ import unittest
 from functools import partial
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict, Optional
 
 import exasol.bucketfs as bfs  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
@@ -45,7 +44,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucket_name: str,
         bucketfs_name: str,
         expected_extension: str,
-        path: Optional[str],
+        path: str | None,
         release_name: str,
     ) -> bfs.path.PathLike:
         build_path_func = partial(
@@ -77,7 +76,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucketfs_name: str,
         compression_strategy: CompressionStrategy,
         flavor_path: Path,
-        path: Optional[str],
+        path: str | None,
         release_name: str,
     ) -> dict[str, dict[str, DeployResult]]:
         deploy_func = partial(
@@ -105,7 +104,7 @@ class ApiDockerDeployTest(unittest.TestCase):
     def _validate_deploy(
         self,
         compression_strategy: CompressionStrategy,
-        path: Optional[str],
+        path: str | None,
         expected_extension: str,
     ):
         release_name = "TEST"
@@ -128,7 +127,7 @@ class ApiDockerDeployTest(unittest.TestCase):
 
         deploy_result = result[str(flavor_path)]["release"]
         self.assertIn(
-            f".build_output/cache/exports/test-flavor-release-",
+            ".build_output/cache/exports/test-flavor-release-",
             deploy_result.release_path,
         )
 
@@ -161,7 +160,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucket_name: str,
         deploy_result: DeployResult,
         expected_extension: str,
-        path: Optional[str],
+        path: str | None,
         release_name: str,
     ) -> None:
         upload_path = "/".join(
@@ -186,7 +185,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucket_name: str,
         bucketfs_name: str,
         deploy_result: DeployResult,
-        path: Optional[str],
+        path: str | None,
         release_name: str,
     ) -> None:
         complete_path_in_bucket = "/".join(
@@ -213,7 +212,7 @@ class ApiDockerDeployTest(unittest.TestCase):
     def validate_file_on_bucket_fs(
         self,
         bucket_name: str,
-        path: Optional[str],
+        path: str | None,
         release_name: str,
         expected_extension: str,
         compression_strategy: CompressionStrategy,

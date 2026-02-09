@@ -1,4 +1,5 @@
-from typing import Callable, Dict, List, TextIO
+from collections.abc import Callable
+from typing import TextIO
 
 import docker.models.containers
 import docker.models.images

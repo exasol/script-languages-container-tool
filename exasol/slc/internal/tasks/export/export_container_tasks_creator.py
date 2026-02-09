@@ -1,5 +1,3 @@
-from typing import Dict, Optional
-
 from exasol_integration_test_docker_environment.lib.base.base_task import BaseTask
 from exasol_integration_test_docker_environment.lib.docker.images.create.docker_image_create_task import (
     DockerCreateImageTask,
@@ -13,7 +11,7 @@ from exasol.slc.internal.tasks.export.export_container_task import ExportContain
 
 class ExportContainerTasksCreator:
 
-    def __init__(self, task: BaseTask, export_path: Optional[str]):
+    def __init__(self, task: BaseTask, export_path: str | None):
         self.export_path = export_path
         self.task = task
 

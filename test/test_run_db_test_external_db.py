@@ -28,7 +28,7 @@ class DockerRunDBTestExternalDBTest(unittest.TestCase):
     def test_run_db_tests_external_db(self):
         arguments = " ".join(
             [
-                f"--environment-type external_db",
+                "--environment-type external_db",
                 f"--external-exasol-db-host {self.docker_environment.database_host}",
                 f"--external-exasol-db-port {self.docker_environment.ports.database}",
                 f"--external-exasol-bucketfs-port {self.docker_environment.ports.bucketfs}",
