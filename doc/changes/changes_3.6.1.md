@@ -1,6 +1,7 @@
 # 3.6.1 - 2026-02-10
 
-This hotfix release 
+This hotfix release fixes a bug in the `run_db_test` command, which caused the test-sets for a given release to be ignored.
+
 ## Bugs
 
  - #337: Fixed RunDbTests
