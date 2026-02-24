@@ -86,7 +86,7 @@ def run_db_test(
     force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
     output_directory: str = ".build_output",
-    temporary_base_directory: str = "/tmp",
+    temporary_base_directory: str = "/var/tmp",
     log_build_context_content: bool = False,
     cache_directory: str | None = None,
     build_name: str | None = None,
