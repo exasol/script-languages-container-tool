@@ -38,11 +38,13 @@ issues = "https://github.com/exasol/script-languages-container-tool/issues"
 importlib_metadata = ">=4.6.0"
 importlib-resources = ">=6.4.0"
 networkx = "^3.3.0"
-exasol-integration-test-docker-environment = ">=4.4.1, <6.0.0"
+
+
+exasol-integration-test-docker-environment=">=6,<7"
 exasol-bucketfs=">=2.1.0,<3"
 pydantic="^2.10.2"
 jsonschema="^4.23.0"
-click = ">=8.2.1, <8.3.0" #Conflict with default values in click ('Sentinel.UNSET' vs ()/None). Need a new version of ITDE before updating click.
+click = ">=8.2.1, <9.0.0"
 
 [build-system]
 requires = ["poetry_core>=2.0.0"]

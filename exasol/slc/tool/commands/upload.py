@@ -33,7 +33,7 @@ from exasol.slc.tool.options.goal_options import release_options
 @click.option("--bucketfs-username", type=str, required=True)
 @click.option("--bucketfs-name", type=str, required=True)
 @click.option("--bucket-name", type=str, required=True)
-@click.option("--bucketfs-password", type=str)
+@click.option("--bucketfs-password", type=str, default=None)
 @click.option("--bucketfs-https/--no-bucketfs-https", default=False)
 @click.option("--path-in-bucket", type=str, required=False, default="")
 @add_options(release_options)

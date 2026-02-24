@@ -46,6 +46,7 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
     "--generic-language-test",
     multiple=True,
     type=str,
+    default=(),
     help="Specifies for which languages the test runner executes generic language tests."
     "The option can be repeated with different languages. "
     "The test runner will run the generic language test for each language.",
@@ -53,6 +54,7 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
 @click.option(
     "--test-folder",
     multiple=True,
+    default=(),
     type=click.Path(),
     help="Specifies in which directories the test runners looks for test files to execute."
     "The option can be repeated with different directories. "
@@ -61,6 +63,7 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
 @click.option(
     "--test-file",
     multiple=True,
+    default=(),
     type=click.Path(),
     help="Specifies in which test-files the test runners should execute."
     "The option can be repeated with different test files. "
@@ -69,6 +72,7 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
 @click.option(
     "--test",
     multiple=True,
+    default=(),
     type=str,
     help="Define restriction which tests in the test files should be executed."
     "The option can be repeated with different restrictions. "
@@ -138,6 +142,7 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
 @click.option(
     "--use-existing-container",
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
+    default=None,
     help="""Use existing exported container (.tar.gz or .tar). The given file must be compatible with the given flavor. """,
 )
 @add_options(test_container_options)
