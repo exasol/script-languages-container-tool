@@ -26,6 +26,7 @@ from exasol.slc.tool.options.goal_options import goal_options
 @add_options(flavor_options)
 @click.option(
     "--save-directory",
+    default=None,
     type=click.Path(file_okay=False, dir_okay=True),
     help="Directory where to save the image tarballs",
 )

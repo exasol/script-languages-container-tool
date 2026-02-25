@@ -1,6 +1,9 @@
 import unittest
 
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+from exasol_integration_test_docker_environment.lib.docker.images.image_info import (
+    current_platform,
+)
 from exasol_integration_test_docker_environment.testing import utils
 from exasol_integration_test_docker_environment.testing.docker_registry import (
     LocalDockerRegistryContextManager,
@@ -37,10 +40,11 @@ class ApiDockerPushTest(unittest.TestCase):
             print("images", images)
             images_info_list = image_infos[str(exaslct_utils.get_test_flavor())]
             print("images_info_list", images_info_list)
+            platform = current_platform()
             images_info_list_tags = sorted(
                 list(
                     {
-                        f"{image_info.target_tag}_{image_info.hash}"
+                        f"{image_info.target_tag}_{platform.value}_{image_info.hash}"
                         for image_info in images_info_list
                     }
                 )
