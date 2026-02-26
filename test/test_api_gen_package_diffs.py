@@ -119,6 +119,5 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
                 self.check_resulting_dir_equality(dcmp)
 
 
-
 if __name__ == "__main__":
     unittest.main()
