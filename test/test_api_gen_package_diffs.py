@@ -108,9 +108,11 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
                     tmp_gen_package_diff_out,
                 )
 
-                self.assertEqual(dcmp.left_only, [], f"Found left only: {dcmp.left_only}")
                 self.assertEqual(
-                    dcmp.right_only,  [],f"Found right only: {dcmp.right_only}"
+                    dcmp.left_only, [], f"Found left only: {dcmp.left_only}"
+                )
+                self.assertEqual(
+                    dcmp.right_only, [], f"Found right only: {dcmp.right_only}"
                 )
                 self.assertEqual(
                     dcmp.diff_files, [], f"Found different files: {dcmp.right_only}"

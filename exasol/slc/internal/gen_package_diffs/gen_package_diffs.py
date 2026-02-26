@@ -226,11 +226,11 @@ def compare_flavor(
 
 def get_last_git_tag() -> str:
     get_fetch_command = ["git", "fetch"]
-    subprocess.run(
-        get_fetch_command, stderr=subprocess.STDOUT, check=True
-    )
+    subprocess.run(get_fetch_command, stderr=subprocess.STDOUT, check=True)
     get_main_branch_command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
-    get_main_branch_result = subprocess.run(get_main_branch_command, stdout=subprocess.PIPE)
+    get_main_branch_result = subprocess.run(
+        get_main_branch_command, stdout=subprocess.PIPE
+    )
     get_main_branch_result.check_returncode()
 
     main_branch_name = get_main_branch_result.stdout.decode("utf-8").strip()
