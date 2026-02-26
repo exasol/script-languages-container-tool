@@ -9,8 +9,6 @@ import pandas as pd
 
 
 def _remove_comments(line: str) -> str:
-    import re
-
     comment_start = "#"
 
     # 1) line is only (optional) whitespace + comment
