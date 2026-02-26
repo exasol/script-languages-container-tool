@@ -2,6 +2,10 @@
 
 ## Summary
 
+## Features
+
+ - #344: Included new package file into hash sum calculation for docker image tag
+
 ## Refactorings
 
  - #341: Updated integration-test-docker-environment

@@ -1335,14 +1335,14 @@ files = [
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "6.0.0"
+version = "6.1.0"
 description = "Integration Test Docker Environment for Exasol"
 optional = false
 python-versions = "<3.15,>=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "exasol_integration_test_docker_environment-6.0.0-py3-none-any.whl", hash = "sha256:fbc15f6d986493023c8a666eb3c1dcfbab0aa755f7453467706172b2d564d45a"},
-    {file = "exasol_integration_test_docker_environment-6.0.0.tar.gz", hash = "sha256:8b5ad7c2c7461906714c31731b7526ef3833beb6facfa75948bf730d67430be6"},
+    {file = "exasol_integration_test_docker_environment-6.1.0-py3-none-any.whl", hash = "sha256:3da3e8d74c3c6ca947730587f0f22996b834a20363ef3d6d186564866cd97864"},
+    {file = "exasol_integration_test_docker_environment-6.1.0.tar.gz", hash = "sha256:f0ecf2dd2db8af0688630543b76373fe154a8a147eaf6f76d8c5794a1bc04d00"},
 ]
 
 [package.dependencies]
@@ -1355,7 +1355,7 @@ gitpython = ">=2.1.0"
 humanfriendly = ">=4.18"
 jinja2 = ">=2.10.1"
 jsonpickle = ">=1.1"
-luigi = ">=2.8.4"
+luigi = ">=2.8.4,<=3.6.0"
 netaddr = ">=0.7.19"
 networkx = ">=2.3"
 portalocker = ">=2.7.0,<3"
@@ -1384,6 +1384,25 @@ python-dateutil = ">=2.8.0,<3.0.0"
 requests = ">=2.32.4,<3.0.0"
 tenacity = ">=8.2.3,<9.0.0"
 types-requests = ">=2.31.0.6,<3.0.0.0"
+
+[[package]]
+name = "exasol-script-languages-package-management"
+version = "1.0.0"
+description = "This project provides a unified way of installing different packages from sources like coda, apt and PyPi"
+optional = false
+python-versions = "<3.15,>=3.10"
+groups = ["main"]
+files = [
+    {file = "exasol_script_languages_package_management-1.0.0-py3-none-any.whl", hash = "sha256:f41cdc9ea53c1558f4a89004e39ddf59d3431972016982459f803fd04861814b"},
+    {file = "exasol_script_languages_package_management-1.0.0.tar.gz", hash = "sha256:5ebbbc3424810f27c3854ddfc7988b1cc414f5f6f0ce83ac07bfd71c02efcd61"},
+]
+
+[package.dependencies]
+click = ">=8.3.0,<9.0.0"
+jinja2 = ">=3.1.6,<4.0.0"
+pydantic = ">=2.10.2,<3.0.0"
+pyyaml = ">=6.0.3,<7.0.0"
+types-pyyaml = ">=6.0.12.20250915,<7.0.0.0"
 
 [[package]]
 name = "exasol-toolbox"
@@ -2183,7 +2202,7 @@ description = "Low-level, pure Python DBus protocol wrapper."
 optional = false
 python-versions = ">=3.7"
 groups = ["dev"]
-markers = "sys_platform == \"linux\" and platform_machine != \"ppc64le\" and platform_machine != \"s390x\""
+markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and sys_platform == \"linux\""
 files = [
     {file = "jeepney-0.9.0-py3-none-any.whl", hash = "sha256:97e5714520c16fc0a45695e5365a2e11b81ea79bba796e26f9f1d178cb182683"},
     {file = "jeepney-0.9.0.tar.gz", hash = "sha256:cf0e9e845622b81e4a28df94c40345400256ec608d0e55bb8a3feaa9163f5732"},
@@ -2451,7 +2470,6 @@ description = "Workflow mgmgt + task scheduling + dependency resolution."
 optional = false
 python-versions = "*"
 groups = ["main", "dev"]
-markers = "python_version >= \"3.12\""
 files = [
     {file = "luigi-3.6.0.tar.gz", hash = "sha256:41b14850223c619d9006b30acda733e756b883fc7e60814205576647190c96e3"},
 ]
@@ -2461,34 +2479,6 @@ python-daemon = "*"
 python-dateutil = ">=2.7.5,<3"
 tenacity = ">=8,<9"
 tornado = ">=5.0,<7"
-
-[package.extras]
-jsonschema = ["jsonschema"]
-prometheus = ["prometheus-client (>=0.5,<0.15)"]
-toml = ["toml (<2.0.0)"]
-
-[[package]]
-name = "luigi"
-version = "3.7.3"
-description = "Workflow mgmgt + task scheduling + dependency resolution."
-optional = false
-python-versions = "<3.13,>=3.8.0"
-groups = ["main", "dev"]
-markers = "python_version < \"3.12\""
-files = [
-    {file = "luigi-3.7.3-py3-none-any.whl", hash = "sha256:f6aaac2417e28a833d30e6b1cd03fe53b2254024dd861fa104ab342cc4f3b843"},
-    {file = "luigi-3.7.3.tar.gz", hash = "sha256:82e3a5d482e9738f4dcae5acb631ee7ffa748896cb1a1d5d4922c2cac61903fe"},
-]
-
-[package.dependencies]
-python-daemon = [
-    {version = "*", markers = "sys_platform != \"win32\""},
-    {version = "<2.2.0", markers = "sys_platform == \"win32\""},
-]
-python-dateutil = ">=2.7.5,<3"
-tenacity = ">=8,<9"
-tornado = ">=5.0,<7"
-typing-extensions = ">=4.12.2"
 
 [package.extras]
 jsonschema = ["jsonschema"]
@@ -4260,30 +4250,11 @@ pytest = ">=7,<9"
 
 [[package]]
 name = "python-daemon"
-version = "2.1.2"
-description = "Library to implement a well-behaved Unix daemon process."
-optional = false
-python-versions = "*"
-groups = ["main", "dev"]
-markers = "python_version < \"3.12\" and sys_platform == \"win32\""
-files = [
-    {file = "python-daemon-2.1.2.tar.gz", hash = "sha256:261c859be5c12ae7d4286dc6951e87e9e1a70a882a8b41fd926efc1ec4214f73"},
-    {file = "python_daemon-2.1.2-py2.py3-none-any.whl", hash = "sha256:53da55aec3bb67b576e13a8091a2181f99b395c2eec32a5a0d91d347a5c420a7"},
-]
-
-[package.dependencies]
-docutils = "*"
-lockfile = ">=0.10"
-setuptools = "*"
-
-[[package]]
-name = "python-daemon"
 version = "3.1.2"
 description = "Library to implement a well-behaved Unix daemon process."
 optional = false
 python-versions = ">=3.7"
 groups = ["main", "dev"]
-markers = "sys_platform != \"win32\" or python_version >= \"3.12\""
 files = [
     {file = "python_daemon-3.1.2-py3-none-any.whl", hash = "sha256:b906833cef63502994ad48e2eab213259ed9bb18d54fa8774dcba2ff7864cec6"},
     {file = "python_daemon-3.1.2.tar.gz", hash = "sha256:f7b04335adc473de877f5117e26d5f1142f4c9f7cd765408f0877757be5afbf4"},
@@ -4446,7 +4417,7 @@ version = "6.0.3"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "PyYAML-6.0.3-cp38-cp38-macosx_10_13_x86_64.whl", hash = "sha256:c2514fceb77bc5e7a2f7adfaa1feb2fb311607c9cb518dbc378688ec73d8292f"},
     {file = "PyYAML-6.0.3-cp38-cp38-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:9c57bb8c96f6d1808c030b1687b9b5fb476abaa47f0db9c0101f5e9f394e97f4"},
@@ -4930,7 +4901,7 @@ description = "Python bindings to FreeDesktop.org Secret Service API"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
-markers = "sys_platform == \"linux\" and platform_machine != \"ppc64le\" and platform_machine != \"s390x\""
+markers = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\" and sys_platform == \"linux\""
 files = [
     {file = "secretstorage-3.5.0-py3-none-any.whl", hash = "sha256:0ce65888c0725fcb2c5bc0fdb8e5438eece02c523557ea40ce0703c266248137"},
     {file = "secretstorage-3.5.0.tar.gz", hash = "sha256:f04b8e4689cbce351744d5537bf6b1329c6fc68f91fa666f60a380edddcd11be"},
@@ -4939,28 +4910,6 @@ files = [
 [package.dependencies]
 cryptography = ">=2.0"
 jeepney = ">=0.6"
-
-[[package]]
-name = "setuptools"
-version = "82.0.0"
-description = "Easily download, build, install, upgrade, and uninstall Python packages"
-optional = false
-python-versions = ">=3.9"
-groups = ["main", "dev"]
-markers = "python_version < \"3.12\" and sys_platform == \"win32\""
-files = [
-    {file = "setuptools-82.0.0-py3-none-any.whl", hash = "sha256:70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0"},
-    {file = "setuptools-82.0.0.tar.gz", hash = "sha256:22e0a2d69474c6ae4feb01951cb69d515ed23728cf96d05513d36e42b62b37cb"},
-]
-
-[package.extras]
-check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1) ; sys_platform != \"cygwin\"", "ruff (>=0.13.0) ; sys_platform != \"cygwin\""]
-core = ["importlib_metadata (>=6) ; python_version < \"3.10\"", "jaraco.functools (>=4)", "jaraco.text (>=3.7)", "more_itertools", "more_itertools (>=8.8)", "packaging (>=24.2)", "platformdirs (>=4.2.2)", "tomli (>=2.0.1) ; python_version < \"3.11\"", "wheel (>=0.43.0)"]
-cover = ["pytest-cov"]
-doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier", "towncrier (<24.7)"]
-enabler = ["pytest-enabler (>=2.2)"]
-test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21) ; python_version >= \"3.9\" and sys_platform != \"cygwin\"", "jaraco.envs (>=2.2)", "jaraco.path (>=3.7.2)", "jaraco.test (>=5.5)", "packaging (>=24.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.*)", "pytest-home (>=0.5)", "pytest-perf ; sys_platform != \"cygwin\"", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel (>=0.44.0)"]
-type = ["importlib_metadata (>=7.0.2) ; python_version < \"3.10\"", "jaraco.develop (>=7.21) ; sys_platform != \"cygwin\"", "mypy (==1.18.*)", "pytest-mypy"]
 
 [[package]]
 name = "shellingham"
@@ -5849,6 +5798,18 @@ files = [
 ]
 
 [[package]]
+name = "types-pyyaml"
+version = "6.0.12.20250915"
+description = "Typing stubs for PyYAML"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "types_pyyaml-6.0.12.20250915-py3-none-any.whl", hash = "sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6"},
+    {file = "types_pyyaml-6.0.12.20250915.tar.gz", hash = "sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3"},
+]
+
+[[package]]
 name = "types-requests"
 version = "2.32.4.20260107"
 description = "Typing stubs for requests"
@@ -6255,4 +6216,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "7f0ff0edb8abf21883ef0b211dafbfde1dddcb0e2fe0796b8ee0b0e39d1b8924"
+content-hash = "82bf891f6beda345ab35a25e0e8ba4e4c5d54ad105f826ec839929162749bb7d"
