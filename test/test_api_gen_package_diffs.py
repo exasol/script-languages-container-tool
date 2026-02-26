@@ -4,9 +4,10 @@ import os
 import shutil
 import subprocess
 import tempfile
-import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import unittest
 from pathlib import Path
+
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
 from exasol.slc.api import generate_package_diffs
 
