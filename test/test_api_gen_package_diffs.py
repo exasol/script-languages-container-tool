@@ -118,12 +118,15 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
 
                 self.check_resulting_dir_equality(dcmp)
 
-
-
     def test_gen_package_diffs_build_step(self):
         current_working_copy_name = "2.0.0"
         with tempfile.TemporaryDirectory() as tmp_gen_package_diff_out:
-            with tmp_cwd(exaslct_utils.GEN_PKG_DIFF_CURRENT_DIRECTORY / "flavors" / "flavor_one" / "flavor_base"):
+            with tmp_cwd(
+                exaslct_utils.GEN_PKG_DIFF_CURRENT_DIRECTORY
+                / "flavors"
+                / "flavor_one"
+                / "flavor_base"
+            ):
                 generate_package_diffs(
                     output_package_diff_directory=tmp_gen_package_diff_out,
                     current_working_copy_name=current_working_copy_name,
