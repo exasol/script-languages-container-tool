@@ -56,7 +56,12 @@ def compare_package_lists(package_list_1: str, package_list_2: str) -> pd.DataFr
         np.nan, "No version specified"
     )
     diff_df = pd.merge(
-        package_list_1_df, package_list_2_df, how="outer", on="Package", sort=False
+        package_list_1_df,
+        package_list_2_df,
+        how="outer",
+        on="Package",
+        sort=False,
+        validate="one_to_one",
     )
     new = diff_df["Version1"].isnull() & ~diff_df["Version2"].isnull()
     removed = diff_df["Version2"].isnull() & ~diff_df["Version1"].isnull()
@@ -90,17 +95,12 @@ def convert_requirements_file(package_list_str: str) -> str:
     return result
 
 
-def find_package_file_or_alternative(
+def find_package_file(
     working_copy: Path,
     build_step_path: Path,
     package_list_file_name: str,
-    package_list_file_name_alternatives: dict[str, list[str]],
 ) -> str | None:
     possible_package_list_file_names = [package_list_file_name]
-    if package_list_file_name in package_list_file_name_alternatives:
-        possible_package_list_file_names += package_list_file_name_alternatives[
-            package_list_file_name
-        ]
     packages_directory = Path(working_copy, build_step_path, "packages")
     if packages_directory.exists():
         for package_list_file_name in possible_package_list_file_names:
@@ -132,10 +132,6 @@ def compare_build_step(
     working_copy_2: Path,
     working_copy_2_name: str,
 ) -> dict[tuple[str, str | None], pd.DataFrame]:
-    package_list_file_name_alternatives = {
-        "python3_pip_packages": ["pip3_packages"],
-        "python2_pip_packages": ["pip_packages"],
-    }
     result = {}
     packages_path_1 = Path(build_step_path_1, "packages")
     if packages_path_1.is_dir():
@@ -145,11 +141,10 @@ def compare_build_step(
             package_list_working_copy_str_1 = parse_package_list_file(
                 package_list_file_1
             )
-            package_list_file_name_2 = find_package_file_or_alternative(
+            package_list_file_name_2 = find_package_file(
                 working_copy_2,
                 build_step_path_2,
                 package_list_file_name_1,
-                package_list_file_name_alternatives,
             )
             result_key = (package_list_file_name_1, package_list_file_name_2)
             if package_list_file_name_2 is None:
