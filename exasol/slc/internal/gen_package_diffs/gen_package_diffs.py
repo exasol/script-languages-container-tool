@@ -379,7 +379,7 @@ def generate_dependency_diff_report_for_all_flavors(
         f"{working_copy_1_name} and "
         f"{working_copy_2_name}\n\n"
     )
-    for flavor_path in Path(working_copy_1_root, "flavors").iterdir():
+    for flavor_path in sorted(Path(working_copy_1_root, "flavors").iterdir()):
         if flavor_path.is_dir():
             relative_flavor_path = flavor_path.relative_to(working_copy_1_root)
             relative_flavor_path_2 = relative_flavor_path

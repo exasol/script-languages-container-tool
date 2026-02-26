@@ -96,6 +96,13 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
     def tearDownClass(cls):
         cls.tmp_root.cleanup()
 
+    def check_resulting_dir_equality(self, dcmp):
+        if dcmp.diff_files or dcmp.right_only or dcmp.left_only:
+            dcmp.report()
+            self.fail("dcmp detected changed file(s)")
+        for sub_dcmp in dcmp.subdirs.values():
+            self.check_resulting_dir_equality(sub_dcmp)
+
     def test_gen_package_diffs_all_flavors(self):
         current_working_copy_name = "2.0.0"
         with tempfile.TemporaryDirectory() as tmp_gen_package_diff_out:
@@ -109,16 +116,8 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
                     tmp_gen_package_diff_out,
                 )
 
-                self.assertEqual(
-                    dcmp.left_only, [], f"Found left only: {dcmp.left_only}"
-                )
-                self.assertEqual(
-                    dcmp.right_only, [], f"Found right only: {dcmp.right_only}"
-                )
-                self.assertEqual(
-                    dcmp.diff_files, [], f"Found different files: {dcmp.right_only}"
-                )
-                self.assertEqual(set(dcmp.common_dirs), {"flavor_one", "flavor_two"})
+                self.check_resulting_dir_equality(dcmp)
+
 
 
 if __name__ == "__main__":
