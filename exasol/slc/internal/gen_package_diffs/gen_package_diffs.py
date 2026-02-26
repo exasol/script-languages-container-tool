@@ -336,7 +336,7 @@ def generate_dependency_diff_report_for_flavor(
         f"{flavor_name_1_capitalized} flavor in {working_copy_1_name} and "
         f"{flavor_name_2_capitalized} flavor in {working_copy_2_name}\n\n"
     )
-    if flavor_name_1 == flavor_name_1:
+    if flavor_name_1 == flavor_name_2:
         result = (
             f"- [Comparison of flavor {flavor_name_1_capitalized}"
             f"]({relative_overview_file})\n"
