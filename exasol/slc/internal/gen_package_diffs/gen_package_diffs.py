@@ -1,38 +1,18 @@
-import re
 import subprocess
-from io import StringIO
+from enum import Enum
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import numpy as np
 import pandas as pd
+from exasol.exaslpm.model.package_file_config import Package, PackageFile
+from exasol.exaslpm.pkg_mgmt.package_file_session import PackageFileSession
+from pydantic import BaseModel
 
 
-def _remove_comments(line: str) -> str:
-    comment_start = "#"
-
-    # 1) line is only (optional) whitespace + comment
-    if re.fullmatch(rf"[ \t]*{re.escape(comment_start)}.*", line):
-        return ""
-
-    # 2) capture first non-whitespace token, optionally followed by whitespace+comment, then trailing whitespace
-    m = re.fullmatch(
-        rf"[ \t]*([^ \t]+)([ \t]{re.escape(comment_start)}.*)?[ \t]*", line
-    )
-    if m:
-        return m.group(1)
-
-    raise ValueError(f"'{line}' doesn't match regex")
-
-
-def parse_package_list_file(file_path: Path) -> str:
-    result = ""
-    with open(file_path) as f:
-        for line in f:
-            line_without_comments = _remove_comments(line.strip())
-            if line_without_comments:
-                result += line_without_comments + "\n"
-    return result
+class PackageDiffEntry(BaseModel):
+    package: Package
+    build_step_name: str
+    installer_name: str
 
 
 def check_for_duplicated_packages(df: pd.DataFrame):
@@ -41,20 +21,43 @@ def check_for_duplicated_packages(df: pd.DataFrame):
         raise ValueError(f"Found duplicated packages, see package list {df}")
 
 
-def compare_package_lists(package_list_1: str, package_list_2: str) -> pd.DataFrame:
-    package_list_1_df = pd.read_csv(
-        StringIO(package_list_1), delimiter="|", names=["Package", "Version1"]
+def _to_dict(pkg_diff: PackageDiffEntry, version_key: str, build_step_key: str) -> dict:
+    return {
+        "Package": pkg_diff.package.name,
+        version_key: (
+            pkg_diff.package.version
+            if pkg_diff.package.version
+            else "No version specified"
+        ),
+        build_step_key: pkg_diff.build_step_name,
+    }
+
+
+class Status(Enum):
+    NEW = "NEW"
+    REMOVED = "REMOVED"
+    UPDATED = "UPDATED"
+    MOVED = "MOVED"
+
+
+def compare_package_lists(
+    package_list_1: list[PackageDiffEntry], package_list_2: list[PackageDiffEntry]
+) -> pd.DataFrame:
+    package_list_1_dict = [
+        _to_dict(pkg_diff, "Version1", "Build-Step-1") for pkg_diff in package_list_1
+    ]
+    package_list_1_df = pd.DataFrame(
+        package_list_1_dict, columns=["Package", "Version1", "Build-Step-1"]
     )
-    package_list_1_df["Version1"] = package_list_1_df["Version1"].replace(
-        np.nan, "No version specified"
+    check_for_duplicated_packages(package_list_1_df)
+    package_list_2_dict = [
+        _to_dict(pkg_diff, "Version2", "Build-Step-2") for pkg_diff in package_list_2
+    ]
+    package_list_2_df = pd.DataFrame(
+        package_list_2_dict, columns=["Package", "Version2", "Build-Step-2"]
     )
-    package_list_2_df = pd.read_csv(
-        StringIO(package_list_2), delimiter="|", names=["Package", "Version2"]
-    )
+
     check_for_duplicated_packages(package_list_2_df)
-    package_list_2_df["Version2"] = package_list_2_df["Version2"].replace(
-        np.nan, "No version specified"
-    )
     diff_df = pd.merge(
         package_list_1_df,
         package_list_2_df,
@@ -70,151 +73,170 @@ def compare_package_lists(package_list_1: str, package_list_2: str) -> pd.DataFr
         & ~diff_df["Version2"].isnull()
         & (diff_df["Version1"] != diff_df["Version2"])
     )
-    diff_df["Status"] = ""
-    diff_df.loc[new, "Status"] = "NEW"
-    diff_df.loc[removed, "Status"] = "REMOVED"
-    diff_df.loc[updated, "Status"] = "UPDATED"
+    moved = (
+        ~diff_df["Build-Step-1"].isnull()
+        & ~diff_df["Build-Step-2"].isnull()
+        & diff_df["Build-Step-1"]
+        == diff_df["Build-Step-2"]
+    )
+    diff_df["Status"] = [set() for _ in range(len(diff_df))] # type: ignore[assignment]
+    diff_df.loc[new, "Status"] = diff_df.loc[new, "Status"].map(
+        lambda x: x | {Status.NEW}
+    )
+    diff_df.loc[removed, "Status"] = diff_df.loc[removed, "Status"].map(
+        lambda x: x | {Status.REMOVED}
+    )
+    diff_df.loc[updated, "Status"] = diff_df.loc[updated, "Status"].map(
+        lambda x: x | {Status.UPDATED}
+    )
+    diff_df.loc[moved, "Status"] = diff_df.loc[moved, "Status"].map(
+        lambda x: x | {Status.MOVED}
+    )
     diff_df = diff_df.fillna("")
-    diff_df = diff_df.sort_values(["Status", "Package"], ascending=[False, True])
     diff_df = diff_df.reset_index(drop=True)
     return diff_df
 
 
-def convert_requirements_file(package_list_str: str) -> str:
-    def convert_line(line):
-        line = line.replace("|<<<<1>>>>", "|")
-        line = line.replace("==", "|")
-        line = line.replace(">=", "|")
-        line = line.replace("<=", "|")
-        line = re.sub(r"\|$", "", line)
-        if "|" not in line:
-            line += "|<<<<1>>>>"
-        return line
+class Installer(Enum):
+    APT = "apt"
+    PIP = "pip"
+    R = "r"
+    CONDA = "conda"
 
-    result = "\n".join(convert_line(line) for line in package_list_str.splitlines())
+
+def _package_file_to_build_step_package_lists(
+    package_file,
+) -> dict[str, list[PackageDiffEntry]]:
+    result: dict[str, list[PackageDiffEntry]] = {}
+    for build_step in package_file.build_steps:
+        for phase in build_step.phases:
+            installers = [
+                (Installer.APT.value, phase.apt),
+                (Installer.PIP.value, phase.pip),
+                (Installer.R.value, phase.r),
+                (Installer.CONDA.value, phase.conda),
+            ]
+            for installer_name, installer in installers:
+                if installer_name not in result:
+                    result[installer_name] = []
+                if installer and installer.packages:
+                    for package in installer.packages:
+                        result[installer_name].append(
+                            PackageDiffEntry(
+                                installer_name=installer_name,
+                                package=package,
+                                build_step_name=build_step.name,
+                            )
+                        )
     return result
 
 
-def find_package_file(
-    working_copy: Path,
-    build_step_path: Path,
-    package_list_file_name: str,
-) -> str | None:
-    possible_package_list_file_names = [package_list_file_name]
-    packages_directory = Path(working_copy, build_step_path, "packages")
-    if packages_directory.exists():
-        for package_list_file_name in possible_package_list_file_names:
-            package_list_file_path = Path(packages_directory, package_list_file_name)
-            if package_list_file_path.exists():
-                return package_list_file_name
-    return None
+def _load_package_file_config(
+    working_copy_root: Path, package_file: Path
+) -> PackageFile | None:
+    package_file_absolute = working_copy_root / package_file
+    if not package_file_absolute.is_file():
+        return None
+    pkg_file_session = PackageFileSession(package_file=package_file_absolute)
+    return pkg_file_session.package_file_config
 
 
-def load_package_file_or_alternative(working_copy: Path, package_list_file: Path):
-    package_list_str = ""
-    try:
-        package_list_str = parse_package_list_file(
-            Path(working_copy, package_list_file)
-        )
-        if package_list_file.name in ["pip3_packages", "pip_packages"]:
-            package_list_str = convert_requirements_file(package_list_str)
-    except Exception as e:
-        print(f"Could not parse {Path(working_copy, package_list_file)}")
-        print(e)
-    return package_list_str
-
-
-def compare_build_step(
-    build_step_path_1: Path,
-    working_copy_1: Path,
+def compare_package_file(
+    package_file_1: Path,
+    working_copy_1_root: Path,
     working_copy_1_name: str,
-    build_step_path_2: Path,
-    working_copy_2: Path,
+    package_file_2: Path,
+    working_copy_2_root: Path,
     working_copy_2_name: str,
-) -> dict[tuple[str, str | None], pd.DataFrame]:
+) -> dict[str, pd.DataFrame]:
+    package_file_config_1 = _load_package_file_config(
+        working_copy_1_root, package_file_1
+    )
+    if package_file_config_1 is None:
+        return {}
+    compare_same_file = (
+        working_copy_1_root == working_copy_2_root and package_file_1 == package_file_2
+    )
+    package_file_config_2 = None
+    if not compare_same_file:
+        package_file_config_2 = _load_package_file_config(
+            working_copy_2_root, package_file_2
+        )
+
+    build_step_packages_1 = _package_file_to_build_step_package_lists(
+        package_file_config_1
+    )
+
+    build_step_packages_2: dict[str, list[PackageDiffEntry]] = {}
+    if package_file_config_2 is not None:
+        build_step_packages_2 = _package_file_to_build_step_package_lists(
+            package_file_config_2
+        )
+
     result = {}
-    packages_path_1 = Path(build_step_path_1, "packages")
-    if packages_path_1.is_dir():
-        for package_list_file_1 in packages_path_1.iterdir():
-            package_list_file_name_1 = package_list_file_1.name
-            package_list_file_1 = Path(working_copy_1, package_list_file_1)
-            package_list_working_copy_str_1 = parse_package_list_file(
-                package_list_file_1
-            )
-            package_list_file_name_2 = find_package_file(
-                working_copy_2,
-                build_step_path_2,
-                package_list_file_name_1,
-            )
-            result_key = (package_list_file_name_1, package_list_file_name_2)
-            if package_list_file_name_2 is None:
-                package_list_working_copy_str_2 = ""
-            else:
-                package_list_file_2 = Path(
-                    build_step_path_2, "packages", package_list_file_name_2
-                )
-                if (
-                    working_copy_1 == working_copy_2
-                    and package_list_file_2 == package_list_file_1
-                ):
-                    package_list_working_copy_str_2 = ""
-                else:
-                    package_list_working_copy_str_2 = load_package_file_or_alternative(
-                        working_copy_2, package_list_file_2
-                    )
-            try:
-                diff_df = compare_package_lists(
-                    package_list_working_copy_str_2, package_list_working_copy_str_1
-                )
-            except ValueError as ve:
-                raise ValueError(
-                    f"Error comparing package lists for file '{package_list_file_1}'",
-                    ve,
-                )
-            new_version1_name = f"Version in {working_copy_2_name}"
-            new_version2_name = f"Version in {working_copy_1_name}"
-            if (
-                package_list_file_name_2 is not None
-                and package_list_file_2 == package_list_file_1
-                and working_copy_1 == working_copy_2
-            ):
-                diff_df = diff_df[["Package", "Version2", "Status"]]
-            else:
-                diff_df = diff_df[["Package", "Version1", "Version2", "Status"]]
-            diff_df = diff_df.rename(
-                columns={"Version1": new_version1_name, "Version2": new_version2_name}
-            )
-            result[result_key] = diff_df
+
+    for installer in Installer:
+
+        diff_df = compare_package_lists(
+            build_step_packages_1[installer.value],
+            build_step_packages_2[installer.value],
+        )
+        new_version_1_name = f"Version in {working_copy_2_name}"
+        new_version_2_name = f"Version in {working_copy_1_name}"
+        if compare_same_file:
+            diff_df = diff_df[
+                ["Package", "Version2", "Status", "Build-Step-1", "Build-Step-2"]
+            ]
+        else:
+            diff_df = diff_df[
+                [
+                    "Package",
+                    "Version1",
+                    "Version2",
+                    "Status",
+                    "Build-Step-1",
+                    "Build-Step-2",
+                ]
+            ]
+        diff_df = diff_df.rename(
+            columns={"Version1": new_version_1_name, "Version2": new_version_2_name}
+        )
+        result[installer.value] = diff_df
+
     return result
 
 
 def compare_flavor(
     flavor_path_1: Path,
-    working_copy_1: Path,
+    working_copy_1_root: Path,
     working_copy_1_name: str,
     flavor_path_2: Path,
-    working_copy_2: Path,
+    working_copy_2_root: Path,
     working_copy_2_name: str,
-) -> dict[tuple[str, str], dict[tuple[str, str | None], pd.DataFrame]]:
-    flavor_base_path_1 = Path(flavor_path_1, "flavor_base")
-    flavor_base_path_2 = Path(flavor_path_2, "flavor_base")
-    result = {}
-    if flavor_base_path_1.is_dir():
-        for build_step_path_1 in flavor_base_path_1.iterdir():
-            if build_step_path_1.is_dir():
-                build_step_name_1 = build_step_path_1.name
-                build_step_name_2 = build_step_name_1
-                build_step_path_2 = Path(flavor_base_path_2, build_step_name_2)
-                diffs = compare_build_step(
-                    build_step_path_1,
-                    working_copy_1,
-                    working_copy_1_name,
-                    build_step_path_2,
-                    working_copy_2,
-                    working_copy_2_name,
-                )
-                result[(build_step_name_1, build_step_name_2)] = diffs
-    return result
+) -> dict[str, dict[str, pd.DataFrame]]:
+    public_package_file_1 = flavor_path_1 / "packages.yml"
+    public_package_file_2 = flavor_path_2 / "packages.yml"
+    internal_package_file_1 = flavor_path_1 / "flavor_base" / "packages.yml"
+    internal_package_file_2 = flavor_path_2 / "flavor_base" / "packages.yml"
+
+    return {
+        "public_packages": compare_package_file(
+            public_package_file_1,
+            working_copy_1_root,
+            working_copy_1_name,
+            public_package_file_2,
+            working_copy_2_root,
+            working_copy_2_name,
+        ),
+        "internal_packages": compare_package_file(
+            internal_package_file_1,
+            working_copy_1_root,
+            working_copy_1_name,
+            internal_package_file_2,
+            working_copy_2_root,
+            working_copy_2_name,
+        ),
+    }
 
 
 def get_last_git_tag() -> str:
@@ -236,80 +258,87 @@ def get_last_git_tag() -> str:
 
 def checkout_git_tag_as_worktree(tmp_dir, last_tag):
     checkout_last_tag_command = ["git", "worktree", "add", tmp_dir, last_tag]
-    checkout_last_tag_result = subprocess.run(
-        checkout_last_tag_command, stderr=subprocess.STDOUT, check=True
-    )
+    subprocess.run(checkout_last_tag_command, stderr=subprocess.STDOUT, check=True)
     init_submodule_command = ["git", "submodule", "update", "--init"]
-    init_submodule_result = subprocess.run(
+    subprocess.run(
         init_submodule_command, cwd=tmp_dir, stderr=subprocess.STDOUT, check=True
     )
 
 
-def generate_dependency_diff_report_for_package_list(
-    package_file_diff_file: Path, diff_df: pd.DataFrame
-):
-    package_file_diff_file.parent.mkdir(parents=True, exist_ok=True)
-    with package_file_diff_file.open("wt") as f:
-        f.write("<!-- markdown-link-check-disable -->\n\n")
-        diff_df.to_markdown(f)
-
-
-def generate_dependency_diff_report_for_build_step(
-    build_steps: tuple[str, str],
-    diffs: dict[tuple[str, str | None], pd.DataFrame],
-    base_output_directory: Path,
-    relative_output_directory: Path,
-):
-    result = ""
-    if len(diffs) > 0:
-        build_step_caption = generate_build_step_caption(build_steps)
-        result = f"- {build_step_caption}\n"
-        for package_lists in sorted(list(diffs.keys())):
-            package_list_caption = generate_package_list_caption(package_lists)
-            relative_package_file_diff_file = Path(
-                relative_output_directory, f"{package_lists[0]}_diff.md"
-            )
-            result += (
-                f"  - [{package_list_caption}]({relative_package_file_diff_file})\n"
-            )
-            package_file_diff_file = Path(
-                base_output_directory, relative_package_file_diff_file
-            )
-            generate_dependency_diff_report_for_package_list(
-                package_file_diff_file, diffs[package_lists]
-            )
-    return result
-
-
-def generate_build_step_caption(build_steps):
-    build_step_1_capitalized = build_steps[0].capitalize()
-    if build_steps[1] is None or build_steps[0] == build_steps[1]:
-        build_step_caption = f"Comparison of build step {build_step_1_capitalized}"
+def status_format(status_set: set[Status]) -> str:
+    if len(status_set) == 0:
+        return ""
+    elif len(status_set) == 1:
+        return list(status_set)[0].value
     else:
-        build_step_2_capitalized = build_steps[1].capitalize()
-        build_step_caption = f"Comparison of build steps {build_step_1_capitalized} and {build_step_2_capitalized}"
-    return build_step_caption
+        result = []
+        for status in Status:
+            if status in status_set:
+                result.append(status.value)
+        return " & ".join(result)
 
 
-def generate_package_list_caption(
-    package_lists: tuple[str, str | None],
-) -> str:
-    package_list_name_1 = " ".join(
-        word.capitalize() for word in package_lists[0].split("_")
-    )
-    if package_lists[1] is None or package_lists[0] == package_lists[1]:
-        if package_lists[0] == package_lists[1]:
-            package_list_caption = f"Comparison of {package_list_name_1}"
-        else:
-            package_list_caption = f"New {package_list_name_1}"
+def format_build_step(build_steps: pd.Series) -> str:
+    if build_steps["Build-Step-1"] == build_steps["Build-Step-2"]:
+        return build_steps["Build-Step-1"]
     else:
-        package_list_name_2 = " ".join(
-            word.capitalize() for word in package_lists[1].split("_")
-        )
-        package_list_caption = (
-            f"Comparison of {package_list_name_1} and {package_list_name_2}"
-        )
-    return package_list_caption
+        return f"{build_steps['Build-Step-1']} -> {build_steps['Build-Step-2']}"
+
+
+def generate_dependency_diff_report_for_package_file(
+    package_output_file: Path,
+    package_scope_caption: str,
+    flavor_name_1: str,
+    working_copy_1_name: str,
+    flavor_name_2: str,
+    working_copy_2_name: str,
+    diffs: dict[str, pd.DataFrame],
+):
+    package_output_file.parent.mkdir(parents=True, exist_ok=True)
+    flavor_name_1_capitalized = flavor_name_1.capitalize()
+    flavor_name_2_capitalized = flavor_name_2.capitalize()
+    content = [
+        f"# {package_scope_caption} comparison between "
+        f"{flavor_name_1_capitalized} flavor in {working_copy_1_name} and "
+        f"{flavor_name_2_capitalized} flavor in {working_copy_2_name}",
+        "",
+        "<!-- markdown-link-check-disable -->",
+        "",
+    ]
+    if len(diffs) == 0:
+        content.append("No packages found.")
+        content.append("")
+        package_output_file.write_text("\n".join(content), encoding="utf-8")
+        return
+
+    for installer in Installer:
+        diffs_per_installer = diffs[installer.value]
+        if len(diffs_per_installer) > 0:
+            formatted_diff = pd.DataFrame()
+            for status in Status:
+                filter_column = diffs_per_installer["Status"].map(lambda x: status in x)
+                formatted_diff = pd.concat(
+                    [formatted_diff, diffs_per_installer[filter_column]]
+                )
+            empty_status_filter = diffs_per_installer["Status"].map(
+                lambda x: len(x) == 0
+            )
+            formatted_diff = pd.concat(
+                [formatted_diff, diffs_per_installer[empty_status_filter]]
+            )
+
+            formatted_diff["Status"] = formatted_diff["Status"].map(status_format)
+
+            formatted_diff.sort_values(["Status", "Package"], inplace=True)
+
+            formatted_diff["Build-Step"] = formatted_diff[
+                ["Build-Step-1", "Build-Step-2"]
+            ].apply(format_build_step, axis=1)
+            formatted_diff.drop(["Build-Step-1", "Build-Step-2"], axis=1, inplace=True)
+
+            content.append(f"{installer.value} packages\n")
+            content.append(formatted_diff.to_markdown())
+            package_output_file.write_text("\n".join(content), encoding="utf-8")
 
 
 def generate_dependency_diff_report_for_flavor(
@@ -317,45 +346,35 @@ def generate_dependency_diff_report_for_flavor(
     working_copy_1_name: str,
     flavor_name_2: str,
     working_copy_2_name: str,
-    diffs: dict[tuple[str, str], dict[tuple[str, str | None], pd.DataFrame]],
+    diffs: dict[str, dict[str, pd.DataFrame]],
     base_output_directory: Path,
     relative_output_directory: Path,
 ):
-    relative_overview_file = Path(relative_output_directory, "README.md")
-    overview_file = Path(base_output_directory, relative_overview_file)
-    overview_file.parent.mkdir(parents=True, exist_ok=True)
-    flavor_name_1_capitalized = flavor_name_1.capitalize()
-    flavor_name_2_capitalized = flavor_name_2.capitalize()
-    overview_file_content = (
-        f"# Package Version Comparison between "
-        f"{flavor_name_1_capitalized} flavor in {working_copy_1_name} and "
-        f"{flavor_name_2_capitalized} flavor in {working_copy_2_name}\n\n"
+    flavor_output_directory = base_output_directory / relative_output_directory
+    flavor_output_directory.mkdir(parents=True, exist_ok=True)
+    generate_dependency_diff_report_for_package_file(
+        flavor_output_directory / "public_packages.md",
+        "Public packages",
+        flavor_name_1,
+        working_copy_1_name,
+        flavor_name_2,
+        working_copy_2_name,
+        diffs["public_packages"],
     )
-    if flavor_name_1 == flavor_name_2:
-        result = (
-            f"- [Comparison of flavor {flavor_name_1_capitalized}"
-            f"]({relative_overview_file})\n"
-        )
-    else:
-        result = (
-            f"- [Comparison of flavors "
-            f"{flavor_name_1_capitalized} and {flavor_name_2_capitalized}"
-            f"]({relative_overview_file})\n"
-        )
-    for build_steps in sorted(list(diffs.keys()), reverse=True):
-        build_step_base_output_directory = Path(
-            base_output_directory, relative_output_directory
-        )
-        build_step_relative_output_directory = Path(build_steps[0])
-        overview_file_content += generate_dependency_diff_report_for_build_step(
-            build_steps,
-            diffs[build_steps],
-            build_step_base_output_directory,
-            build_step_relative_output_directory,
-        )
-    with overview_file.open("wt") as f:
-        f.write(overview_file_content)
-    return result
+    generate_dependency_diff_report_for_package_file(
+        flavor_output_directory / "internal_packages.md",
+        "Internal packages",
+        flavor_name_1,
+        working_copy_1_name,
+        flavor_name_2,
+        working_copy_2_name,
+        diffs["internal_packages"],
+    )
+    return f"""
+## {flavor_name_1}
+- [Release dependencies]({relative_output_directory}/public_packages.md)
+- [Build dependencies]({relative_output_directory}/internal_packages.md)
+    """
 
 
 def generate_dependency_diff_report_for_all_flavors(
@@ -417,7 +436,7 @@ def generate_dependency_diff_report_for_all_flavors(
                         working_copy_1_root,
                         working_copy_1_name,
                     )
-            if len(diffs) > 0:
+            if len(diffs["public_packages"]) > 0 or len(diffs["internal_packages"]) > 0:
                 flavor_1 = relative_flavor_path.name
                 flavor_2 = relative_flavor_path_2.name
                 if flavor_1 == flavor_2:

@@ -1386,6 +1386,25 @@ tenacity = ">=8.2.3,<9.0.0"
 types-requests = ">=2.31.0.6,<3.0.0.0"
 
 [[package]]
+name = "exasol-script-languages-package-management"
+version = "1.0.0"
+description = "This project provides a unified way of installing different packages from sources like coda, apt and PyPi"
+optional = false
+python-versions = "<3.15,>=3.10"
+groups = ["main"]
+files = [
+    {file = "exasol_script_languages_package_management-1.0.0-py3-none-any.whl", hash = "sha256:f41cdc9ea53c1558f4a89004e39ddf59d3431972016982459f803fd04861814b"},
+    {file = "exasol_script_languages_package_management-1.0.0.tar.gz", hash = "sha256:5ebbbc3424810f27c3854ddfc7988b1cc414f5f6f0ce83ac07bfd71c02efcd61"},
+]
+
+[package.dependencies]
+click = ">=8.3.0,<9.0.0"
+jinja2 = ">=3.1.6,<4.0.0"
+pydantic = ">=2.10.2,<3.0.0"
+pyyaml = ">=6.0.3,<7.0.0"
+types-pyyaml = ">=6.0.12.20250915,<7.0.0.0"
+
+[[package]]
 name = "exasol-toolbox"
 version = "5.1.1"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
@@ -4446,7 +4465,7 @@ version = "6.0.3"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "PyYAML-6.0.3-cp38-cp38-macosx_10_13_x86_64.whl", hash = "sha256:c2514fceb77bc5e7a2f7adfaa1feb2fb311607c9cb518dbc378688ec73d8292f"},
     {file = "PyYAML-6.0.3-cp38-cp38-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:9c57bb8c96f6d1808c030b1687b9b5fb476abaa47f0db9c0101f5e9f394e97f4"},
@@ -5849,6 +5868,18 @@ files = [
 ]
 
 [[package]]
+name = "types-pyyaml"
+version = "6.0.12.20250915"
+description = "Typing stubs for PyYAML"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "types_pyyaml-6.0.12.20250915-py3-none-any.whl", hash = "sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6"},
+    {file = "types_pyyaml-6.0.12.20250915.tar.gz", hash = "sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3"},
+]
+
+[[package]]
 name = "types-requests"
 version = "2.32.4.20260107"
 description = "Typing stubs for requests"
@@ -6255,4 +6286,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "7f0ff0edb8abf21883ef0b211dafbfde1dddcb0e2fe0796b8ee0b0e39d1b8924"
+content-hash = "8a753fa3fe66c9fef4b3dbcab1b2eee786d0b12a65cfc89ff14e762ce3e65a59"

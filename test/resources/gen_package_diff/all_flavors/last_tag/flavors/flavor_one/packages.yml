@@ -1,0 +1,15 @@
+version: 1.0.0
+build_steps:
+  - name: build_step_two
+    phases:
+      - name: phase_one
+        apt:
+          packages:
+            - name: ca-certificates
+              version: 20240203~22.04.1
+            - name: python3.10-dev
+              version: 3.10.12-1~22.04.14
+            - name: python3-distutils
+              version: 3.10.8-1~22.04
+            - name: curl
+              version: 7.81.0-1ubuntu1.21
