@@ -1,0 +1,4 @@
+ca-certificates|20240203~24.04.1
+python3.12-dev|3.12.12-1~24.04.14
+python3-distutils|3.12.8-1~24.04
+curl|7.81.0-1ubuntu1.23

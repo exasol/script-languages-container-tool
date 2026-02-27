@@ -4,6 +4,7 @@ from .clean import clean_all_images, clean_flavor_images
 from .deploy import deploy
 from .export import export
 from .generate_language_activation import generate_language_activation
+from .generate_package_diffs import generate_package_diffs
 from .push import push
 from .push_test_container import push_test_container
 from .run_db_tests import run_db_test
@@ -25,4 +26,5 @@ __all__ = [
     "save",
     "security_scan",
     "upload",
+    "generate_package_diffs",
 ]
