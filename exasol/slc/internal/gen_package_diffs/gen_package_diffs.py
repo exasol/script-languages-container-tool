@@ -440,8 +440,6 @@ def generate_dependency_diff_report_for_all_flavors(
 def gen_package_diffs(
     output_directory: str,
     current_working_copy_name: str,
-    build_step_path_1: str | None,
-    build_step_path_2: str | None,
     compare_to_commit: str | None,
 ):
     if compare_to_commit is None:
@@ -451,37 +449,10 @@ def gen_package_diffs(
         working_copy_root = Path(".")
         working_copy_1_name = current_working_copy_name
         working_copy_2_name = compare_to_commit
-        if build_step_path_1 is None and build_step_path_2 is None:
-            generate_dependency_diff_report_for_all_flavors(
-                working_copy_root,
-                working_copy_1_name,
-                Path(working_copy_2_root),
-                working_copy_2_name,
-                Path(output_directory),
-            )
-        else:
-            if build_step_path_1 is None or build_step_path_2 is None:
-                raise Exception(
-                    "You need to specifiy --build-step-path-1 and --build-step-path-2."
-                )
-            else:
-                diffs = compare_build_step(
-                    Path(build_step_path_1),
-                    Path(working_copy_root),
-                    working_copy_1_name,
-                    Path(build_step_path_2),
-                    Path(working_copy_2_root),
-                    working_copy_2_name,
-                )
-                relative_output_directory = "__".join(
-                    Path(
-                        build_step_path_1,
-                        build_step_path_2,
-                    ).parts
-                )
-                result = generate_dependency_diff_report_for_build_step(
-                    (Path(build_step_path_1).name, Path(build_step_path_2).name),
-                    diffs,
-                    Path(output_directory),
-                    Path(relative_output_directory),
-                )
+        generate_dependency_diff_report_for_all_flavors(
+            working_copy_root,
+            working_copy_1_name,
+            Path(working_copy_2_root),
+            working_copy_2_name,
+            Path(output_directory),
+        )

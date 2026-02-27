@@ -21,20 +21,6 @@ from exasol.slc.tool.cli import cli
     type=str,
 )
 @click.option(
-    "--build-step-path-1",
-    required=False,
-    default=None,
-    help="If this is set we only compare this build step with --build-step-path-2.",
-    type=click.Path(exists=True),
-)
-@click.option(
-    "--build-step-path-2",
-    required=False,
-    default=None,
-    help="If this is set we only compare this build step with --build-step-path-1.",
-    type=click.Path(exists=True),
-)
-@click.option(
     "--compare-to-commit",
     required=False,
     help="Commit to compare to.",
@@ -44,8 +30,6 @@ from exasol.slc.tool.cli import cli
 def generate_package_diffs(
     output_package_diff_directory: str,
     current_working_copy_name: str,
-    build_step_path_1: str | None,
-    build_step_path_2: str | None,
     compare_to_commit: str | None,
 ):
     """
@@ -54,7 +38,5 @@ def generate_package_diffs(
     api.generate_package_diffs(
         output_package_diff_directory=output_package_diff_directory,
         current_working_copy_name=current_working_copy_name,
-        build_step_path_1=build_step_path_1,
-        build_step_path_2=build_step_path_2,
         compare_to_commit=compare_to_commit,
     )

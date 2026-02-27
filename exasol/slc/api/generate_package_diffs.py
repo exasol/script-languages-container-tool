@@ -9,8 +9,6 @@ from exasol.slc.internal.gen_package_diffs.gen_package_diffs import gen_package_
 def generate_package_diffs(
     output_package_diff_directory: str,
     current_working_copy_name: str,
-    build_step_path_1: str | None = None,
-    build_step_path_2: str | None = None,
     compare_to_commit: str | None = None,
 ) -> None:
     """
@@ -20,7 +18,5 @@ def generate_package_diffs(
     gen_package_diffs(
         output_package_diff_directory,
         current_working_copy_name,
-        build_step_path_1,
-        build_step_path_2,
         compare_to_commit,
     )

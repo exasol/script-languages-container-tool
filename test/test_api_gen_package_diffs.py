@@ -4,10 +4,9 @@ import os
 import shutil
 import subprocess
 import tempfile
+import test.utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import unittest
 from pathlib import Path
-
-import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 
 from exasol.slc.api import generate_package_diffs
 
@@ -112,29 +111,24 @@ class RunDBTestDockerPassThroughTest(unittest.TestCase):
                     current_working_copy_name=current_working_copy_name,
                 )
                 dcmp = filecmp.dircmp(
-                    exaslct_utils.GEN_PKG_DIFF_EXPECTED_RESULT_DIRECTORY,
+                    exaslct_utils.GEN_PKG_DIFF_ALL_FLAVORS_EXPECTED_RESULT_DIRECTORY,
                     tmp_gen_package_diff_out,
                 )
 
                 self.check_resulting_dir_equality(dcmp)
 
-    def test_gen_package_diffs_build_step(self):
+    def test_gen_package_diffs_all_flavors_specific_commit(self):
         current_working_copy_name = "2.0.0"
+
         with tempfile.TemporaryDirectory() as tmp_gen_package_diff_out:
-            with tmp_cwd(
-                exaslct_utils.GEN_PKG_DIFF_CURRENT_DIRECTORY
-                / "flavors"
-                / "flavor_one"
-                / "flavor_base"
-            ):
+            with tmp_cwd(self.repo_dir):
                 generate_package_diffs(
                     output_package_diff_directory=tmp_gen_package_diff_out,
                     current_working_copy_name=current_working_copy_name,
-                    build_step_path_1="build_step_one",
-                    build_step_path_2="build_step_two",
+                    compare_to_commit="1.0.0",
                 )
                 dcmp = filecmp.dircmp(
-                    exaslct_utils.GEN_PKG_DIFF_EXPECTED_RESULT_BUILD_STEP_DIRECTORY,
+                    exaslct_utils.GEN_PKG_DIFF_ALL_FLAVORS_EXPECTED_RESULT_DIRECTORY,
                     tmp_gen_package_diff_out,
                 )
 
