@@ -12,25 +12,21 @@ from pydantic import BaseModel
 class PackageDiffEntry(BaseModel):
     package: Package
     build_step_name: str
-    installer_name: str
+
+    def to_dict(self, version_key: str, build_step_key: str) -> dict[str, str]:
+        return {
+            "Package": self.package.name,
+            version_key: (
+                self.package.version if self.package.version else "No version specified"
+            ),
+            build_step_key: self.build_step_name,
+        }
 
 
 def check_for_duplicated_packages(df: pd.DataFrame):
     duplicates = df.duplicated(subset=["Package"])
     if any(duplicates):
         raise ValueError(f"Found duplicated packages, see package list {df}")
-
-
-def _to_dict(pkg_diff: PackageDiffEntry, version_key: str, build_step_key: str) -> dict:
-    return {
-        "Package": pkg_diff.package.name,
-        version_key: (
-            pkg_diff.package.version
-            if pkg_diff.package.version
-            else "No version specified"
-        ),
-        build_step_key: pkg_diff.build_step_name,
-    }
 
 
 class Status(Enum):
@@ -44,14 +40,14 @@ def compare_package_lists(
     package_list_1: list[PackageDiffEntry], package_list_2: list[PackageDiffEntry]
 ) -> pd.DataFrame:
     package_list_1_dict = [
-        _to_dict(pkg_diff, "Version1", "Build-Step-1") for pkg_diff in package_list_1
+        pkg_diff.to_dict("Version1", "Build-Step-1") for pkg_diff in package_list_1
     ]
     package_list_1_df = pd.DataFrame(
         package_list_1_dict, columns=["Package", "Version1", "Build-Step-1"]
     )
     check_for_duplicated_packages(package_list_1_df)
     package_list_2_dict = [
-        _to_dict(pkg_diff, "Version2", "Build-Step-2") for pkg_diff in package_list_2
+        pkg_diff.to_dict("Version2", "Build-Step-2") for pkg_diff in package_list_2
     ]
     package_list_2_df = pd.DataFrame(
         package_list_2_dict, columns=["Package", "Version2", "Build-Step-2"]
@@ -79,7 +75,7 @@ def compare_package_lists(
         & diff_df["Build-Step-1"]
         == diff_df["Build-Step-2"]
     )
-    diff_df["Status"] = [set() for _ in range(len(diff_df))] # type: ignore[assignment]
+    diff_df["Status"] = [set() for _ in range(len(diff_df))]  # type: ignore[assignment]
     diff_df.loc[new, "Status"] = diff_df.loc[new, "Status"].map(
         lambda x: x | {Status.NEW}
     )
