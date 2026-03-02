@@ -1,0 +1,3 @@
+public_bootstrap:
+  apt:
+    - git

@@ -1,4 +1,8 @@
-# Package Version Comparison between 2.0.0 and 1.0.0
+# Package files
 
-- [Comparison of flavor Flavor_one](flavor_one/README.md)
-- [Comparison of flavor Flavor_two](flavor_two/README.md)
+- flavor_one
+  - [public packages](flavor_one/public_packages.md)
+  - [internal packages](flavor_one/internal_packages.md)
+- flavor_two
+  - [public packages](flavor_two/public_packages.md)
+  - [internal packages](flavor_two/internal_packages.md)

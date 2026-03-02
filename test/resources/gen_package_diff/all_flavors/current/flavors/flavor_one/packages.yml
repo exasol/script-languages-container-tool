@@ -1,0 +1,6 @@
+build_step_alpha:
+  pip:
+    - pandas==2.2.3
+build_step_beta:
+  apt:
+    - curl
