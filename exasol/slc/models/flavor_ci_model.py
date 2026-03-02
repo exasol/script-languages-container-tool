@@ -9,15 +9,15 @@ class TestSet(BaseModel):
     folders: list[str]
     goal: str
     generic_language_tests: list[str]
-    test_runner: str | None = None
+    test_runners: list[str] | None = None
     accelerator: Accelerator = Accelerator.NONE
 
 
 class TestConfig(BaseModel):
-    default_test_runner: str
+    default_test_runners: list[str]
     test_sets: list[TestSet]
 
 
 class FlavorCiConfig(BaseModel):
-    build_runner: str
+    build_runners: list[str]
     test_config: TestConfig
