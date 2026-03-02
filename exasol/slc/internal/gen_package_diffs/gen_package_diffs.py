@@ -119,7 +119,6 @@ def _package_file_to_build_step_package_lists(
                     for package in installer.packages:
                         result[installer_name].append(
                             PackageDiffEntry(
-                                installer_name=installer_name,
                                 package=package,
                                 build_step_name=build_step.name,
                             )
