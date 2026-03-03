@@ -275,7 +275,9 @@ def status_format(status_set: set[Status]) -> str:
 def format_build_step(build_steps: pd.Series) -> str:
     if Status.MOVED in build_steps["Status"]:
         if build_steps["Build-Step-1"] == build_steps["Build-Step-2"]:
-            return build_steps["Build-Step-1"]
+            raise RuntimeError(
+                f"Invalid status=Moved for package diff row={build_steps}"
+            )
         return f"{build_steps['Build-Step-1']} -> {build_steps['Build-Step-2']}"
     if build_steps["Build-Step-2"]:
         return build_steps["Build-Step-2"]
@@ -367,8 +369,9 @@ def generate_dependency_diff_report_for_flavor(
         working_copy_2_name,
         diffs["internal_packages"],
     )
+    formatted_flavor_name = flavor_name_1.replace("_", " ").replace("-", " ").title()
     return f"""
-## {flavor_name_1}
+## {formatted_flavor_name}
 - [Release dependencies]({relative_output_directory}/public_packages.md)
 - [Build dependencies]({relative_output_directory}/internal_packages.md)
     """

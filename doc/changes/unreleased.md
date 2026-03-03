@@ -4,7 +4,7 @@
 
 ## Features
 
- - #343: Migrated gen package diff tool to new package format
+ - #343: Migrated generate package diff tool to new package format
 
 ## Refactorings
 
