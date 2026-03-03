@@ -1,14 +1,4 @@
 build_steps:
-- name: flavor_base_deps
-  phases:
-  - name: phase_apt
-    apt:
-      packages: []
-- name: flavor_customization
-  phases:
-  - name: phase_apt
-    apt:
-      packages: []
 - name: release
   phases:
   - name: phase_apt

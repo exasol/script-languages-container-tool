@@ -101,8 +101,10 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         """
         package_file_name = self.get_package_file_name()
         build_step_package_file = self._build_package_file_for_current_build_step()
-        package_file_str = to_yaml_str(build_step_package_file)
-        return {package_file_name: package_file_str}
+        ret_val = {}
+        if build_step_package_file:
+            ret_val[package_file_name] = to_yaml_str(build_step_package_file)
+        return ret_val
 
     def get_source_repository_name(self) -> str:
         return source_docker_repository_config().repository_name  # type: ignore
@@ -171,7 +173,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             self.build_step, raise_if_not_found=False
         )
 
-    def _build_package_file_for_current_build_step(self) -> PackageFile:
+    def _build_package_file_for_current_build_step(self) -> PackageFile | None:
         flavor_path = str(self.flavor_path)
         public_pkg_file = Path(flavor_path) / "packages.yaml"
         internal_pkg_file = Path(flavor_path) / "flavor_base" / "packages.yaml"
@@ -179,7 +181,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
             public_pkg_file
         ) or self._find_build_step_in_packages_file(internal_pkg_file)
         if not build_step_pkgs:
-            raise RuntimeError("Build step packages not found in packages.yaml files")
+            return None
         return PackageFile(
             build_steps=[build_step_pkgs],
             comment=f"Automatically generated package file for build step {self.build_step}",
