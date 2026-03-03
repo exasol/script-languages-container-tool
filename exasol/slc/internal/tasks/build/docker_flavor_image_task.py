@@ -173,21 +173,15 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def _build_package_file_for_current_build_step(self) -> PackageFile:
         flavor_path = str(self.flavor_path)
-        pkg_files = [
-            Path(flavor_path) / "packages.yaml",
-            Path(flavor_path) / "flavor_base" / "packages.yaml",
-        ]
-        build_step_pkgs = next(
-            (
-                self._find_build_step_in_packages_file(pkg_file)
-                for pkg_file in pkg_files
-            ),
-            None,
-        )
+        public_pkg_file = Path(flavor_path) / "packages.yaml"
+        internal_pkg_file = Path(flavor_path) / "flavor_base" / "packages.yaml"
+        build_step_pkgs = self._find_build_step_in_packages_file(
+            public_pkg_file
+        ) or self._find_build_step_in_packages_file(internal_pkg_file)
         if not build_step_pkgs:
             raise RuntimeError("Build step packages not found in packages.yaml files")
         return PackageFile(
-            build_steps=[build_step_pkgs[0]],
+            build_steps=[build_step_pkgs],
             comment=f"Automatically generated package file for build step {self.build_step}",
             version=CURRENT_PACKAGE_VERSION,
         )
