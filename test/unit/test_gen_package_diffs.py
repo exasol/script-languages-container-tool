@@ -5,8 +5,8 @@ The tests intentionally combine:
 - snapshot-style markdown assertions for report rendering
 """
 
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -30,8 +30,8 @@ from exasol.slc.internal.gen_package_diffs.gen_package_diffs import (
     Installer,
     PackageDiffEntry,
     Status,
-    compare_package_lists,
     compare_flavor,
+    compare_package_lists,
     generate_dependency_diff_report_for_package_file,
 )
 
@@ -276,7 +276,10 @@ def test_generate_dependency_diff_report_for_package_file_without_diffs(tmp_path
     )
 
     content = output_file.read_text(encoding="utf-8")
-    assert "# Public packages comparison between Flavor_a flavor in wc_1 and Flavor_b flavor in wc_2" in content
+    assert (
+        "# Public packages comparison between Flavor_a flavor in wc_1 and Flavor_b flavor in wc_2"
+        in content
+    )
     assert "No packages found." in content
 
 
