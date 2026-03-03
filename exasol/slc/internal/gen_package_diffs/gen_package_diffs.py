@@ -93,10 +93,10 @@ def compare_package_lists(
 
 
 class Installer(Enum):
-    APT = "apt"
-    PIP = "pip"
-    R = "r"
-    CONDA = "conda"
+    APT = "Apt"
+    PIP = "Pip"
+    R = "R"
+    CONDA = "Conda"
 
 
 def _package_file_to_build_step_package_lists(
@@ -300,7 +300,6 @@ def generate_dependency_diff_report_for_package_file(
         f"{flavor_name_2_capitalized} flavor in {working_copy_2_name}",
         "",
         "<!-- markdown-link-check-disable -->",
-        "",
     ]
     if len(diffs) == 0:
         content.append("No packages found.")
@@ -333,7 +332,8 @@ def generate_dependency_diff_report_for_package_file(
 
             formatted_diff.drop(["Build-Step-1", "Build-Step-2"], axis=1, inplace=True)
 
-            content.append(f"{installer.value} packages\n")
+            content.append("") #Additional line break
+            content.append(f"## {installer.value} packages\n")
             content.append(formatted_diff.to_markdown())
             package_output_file.write_text("\n".join(content), encoding="utf-8")
 

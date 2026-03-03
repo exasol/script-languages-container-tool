@@ -2,7 +2,7 @@
 
 <!-- markdown-link-check-disable -->
 
-conda packages
+## Conda packages
 
 |    | Package      | Version in 1.0.0   | Version in 2.0.0   | Status   | Build-Step     |
 |---:|:-------------|:-------------------|:-------------------|:---------|:---------------|

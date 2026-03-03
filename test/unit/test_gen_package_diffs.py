@@ -380,7 +380,7 @@ REPORT_CASES = [
 
 <!-- markdown-link-check-disable -->
 
-apt packages
+## Apt packages
 
 |    | Package               | Version in old   | Version in new   | Status          | Build-Step         |
 |---:|:----------------------|:-----------------|:-----------------|:----------------|:-------------------|
@@ -391,7 +391,8 @@ apt packages
 |  2 | pkg_updated           | 1.0.0            | 2.0.0            | UPDATED         | build_new          |
 |  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
 |  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
-pip packages
+
+## Pip packages
 
 |    | Package   | Version in old   | Version in new   | Status   | Build-Step   |
 |---:|:----------|:-----------------|:-----------------|:---------|:-------------|
@@ -446,13 +447,14 @@ pip packages
 
 <!-- markdown-link-check-disable -->
 
-r packages
+## R packages
 
 |    | Package   | Version in old   | Version in new   | Status   | Build-Step   |
 |---:|:----------|:-----------------|:-----------------|:---------|:-------------|
 |  0 | r_keep    | 1.0.0            | 1.0.0            |          | r_step       |
 |  1 | r_drop    | 2.0.0            |                  | REMOVED  | r_step       |
-conda packages
+
+## Conda packages
 
 |    | Package    | Version in old   | Version in new   | Status   | Build-Step   |
 |---:|:-----------|:-----------------|:-----------------|:---------|:-------------|
