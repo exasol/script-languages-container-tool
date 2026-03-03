@@ -1,7 +1,7 @@
-import test.utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import unittest
 
 import docker  # type: ignore
+import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 import yaml
 from exasol.exaslpm.model.package_file_config import (
     AptPackages,
