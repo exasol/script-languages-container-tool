@@ -20,5 +20,7 @@ RUN true # workaround for https://github.com/moby/moby/issues/37965
 COPY --from={{flavor_customization}} /build_info /build_info
 RUN true # workaround for https://github.com/moby/moby/issues/37965
 
+COPY /flavor_test_build_run_packages.yaml /build_info/flavor_test_build_run_packages.yaml
+RUN true # workaround for https://github.com/moby/moby/issues/37965
 
 RUN mkdir /exaudf
