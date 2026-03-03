@@ -72,8 +72,7 @@ def compare_package_lists(
     moved = (
         ~diff_df["Build-Step-1"].isnull()
         & ~diff_df["Build-Step-2"].isnull()
-        & diff_df["Build-Step-1"]
-        == diff_df["Build-Step-2"]
+        & (diff_df["Build-Step-1"] != diff_df["Build-Step-2"])
     )
     diff_df["Status"] = [set() for _ in range(len(diff_df))]  # type: ignore[assignment]
     diff_df.loc[new, "Status"] = diff_df.loc[new, "Status"].map(
@@ -274,10 +273,13 @@ def status_format(status_set: set[Status]) -> str:
 
 
 def format_build_step(build_steps: pd.Series) -> str:
-    if build_steps["Build-Step-1"] == build_steps["Build-Step-2"]:
-        return build_steps["Build-Step-1"]
-    else:
+    if Status.MOVED in build_steps["Status"]:
+        if build_steps["Build-Step-1"] == build_steps["Build-Step-2"]:
+            return build_steps["Build-Step-1"]
         return f"{build_steps['Build-Step-1']} -> {build_steps['Build-Step-2']}"
+    if build_steps["Build-Step-2"]:
+        return build_steps["Build-Step-2"]
+    return build_steps["Build-Step-1"]
 
 
 def generate_dependency_diff_report_for_package_file(
@@ -322,13 +324,13 @@ def generate_dependency_diff_report_for_package_file(
                 [formatted_diff, diffs_per_installer[empty_status_filter]]
             )
 
+            formatted_diff["Build-Step"] = formatted_diff[
+                ["Build-Step-1", "Build-Step-2", "Status"]
+            ].apply(format_build_step, axis=1)
             formatted_diff["Status"] = formatted_diff["Status"].map(status_format)
 
             formatted_diff.sort_values(["Status", "Package"], inplace=True)
 
-            formatted_diff["Build-Step"] = formatted_diff[
-                ["Build-Step-1", "Build-Step-2"]
-            ].apply(format_build_step, axis=1)
             formatted_diff.drop(["Build-Step-1", "Build-Step-2"], axis=1, inplace=True)
 
             content.append(f"{installer.value} packages\n")
