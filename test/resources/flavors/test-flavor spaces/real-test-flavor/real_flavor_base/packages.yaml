@@ -3,41 +3,41 @@ build_steps:
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: base_test_deps
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: build_deps
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: build_run
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: flavor_test_build_run
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: language_deps
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: security_scan
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: udfclient_deps
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 
 version: 1.0.0

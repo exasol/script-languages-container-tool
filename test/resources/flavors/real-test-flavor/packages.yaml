@@ -3,15 +3,15 @@ build_steps:
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: flavor_customization
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 - name: release
   phases:
   - name: phase_apt
     apt:
-      packages:
+      packages: []
 version: 1.0.0
