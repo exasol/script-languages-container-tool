@@ -4,7 +4,7 @@
 
 ## Features
 
- - #344: Included new package file into hash sum calculation for docker image tag
+ - #344: Included new package file into docker image
 
 ## Refactorings
 
