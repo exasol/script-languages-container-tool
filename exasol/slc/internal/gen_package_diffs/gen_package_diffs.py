@@ -332,7 +332,7 @@ def generate_dependency_diff_report_for_package_file(
 
             formatted_diff.drop(["Build-Step-1", "Build-Step-2"], axis=1, inplace=True)
 
-            content.append("") #Additional line break
+            content.append("")  # Additional line break
             content.append(f"## {installer.value} packages\n")
             content.append(formatted_diff.to_markdown())
             package_output_file.write_text("\n".join(content), encoding="utf-8")
