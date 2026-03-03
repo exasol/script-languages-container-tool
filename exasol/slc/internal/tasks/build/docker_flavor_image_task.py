@@ -3,7 +3,10 @@ from pathlib import Path
 from exasol.exaslpm.model.package_file_config import (
     CURRENT_VERSION as CURRENT_PACKAGE_VERSION,
 )
-from exasol.exaslpm.model.package_file_config import BuildStep, PackageFile
+from exasol.exaslpm.model.package_file_config import (
+    BuildStep,
+    PackageFile,
+)
 from exasol.exaslpm.model.serialization import to_yaml_str
 from exasol.exaslpm.pkg_mgmt.package_file_session import PackageFileSession
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
