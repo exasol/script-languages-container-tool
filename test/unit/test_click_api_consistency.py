@@ -93,9 +93,9 @@ def test_same_functions():
 
 def test_parse_ci_json(tmp_path: Path):
     ci_json_data = {
-        "build_runner": "24.04",
+        "build_runners": ["24.04, x86", "22.04, arm64"],
         "test_config": {
-            "default_test_runner": "24.04",
+            "default_test_runners": ["24.04, x86", "22.04, arm64"],
             "test_sets": [
                 {
                     "name": "python",
@@ -103,6 +103,7 @@ def test_parse_ci_json(tmp_path: Path):
                     "folders": ["fld00", "fld01"],
                     "goal": "rel",
                     "generic_language_tests": ["py3.11", "py3.12"],
+                    "test_runners": ["24.04, x86", "22.04, arm64"],
                 },
                 {
                     "name": "python",
@@ -110,6 +111,7 @@ def test_parse_ci_json(tmp_path: Path):
                     "folders": ["fld10", "fld11"],
                     "goal": "rel",
                     "generic_language_tests": ["py3.13", "py3.14"],
+                    "test_runners": ["24.04, x86", "22.04, arm64"],
                 },
             ],
         },
