@@ -239,7 +239,7 @@ def get_last_git_tag() -> str:
     )  # nosec B603, B607
     get_main_branch_result = subprocess.run(
         ["git", "symbolic-ref", "refs/remotes/origin/HEAD"], stdout=subprocess.PIPE
-    ) # nosec B603, B607
+    )  # nosec B603, B607
     get_main_branch_result.check_returncode()
 
     main_branch_name = get_main_branch_result.stdout.decode("utf-8").strip()
@@ -259,14 +259,14 @@ def checkout_git_tag_as_worktree(tmp_dir, last_tag):
         stderr=subprocess.STDOUT,
         check=True,
         shell=False,
-    )   # nosec B603, B607
+    )  # nosec B603, B607
     subprocess.run(
         ["git", "submodule", "update", "--init"],
         cwd=tmp_dir,
         stderr=subprocess.STDOUT,
         check=True,
         shell=False,
-    )   # nosec B603, B607
+    )  # nosec B603, B607
 
 
 def status_format(status_set: set[Status]) -> str:
