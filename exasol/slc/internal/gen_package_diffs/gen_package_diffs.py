@@ -234,7 +234,7 @@ def compare_flavor(
 
 
 def get_last_git_tag() -> str:
-    subprocess.run(["git", "fetch"], stderr=subprocess.STDOUT, shell=False, check=True)
+    subprocess.run(["git", "fetch"], stderr=subprocess.STDOUT, shell=False, check=True) # nosec B603, B607
     get_main_branch_result = subprocess.run(
         ["git", "symbolic-ref", "refs/remotes/origin/HEAD"], stdout=subprocess.PIPE
     )
@@ -245,7 +245,7 @@ def get_last_git_tag() -> str:
         ["git", "describe", "--abbrev=0", "--tags", main_branch_name],
         stdout=subprocess.PIPE,
         shell=False,
-    )
+    ) # nosec B603
     last_tag_result.check_returncode()
     last_tag = last_tag_result.stdout.decode("UTF-8").strip()
     return last_tag
@@ -257,14 +257,14 @@ def checkout_git_tag_as_worktree(tmp_dir, last_tag):
         stderr=subprocess.STDOUT,
         check=True,
         shell=False,
-    )
+    ) # nosec B603
     subprocess.run(
         ["git", "submodule", "update", "--init"],
         cwd=tmp_dir,
         stderr=subprocess.STDOUT,
         check=True,
         shell=False,
-    )
+    ) # nosec B603
 
 
 def status_format(status_set: set[Status]) -> str:
