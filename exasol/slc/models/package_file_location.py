@@ -1,6 +1,6 @@
 from pathlib import Path
 
-_PACKAGE_FILE_NAME = "packages.yaml"
+_PACKAGE_FILE_NAME = "packages.yml"
 
 
 class PackageFileLocation:
