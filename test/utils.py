@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
@@ -21,7 +22,10 @@ from exasol.slc import api
 
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
-FLAVORS_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "flavors"
+FS_RELATED_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "filesysytem_related"
+FS_RELATED_FLAVORS_ROOT_DIRECTORY = FS_RELATED_ROOT_DIRECTORY / "flavors"
+DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavors"
+DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY = DEFAULT_FLAVOR_ROOT_DIRECTORY / "flavors"
 EXASLCT_DEFAULT_BIN = "exaslct"
 GEN_PKG_DIFF_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "gen_package_diff"
 
@@ -31,6 +35,12 @@ GEN_PKG_DIFF_LAST_TAG_DIRECTORY = GEN_PKG_DIFF_ALL_FLAVORS_DIRECTORY / "last_tag
 GEN_PKG_DIFF_ALL_FLAVORS_EXPECTED_RESULT_DIRECTORY = (
     GEN_PKG_DIFF_ALL_FLAVORS_DIRECTORY / "expected_result"
 )
+
+
+@dataclass(frozen=True)
+class FileSystemRelatedTestFolders:
+    symlink_test_flavor = FS_RELATED_FLAVORS_ROOT_DIRECTORY / "test-flavor"
+    test_flavor_with_spaces = FS_RELATED_FLAVORS_ROOT_DIRECTORY / "test-flavor spaces"
 
 
 class ExaslctApiTestEnvironmentWithCleanup:
@@ -114,7 +124,7 @@ class ExaslctTestEnvironmentWithCleanUp:
         executable=EXASLCT_DEFAULT_BIN,
         clean_images_at_close=True,
         name=None,
-        flavor_path: Path = FLAVORS_ROOT_DIRECTORY / "test-flavor",
+        flavor_path: Path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor",
     ):
         self._flavor_path = flavor_path
         self._clean_images_at_close = clean_images_at_close
@@ -223,15 +233,13 @@ def get_mock_test_container_folder() -> Path:
     return path
 
 
+def get_file_system_related_flavors():
+    return FileSystemRelatedTestFolders()
+
+
 def get_test_flavor() -> Path:
-    path = FLAVORS_ROOT_DIRECTORY / "test-flavor"
+    path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor"
     return path
-
-
-def get_real_test_flavor() -> Path:
-    path = FLAVORS_ROOT_DIRECTORY / "real-test-flavor"
-    return path
-
 
 def get_docker_container_ids(*names) -> dict[str, str]:
     result = {}

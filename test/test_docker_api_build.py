@@ -16,7 +16,7 @@ from exasol.slc.api import build
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 
 
-class ApiDockerBuildTest(unittest.TestCase):
+class ApiDockerBuildTestFileSystemRelated(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")

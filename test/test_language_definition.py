@@ -6,7 +6,7 @@ from exasol.slc.internal.tasks.upload.language_definition import LanguageDefinit
 
 
 class LanguageDefintionTest(unittest.TestCase):
-    flavor_path = str(exaslct_utils.get_real_test_flavor())
+    flavor_path = str(exaslct_utils.get_test_flavor())
 
     def test_add_missing_builtin_true(self):
         language_definition = LanguageDefinition(
