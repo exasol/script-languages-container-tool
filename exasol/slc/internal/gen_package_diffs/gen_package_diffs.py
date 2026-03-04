@@ -234,18 +234,17 @@ def compare_flavor(
 
 
 def get_last_git_tag() -> str:
-    get_fetch_command = ["git", "fetch"]
-    subprocess.run(get_fetch_command, stderr=subprocess.STDOUT, shell=False, check=True)
-    get_main_branch_command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
+    subprocess.run(["git", "fetch"], stderr=subprocess.STDOUT, shell=False, check=True)
     get_main_branch_result = subprocess.run(
-        get_main_branch_command, stdout=subprocess.PIPE
+        ["git", "symbolic-ref", "refs/remotes/origin/HEAD"], stdout=subprocess.PIPE
     )
     get_main_branch_result.check_returncode()
 
     main_branch_name = get_main_branch_result.stdout.decode("utf-8").strip()
-    get_last_tag_command = ["git", "describe", "--abbrev=0", "--tags", main_branch_name]
     last_tag_result = subprocess.run(
-        get_last_tag_command, stdout=subprocess.PIPE, shell=False
+        ["git", "describe", "--abbrev=0", "--tags", main_branch_name],
+        stdout=subprocess.PIPE,
+        shell=False,
     )
     last_tag_result.check_returncode()
     last_tag = last_tag_result.stdout.decode("UTF-8").strip()
@@ -253,13 +252,14 @@ def get_last_git_tag() -> str:
 
 
 def checkout_git_tag_as_worktree(tmp_dir, last_tag):
-    checkout_last_tag_command = ["git", "worktree", "add", tmp_dir, last_tag]
     subprocess.run(
-        checkout_last_tag_command, stderr=subprocess.STDOUT, check=True, shell=False
+        ["git", "worktree", "add", tmp_dir, last_tag],
+        stderr=subprocess.STDOUT,
+        check=True,
+        shell=False,
     )
-    init_submodule_command = ["git", "submodule", "update", "--init"]
     subprocess.run(
-        init_submodule_command,
+        ["git", "submodule", "update", "--init"],
         cwd=tmp_dir,
         stderr=subprocess.STDOUT,
         check=True,
