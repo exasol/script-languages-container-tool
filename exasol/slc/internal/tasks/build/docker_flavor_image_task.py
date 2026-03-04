@@ -27,6 +27,7 @@ from exasol.slc.models.language_definition_model import (
     LANGUAGE_DEFINITON_SCHEMA_VERSION,
     LanguageDefinitionsModel,
 )
+from exasol.slc.models.package_file_location import PackageFileLocation
 
 
 class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
@@ -175,8 +176,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def _build_package_file_for_current_build_step(self) -> PackageFile | None:
         flavor_path = str(self.flavor_path)
-        public_pkg_file = Path(flavor_path) / "packages.yaml"
-        internal_pkg_file = Path(flavor_path) / "flavor_base" / "packages.yaml"
+        package_file_location = PackageFileLocation(flavor_path=Path(flavor_path))
+        public_pkg_file = package_file_location.public_package_file
+        internal_pkg_file = package_file_location.internal_package_file
         build_step_pkgs = self._find_build_step_in_packages_file(
             public_pkg_file
         ) or self._find_build_step_in_packages_file(internal_pkg_file)
