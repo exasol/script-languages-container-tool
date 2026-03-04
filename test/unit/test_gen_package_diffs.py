@@ -277,7 +277,7 @@ def test_generate_dependency_diff_report_for_package_file_without_diffs(tmp_path
 
     content = output_file.read_text(encoding="utf-8")
     assert (
-        "# Public packages comparison between Flavor_a flavor in wc_1 and Flavor_b flavor in wc_2"
+        '# Public packages comparison between flavor "Flavor A" in wc_1 and flavor "Flavor B" in wc_2'
         in content
     )
     assert "No packages found." in content
@@ -376,7 +376,7 @@ REPORT_CASES = [
             Installer.R.value: _empty_report_diff(),
             Installer.CONDA.value: _empty_report_diff(),
         },
-        expected_markdown="""# Internal packages comparison between Flavor_c flavor in wc_1 and Flavor_d flavor in wc_2
+        expected_markdown="""# Internal packages comparison between flavor "Flavor C" in wc_1 and flavor "Flavor D" in wc_2
 
 <!-- markdown-link-check-disable -->
 
@@ -443,7 +443,7 @@ REPORT_CASES = [
                 ]
             ),
         },
-        expected_markdown="""# Internal packages comparison between Flavor_c flavor in wc_1 and Flavor_d flavor in wc_2
+        expected_markdown="""# Internal packages comparison between flavor "Flavor C" in wc_1 and flavor "Flavor D" in wc_2
 
 <!-- markdown-link-check-disable -->
 

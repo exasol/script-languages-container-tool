@@ -235,7 +235,7 @@ def compare_flavor(
 
 def get_last_git_tag() -> str:
     get_fetch_command = ["git", "fetch"]
-    subprocess.run(get_fetch_command, stderr=subprocess.STDOUT, check=True)
+    subprocess.run(get_fetch_command, stderr=subprocess.STDOUT, shell=False, check=True)
     get_main_branch_command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
     get_main_branch_result = subprocess.run(
         get_main_branch_command, stdout=subprocess.PIPE
@@ -244,7 +244,9 @@ def get_last_git_tag() -> str:
 
     main_branch_name = get_main_branch_result.stdout.decode("utf-8").strip()
     get_last_tag_command = ["git", "describe", "--abbrev=0", "--tags", main_branch_name]
-    last_tag_result = subprocess.run(get_last_tag_command, stdout=subprocess.PIPE)
+    last_tag_result = subprocess.run(
+        get_last_tag_command, stdout=subprocess.PIPE, shell=False
+    )
     last_tag_result.check_returncode()
     last_tag = last_tag_result.stdout.decode("UTF-8").strip()
     return last_tag
@@ -252,10 +254,16 @@ def get_last_git_tag() -> str:
 
 def checkout_git_tag_as_worktree(tmp_dir, last_tag):
     checkout_last_tag_command = ["git", "worktree", "add", tmp_dir, last_tag]
-    subprocess.run(checkout_last_tag_command, stderr=subprocess.STDOUT, check=True)
+    subprocess.run(
+        checkout_last_tag_command, stderr=subprocess.STDOUT, check=True, shell=False
+    )
     init_submodule_command = ["git", "submodule", "update", "--init"]
     subprocess.run(
-        init_submodule_command, cwd=tmp_dir, stderr=subprocess.STDOUT, check=True
+        init_submodule_command,
+        cwd=tmp_dir,
+        stderr=subprocess.STDOUT,
+        check=True,
+        shell=False,
     )
 
 
@@ -284,6 +292,10 @@ def format_build_step(build_steps: pd.Series) -> str:
     return build_steps["Build-Step-1"]
 
 
+def format_flavor_name(flavor_name: str) -> str:
+    return flavor_name.replace("_", " ").replace("-", " ").title()
+
+
 def generate_dependency_diff_report_for_package_file(
     package_output_file: Path,
     package_scope_caption: str,
@@ -294,12 +306,12 @@ def generate_dependency_diff_report_for_package_file(
     diffs: dict[str, pd.DataFrame],
 ):
     package_output_file.parent.mkdir(parents=True, exist_ok=True)
-    flavor_name_1_capitalized = flavor_name_1.capitalize()
-    flavor_name_2_capitalized = flavor_name_2.capitalize()
+    formatted_flavor_name_1 = format_flavor_name(flavor_name_1)
+    formatted_flavor_name_2 = format_flavor_name(flavor_name_2)
     content = [
         f"# {package_scope_caption} comparison between "
-        f"{flavor_name_1_capitalized} flavor in {working_copy_1_name} and "
-        f"{flavor_name_2_capitalized} flavor in {working_copy_2_name}",
+        f"""flavor "{formatted_flavor_name_1}" in {working_copy_1_name} and """
+        f"""flavor "{formatted_flavor_name_2}" in {working_copy_2_name}""",
         "",
         "<!-- markdown-link-check-disable -->",
     ]
@@ -369,7 +381,7 @@ def generate_dependency_diff_report_for_flavor(
         working_copy_2_name,
         diffs["internal_packages"],
     )
-    formatted_flavor_name = flavor_name_1.replace("_", " ").replace("-", " ").title()
+    formatted_flavor_name = format_flavor_name(flavor_name_1)
     return f"""
 ## {formatted_flavor_name}
 - [Release dependencies]({relative_output_directory}/public_packages.md)

@@ -1,4 +1,4 @@
-# Internal packages comparison between Flavor_one flavor in 2.0.0 and Flavor_one flavor in 1.0.0
+# Internal packages comparison between flavor "Flavor One" in 2.0.0 and flavor "Flavor One" in 1.0.0
 
 <!-- markdown-link-check-disable -->
 
