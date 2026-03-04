@@ -332,8 +332,8 @@ REPORT_CASES = [
                         "Version in old": "1.0.0",
                         "Version in new": "2.0.0",
                         "Status": {Status.UPDATED},
-                        "Build-Step-1": "build_old",
-                        "Build-Step-2": "build_new",
+                        "Build-Step-1": "build_a",
+                        "Build-Step-2": "build_a",
                     },
                     {
                         "Package": "pkg_moved",
@@ -388,7 +388,7 @@ REPORT_CASES = [
 |  3 | pkg_moved             | 1.0.0            | 1.0.0            | MOVED           | build_a -> build_b |
 |  0 | pkg_new               |                  | 1.0.0            | NEW             | build_new          |
 |  1 | pkg_removed           | 1.0.0            |                  | REMOVED         | build_old          |
-|  2 | pkg_updated           | 1.0.0            | 2.0.0            | UPDATED         | build_new          |
+|  2 | pkg_updated           | 1.0.0            | 2.0.0            | UPDATED         | build_a            |
 |  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
 |  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
 
