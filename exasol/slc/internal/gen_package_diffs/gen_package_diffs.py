@@ -312,15 +312,16 @@ def format_flavor_name(flavor_name: str) -> str:
     return flavor_name.replace("_", " ").replace("-", " ").title()
 
 
+def filter_diff_per_status(diffs_per_installer: DataFrame, status: Status) -> pd.Series:
+    return diffs_per_installer["Status"].map(lambda x: status in x)
+
+
 def build_formatted_diff(diffs_per_installer: DataFrame) -> pd.DataFrame:
     formatted_diff = pd.DataFrame()
     for status in Status:
+        status_filter = filter_diff_per_status(diffs_per_installer, status)
+        formatted_diff = pd.concat([formatted_diff, diffs_per_installer[status_filter]])
 
-        def status_exists(status_set: set[Status]):
-            return status in status_set
-
-        filter_column = diffs_per_installer["Status"].map(status_exists)
-        formatted_diff = pd.concat([formatted_diff, diffs_per_installer[filter_column]])
     empty_status_filter = diffs_per_installer["Status"].map(lambda x: len(x) == 0)
     formatted_diff = pd.concat(
         [formatted_diff, diffs_per_installer[empty_status_filter]]
