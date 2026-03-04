@@ -42,6 +42,5 @@ class ApiDockerBuildTestFlavorWithSymlink(unittest.TestCase):
         assert len(images) == 10
 
 
-
 if __name__ == "__main__":
     unittest.main()
