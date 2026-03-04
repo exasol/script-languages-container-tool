@@ -22,8 +22,6 @@ from exasol.slc import api
 
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
-FS_RELATED_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "filesystem_related"
-FS_RELATED_FLAVORS_ROOT_DIRECTORY = FS_RELATED_ROOT_DIRECTORY / "flavors"
 DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavor"
 DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY = DEFAULT_FLAVOR_ROOT_DIRECTORY / "flavors"
 EXASLCT_DEFAULT_BIN = "exaslct"
@@ -35,12 +33,6 @@ GEN_PKG_DIFF_LAST_TAG_DIRECTORY = GEN_PKG_DIFF_ALL_FLAVORS_DIRECTORY / "last_tag
 GEN_PKG_DIFF_ALL_FLAVORS_EXPECTED_RESULT_DIRECTORY = (
     GEN_PKG_DIFF_ALL_FLAVORS_DIRECTORY / "expected_result"
 )
-
-
-@dataclass(frozen=True)
-class FileSystemRelatedTestFolders:
-    symlink_test_flavor = FS_RELATED_FLAVORS_ROOT_DIRECTORY / "test-flavor"
-    test_flavor_with_spaces = FS_RELATED_FLAVORS_ROOT_DIRECTORY / "test-flavor spaces"
 
 
 class ExaslctApiTestEnvironmentWithCleanup:
@@ -231,10 +223,6 @@ def get_full_test_container_folder() -> Path:
 def get_mock_test_container_folder() -> Path:
     path = TEST_CONTAINER_ROOT_DIRECTORY / "full"
     return path
-
-
-def get_file_system_related_flavors():
-    return FileSystemRelatedTestFolders()
 
 
 def get_test_flavor() -> Path:
