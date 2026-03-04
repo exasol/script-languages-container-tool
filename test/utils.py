@@ -241,6 +241,7 @@ def get_test_flavor() -> Path:
     path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor"
     return path
 
+
 def get_docker_container_ids(*names) -> dict[str, str]:
     result = {}
     with ContextDockerClient() as docker_client:
