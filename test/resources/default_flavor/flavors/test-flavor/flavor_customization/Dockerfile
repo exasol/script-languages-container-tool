@@ -1,1 +1,1 @@
-FROM {{flavor_base_deps}}
+FROM {{build_run}}
