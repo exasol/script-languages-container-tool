@@ -31,7 +31,7 @@ class DockerPushTest(unittest.TestCase):
             self.assertEqual(
                 len(images["tags"]),
                 5,
-                f"{images} doesn't have the expected 10 tags, it only has {len(images['tags'])}",
+                f"{images} doesn't have the expected 5 tags, it only has {len(images['tags'])}",
             )
 
 
