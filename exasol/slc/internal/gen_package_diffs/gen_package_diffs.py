@@ -2,11 +2,15 @@ import subprocess
 from enum import Enum
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Any
 
 import pandas as pd
 from exasol.exaslpm.model.package_file_config import Package, PackageFile
 from exasol.exaslpm.pkg_mgmt.package_file_session import PackageFileSession
+from pandas import DataFrame
 from pydantic import BaseModel
+
+from exasol.slc.models.package_file_location import PackageFileLocation
 
 
 class PackageDiffEntry(BaseModel):
@@ -111,18 +115,26 @@ def _package_file_to_build_step_package_lists(
                 (Installer.R.value, phase.r),
                 (Installer.CONDA.value, phase.conda),
             ]
-            for installer_name, installer in installers:
-                if installer_name not in result:
-                    result[installer_name] = []
-                if installer and installer.packages:
-                    for package in installer.packages:
-                        result[installer_name].append(
-                            PackageDiffEntry(
-                                package=package,
-                                build_step_name=build_step.name,
-                            )
-                        )
+            _collect_package_diff_for_phase(build_step.name, installers, result)
     return result
+
+
+def _collect_package_diff_for_phase(
+    build_step_name,
+    installers: list[tuple[str, Any]],
+    result: dict[str, list[PackageDiffEntry]],
+):
+    for installer_name, installer in installers:
+        if installer_name not in result:
+            result[installer_name] = []
+        if installer and installer.packages:
+            for package in installer.packages:
+                result[installer_name].append(
+                    PackageDiffEntry(
+                        package=package,
+                        build_step_name=build_step_name,
+                    )
+                )
 
 
 def _load_package_file_config(
@@ -208,10 +220,12 @@ def compare_flavor(
     working_copy_2_root: Path,
     working_copy_2_name: str,
 ) -> dict[str, dict[str, pd.DataFrame]]:
-    public_package_file_1 = flavor_path_1 / "packages.yml"
-    public_package_file_2 = flavor_path_2 / "packages.yml"
-    internal_package_file_1 = flavor_path_1 / "flavor_base" / "packages.yml"
-    internal_package_file_2 = flavor_path_2 / "flavor_base" / "packages.yml"
+    package_file_location_1 = PackageFileLocation(flavor_path_1)
+    package_file_location_2 = PackageFileLocation(flavor_path_2)
+    public_package_file_1 = package_file_location_1.public_package_file
+    public_package_file_2 = package_file_location_2.public_package_file
+    internal_package_file_1 = package_file_location_1.internal_package_file
+    internal_package_file_2 = package_file_location_2.internal_package_file
 
     return {
         "public_packages": compare_package_file(
@@ -298,6 +312,22 @@ def format_flavor_name(flavor_name: str) -> str:
     return flavor_name.replace("_", " ").replace("-", " ").title()
 
 
+def build_formatted_diff(diffs_per_installer: DataFrame) -> pd.DataFrame:
+    formatted_diff = pd.DataFrame()
+    for status in Status:
+
+        def status_exists(status_set: set[Status]):
+            return status in status_set
+
+        filter_column = diffs_per_installer["Status"].map(status_exists)
+        formatted_diff = pd.concat([formatted_diff, diffs_per_installer[filter_column]])
+    empty_status_filter = diffs_per_installer["Status"].map(lambda x: len(x) == 0)
+    formatted_diff = pd.concat(
+        [formatted_diff, diffs_per_installer[empty_status_filter]]
+    )
+    return formatted_diff
+
+
 def generate_dependency_diff_report_for_package_file(
     package_output_file: Path,
     package_scope_caption: str,
@@ -326,19 +356,7 @@ def generate_dependency_diff_report_for_package_file(
     for installer in Installer:
         diffs_per_installer = diffs[installer.value]
         if len(diffs_per_installer) > 0:
-            formatted_diff = pd.DataFrame()
-            for status in Status:
-                filter_column = diffs_per_installer["Status"].map(lambda x: status in x)
-                formatted_diff = pd.concat(
-                    [formatted_diff, diffs_per_installer[filter_column]]
-                )
-            empty_status_filter = diffs_per_installer["Status"].map(
-                lambda x: len(x) == 0
-            )
-            formatted_diff = pd.concat(
-                [formatted_diff, diffs_per_installer[empty_status_filter]]
-            )
-
+            formatted_diff = build_formatted_diff(diffs_per_installer)
             formatted_diff["Build-Step"] = formatted_diff[
                 ["Build-Step-1", "Build-Step-2", "Status"]
             ].apply(format_build_step, axis=1)
