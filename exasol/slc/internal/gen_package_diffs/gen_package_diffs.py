@@ -247,7 +247,7 @@ def get_last_git_tag() -> str:
         ["git", "describe", "--abbrev=0", "--tags", main_branch_name],
         stdout=subprocess.PIPE,
         shell=False,
-    )  # nosec B603
+    )  # nosec B603, B607
     last_tag_result.check_returncode()
     last_tag = last_tag_result.stdout.decode("UTF-8").strip()
     return last_tag
