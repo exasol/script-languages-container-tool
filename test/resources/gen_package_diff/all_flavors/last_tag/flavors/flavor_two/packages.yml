@@ -1,0 +1,13 @@
+version: 1.0.0
+build_steps:
+  - name: build_step_two
+    phases:
+      - name: phase_one
+        conda:
+          packages:
+            - name: cudnn
+              version: 9.13.1.26
+            - name: cuda-toolkit
+              version: 12.9.1
+            - name: cuda-nvcc
+              version: 12.9.86
