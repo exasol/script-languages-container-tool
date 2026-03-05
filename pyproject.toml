@@ -15,7 +15,7 @@ authors = [
 
 dependencies = [
     "networkx (>=3.3.0,<4)",
-    "exasol-integration-test-docker-environment (>=6,<7)",
+    "exasol-integration-test-docker-environment (>=6.1.0,<7)",
     "exasol-bucketfs (>=2.1.0,<3)",
     "pydantic (>=2.10.2, <3)",
     "jsonschema (>=4.23.0, <5)",

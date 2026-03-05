@@ -1,5 +1,14 @@
 from pathlib import Path
 
+from exasol.exaslpm.model.package_file_config import (
+    CURRENT_VERSION as CURRENT_PACKAGE_VERSION,
+)
+from exasol.exaslpm.model.package_file_config import (
+    BuildStep,
+    PackageFile,
+)
+from exasol.exaslpm.model.serialization import to_yaml_str
+from exasol.exaslpm.pkg_mgmt.package_file_session import PackageFileSession
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
 )
@@ -18,6 +27,7 @@ from exasol.slc.models.language_definition_model import (
     LANGUAGE_DEFINITON_SCHEMA_VERSION,
     LanguageDefinitionsModel,
 )
+from exasol.slc.models.package_file_location import PackageFileLocation
 
 
 class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
@@ -75,6 +85,27 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         :return: dictionaries with destination path as keys and source paths in values
         """
         return None
+
+    def get_package_file_name(self) -> str:
+        """
+        Returns the package file name of the automatically generated packages file, which will be created in the docker image.
+        Sub classes can override this value to customize the package file name.
+        """
+        return f"{self.build_step}_packages.yaml"
+
+    def get_additional_resources(self) -> dict[str, str]:
+        """
+        Called by the constructor to get additional resources for the docker build.
+        For each entry of the dict the base class will generate a new file, with the value of the dict as content.
+        Sub-classes need to implement this method.
+        :return: dictionary for additional resources.
+        """
+        package_file_name = self.get_package_file_name()
+        build_step_package_file = self._build_package_file_for_current_build_step()
+        ret_val = {}
+        if build_step_package_file:
+            ret_val[package_file_name] = to_yaml_str(build_step_package_file)
+        return ret_val
 
     def get_source_repository_name(self) -> str:
         return source_docker_repository_config().repository_name  # type: ignore
@@ -134,3 +165,27 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
 
     def get_dockerfile(self) -> str:
         return str(self.get_build_step_path().joinpath("Dockerfile"))
+
+    def _find_build_step_in_packages_file(
+        self, packages_file: Path
+    ) -> BuildStep | None:
+        pkg_file_session = PackageFileSession(packages_file)
+        return pkg_file_session.package_file_config.find_build_step(
+            self.build_step, raise_if_not_found=False
+        )
+
+    def _build_package_file_for_current_build_step(self) -> PackageFile | None:
+        flavor_path = str(self.flavor_path)
+        package_file_location = PackageFileLocation(flavor_path=Path(flavor_path))
+        public_pkg_file = package_file_location.public_package_file
+        internal_pkg_file = package_file_location.internal_package_file
+        build_step_pkgs = self._find_build_step_in_packages_file(
+            public_pkg_file
+        ) or self._find_build_step_in_packages_file(internal_pkg_file)
+        if not build_step_pkgs:
+            return None
+        return PackageFile(
+            build_steps=[build_step_pkgs],
+            comment=f"Automatically generated package file for build step {self.build_step}",
+            version=CURRENT_PACKAGE_VERSION,
+        )

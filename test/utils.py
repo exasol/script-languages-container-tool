@@ -21,7 +21,8 @@ from exasol.slc import api
 
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
-FLAVORS_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "flavors"
+DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavor"
+DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY = DEFAULT_FLAVOR_ROOT_DIRECTORY / "flavors"
 EXASLCT_DEFAULT_BIN = "exaslct"
 GEN_PKG_DIFF_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "gen_package_diff"
 
@@ -114,7 +115,7 @@ class ExaslctTestEnvironmentWithCleanUp:
         executable=EXASLCT_DEFAULT_BIN,
         clean_images_at_close=True,
         name=None,
-        flavor_path: Path = FLAVORS_ROOT_DIRECTORY / "test-flavor",
+        flavor_path: Path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor",
     ):
         self._flavor_path = flavor_path
         self._clean_images_at_close = clean_images_at_close
@@ -224,12 +225,7 @@ def get_mock_test_container_folder() -> Path:
 
 
 def get_test_flavor() -> Path:
-    path = FLAVORS_ROOT_DIRECTORY / "test-flavor"
-    return path
-
-
-def get_real_test_flavor() -> Path:
-    path = FLAVORS_ROOT_DIRECTORY / "real-test-flavor"
+    path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor"
     return path
 
 

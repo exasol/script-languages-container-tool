@@ -1,0 +1,12 @@
+build_steps:
+- name: base_test_build_run
+  phases:
+  - name: phase_apt
+    apt:
+      packages: []
+- name: flavor_test_build_run
+  phases:
+  - name: phase_apt
+    apt:
+      packages: []
+version: 1.0.0

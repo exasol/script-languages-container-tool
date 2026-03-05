@@ -2,6 +2,14 @@ import unittest
 
 import docker  # type: ignore
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
+import yaml
+from exasol.exaslpm.model.package_file_config import (
+    AptPackages,
+    BuildStep,
+    PackageFile,
+    Phase,
+)
+from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc.api import build
@@ -24,6 +32,34 @@ class ApiDockerBuildTest(unittest.TestCase):
         except Exception as e:
             print(e)
         utils.close_environments(self.test_environment)
+
+    def validate_package_file(self, image: str, goal: str):
+        with ContextDockerClient() as docker_client:
+            output_bytes = docker_client.containers.run(
+                image,
+                command=f"cat /build_info/{goal}_packages.yaml",
+                remove=True,  # Automatically removes the container when it exits
+            )
+            # Decode the output from bytes to a string
+            output = output_bytes.decode("utf-8").strip()
+            yaml_data = yaml.safe_load(output)
+            package_file_under_test = PackageFile.model_validate(yaml_data)
+
+            expected_comment = (
+                f"Automatically generated package file for build step {goal}"
+            )
+            expected_build_step = BuildStep(
+                name=goal,
+                phases=[Phase(name="phase_apt", apt=AptPackages(packages=[]))],
+            )
+            expected_packages_file = PackageFile(
+                comment=expected_comment, build_steps=[expected_build_step]
+            )
+            self.assertEqual(
+                package_file_under_test,
+                expected_packages_file,
+                msg=f"expected_packages_file={expected_packages_file}\npackage_file_under_test={package_file_under_test}",
+            )
 
     def test_docker_build(self):
         flavor_path = exaslct_utils.get_test_flavor()
@@ -55,6 +91,8 @@ class ApiDockerBuildTest(unittest.TestCase):
                 len(images) == 1,
                 f"Did not found image for goal '{goal}' with prefix {expected_prefix} in list {images}",
             )
+
+            self.validate_package_file(images[0], goal)
 
 
 if __name__ == "__main__":

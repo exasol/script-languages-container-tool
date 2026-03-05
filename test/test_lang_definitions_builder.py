@@ -19,7 +19,7 @@ from exasol.slc.models.language_definition_components import (
 
 
 class LanguageDefinitionBuilderTest(unittest.TestCase):
-    flavor_path = str(exaslct_utils.get_real_test_flavor())
+    flavor_path = str(exaslct_utils.get_test_flavor())
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
