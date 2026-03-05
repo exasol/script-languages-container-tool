@@ -194,6 +194,21 @@ with an accelerator. Currently, only ``nvidia`` is supported:
 This will launch the underlying docker-db with the necessary options to
 enable the ``NVIDIA`` accelerator.
 
+
+Generating a package change report
+----------------------------------
+
+You can use `exaslct` to generate a report for changed packages:
+The report works on the "flavors" directory and compares the current local working copy to a specific Git commit.
+This Git commit can be given by an option, but if not set, the latest Git tag is used automatically.
+
+.. code:: bash
+
+   exaslct generate-package-diffs --current-working-copy-name "11.0.0" --compare-to-commit "10.0.0" --output-package-diff-directory docs/changes/package_diffs/11.0.0
+
+The generated report lists the changed packages for each flavor found in the "flavors" directory, split by public packages (which are included in the final release Script-Languages-Container) and internal packages (which are not part of the final release Script-Languages-Container).
+
+
 Cleaning up after you are finished
 ----------------------------------
 
