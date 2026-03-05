@@ -206,7 +206,7 @@ This Git commit can be given by an option, but if not set, the latest Git tag is
 
    exaslct generate-package-diffs --current-working-copy-name "11.0.0" --compare-to-commit "10.0.0" --output-package-diff-directory docs/changes/package_diffs/11.0.0
 
-The generated reported list the changed packages for each flavor found in the "flavors" directory, split by public packages (which are included in the final release Script-Languages-Container) and internal packages (which are not part of the final release Script-Languages-Container).
+The generated report lists the changed packages for each flavor found in the "flavors" directory, split by public packages (which are included in the final release Script-Languages-Container) and internal packages (which are not part of the final release Script-Languages-Container).
 
 
 Cleaning up after you are finished
