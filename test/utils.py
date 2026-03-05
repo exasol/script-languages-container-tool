@@ -23,6 +23,8 @@ RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
 DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavor"
 DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY = DEFAULT_FLAVOR_ROOT_DIRECTORY / "flavors"
+LEGACY_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "legacy_flavor"
+LEGACY_FLAVOR_FLAVORS_ROOT_DIRECTORY = LEGACY_FLAVOR_ROOT_DIRECTORY / "flavors"
 EXASLCT_DEFAULT_BIN = "exaslct"
 GEN_PKG_DIFF_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "gen_package_diff"
 
@@ -226,6 +228,11 @@ def get_mock_test_container_folder() -> Path:
 
 def get_test_flavor() -> Path:
     path = DEFAULT_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor"
+    return path
+
+
+def get_legacy_test_flavor() -> Path:
+    path = LEGACY_FLAVOR_FLAVORS_ROOT_DIRECTORY / "test-flavor"
     return path
 
 
