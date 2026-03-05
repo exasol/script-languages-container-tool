@@ -18,6 +18,10 @@ The new package file format from https://github.com/exasol/script-languages-pack
  - #197: Moved generate_package_diffs_for_flavors from script-languages to here
  - #346: Updated pydantic models to support ARM runners
 
+## Documentation
+
+ - Updated user-guide
+
 ## Dependency Updates
 
 ### `main`
