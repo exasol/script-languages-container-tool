@@ -169,10 +169,12 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
     def _find_build_step_in_packages_file(
         self, packages_file: Path
     ) -> BuildStep | None:
-        pkg_file_session = PackageFileSession(packages_file)
-        return pkg_file_session.package_file_config.find_build_step(
-            self.build_step, raise_if_not_found=False
-        )
+        if packages_file.is_file():
+            pkg_file_session = PackageFileSession(packages_file)
+            return pkg_file_session.package_file_config.find_build_step(
+                self.build_step, raise_if_not_found=False
+            )
+        return None
 
     def _build_package_file_for_current_build_step(self) -> PackageFile | None:
         flavor_path = str(self.flavor_path)
