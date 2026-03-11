@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import yaml
 from exasol.exaslpm.model.package_file_config import (
     CURRENT_VERSION as CURRENT_PACKAGE_VERSION,
 )
@@ -7,7 +8,6 @@ from exasol.exaslpm.model.package_file_config import (
     BuildStep,
     PackageFile,
 )
-from exasol.exaslpm.model.serialization import to_yaml_str
 from exasol.exaslpm.pkg_mgmt.package_file_session import PackageFileSession
 from exasol_integration_test_docker_environment.lib.base.flavor_task import (
     FlavorBaseTask,
@@ -27,7 +27,20 @@ from exasol.slc.models.language_definition_model import (
     LANGUAGE_DEFINITON_SCHEMA_VERSION,
     LanguageDefinitionsModel,
 )
-from exasol.slc.models.package_file_location import PackageFileLocation
+from exasol.slc.models.package_file_location import (
+    PACKAGE_FILE_NAME,
+    PackageFileLocation,
+)
+
+
+def package_model_to_yaml_str(model: PackageFile) -> str:
+    """
+    Converts the given PackageFile model to a YAML string.
+    The method might reorder the keys (sort_keys=True) in order to provide a reproducible result.
+    Note: Uses (mode="JSON") for correct serialization of `Path` objects.
+    """
+    d = model.model_dump(mode="json", exclude_none=True)
+    return yaml.dump(d, sort_keys=True)
 
 
 class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
@@ -91,7 +104,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         Returns the package file name of the automatically generated packages file, which will be created in the docker image.
         Sub classes can override this value to customize the package file name.
         """
-        return f"{self.build_step}_packages.yaml"
+        return f"{self.build_step}_{PACKAGE_FILE_NAME}"
 
     def get_additional_resources(self) -> dict[str, str]:
         """
@@ -104,7 +117,9 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         build_step_package_file = self._build_package_file_for_current_build_step()
         ret_val = {}
         if build_step_package_file:
-            ret_val[package_file_name] = to_yaml_str(build_step_package_file)
+            ret_val[package_file_name] = package_model_to_yaml_str(
+                build_step_package_file
+            )
         return ret_val
 
     def get_source_repository_name(self) -> str:

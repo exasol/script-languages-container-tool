@@ -1,6 +1,6 @@
 from pathlib import Path
 
-_PACKAGE_FILE_NAME = "packages.yml"
+PACKAGE_FILE_NAME = "packages.yml"
 
 
 class PackageFileLocation:
@@ -9,8 +9,8 @@ class PackageFileLocation:
 
     @property
     def public_package_file(self) -> Path:
-        return self.flavor_path / _PACKAGE_FILE_NAME
+        return self.flavor_path / PACKAGE_FILE_NAME
 
     @property
     def internal_package_file(self) -> Path:
-        return self.flavor_path / "flavor_base" / _PACKAGE_FILE_NAME
+        return self.flavor_path / "flavor_base" / PACKAGE_FILE_NAME
