@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import yaml
 from exasol.exaslpm.model.package_file_config import (
     CURRENT_VERSION as CURRENT_PACKAGE_VERSION,
 )
@@ -32,6 +33,7 @@ from exasol.slc.models.package_file_location import PackageFileLocation
 def package_model_to_yaml_str(model: PackageFile) -> str:
     """
     Converts the given PackageFile model to a YAML string.
+    The method might reorder the keys (sort_keys=True) in order to provide a reproducible result.
     Note: Uses (mode="JSON") for correct serialization of `Path` objects.
     """
     d = model.model_dump(mode="json", exclude_none=True)
