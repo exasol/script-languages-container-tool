@@ -27,7 +27,10 @@ from exasol.slc.models.language_definition_model import (
     LANGUAGE_DEFINITON_SCHEMA_VERSION,
     LanguageDefinitionsModel,
 )
-from exasol.slc.models.package_file_location import PackageFileLocation
+from exasol.slc.models.package_file_location import (
+    PACKAGE_FILE_NAME,
+    PackageFileLocation,
+)
 
 
 def package_model_to_yaml_str(model: PackageFile) -> str:
@@ -101,7 +104,7 @@ class DockerFlavorAnalyzeImageTask(DockerAnalyzeImageTask, FlavorBaseTask):
         Returns the package file name of the automatically generated packages file, which will be created in the docker image.
         Sub classes can override this value to customize the package file name.
         """
-        return f"{self.build_step}_packages.yml"
+        return f"{self.build_step}_{PACKAGE_FILE_NAME}"
 
     def get_additional_resources(self) -> dict[str, str]:
         """
