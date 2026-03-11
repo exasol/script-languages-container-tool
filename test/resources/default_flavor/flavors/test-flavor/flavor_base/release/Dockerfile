@@ -23,5 +23,5 @@ RUN true # workaround for https://github.com/moby/moby/issues/37965
 COPY language_definitions.json /build_info/language_definitions.json
 RUN true # workaround for https://github.com/moby/moby/issues/37965
 
-COPY /release_packages.yaml /build_info/release_packages.yaml
+COPY /release_packages.yml /build_info/release_packages.yml
 RUN true # workaround for https://github.com/moby/moby/issues/37965

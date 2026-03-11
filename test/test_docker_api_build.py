@@ -37,7 +37,7 @@ class ApiDockerBuildTest(unittest.TestCase):
         with ContextDockerClient() as docker_client:
             output_bytes = docker_client.containers.run(
                 image,
-                command=f"cat /build_info/{goal}_packages.yaml",
+                command=f"cat /build_info/{goal}_packages.yml",
                 remove=True,  # Automatically removes the container when it exits
             )
             # Decode the output from bytes to a string
