@@ -96,7 +96,9 @@ class ComparePackageListsCase:
 )
 def test_compare_package_lists_status_matrix(case: ComparePackageListsCase):
     """Validate each status combination in isolation via parametrized cases."""
-    diff = compare_package_lists(case.package_list_1, "pkg_file_a", case.package_list_2, "pkg_file_b")
+    diff = compare_package_lists(
+        case.package_list_1, "pkg_file_a", case.package_list_2, "pkg_file_b"
+    )
     assert len(diff) == 1
     assert diff.iloc[0]["Status"] == case.expected_status
 
