@@ -27,10 +27,13 @@ class PackageDiffEntry(BaseModel):
         }
 
 
-def check_for_duplicated_packages(df: pd.DataFrame):
+def check_for_duplicated_packages(df: pd.DataFrame, package_file_desc: str):
     duplicates = df.duplicated(subset=["Package"])
     if any(duplicates):
-        raise ValueError(f"Found duplicated packages, see package list {df}")
+        print(
+            f"Found duplicated packages, see package list {df[duplicates]} in file '{package_file_desc}'"
+        )
+    return df.drop_duplicates(subset=["Package"])
 
 
 class Status(Enum):
@@ -41,7 +44,10 @@ class Status(Enum):
 
 
 def compare_package_lists(
-    package_list_1: list[PackageDiffEntry], package_list_2: list[PackageDiffEntry]
+    package_list_1: list[PackageDiffEntry],
+    package_file_desc_1: str,
+    package_list_2: list[PackageDiffEntry],
+    package_file_desc_2: str,
 ) -> pd.DataFrame:
     package_list_1_dict = [
         pkg_diff.to_dict("Version1", "Build-Step-1") for pkg_diff in package_list_1
@@ -49,7 +55,7 @@ def compare_package_lists(
     package_list_1_df = pd.DataFrame(
         package_list_1_dict, columns=["Package", "Version1", "Build-Step-1"]
     )
-    check_for_duplicated_packages(package_list_1_df)
+    check_for_duplicated_packages(package_list_1_df, package_file_desc_1)
     package_list_2_dict = [
         pkg_diff.to_dict("Version2", "Build-Step-2") for pkg_diff in package_list_2
     ]
@@ -57,7 +63,7 @@ def compare_package_lists(
         package_list_2_dict, columns=["Package", "Version2", "Build-Step-2"]
     )
 
-    check_for_duplicated_packages(package_list_2_df)
+    check_for_duplicated_packages(package_list_2_df, package_file_desc_2)
     diff_df = pd.merge(
         package_list_1_df,
         package_list_2_df,
@@ -151,9 +157,11 @@ def compare_package_file(
     package_file_1: Path,
     working_copy_1_root: Path,
     working_copy_1_name: str,
+    package_file_desc_1: str,
     package_file_2: Path,
     working_copy_2_root: Path,
     working_copy_2_name: str,
+    package_file_desc_2: str,
 ) -> dict[str, pd.DataFrame]:
     package_file_config_1 = _load_package_file_config(
         working_copy_1_root, package_file_1
@@ -184,8 +192,10 @@ def compare_package_file(
     for installer in Installer:
 
         diff_df = compare_package_lists(
-            build_step_packages_1[installer.value],
             build_step_packages_2[installer.value],
+            package_file_desc_2,
+            build_step_packages_1[installer.value],
+            package_file_desc_1,
         )
         new_version_1_name = f"Version in {working_copy_2_name}"
         new_version_2_name = f"Version in {working_copy_1_name}"
@@ -226,23 +236,31 @@ def compare_flavor(
     public_package_file_2 = package_file_location_2.public_package_file
     internal_package_file_1 = package_file_location_1.internal_package_file
     internal_package_file_2 = package_file_location_2.internal_package_file
+    public_package_file_desc_1 = f"Public package file in {working_copy_1_name}"
+    public_package_file_desc_2 = f"Public package file in {working_copy_2_name}"
+    internal_package_file_desc_1 = f"Internal package file in {working_copy_1_name}"
+    internal_package_file_desc_2 = f"Internal package file in {working_copy_2_name}"
 
     return {
         "public_packages": compare_package_file(
             public_package_file_1,
             working_copy_1_root,
             working_copy_1_name,
+            public_package_file_desc_1,
             public_package_file_2,
             working_copy_2_root,
             working_copy_2_name,
+            public_package_file_desc_2,
         ),
         "internal_packages": compare_package_file(
             internal_package_file_1,
             working_copy_1_root,
             working_copy_1_name,
+            internal_package_file_desc_1,
             internal_package_file_2,
             working_copy_2_root,
             working_copy_2_name,
+            internal_package_file_desc_2,
         ),
     }
 
@@ -363,9 +381,13 @@ def generate_dependency_diff_report_for_package_file(
             ].apply(format_build_step, axis=1)
             formatted_diff["Status"] = formatted_diff["Status"].map(status_format)
 
-            formatted_diff.sort_values(["Status", "Package"], inplace=True)
-
             formatted_diff.drop(["Build-Step-1", "Build-Step-2"], axis=1, inplace=True)
+            formatted_diff.sort_values(
+                ["Status", "Build-Step", "Package"],
+                inplace=True,
+                ascending=[False, True, True],
+            )
+            formatted_diff = formatted_diff.reset_index(drop=True)
 
             content.append("")  # Additional line break
             content.append(f"## {installer.value} packages\n")
