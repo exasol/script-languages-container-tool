@@ -33,6 +33,24 @@ from exasol.slc.models.package_file_location import (
 )
 
 
+def sort_all_channels(obj):
+    """
+    Workaround until https://github.com/exasol/script-languages-package-management/issues/109 gets fixed.
+    Channels are in undefined order, so this function recursively traverses the dictionary and sorts all occurrences
+    of "channels".
+    """
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k == "channels" and isinstance(v, list):
+                v.sort()
+            else:
+                sort_all_channels(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            sort_all_channels(item)
+    return obj
+
+
 def package_model_to_yaml_str(model: PackageFile) -> str:
     """
     Converts the given PackageFile model to a YAML string.
@@ -40,6 +58,7 @@ def package_model_to_yaml_str(model: PackageFile) -> str:
     Note: Uses (mode="JSON") for correct serialization of `Path` objects.
     """
     d = model.model_dump(mode="json", exclude_none=True)
+    sort_all_channels(d)
     return yaml.dump(d, sort_keys=True)
 
 
