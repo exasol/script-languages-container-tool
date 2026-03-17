@@ -96,7 +96,9 @@ class ComparePackageListsCase:
 )
 def test_compare_package_lists_status_matrix(case: ComparePackageListsCase):
     """Validate each status combination in isolation via parametrized cases."""
-    diff = compare_package_lists(case.package_list_1, case.package_list_2)
+    diff = compare_package_lists(
+        case.package_list_1, "pkg_file_a", case.package_list_2, "pkg_file_b"
+    )
     assert len(diff) == 1
     assert diff.iloc[0]["Status"] == case.expected_status
 
@@ -130,34 +132,34 @@ def _packages_for_step(
     package_versions = {
         "step_common": {
             1: [
-                Package(name="removed", version="1.0.0"),
-                Package(name="updated", version="1.0.0"),
+                Package(name="new", version="1.0.0"),
+                Package(name="updated", version="2.0.0"),
                 Package(name="unchanged", version="1.0.0"),
             ],
             2: [
-                Package(name="new", version="1.0.0"),
-                Package(name="updated", version="2.0.0"),
+                Package(name="removed", version="1.0.0"),
+                Package(name="updated", version="1.0.0"),
                 Package(name="unchanged", version="1.0.0"),
             ],
         },
         "step_a": {
             1: [
                 Package(name="moved", version="1.0.0"),
-                Package(name="updated_and_moved", version="1.0.0"),
+                Package(name="updated_and_moved", version="2.0.0"),
             ],
             2: [
                 Package(name="moved", version="1.0.0"),
-                Package(name="updated_and_moved", version="2.0.0"),
+                Package(name="updated_and_moved", version="1.0.0"),
             ],
         },
         "step_b": {
             1: [
                 Package(name="moved", version="1.0.0"),
-                Package(name="updated_and_moved", version="1.0.0"),
+                Package(name="updated_and_moved", version="2.0.0"),
             ],
             2: [
                 Package(name="moved", version="1.0.0"),
-                Package(name="updated_and_moved", version="2.0.0"),
+                Package(name="updated_and_moved", version="1.0.0"),
             ],
         },
     }
@@ -244,7 +246,7 @@ def test_compare_flavor_all_status_combinations_for_all_installers(tmp_path: Pat
     )
 
     result = compare_flavor(
-        flavor_rel_path, root_1, "wc_1", flavor_rel_path, root_2, "wc_2"
+        flavor_rel_path, root_1, "wc_current", flavor_rel_path, root_2, "wc_old"
     )
 
     for package_scope in ("public_packages", "internal_packages"):
@@ -269,15 +271,15 @@ def test_generate_dependency_diff_report_for_package_file_without_diffs(tmp_path
         package_output_file=output_file,
         package_scope_caption="Public packages",
         flavor_name_1="flavor_a",
-        working_copy_1_name="wc_1",
+        working_copy_1_name="wc_current",
         flavor_name_2="flavor_b",
-        working_copy_2_name="wc_2",
+        working_copy_2_name="wc_old",
         diffs={},
     )
 
     content = output_file.read_text(encoding="utf-8")
     assert (
-        '# Public packages comparison between flavor "Flavor A" in wc_1 and flavor "Flavor B" in wc_2'
+        '# Public packages comparison between flavor "Flavor A" in wc_current and flavor "Flavor B" in wc_old'
         in content
     )
     assert "No packages found." in content
@@ -384,13 +386,13 @@ REPORT_CASES = [
 
 |    | Package               | Version in old   | Version in new   | Status          | Build-Step         |
 |---:|:----------------------|:-----------------|:-----------------|:----------------|:-------------------|
-|  5 | pkg_unchanged         | 1.0.0            | 1.0.0            |                 | build_2            |
-|  3 | pkg_moved             | 1.0.0            | 1.0.0            | MOVED           | build_a -> build_b |
-|  0 | pkg_new               |                  | 1.0.0            | NEW             | build_new          |
-|  1 | pkg_removed           | 1.0.0            |                  | REMOVED         | build_old          |
+|  0 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
+|  1 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
 |  2 | pkg_updated           | 1.0.0            | 2.0.0            | UPDATED         | build_a            |
-|  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
-|  4 | pkg_updated_and_moved | 1.0.0            | 2.0.0            | UPDATED & MOVED | build_c -> build_d |
+|  3 | pkg_removed           | 1.0.0            |                  | REMOVED         | build_old          |
+|  4 | pkg_new               |                  | 1.0.0            | NEW             | build_new          |
+|  5 | pkg_moved             | 1.0.0            | 1.0.0            | MOVED           | build_a -> build_b |
+|  6 | pkg_unchanged         | 1.0.0            | 1.0.0            |                 | build_2            |
 
 ## Pip packages
 
@@ -451,15 +453,15 @@ REPORT_CASES = [
 
 |    | Package   | Version in old   | Version in new   | Status   | Build-Step   |
 |---:|:----------|:-----------------|:-----------------|:---------|:-------------|
-|  0 | r_keep    | 1.0.0            | 1.0.0            |          | r_step       |
-|  1 | r_drop    | 2.0.0            |                  | REMOVED  | r_step       |
+|  0 | r_drop    | 2.0.0            |                  | REMOVED  | r_step       |
+|  1 | r_keep    | 1.0.0            | 1.0.0            |          | r_step       |
 
 ## Conda packages
 
 |    | Package    | Version in old   | Version in new   | Status   | Build-Step   |
 |---:|:-----------|:-----------------|:-----------------|:---------|:-------------|
-|  1 | conda_move | 1.2.3            | 1.2.3            | MOVED    | a -> b       |
-|  0 | conda_add  |                  | 9.9.9            | NEW      | conda_step   |""",
+|  0 | conda_add  |                  | 9.9.9            | NEW      | conda_step   |
+|  1 | conda_move | 1.2.3            | 1.2.3            | MOVED    | a -> b       |""",
     ),
 ]
 
