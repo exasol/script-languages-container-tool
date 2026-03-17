@@ -36,7 +36,7 @@ from exasol.slc.models.package_file_location import (
 def sort_all_channels(obj):
     """
     Workaround until https://github.com/exasol/script-languages-package-management/issues/109 gets fixed.
-    Channels are in undefined order, so this function recursively travers the dictionary and sorts all occurrences
+    Channels are in undefined order, so this function recursively traverses the dictionary and sorts all occurrences
     of "channels".
     """
     if isinstance(obj, dict):

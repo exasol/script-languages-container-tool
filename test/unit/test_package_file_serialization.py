@@ -180,6 +180,6 @@ def make_package_file() -> PackageFile:
 
 def test_package_file_serialization():
     package_file_yaml_str = package_model_to_yaml_str(make_package_file())
-    for i in range(100):
+    for _ in range(100):
         new_package_file_yaml_str = package_model_to_yaml_str(make_package_file())
         assert new_package_file_yaml_str == package_file_yaml_str
