@@ -130,7 +130,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
     ) -> tuple[str, str, str]:
         release_image_name = image_info_of_release_image.get_target_complete_name()
         export_path = Path(export_directory_future.get_output()).absolute()
-        release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.hash}"""
+        release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.platform}-{image_info_of_release_image.hash}"""
         cache_file = Path(
             export_path, release_complete_name + self._get_export_file_extension()
         ).absolute()
