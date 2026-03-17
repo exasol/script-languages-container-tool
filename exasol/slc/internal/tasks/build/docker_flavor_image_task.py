@@ -32,6 +32,7 @@ from exasol.slc.models.package_file_location import (
     PackageFileLocation,
 )
 
+
 def sort_all_channels(obj):
     """
     Workaround until https://github.com/exasol/script-languages-package-management/issues/109 gets fixed.
@@ -48,6 +49,7 @@ def sort_all_channels(obj):
         for item in obj:
             sort_all_channels(item)
     return obj
+
 
 def package_model_to_yaml_str(model: PackageFile) -> str:
     """
