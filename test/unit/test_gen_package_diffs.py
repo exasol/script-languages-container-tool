@@ -103,6 +103,28 @@ def test_compare_package_lists_status_matrix(case: ComparePackageListsCase):
     assert diff.iloc[0]["Status"] == case.expected_status
 
 
+def test_compare_package_lists_ignores_duplicate_packages_across_build_steps(capsys):
+    """Duplicate package entries in one list should be deduplicated before merge."""
+    diff = compare_package_lists(
+        package_list_1=[
+            _package_diff_entry("pkg_duplicate", "1.0.0", "step_a"),
+            _package_diff_entry("pkg_duplicate", "1.0.0", "step_b"),
+        ],
+        package_file_desc_1="pkg_file_with_duplicates",
+        package_list_2=[_package_diff_entry("pkg_duplicate", "1.0.0", "step_a")],
+        package_file_desc_2="pkg_file_without_duplicates",
+    )
+    captured = capsys.readouterr()
+
+    assert len(diff) == 1
+    assert diff.iloc[0]["Package"] == "pkg_duplicate"
+    assert diff.iloc[0]["Status"] == set()
+    assert diff.iloc[0]["Build-Step-1"] == "step_a"
+    assert diff.iloc[0]["Build-Step-2"] == "step_a"
+    assert "Found duplicated packages, see package list" in captured.out
+    assert "pkg_file_with_duplicates" in captured.out
+
+
 def _status_map(diff_df: pd.DataFrame) -> dict[str, set[Status]]:
     """Map package name to status set for concise assertions."""
     return {
