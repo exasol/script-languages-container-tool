@@ -55,7 +55,9 @@ def compare_package_lists(
     package_list_1_df = pd.DataFrame(
         package_list_1_dict, columns=["Package", "Version1", "Build-Step-1"]
     )
-    package_list_1_df = check_for_duplicated_packages(package_list_1_df, package_file_desc_1)
+    package_list_1_df = check_for_duplicated_packages(
+        package_list_1_df, package_file_desc_1
+    )
     package_list_2_dict = [
         pkg_diff.to_dict("Version2", "Build-Step-2") for pkg_diff in package_list_2
     ]
@@ -63,7 +65,9 @@ def compare_package_lists(
         package_list_2_dict, columns=["Package", "Version2", "Build-Step-2"]
     )
 
-    package_list_2_df = check_for_duplicated_packages(package_list_2_df, package_file_desc_2)
+    package_list_2_df = check_for_duplicated_packages(
+        package_list_2_df, package_file_desc_2
+    )
     diff_df = pd.merge(
         package_list_1_df,
         package_list_2_df,
