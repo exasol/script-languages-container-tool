@@ -197,8 +197,7 @@ def deploy(
 
         for flavor_name, lang_def_builds_per_release in result.items():
             for release, deploy_result in lang_def_builds_per_release.items():
-                print(
-                    f"""
+                print(f"""
                 Uploaded release='{release}' located at {deploy_result.release_path} to {deploy_result.human_readable_upload_location}
 
                 In SQL, you can activate the languages supported by the {flavor_name}
@@ -213,5 +212,4 @@ def deploy(
                 To activate the flavor on the system:
 
                 {deploy_result.language_definition_builder.generate_alter_system()}
-                """
-                )
+                """)
