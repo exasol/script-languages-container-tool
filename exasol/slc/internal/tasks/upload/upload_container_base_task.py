@@ -67,8 +67,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             release_path = Path(export_info.cache_file).relative_to(Path("").absolute())
         except ValueError:
             release_path = Path(export_info.cache_file)
-        command_line_output_str = textwrap.dedent(
-            f"""
+        command_line_output_str = textwrap.dedent(f"""
             Uploaded {release_path} to {self._complete_url(export_info)}
 
             In SQL, you can activate the languages supported by the {flavor_name}
@@ -83,8 +82,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             To activate the flavor on the system:
 
             {language_definition.generate_alter_system()}
-            """
-        )
+            """)
         return command_line_output_str
 
     def build_file_path_in_bucket(self, release_info: ExportInfo) -> bfs.path.PathLike:

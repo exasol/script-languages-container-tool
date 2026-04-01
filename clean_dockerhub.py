@@ -243,13 +243,11 @@ async def delete_tags(
             await asyncio.gather(*tasks, return_exceptions=True)
 
         print(
-            cleandoc(
-                f"""
+            cleandoc(f"""
                 Deletion run completed.
                 Status counters:
                 {status_counter_map}
-                Retry: {needs_retry}"""
-            ),
+                Retry: {needs_retry}"""),
         )
     return needs_retry
 

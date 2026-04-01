@@ -22,9 +22,7 @@ class DockerDBEnvironmentTest(udf.TestCase):
             )
             self.query(udf.fixindent("CREATE SCHEMA %s" % schema))
             self.query(udf.fixindent("OPEN SCHEMA %s" % schema))
-            self.query(
-                udf.fixindent(
-                    """
+            self.query(udf.fixindent("""
                 CREATE OR REPLACE PYTHON3 SCALAR SCRIPT connect_container(host varchar(1000), port int)  returns int AS
                 import socket
                 def run(ctx):
@@ -32,9 +30,7 @@ class DockerDBEnvironmentTest(udf.TestCase):
                     s.connect((ctx.host, ctx.port))
                     return 0
                 /
-                """
-                )
-            )
+                """))
             container = env.run(
                 name="netcat",
                 image="busybox:1",

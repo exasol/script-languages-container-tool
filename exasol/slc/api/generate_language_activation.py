@@ -31,8 +31,7 @@ def generate_language_activation(
         path_in_bucket=path_in_bucket,
     )
 
-    command_line_output_str = textwrap.dedent(
-        f"""
+    command_line_output_str = textwrap.dedent(f"""
 
             In SQL, you can activate the languages supported by the {Path(flavor_path).name}
             flavor by using the following statements:
@@ -46,8 +45,7 @@ def generate_language_activation(
             To activate the flavor on the system:
 
             {language_definition.generate_alter_system()}
-            """
-    )
+            """)
     return (
         language_definition.generate_alter_session(),
         language_definition.generate_alter_system(),
