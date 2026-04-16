@@ -1,22 +1,26 @@
-import importlib
+import importlib.util
 import inspect
 import sys
 from pathlib import Path
+from types import ModuleType
 
 from exasol.slc.internal.tasks.build.docker_flavor_image_task import (
     DockerFlavorAnalyzeImageTask,
 )
 
 
-def _load_build_steps_module(build_steps_path: Path):
+def _load_build_steps_module(build_steps_path: Path) -> ModuleType:
     spec = importlib.util.spec_from_file_location("build_steps", build_steps_path)
+    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     sys.modules["build_steps"] = module
     spec.loader.exec_module(module)
     return module
 
 
-def _collect_build_step_classes(module) -> list[type]:
+def _collect_build_step_classes(
+    module: ModuleType,
+) -> list[type[DockerFlavorAnalyzeImageTask]]:
     return [
         obj
         for obj in vars(module).values()
@@ -27,16 +31,16 @@ def _collect_build_step_classes(module) -> list[type]:
 
 
 def _build_dependency_edges(
-    build_step_classes: list[type],
+    build_step_classes: list[type[DockerFlavorAnalyzeImageTask]],
 ) -> tuple[list[str], list[tuple[str, str]]]:
     nodes: list[str] = []
     edges: list[tuple[str, str]] = []
     for cls in build_step_classes:
-        step_name = cls.get_build_step(cls)
+        step_name = cls.get_build_step(cls)  # type: ignore[arg-type]
         nodes.append(step_name)
     for cls in build_step_classes:
-        step_name = cls.get_build_step(cls)
-        requires = cls.requires_tasks(cls)
+        step_name = cls.get_build_step(cls)  # type: ignore[arg-type]
+        requires = cls.requires_tasks(cls)  # type: ignore[arg-type]
         if requires:
             for dep_name in requires:
                 edges.append((dep_name, step_name))
@@ -55,9 +59,7 @@ def generate_dot(flavor_path: str, output_path: str | None = None) -> str:
     flavor_dir = Path(flavor_path)
     build_steps_path = flavor_dir / "flavor_base" / "build_steps.py"
     if not build_steps_path.exists():
-        raise FileNotFoundError(
-            f"build_steps.py not found at {build_steps_path}"
-        )
+        raise FileNotFoundError(f"build_steps.py not found at {build_steps_path}")
 
     module = _load_build_steps_module(build_steps_path)
     build_step_classes = _collect_build_step_classes(module)
