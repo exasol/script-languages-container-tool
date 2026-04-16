@@ -67,7 +67,7 @@ def generate_dot(flavor_path: str, output_path: str | None = None) -> str:
 
     lines = ["strict digraph {"]
     for node in nodes:
-        lines.append(f'"{node}" [label="{node}"];')
+        lines.append(f'"{node}" [label="{node}", shape=box];')
     for source, target in edges:
         lines.append(f'"{source}" -> "{target}";')
     lines.append("}")

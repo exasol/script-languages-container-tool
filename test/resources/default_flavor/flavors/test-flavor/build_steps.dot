@@ -1,0 +1,13 @@
+strict digraph {
+"build_run" [label="build_run", shape=box];
+"base_test_build_run" [label="base_test_build_run", shape=box];
+"flavor_customization" [label="flavor_customization", shape=box];
+"flavor_test_build_run" [label="flavor_test_build_run", shape=box];
+"release" [label="release", shape=box];
+"security_scan" [label="security_scan", shape=box];
+"build_run" -> "flavor_customization";
+"flavor_customization" -> "flavor_test_build_run";
+"base_test_build_run" -> "flavor_test_build_run";
+"flavor_customization" -> "release";
+"release" -> "security_scan";
+}
