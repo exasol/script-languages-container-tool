@@ -49,6 +49,7 @@ def generate_dot(flavor_path: str, output_path: str | None = None) -> str:
 
     :param flavor_path: Path to the flavor directory.
     :param output_path: Optional path where to write the .dot file.
+        Defaults to <flavor_path>/build_steps.dot.
     :return: The .dot file content as a string.
     """
     flavor_dir = Path(flavor_path)
@@ -70,9 +71,10 @@ def generate_dot(flavor_path: str, output_path: str | None = None) -> str:
     lines.append("}")
     dot_content = "\n".join(lines) + "\n"
 
-    if output_path is not None:
-        output_file = Path(output_path)
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-        output_file.write_text(dot_content, encoding="utf-8")
+    if output_path is None:
+        output_path = str(flavor_dir / "build_steps.dot")
+    output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(dot_content, encoding="utf-8")
 
     return dot_content

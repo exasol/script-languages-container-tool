@@ -16,7 +16,7 @@ from exasol.slc.tool.options.flavor_options import single_flavor_options
     "--output-path",
     required=False,
     default=None,
-    help="Path where to write the .dot file. If not specified, prints to stdout.",
+    help="Path where to write the .dot file. Defaults to <flavor-path>/build_steps.dot.",
     type=click.Path(exists=False),
 )
 def generate_build_steps_dot_graph(
@@ -26,9 +26,7 @@ def generate_build_steps_dot_graph(
     """
     Generate a .dot file visualizing the build step dependencies of a flavor.
     """
-    result = api.generate_build_steps_dot_graph(
+    api.generate_build_steps_dot_graph(
         flavor_path=flavor_path,
         output_path=output_path,
     )
-    if output_path is None:
-        print(result)
