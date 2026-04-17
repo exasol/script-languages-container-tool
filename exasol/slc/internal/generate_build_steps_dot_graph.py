@@ -11,7 +11,8 @@ from exasol.slc.internal.tasks.build.docker_flavor_image_task import (
 
 def _load_build_steps_module(build_steps_path: Path) -> ModuleType:
     spec = importlib.util.spec_from_file_location("build_steps", build_steps_path)
-    assert spec is not None and spec.loader is not None
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load build_steps module")
     module = importlib.util.module_from_spec(spec)
     sys.modules["build_steps"] = module
     spec.loader.exec_module(module)
