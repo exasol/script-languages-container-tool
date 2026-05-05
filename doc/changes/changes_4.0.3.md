@@ -11,3 +11,7 @@ Furthermore, it fixes a bug related to the generation of the build-step package 
  - #360: Fixed bugs in package diff generation
  - #363: Sorted channels field in build step package file
  - #365: Added platform name to exported tar gz file
+
+## Security
+
+ - #373: Fixing vulnerabilities
