@@ -82,7 +82,6 @@ jobs:
         with:
           name: lint-python${{ matrix.python-versions }}
           path: |
-            .lint.txt
             .lint.json
           include-hidden-files: true
 
