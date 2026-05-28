@@ -10,7 +10,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_add_missing_builtin_true(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -18,15 +18,15 @@ class LanguageDefintionTest(unittest.TestCase):
             add_missing_builtin=True,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3"
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/build_name/exaudf/exaudfclient_py3"
             " JAVA=builtin_java PYTHON3=builtin_python3 R=builtin_r",
             language_definition.generate_definition(),
         )
 
     def test_add_missing_builtin_false(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -34,56 +34,56 @@ class LanguageDefintionTest(unittest.TestCase):
             add_missing_builtin=False,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/build_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
     def test_path_in_bucket_none(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
             path_in_bucket=None,
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/build_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
     def test_path_in_bucket_empty_string(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
             path_in_bucket="",
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/build_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
     def test_path_in_bucket_not_none(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
             path_in_bucket="path_in_bucket",
         )
         self.assertEqual(
-            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3",
+            "PYTHON3_TEST=localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/build_name/exaudf/exaudfclient_py3",
             language_definition.generate_definition(),
         )
 
     def test_alter_system(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -91,14 +91,14 @@ class LanguageDefintionTest(unittest.TestCase):
         )
         self.assertEqual(
             "ALTER SYSTEM SET SCRIPT_LANGUAGES='PYTHON3_TEST="
-            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
+            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/build_name/exaudf/exaudfclient_py3';",
             language_definition.generate_alter_system(),
         )
 
     def test_alter_session(self):
         language_definition = LanguageDefinition(
-            release_name="release_name",
+            build_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -106,8 +106,8 @@ class LanguageDefintionTest(unittest.TestCase):
         )
         self.assertEqual(
             "ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST="
-            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/release_name?lang="
-            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/release_name/exaudf/exaudfclient_py3';",
+            "localzmq+protobuf:///bucketfs_name/bucket_name/path_in_bucket/build_name?lang="
+            "python#buckets/bucketfs_name/bucket_name/path_in_bucket/build_name/exaudf/exaudfclient_py3';",
             language_definition.generate_alter_session(),
         )
 

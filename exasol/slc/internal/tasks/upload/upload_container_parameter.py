@@ -16,7 +16,7 @@ class UploadContainerParameter(ExportContainerOptionsParameter):
     bucket_name: str | None = luigi.OptionalParameter(None)  # type: ignore
     path_in_bucket: str | None = luigi.OptionalParameter(None)  # type: ignore
     bucketfs_https: bool = luigi.BoolParameter(False)  # type: ignore
-    release_name: str | None = luigi.OptionalParameter(None)  # type: ignore
+    build_name: str | None = luigi.OptionalParameter(None)  # type: ignore
     ssl_cert_path: str | None = luigi.OptionalParameter(None)  # type: ignore
     use_ssl_cert_validation: bool = luigi.BoolParameter(True)  # type: ignore
     saas_host: str | None = luigi.OptionalParameter(None)  # type: ignore

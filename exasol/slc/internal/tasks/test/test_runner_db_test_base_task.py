@@ -215,7 +215,7 @@ class TestRunnerDBTestBaseTask(
         database_credentials = self.get_database_credentials()
         # "myudfs/containers/" + self.export_info.name + ".tar.gz"
         language_definition = LanguageDefinition(
-            release_name=uploaded_container_name,
+            build_name=uploaded_container_name,
             flavor_path=self.flavor_path,  # type: ignore
             bucket_name="myudfs",
             bucketfs_name="bfsdefault",

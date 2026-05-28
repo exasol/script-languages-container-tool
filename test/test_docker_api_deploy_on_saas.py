@@ -20,13 +20,13 @@ def require_saas_bucketfs_params(backend_aware_saas_bucketfs_params, use_saas):
     return backend_aware_saas_bucketfs_params
 
 
-def _expected_file(release_name: str, extension: str = "") -> str:
-    return f"test-flavor-release-{release_name}{extension}"
+def _expected_file(build_name: str, extension: str = "") -> str:
+    return f"test-flavor-release-{build_name}{extension}"
 
 
 def _build_bfs_path(
     require_saas_bucketfs_params,
-    release_name: str,
+    build_name: str,
     expected_extension: str,
     path: str | None = None,
 ) -> bfs.path.PathLike:
@@ -50,7 +50,7 @@ def _build_bfs_path(
         )
 
     return build_path / _expected_file(
-        release_name=release_name, extension=expected_extension
+        build_name=build_name, extension=expected_extension
     )
 
 
@@ -58,14 +58,14 @@ def _run_deploy(
     require_saas_bucketfs_params,
     compression_strategy: CompressionStrategy,
     flavor_path: Path,
-    release_name: str,
+    build_name: str,
     path_in_bucket: str | None,
 ) -> dict[str, dict[str, DeployResult]]:
     saas_params = require_saas_bucketfs_params
     deploy_func = partial(
         api.deploy,
         flavor_path=(str(flavor_path),),
-        release_name=release_name,
+        build_name=build_name,
         compression_strategy=compression_strategy,
         saas_host=saas_params["url"],
         saas_account_id=saas_params["account_id"],
@@ -80,12 +80,12 @@ def _run_deploy(
 def _validate_alter_session_cmd(
     deploy_result: DeployResult,
     flavor_path: Path,
-    release_name: str,
+    build_name: str,
     path_in_bucket: str | None = None,
 ) -> None:
     expected_alter_session_cmd = (
-        f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///uploads/default/{path_in_bucket or ''}{flavor_path.name}-release-{release_name}?lang=python#buckets/uploads/default/"
-        f"{path_in_bucket or ''}{flavor_path.name}-release-{release_name}/exaudf/exaudfclient_py3';"
+        f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///uploads/default/{path_in_bucket or ''}{flavor_path.name}-release-{build_name}?lang=python#buckets/uploads/default/"
+        f"{path_in_bucket or ''}{flavor_path.name}-release-{build_name}/exaudf/exaudfclient_py3';"
     )
     result_alter_session_cmd = (
         deploy_result.language_definition_builder.generate_alter_session()
@@ -132,13 +132,13 @@ def _validate_deploy(
     expected_extension: str,
     path_in_bucket: str | None = None,
 ):
-    release_name = "TEST"
+    build_name = "TEST"
     flavor_path = exaslct_utils.get_test_flavor()
     result = _run_deploy(
         require_saas_bucketfs_params,
         compression_strategy,
         flavor_path,
-        release_name,
+        build_name,
         path_in_bucket,
     )
 
@@ -153,13 +153,13 @@ def _validate_deploy(
     )
 
     expected_path_in_bucket = _build_bfs_path(
-        require_saas_bucketfs_params, release_name, expected_extension, path_in_bucket
+        require_saas_bucketfs_params, build_name, expected_extension, path_in_bucket
     )
     assert (
         expected_path_in_bucket.as_udf_path() == deploy_result.bucket_path.as_udf_path()
     )
     _validate_alter_session_cmd(
-        deploy_result, flavor_path, release_name, path_in_bucket
+        deploy_result, flavor_path, build_name, path_in_bucket
     )
     _validate_human_readable_location(expected_path_in_bucket, deploy_result)
 

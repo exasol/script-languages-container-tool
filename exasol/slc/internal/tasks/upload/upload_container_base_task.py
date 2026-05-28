@@ -48,7 +48,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         if not self.bucketfs_name or not self.bucket_name:
             raise ValueError("Parameter bucketfs_name or bucket_name must be not None.")
         language_definition = LanguageDefinition(
-            release_name=self._get_complete_release_name(export_info),
+            build_name=self._get_complete_build_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
             bucketfs_name=self.bucketfs_name,
             bucket_name=self.bucket_name,
@@ -88,7 +88,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
     def build_file_path_in_bucket(self, release_info: ExportInfo) -> bfs.path.PathLike:
         backend = bfs.path.StorageBackend.onprem
 
-        complete_release_name = self._get_complete_release_name(release_info)
+        complete_build_name = self._get_complete_build_name(release_info)
         verify = self.ssl_cert_path or self.use_ssl_cert_validation
         path_in_bucket_to_upload_path = bfs.path.build_path(
             backend=backend,
@@ -101,7 +101,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             path=self.path_in_bucket or "",
         )
         extension = detect_container_file_extension(release_info.cache_file)
-        return path_in_bucket_to_upload_path / f"{complete_release_name}{extension}"
+        return path_in_bucket_to_upload_path / f"{complete_build_name}{extension}"
 
     @property
     def _url(self) -> str:
@@ -112,7 +112,7 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
             f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
         )
         extension = detect_container_file_extension(export_info.cache_file)
-        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}{extension}"
+        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_build_name(export_info)}{extension}"
 
     def _upload_container(self, release_info: ExportInfo):
         bucket_path = self.build_file_path_in_bucket(release_info)
@@ -122,17 +122,17 @@ class UploadContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         with open(release_info.cache_file, "rb") as file:
             bucket_path.write(file)
 
-    def _get_complete_release_name(self, release_info: ExportInfo) -> str:
-        complete_release_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_release_name(
+    def _get_complete_build_name(self, release_info: ExportInfo) -> str:
+        complete_build_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_build_name(
             release_info)}"""
-        return complete_release_name
+        return complete_build_name
 
-    def _get_release_name(self, release_info: ExportInfo) -> str:
-        if self.release_name is None:
-            release_name = release_info.hash
+    def _get_build_name(self, release_info: ExportInfo) -> str:
+        if self.build_name is None:
+            build_name = release_info.hash
         else:
-            release_name = self.release_name
-        return release_name
+            build_name = self.build_name
+        return build_name
 
     def _get_url_prefix(self) -> str:
         if self.bucketfs_https:

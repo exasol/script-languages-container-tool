@@ -46,7 +46,7 @@ def deploy(
     ssl_cert_path: str | None = None,
     use_ssl_cert_validation: bool = True,
     release_goal: tuple[str, ...] = ("release",),
-    release_name: str | None = None,
+    build_name: str | None = None,
     force_rebuild: bool = False,
     force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
@@ -54,7 +54,6 @@ def deploy(
     temporary_base_directory: str = "/var/tmp",
     log_build_context_content: bool = False,
     cache_directory: str | None = None,
-    build_name: str | None = None,
     source_docker_repository_name: str = "exasol/script-language-container",
     source_docker_tag_prefix: str = "",
     source_docker_username: str | None = None,
@@ -115,7 +114,7 @@ def deploy(
             bucket_name=bucket,
             path_in_bucket=path_in_bucket,
             bucketfs_https=bucketfs_use_https,
-            release_name=release_name,
+            build_name=build_name,
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
@@ -137,7 +136,7 @@ def deploy(
 
     return {
         flavor: {
-            release: toDeployResult(
+            build_name_key: toDeployResult(
                 deploy_info=deploy_info,
                 bucketfs_use_https=bucketfs_use_https,
                 bucketfs_host=bucketfs_host,
@@ -155,7 +154,7 @@ def deploy(
                 saas_database_name=saas_database_name,
                 saas_url=saas_host,
             )
-            for release, deploy_info in deploy_info_per_release.items()
+            for build_name_key, deploy_info in deploy_info_per_release.items()
         }
         for flavor, deploy_info_per_release in deploy_infos.items()
     }

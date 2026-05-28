@@ -63,8 +63,8 @@ class ExportContainerToFileTask(
     ) -> Path | None:
         output_file = None
         if self.export_path is not None:
-            if self.release_name is not None:
-                suffix = f"""_{self.release_name}"""
+            if self.build_name is not None:
+                suffix = f"""_{self.build_name}"""
             else:
                 suffix = ""
             file_extension = detect_container_file_extension(cache_file.name)

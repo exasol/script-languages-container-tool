@@ -13,7 +13,7 @@ def generate_language_activation(
     flavor_path: str,
     bucketfs_name: str,
     bucket_name: str,
-    container_name: str,
+    build_name: str,
     path_in_bucket: str = "",
 ) -> tuple[str, str, str]:
     """
@@ -24,7 +24,7 @@ def generate_language_activation(
     """
 
     language_definition = LanguageDefinition(
-        release_name=container_name,
+        build_name=build_name,
         flavor_path=flavor_path,
         bucketfs_name=bucketfs_name,
         bucket_name=bucket_name,

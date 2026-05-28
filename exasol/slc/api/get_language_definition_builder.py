@@ -12,7 +12,7 @@ def get_language_definition_builder(
     flavor_path: str,
     bucketfs_name: str,
     bucket_name: str,
-    container_name: str,
+    build_name: str,
     path_in_bucket: str = "",
     add_missing_builtin: bool = False,
     custom_aliases: dict[str, str] | None = None,
@@ -26,7 +26,7 @@ def get_language_definition_builder(
         custom_aliases = dict()
 
     language_definition = LanguageDefinition(
-        release_name=container_name,
+        build_name=build_name,
         flavor_path=flavor_path,
         bucketfs_name=bucketfs_name,
         bucket_name=bucket_name,

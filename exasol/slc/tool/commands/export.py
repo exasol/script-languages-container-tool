@@ -1,3 +1,5 @@
+import warnings
+
 import click
 from exasol_integration_test_docker_environment.cli.options.build_options import (
     build_options,
@@ -34,7 +36,13 @@ from exasol.slc.tool.options.goal_options import release_options
     help="The directory where the container file will be stored. If this parameter is omitted, only the cached"
     " file will be created.",
 )
-@click.option("--release-name", type=str, default=None)
+@click.option(
+    "--release-name",
+    "deprecated_release_name",
+    type=str,
+    default=None,
+    help="Deprecated alias for --build-name.",
+)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -50,7 +58,7 @@ def export(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
     export_path: str | None,
-    release_name: str | None,
+    deprecated_release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -79,12 +87,20 @@ def export(
     ready for the upload into the bucketfs. If the stages do not exists locally,
     the system will build or pull them before the exporting the packaged container.
     """
+    if deprecated_release_name is not None:
+        warnings.warn(
+            "--release-name is deprecated, use --build-name instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if build_name is None:
+            build_name = deprecated_release_name
     with TerminationHandler():
         export_result = api.export(
             flavor_path=flavor_path,
             release_goal=release_goal,
             export_path=export_path,
-            release_name=release_name,
+            build_name=build_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,
@@ -92,7 +108,6 @@ def export(
             temporary_base_directory=temporary_base_directory,
             log_build_context_content=log_build_context_content,
             cache_directory=cache_directory,
-            build_name=build_name,
             source_docker_repository_name=source_docker_repository_name,
             source_docker_tag_prefix=source_docker_tag_prefix,
             source_docker_username=source_docker_username,

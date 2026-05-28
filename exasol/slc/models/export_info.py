@@ -16,9 +16,9 @@ class ExportInfo(Info):
         release_goal: str,
         depends_on_image: ImageInfo,
         output_file: str | None = None,
-        release_name: str | None = None,
+        build_name: str | None = None,
     ) -> None:
-        self.release_name = release_name
+        self.build_name = build_name
         self.output_file = output_file
         self.release_goal = release_goal
         self.depends_on_image = depends_on_image

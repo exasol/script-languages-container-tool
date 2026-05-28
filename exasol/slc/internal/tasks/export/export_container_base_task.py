@@ -108,7 +108,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
             is_new=is_new,
             depends_on_image=image_info_of_release_image,
             release_goal=str(self.release_goal),
-            release_name=str(self.release_name),
+            build_name=str(self.build_name),
             output_file=str(output_file) if output_file else None,
         )
         return export_info
