@@ -1438,8 +1438,8 @@ simplejson = ">=3.16.0"
 [package.source]
 type = "git"
 url = "https://github.com/exasol/integration-test-docker-environment.git"
-reference = "165845c46bd88531ef0d11e85f2b2933604a727f"
-resolved_reference = "165845c46bd88531ef0d11e85f2b2933604a727f"
+reference = "02e5ae0002151969a6d3859a7782861b6e67e919"
+resolved_reference = "02e5ae0002151969a6d3859a7782861b6e67e919"
 
 [[package]]
 name = "exasol-saas-api"
@@ -6252,4 +6252,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "8990ff2a210be8443eefa8ab7935e60dc261bd363b10b2a343235f83b00c0ac3"
+content-hash = "636855ef37bd937091a86df8819fcd08110f1af27ce6c09ee3d55a3f9e400922"
