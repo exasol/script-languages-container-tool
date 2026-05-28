@@ -58,7 +58,6 @@ def export(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
     export_path: str | None,
-    deprecated_release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -81,6 +80,7 @@ def export(
     use_job_specific_log_file: bool,
     cleanup_docker_images: bool,
     compression_strategy: str,
+    deprecated_release_name: str | None,
 ):
     """
     This command exports the whole script-language-container package of the flavor,

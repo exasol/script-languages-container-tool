@@ -158,9 +158,7 @@ def _validate_deploy(
     assert (
         expected_path_in_bucket.as_udf_path() == deploy_result.bucket_path.as_udf_path()
     )
-    _validate_alter_session_cmd(
-        deploy_result, flavor_path, build_name, path_in_bucket
-    )
+    _validate_alter_session_cmd(deploy_result, flavor_path, build_name, path_in_bucket)
     _validate_human_readable_location(expected_path_in_bucket, deploy_result)
 
     validate_file_on_bucket_fs(

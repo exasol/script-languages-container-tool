@@ -89,6 +89,9 @@ extend-ignore = [
 extend-select = ["F401"]
 unfixable = []
 
+[tool.ruff]
+extend-exclude = [".dependencies"]
+
 [tool.black]
 line-length = 88
 verbose = false

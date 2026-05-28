@@ -1,6 +1,5 @@
-import warnings
-
 import os
+import warnings
 from enum import Enum
 from typing import Any
 
@@ -132,7 +131,6 @@ def deploy(
     ssl_cert_path: str | None,
     use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],
-    deprecated_release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -154,6 +152,7 @@ def deploy(
     log_level: str | None,
     use_job_specific_log_file: bool,
     compression_strategy: str,
+    deprecated_release_name: str | None,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.

@@ -64,7 +64,6 @@ def upload(
     bucketfs_https: bool,
     path_in_bucket: str,
     release_goal: tuple[str, ...],
-    deprecated_release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -88,6 +87,7 @@ def upload(
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
     compression_strategy: str,
+    deprecated_release_name: str | None,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
