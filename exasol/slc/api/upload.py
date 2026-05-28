@@ -113,6 +113,7 @@ def upload(
             path_in_bucket=path_in_bucket,
             bucketfs_https=bucketfs_https,
             bucketfs_name=bucketfs_name,
+            build_name=build_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=compression_strategy,
