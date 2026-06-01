@@ -25,6 +25,9 @@ dependencies = [
     "exasol-script-languages-package-management (>=1.0.0, <2)"
 ]
 
+[project.scripts]
+exaslct = "exasol.slc.tool.main:main"
+
 [tool.poetry]
 
 requires-poetry = ">=2.3.0"
@@ -61,11 +64,6 @@ dev = [
     "pytest-exasol-backend (>=1.2.2, <2)",
     "pandas-stubs (>=2.2.3, <3)",
     ]
-
-
-[tool.poetry.scripts]
-exaslct = 'exasol.slc.tool.main:main'
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
