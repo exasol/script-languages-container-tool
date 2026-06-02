@@ -18,7 +18,7 @@ class GenerateLanguageActivationTest(unittest.TestCase):
     def test_generate_with_path_in_bucket(self):
         command = (
             f"{self.test_environment.executable} generate-language-activation --bucketfs-name bfsdefault "
-            f"--bucket-name default --path-in-bucket path --build-name container"
+            f"--bucket-name default --path-in-bucket path --container-name container"
         )
         completed_process = self.test_environment.run_command(
             command,
@@ -36,7 +36,7 @@ class GenerateLanguageActivationTest(unittest.TestCase):
     def test_generate_without_path_in_bucket(self):
         command = (
             f"{self.test_environment.executable} generate-language-activation --bucketfs-name bfsdefault "
-            f"--bucket-name default --build-name container"
+            f"--bucket-name default --container-name container"
         )
         completed_process = self.test_environment.run_command(
             command,
