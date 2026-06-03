@@ -12,14 +12,14 @@ def cli():
     return CliRunner(build)
 
 
-def test_build_release_name_alias(cli):
+def test_build_name(cli):
     with patch("exasol.slc.api.build", return_value={}) as mock_build:
         with tempfile.TemporaryDirectory() as temp_flavor_path:
             cli.run(
                 "--flavor-path",
                 temp_flavor_path,
-                "--release-name",
-                "legacy-build",
+                "--build-name",
+                "canonical-build",
             )
 
     assert cli.succeeded
@@ -33,8 +33,7 @@ def test_build_release_name_alias(cli):
         temporary_base_directory="/var/tmp",
         log_build_context_content=False,
         cache_directory=None,
-        build_name=None,
-        release_name="legacy-build",
+        build_name="canonical-build",
         shortcut_build=True,
         source_docker_repository_name="exasol/script-language-container",
         source_docker_tag_prefix="",

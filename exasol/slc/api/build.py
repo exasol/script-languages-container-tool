@@ -21,7 +21,6 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
-from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.build.docker_build import DockerBuild
 
 
@@ -37,7 +36,6 @@ def build(
     log_build_context_content: bool = False,
     cache_directory: str | None = None,
     build_name: str | None = None,
-    release_name: str | None = None,
     shortcut_build: bool = True,
     source_docker_repository_name: str = "exasol/script-language-container",
     source_docker_tag_prefix: str = "",
@@ -60,8 +58,6 @@ def build(
     :return: Image info per goal.
     """
     import_build_steps(flavor_path)
-
-    build_name = resolve_build_name(build_name, release_name)
 
     set_build_config(
         force_rebuild,
