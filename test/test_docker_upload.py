@@ -31,7 +31,7 @@ class DockerUploadTest(unittest.TestCase):
 
     def test_docker_upload_with_path_in_bucket(self):
         self.path_in_bucket = "test"
-        self.build_name = "TEST"
+        self.release_name = "TEST"
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join(
@@ -44,7 +44,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucket-name {self.bucket_name}",
                 f"--path-in-bucket {self.path_in_bucket}",
                 "--no-bucketfs-https",
-                f"--build-name {self.build_name}",
+                f"--release-name {self.release_name}",
             ]
         )
         command = f"{self.test_environment.executable} upload {arguments}"
@@ -54,18 +54,18 @@ class DockerUploadTest(unittest.TestCase):
         )
         self.assertIn(
             f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
-            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.build_name}?lang=python#buckets/"
-            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.build_name}/"
+            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}/"
             f"exaudf/exaudfclient_py3",
             completed_process.stdout.decode("UTF-8"),
         )
         self.validate_file_on_bucket_fs(
-            f"{self.path_in_bucket}/test-flavor-release-{self.build_name}.tar.gz"
+            f"{self.path_in_bucket}/test-flavor-release-{self.release_name}.tar.gz"
         )
 
     def test_docker_upload_with_path_in_bucket_without_compression(self):
         self.path_in_bucket = "test"
-        self.build_name = "TEST"
+        self.release_name = "TEST"
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join(
@@ -78,7 +78,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucket-name {self.bucket_name}",
                 f"--path-in-bucket {self.path_in_bucket}",
                 "--no-bucketfs-https",
-                f"--build-name {self.build_name}",
+                f"--release-name {self.release_name}",
                 "--compression-strategy none",
             ]
         )
@@ -89,17 +89,17 @@ class DockerUploadTest(unittest.TestCase):
         )
         self.assertIn(
             f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
-            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.build_name}?lang=python#buckets/"
-            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.build_name}/"
+            f"{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/{self.path_in_bucket}/test-flavor-release-{self.release_name}/"
             f"exaudf/exaudfclient_py3",
             completed_process.stdout.decode("UTF-8"),
         )
         self.validate_file_on_bucket_fs(
-            f"{self.path_in_bucket}/test-flavor-release-{self.build_name}.tar"
+            f"{self.path_in_bucket}/test-flavor-release-{self.release_name}.tar"
         )
 
     def test_docker_upload_without_path_in_bucket(self):
-        self.build_name = "TEST"
+        self.release_name = "TEST"
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join(
@@ -111,7 +111,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
                 "--no-bucketfs-https",
-                f"--build-name {self.build_name}",
+                f"--release-name {self.release_name}",
             ]
         )
         command = f"{self.test_environment.executable} upload {arguments}"
@@ -121,14 +121,16 @@ class DockerUploadTest(unittest.TestCase):
         )
         self.assertIn(
             f"ALTER SESSION SET SCRIPT_LANGUAGES='PYTHON3_TEST=localzmq+protobuf:///{self.bucketfs_name}/"
-            f"{self.bucket_name}/test-flavor-release-{self.build_name}?lang=python#buckets/"
-            f"{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.build_name}/exaudf/exaudfclient_py3",
+            f"{self.bucket_name}/test-flavor-release-{self.release_name}?lang=python#buckets/"
+            f"{self.bucketfs_name}/{self.bucket_name}/test-flavor-release-{self.release_name}/exaudf/exaudfclient_py3",
             completed_process.stdout.decode("UTF-8"),
         )
-        self.validate_file_on_bucket_fs(f"test-flavor-release-{self.build_name}.tar.gz")
+        self.validate_file_on_bucket_fs(
+            f"test-flavor-release-{self.release_name}.tar.gz"
+        )
 
     def test_docker_upload_fail_path_in_bucket(self):
-        self.build_name = "TEST"
+        self.release_name = "TEST"
         self.bucketfs_name = "bfsdefault"
         self.bucket_name = "default"
         arguments = " ".join(
@@ -140,7 +142,7 @@ class DockerUploadTest(unittest.TestCase):
                 f"--bucketfs-name {self.bucketfs_name}",
                 f"--bucket-name {self.bucket_name}",
                 "--no-bucketfs-https",
-                f"--build-name {self.build_name}",
+                f"--release-name {self.release_name}",
             ]
         )
         command = f"{self.test_environment.executable} upload {arguments}"
