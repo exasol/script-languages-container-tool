@@ -22,7 +22,6 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
-from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.upload.upload_containers import UploadContainers
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
@@ -71,7 +70,6 @@ def upload(
         "The 'upload' function is deprecated, use 'deploy' instead", DeprecationWarning
     )
     import_build_steps(flavor_path)
-    build_name = resolve_build_name(build_name, release_name)
     set_build_config(
         force_rebuild,
         force_rebuild_from,
@@ -115,8 +113,8 @@ def upload(
             bucket_name=bucket_name,
             path_in_bucket=path_in_bucket,
             bucketfs_https=bucketfs_https,
+            release_name=release_name,
             bucketfs_name=bucketfs_name,
-            release_name=build_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
             compression_strategy=compression_strategy,

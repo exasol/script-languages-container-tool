@@ -1,4 +1,5 @@
 import tempfile
+from test.unit.cli import CliRunner
 from unittest.mock import patch
 
 import pytest
@@ -6,7 +7,6 @@ import pytest
 from exasol.slc.tool.commands.generate_language_activation import (
     generate_language_activation,
 )
-from test.unit.cli import CliRunner
 
 
 @pytest.fixture

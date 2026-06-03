@@ -1,10 +1,10 @@
 import tempfile
+from test.unit.cli import CliRunner
 from unittest.mock import patch
 
 import pytest
 
 from exasol.slc.tool.commands.build import build
-from test.unit.cli import CliRunner
 
 
 @pytest.fixture

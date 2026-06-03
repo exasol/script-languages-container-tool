@@ -27,7 +27,9 @@ def test_export_release_name_alias(build_name, release_name, expected_build_name
         generate_root_task_mock = stack.enter_context(
             patch.object(module, "generate_root_task")
         )
-        stack.enter_context(patch.object(module, "run_task", side_effect=_run_root_task))
+        stack.enter_context(
+            patch.object(module, "run_task", side_effect=_run_root_task)
+        )
 
         with pytest.warns(DeprecationWarning, match="release_name is deprecated"):
             module.export(
@@ -37,7 +39,9 @@ def test_export_release_name_alias(build_name, release_name, expected_build_name
             )
 
     assert set_build_config_mock.call_args.args[-1] == expected_build_name
-    assert generate_root_task_mock.call_args.kwargs["release_name"] == expected_build_name
+    assert (
+        generate_root_task_mock.call_args.kwargs["release_name"] == expected_build_name
+    )
 
 
 @pytest.mark.parametrize(
@@ -57,7 +61,9 @@ def test_deploy_release_name_alias(build_name, release_name, expected_build_name
         generate_root_task_mock = stack.enter_context(
             patch.object(module, "generate_root_task")
         )
-        stack.enter_context(patch.object(module, "run_task", side_effect=_run_root_task))
+        stack.enter_context(
+            patch.object(module, "run_task", side_effect=_run_root_task)
+        )
 
         with pytest.warns(DeprecationWarning, match="release_name is deprecated"):
             module.deploy(
@@ -67,5 +73,6 @@ def test_deploy_release_name_alias(build_name, release_name, expected_build_name
             )
 
     assert set_build_config_mock.call_args.args[-1] == expected_build_name
-    assert generate_root_task_mock.call_args.kwargs["release_name"] == expected_build_name
-
+    assert (
+        generate_root_task_mock.call_args.kwargs["release_name"] == expected_build_name
+    )
