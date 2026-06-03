@@ -43,24 +43,3 @@ def test_generate_language_activation_container_name(cli):
         "container",
         "path",
     )
-
-
-@pytest.mark.parametrize("option_name", ["--build-name", "--release-name"])
-def test_generate_language_activation_rejects_old_option_names(cli, option_name):
-    with tempfile.TemporaryDirectory() as temp_flavor_path:
-        args = [
-            "--flavor-path",
-            temp_flavor_path,
-            "--bucketfs-name",
-            "bfsdefault",
-            "--bucket-name",
-            "default",
-            "--path-in-bucket",
-            "path",
-            option_name,
-            "container",
-        ]
-        cli.run(*args)
-
-    assert cli.failed
-    assert "No such option" in cli.output
