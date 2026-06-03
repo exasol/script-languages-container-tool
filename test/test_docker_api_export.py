@@ -37,6 +37,7 @@ class ApiDockerExportTest(unittest.TestCase):
         export_info = export_infos_for_flavor["release"]
 
         exported_files = os.listdir(self.export_path)
+        assert export_info.output_file is not None
         export_path = Path(export_info.output_file)
         self.assertIn(export_path.name, exported_files)
 
@@ -51,7 +52,8 @@ class ApiDockerExportTest(unittest.TestCase):
             )
         else:
             self.assertIn(
-                export_info.hash, export_info.depends_on_image.get_target_complete_name()
+                export_info.hash,
+                export_info.depends_on_image.get_target_complete_name(),
             )
 
         return export_info, export_path

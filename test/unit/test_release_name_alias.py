@@ -63,8 +63,7 @@ def _assert_release_name_alias(
 
     assert set_build_config_mock.call_args.args[-1] == expected_build_name
     assert (
-        generate_root_task_mock.call_args.kwargs["release_name"]
-        == expected_build_name
+        generate_root_task_mock.call_args.kwargs["release_name"] == expected_build_name
     )
 
 
