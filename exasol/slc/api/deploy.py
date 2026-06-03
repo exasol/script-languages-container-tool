@@ -114,7 +114,7 @@ def deploy(
             bucket_name=bucket,
             path_in_bucket=path_in_bucket,
             bucketfs_https=bucketfs_use_https,
-            build_name=build_name,
+            release_name=build_name,
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
@@ -136,7 +136,7 @@ def deploy(
 
     return {
         flavor: {
-            build_name_key: toDeployResult(
+            release: toDeployResult(
                 deploy_info=deploy_info,
                 bucketfs_use_https=bucketfs_use_https,
                 bucketfs_host=bucketfs_host,
@@ -154,7 +154,7 @@ def deploy(
                 saas_database_name=saas_database_name,
                 saas_url=saas_host,
             )
-            for build_name_key, deploy_info in deploy_info_per_release.items()
+            for release, deploy_info in deploy_info_per_release.items()
         }
         for flavor, deploy_info_per_release in deploy_infos.items()
     }

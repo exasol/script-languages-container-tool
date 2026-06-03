@@ -43,7 +43,6 @@ class LanguageDefinition:
             bucket_name=self.bucket_name,
             path_in_bucket=path_in_bucket,
             release_name=self.release_name,
-            build_name=self.release_name,
         )
         return language_definition
 

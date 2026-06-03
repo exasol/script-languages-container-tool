@@ -75,7 +75,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         else:
             raise ValueError("Parameter bucketfs_name or bucket_name must be not None.")
         language_definition = LanguageDefinition(
-            release_name=self._get_complete_build_name(export_info),
+            release_name=self._get_complete_release_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
             bucketfs_name=bucketfs_name,
             bucket_name=bucket_name,
@@ -99,7 +99,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         )
         result = DeployInfo(
             release_path=str(release_path),
-            complete_build_name=self._get_complete_build_name(export_info),
+            complete_release_name=self._get_complete_release_name(export_info),
             human_readable_location=human_readable_location,
             language_definition_builder=lang_def_builder,
             file_extension=detect_container_file_extension(path_in_bucket.name),
@@ -108,7 +108,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
     def build_file_path_in_bucket(self, release_info: ExportInfo) -> bfs.path.PathLike:
 
-        complete_build_name = self._get_complete_build_name(release_info)
+        complete_release_name = self._get_complete_release_name(release_info)
         path_in_bucket_to_upload_path = bfs.path.infer_path(
             bucketfs_host=self.database_host,
             bucketfs_port=self.bucketfs_port,
@@ -128,7 +128,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         )
         return (
             path_in_bucket_to_upload_path
-            / f"{complete_build_name}{detect_container_file_extension(release_info.cache_file)}"
+            / f"{complete_release_name}{detect_container_file_extension(release_info.cache_file)}"
         )
 
     @property
@@ -139,7 +139,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         path_in_bucket = (
             f"{self.path_in_bucket}/" if self.path_in_bucket not in [None, ""] else ""
         )
-        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_build_name(export_info)}{detect_container_file_extension(export_info.cache_file)}"
+        return f"{self._url}/{self.bucket_name}/{path_in_bucket}{self._get_complete_release_name(export_info)}{detect_container_file_extension(export_info.cache_file)}"
 
     def _upload_container(self, release_info: ExportInfo) -> bfs.path.PathLike:
         self.logger.info(
@@ -157,17 +157,17 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
 
         return bucket_path
 
-    def _get_complete_build_name(self, release_info: ExportInfo):
-        complete_build_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_build_name(
+    def _get_complete_release_name(self, release_info: ExportInfo):
+        complete_release_name = f"""{release_info.name}-{release_info.release_goal}-{self._get_release_name(
             release_info)}"""
-        return complete_build_name
+        return complete_release_name
 
-    def _get_build_name(self, release_info: ExportInfo):
-        if self.build_name is None:
-            build_name = release_info.hash
+    def _get_release_name(self, release_info: ExportInfo):
+        if self.release_name is None:
+            release_name = release_info.hash
         else:
-            build_name = self.build_name
-        return build_name
+            release_name = self.release_name
+        return release_name
 
     def _get_url_prefix(self):
         if self.bucketfs_https:

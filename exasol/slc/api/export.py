@@ -93,7 +93,7 @@ def export(
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
             export_path=export_path,
-            build_name=build_name,
+            release_name=build_name,
             cleanup_docker_images=cleanup_docker_images,
             compression_strategy=compression_strategy,
         )

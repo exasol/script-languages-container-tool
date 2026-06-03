@@ -68,7 +68,7 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
             self.command_line_output_target.remove()
         with self.command_line_output_target.open("w") as out_file:
             for flavor_path, releases in export_infos.items():
-                for build_name, export_info in releases.items():
+                for release_name, export_info in releases.items():
                     out_file.write("\n")
                     out_file.write("Cached container under %s" % export_info.cache_file)
                     out_file.write("\n")

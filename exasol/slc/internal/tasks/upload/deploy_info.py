@@ -9,7 +9,7 @@ from exasol.slc.models.language_definitions_builder import LanguageDefinitionsBu
 @dataclass
 class DeployInfo:
     release_path: str
-    complete_build_name: str
+    complete_release_name: str
     human_readable_location: str
     language_definition_builder: LanguageDefinitionsBuilder
     file_extension: str
@@ -33,7 +33,7 @@ def toDeployResult(
     saas_account_id: str | None,
     saas_url: str | None,
 ) -> DeployResult:
-    complete_build_name = deploy_info.complete_build_name
+    complete_release_name = deploy_info.complete_release_name
     bucket_path = (
         bfs.path.infer_path(
             bucketfs_host=bucketfs_host,
@@ -52,7 +52,7 @@ def toDeployResult(
             saas_account_id=saas_account_id,
             saas_database_name=saas_database_name,
         )
-        / f"{complete_build_name}{deploy_info.file_extension}"
+        / f"{complete_release_name}{deploy_info.file_extension}"
     )
 
     return DeployResult(
