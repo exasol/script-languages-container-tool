@@ -10,7 +10,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_add_missing_builtin_true(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -26,7 +26,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_add_missing_builtin_false(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -41,7 +41,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_path_in_bucket_none(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -55,7 +55,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_path_in_bucket_empty_string(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -69,7 +69,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_path_in_bucket_not_none(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -83,7 +83,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_alter_system(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",
@@ -98,7 +98,7 @@ class LanguageDefintionTest(unittest.TestCase):
 
     def test_alter_session(self):
         language_definition = LanguageDefinition(
-            build_name="build_name",
+            release_name="build_name",
             flavor_path=self.flavor_path,
             bucketfs_name="bucketfs_name",
             bucket_name="bucket_name",

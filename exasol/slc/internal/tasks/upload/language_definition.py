@@ -6,7 +6,7 @@ from jinja2 import Template
 class LanguageDefinition:
     def __init__(
         self,
-        build_name: str,
+        release_name: str,
         flavor_path: str,
         bucketfs_name: str,
         bucket_name: str,
@@ -17,7 +17,7 @@ class LanguageDefinition:
         self.bucket_name = bucket_name
         self.bucketfs_name = bucketfs_name
         self.flavor_path = flavor_path
-        self.build_name = build_name
+        self.release_name = release_name
         self.add_missing_builtin = add_missing_builtin
 
     def generate_definition(self) -> str:
@@ -42,7 +42,8 @@ class LanguageDefinition:
             bucketfs_name=self.bucketfs_name,
             bucket_name=self.bucket_name,
             path_in_bucket=path_in_bucket,
-            build_name=self.build_name,
+            release_name=self.release_name,
+            build_name=self.release_name,
         )
         return language_definition
 

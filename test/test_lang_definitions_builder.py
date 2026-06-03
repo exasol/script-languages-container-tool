@@ -34,7 +34,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             flavor_path=self.flavor_path,
             bucketfs_name="bfsdefault",
             bucket_name="default",
-            build_name="my_release",
+            container_name="my_release",
             path_in_bucket="some_path",
         )
         components_list = lang_def_builder.generate_definition_components()
@@ -73,7 +73,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             flavor_path=self.flavor_path,
             bucketfs_name="bfsdefault",
             bucket_name="default",
-            build_name="my_release",
+            container_name="my_release",
             path_in_bucket="some_path",
             add_missing_builtin=True,
         )
@@ -126,7 +126,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             flavor_path=self.flavor_path,
             bucketfs_name="bfsdefault",
             bucket_name="default",
-            build_name="my_release",
+            container_name="my_release",
             path_in_bucket="some_path",
             add_missing_builtin=True,
         )
@@ -179,7 +179,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             flavor_path=self.flavor_path,
             bucketfs_name="bfsdefault",
             bucket_name="default",
-            build_name="my_release",
+            container_name="my_release",
             path_in_bucket="some_path",
             add_missing_builtin=True,
         )
@@ -203,7 +203,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             flavor_path=self.flavor_path,
             bucketfs_name="bfsdefault",
             bucket_name="default",
-            build_name="my_release",
+            container_name="my_release",
             path_in_bucket="some_path",
             add_missing_builtin=True,
         )
@@ -232,14 +232,14 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             with open(lang_def_file, "w") as f:
                 f.write(
                     "PYTHON3_TEST=localzmq+protobuf:///{{ bucketfs_name }}/{{ bucket_name }}/{{ path_in_bucket }}"
-                    "{{ build_name }}?lang=python&my_param=hello#buckets/{{ bucketfs_name }}/{{ bucket_name }}/"
-                    "{{ path_in_bucket }}{{ build_name }}/exaudf/exaudfclient_py3"
+                    "{{ release_name }}?lang=python&my_param=hello#buckets/{{ bucketfs_name }}/{{ bucket_name }}/"
+                    "{{ path_in_bucket }}{{ release_name }}/exaudf/exaudfclient_py3"
                 )
             lang_def_builder = get_language_definition_builder(
                 flavor_path=d,
                 bucketfs_name="bfsdefault",
                 bucket_name="default",
-                build_name="my_build",
+                container_name="my_build",
                 path_in_bucket="some_path",
                 add_missing_builtin=True,
             )

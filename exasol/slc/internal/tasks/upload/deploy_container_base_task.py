@@ -75,7 +75,7 @@ class DeployContainerBaseTask(FlavorBaseTask, UploadContainerParameter):
         else:
             raise ValueError("Parameter bucketfs_name or bucket_name must be not None.")
         language_definition = LanguageDefinition(
-            build_name=self._get_complete_build_name(export_info),
+            release_name=self._get_complete_build_name(export_info),
             flavor_path=self.flavor_path,  # type: ignore
             bucketfs_name=bucketfs_name,
             bucket_name=bucket_name,
