@@ -27,6 +27,13 @@ from exasol.slc.tool.options.goal_options import goal_options
 @add_options(goal_options)
 @add_options(build_options)
 @click.option(
+    "--release-name",
+    "release_name",
+    type=str,
+    default=None,
+    help="Deprecated alias for --build-name.",
+)
+@click.option(
     "--shortcut-build/--no-shortcut-build",
     default=True,
     help="Forces the system to complete to build all all stages, "
@@ -54,6 +61,7 @@ def build(
     log_build_context_content: bool,
     cache_directory: str | None,
     build_name: str | None,
+    release_name: str | None,
     shortcut_build: bool,
     source_docker_repository_name: str,
     source_docker_tag_prefix: str,
@@ -85,6 +93,7 @@ def build(
             log_build_context_content=log_build_context_content,
             cache_directory=cache_directory,
             build_name=build_name,
+            release_name=release_name,
             shortcut_build=shortcut_build,
             source_docker_repository_name=source_docker_repository_name,
             source_docker_tag_prefix=source_docker_tag_prefix,

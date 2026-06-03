@@ -1,5 +1,3 @@
-import warnings
-
 import click
 from exasol_integration_test_docker_environment.cli.options.build_options import (
     build_options,
@@ -38,7 +36,7 @@ from exasol.slc.tool.options.goal_options import release_options
 )
 @click.option(
     "--release-name",
-    "deprecated_release_name",
+    "release_name",
     type=str,
     default=None,
     help="Deprecated alias for --build-name.",
@@ -58,6 +56,7 @@ def export(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...],
     export_path: str | None,
+    release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -80,27 +79,19 @@ def export(
     use_job_specific_log_file: bool,
     cleanup_docker_images: bool,
     compression_strategy: str,
-    deprecated_release_name: str | None,
 ):
     """
     This command exports the whole script-language-container package of the flavor,
     ready for the upload into the bucketfs. If the stages do not exists locally,
     the system will build or pull them before the exporting the packaged container.
     """
-    if deprecated_release_name is not None:
-        warnings.warn(
-            "--release-name is deprecated, use --build-name instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        if build_name is None:
-            build_name = deprecated_release_name
     with TerminationHandler():
         export_result = api.export(
             flavor_path=flavor_path,
             release_goal=release_goal,
             export_path=export_path,
             build_name=build_name,
+            release_name=release_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,

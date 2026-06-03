@@ -1,5 +1,4 @@
 import os
-import warnings
 from enum import Enum
 from typing import Any
 
@@ -103,7 +102,7 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
 @add_options(release_options)
 @click.option(
     "--release-name",
-    "deprecated_release_name",
+    "release_name",
     type=str,
     default=None,
     help="Deprecated alias for --build-name.",
@@ -131,6 +130,7 @@ def deploy(
     ssl_cert_path: str | None,
     use_ssl_cert_validation: bool,
     release_goal: tuple[str, ...],
+    release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -152,21 +152,12 @@ def deploy(
     log_level: str | None,
     use_job_specific_log_file: bool,
     compression_strategy: str,
-    deprecated_release_name: str | None,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
     If the stages or the packaged container do not exists locally, the system will build, pull or
     export them before the upload.
     """
-    if deprecated_release_name is not None:
-        warnings.warn(
-            "--release-name is deprecated, use --build-name instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        if build_name is None:
-            build_name = deprecated_release_name
     with TerminationHandler():
         result = api.deploy(
             flavor_path=flavor_path,
@@ -185,6 +176,7 @@ def deploy(
             saas_database_id=saas_database_id,
             release_goal=release_goal,
             build_name=build_name,
+            release_name=release_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,

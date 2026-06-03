@@ -1,5 +1,3 @@
-import warnings
-
 import click
 from exasol_integration_test_docker_environment.cli.options.build_options import (
     build_options,
@@ -41,7 +39,7 @@ from exasol.slc.tool.options.goal_options import release_options
 @add_options(release_options)
 @click.option(
     "--release-name",
-    "deprecated_release_name",
+    "release_name",
     type=str,
     default=None,
     help="Deprecated alias for --build-name.",
@@ -64,6 +62,7 @@ def upload(
     bucketfs_https: bool,
     path_in_bucket: str,
     release_goal: tuple[str, ...],
+    release_name: str | None,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -87,7 +86,6 @@ def upload(
     ssl_cert_path: str,
     use_ssl_cert_validation: bool,
     compression_strategy: str,
-    deprecated_release_name: str | None,
 ):
     """
     This command uploads the whole script-language-container package of the flavor to the database.
@@ -95,14 +93,6 @@ def upload(
     export them before the upload.
     This function is deprecated. Use `deploy` instead.
     """
-    if deprecated_release_name is not None:
-        warnings.warn(
-            "--release-name is deprecated, use --build-name instead",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        if build_name is None:
-            build_name = deprecated_release_name
     with TerminationHandler():
         result = api.upload(
             flavor_path=flavor_path,
@@ -116,6 +106,7 @@ def upload(
             path_in_bucket=path_in_bucket,
             release_goal=release_goal,
             build_name=build_name,
+            release_name=release_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
             force_pull=force_pull,

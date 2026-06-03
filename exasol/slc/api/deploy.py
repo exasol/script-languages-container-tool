@@ -18,6 +18,7 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
+from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.upload.deploy_containers import DeployContainers
 from exasol.slc.internal.tasks.upload.deploy_info import toDeployResult
 from exasol.slc.models.compression_strategy import (
@@ -46,6 +47,7 @@ def deploy(
     ssl_cert_path: str | None = None,
     use_ssl_cert_validation: bool = True,
     release_goal: tuple[str, ...] = ("release",),
+    release_name: str | None = None,
     force_rebuild: bool = False,
     force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
@@ -77,6 +79,7 @@ def deploy(
     For example { "flavors/standard-flavor" : {"release" : DeployResult(...) } }
     """
     import_build_steps(flavor_path)
+    build_name = resolve_build_name(build_name, release_name)
     set_build_config(
         force_rebuild,
         force_rebuild_from,

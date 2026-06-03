@@ -18,6 +18,7 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
+from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.export.export_containers import ExportContainers
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
@@ -31,6 +32,7 @@ def export(
     flavor_path: tuple[str, ...],
     release_goal: tuple[str, ...] = ("release",),
     export_path: str | None = None,
+    release_name: str | None = None,
     force_rebuild: bool = False,
     force_rebuild_from: tuple[str, ...] = tuple(),
     force_pull: bool = False,
@@ -62,6 +64,7 @@ def export(
     :returns: ExportContainerResult
     """
     import_build_steps(flavor_path)
+    build_name = resolve_build_name(build_name, release_name)
     set_build_config(
         force_rebuild,
         force_rebuild_from,

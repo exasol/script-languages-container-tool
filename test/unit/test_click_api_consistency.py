@@ -18,7 +18,7 @@ from exasol.slc.models.flavor_ci_model import FlavorCiConfig
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]
-CLI_ONLY_ALIAS_PARAMS = {"deprecated_release_name"}
+CLI_ONLY_ALIAS_PARAMS = set()
 
 
 def test_api_arguments():
