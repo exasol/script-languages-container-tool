@@ -17,34 +17,6 @@ def _run_root_task(root_task_generator, **_kwargs):
         ("canonical-build", "legacy-build", "canonical-build"),
     ],
 )
-def test_build_release_name_alias(build_name, release_name, expected_build_name):
-    module = import_module("exasol.slc.api.build")
-    with ExitStack() as stack:
-        stack.enter_context(patch.object(module, "import_build_steps"))
-        set_build_config_mock = stack.enter_context(
-            patch.object(module, "set_build_config")
-        )
-        stack.enter_context(patch.object(module, "set_docker_repository_config"))
-        stack.enter_context(patch.object(module, "generate_root_task"))
-        stack.enter_context(patch.object(module, "run_task", side_effect=_run_root_task))
-
-        with pytest.warns(DeprecationWarning, match="release_name is deprecated"):
-            module.build(
-                flavor_path=("flavor",),
-                build_name=build_name,
-                release_name=release_name,
-            )
-
-    assert set_build_config_mock.call_args.args[-1] == expected_build_name
-
-
-@pytest.mark.parametrize(
-    "build_name, release_name, expected_build_name",
-    [
-        (None, "legacy-build", "legacy-build"),
-        ("canonical-build", "legacy-build", "canonical-build"),
-    ],
-)
 def test_export_release_name_alias(build_name, release_name, expected_build_name):
     module = import_module("exasol.slc.api.export")
     with ExitStack() as stack:
