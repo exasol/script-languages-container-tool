@@ -40,8 +40,13 @@ class ApiDockerExportTest(unittest.TestCase):
 
         if build_name is not None:
             self.assertEqual(export_path.name, f"test-flavor_release_{build_name}.tar")
-            self.assertIn(build_name, export_info.depends_on_image.get_target_complete_name())
-            self.assertNotIn(export_info.hash, export_info.depends_on_image.get_target_complete_name())
+            self.assertIn(
+                build_name, export_info.depends_on_image.get_target_complete_name()
+            )
+            self.assertNotIn(
+                export_info.hash,
+                export_info.depends_on_image.get_target_complete_name(),
+            )
 
         return export_info, export_path
 
