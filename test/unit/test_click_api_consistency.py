@@ -18,7 +18,6 @@ from exasol.slc.models.flavor_ci_model import FlavorCiConfig
 from exasol.slc.tool import commands
 
 IGNORE_LIST = ["compression_strategy", "accelerator"]
-CLI_ONLY_ALIAS_PARAMS = set()
 
 
 def test_api_arguments():
@@ -44,22 +43,9 @@ def test_api_arguments():
                     del api_spec.annotations[annotation_to_ignore]
                     del cli_spec.annotations[annotation_to_ignore]
 
-            cli_args = [
-                arg for arg in cli_spec.args if arg not in CLI_ONLY_ALIAS_PARAMS
-            ]
-            cli_annotations = {
-                name: annotation
-                for name, annotation in cli_spec.annotations.items()
-                if name not in CLI_ONLY_ALIAS_PARAMS
-            }
-
-            assert api_spec.args == cli_args
-            assert api_spec.annotations == cli_annotations
-            assert api_spec.args == [
-                arg
-                for arg in param_names_of_click_call(cli_call)
-                if arg not in CLI_ONLY_ALIAS_PARAMS
-            ]
+            assert api_spec.args == cli_spec.args
+            assert api_spec.annotations == cli_spec.annotations
+            assert api_spec.args == param_names_of_click_call(cli_call)
 
 
 def test_api_default_values():
@@ -73,11 +59,6 @@ def test_api_default_values():
     for cli_call, api_call in zip(click_commands, api_functions):
         api_spec_defaults = inspect.getfullargspec(api_call).defaults or tuple()
         cli_defaults = defaults_of_click_call(cli_call)
-        cli_defaults = [
-            default
-            for default in cli_defaults
-            if default[0] not in CLI_ONLY_ALIAS_PARAMS
-        ]
 
         assert len(cli_defaults) == len(
             api_spec_defaults
