@@ -239,7 +239,7 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
                 flavor_path=d,
                 bucketfs_name="bfsdefault",
                 bucket_name="default",
-                container_name="my_build",
+                container_name="my_release",
                 path_in_bucket="some_path",
                 add_missing_builtin=True,
             )
@@ -249,8 +249,8 @@ class LanguageDefinitionBuilderTest(unittest.TestCase):
             self.assertEqual(
                 alter_system,
                 "ALTER SYSTEM SET SCRIPT_LANGUAGES='MY_PYTHON3="
-                "localzmq+protobuf:///bfsdefault/default/some_path/my_build"
-                "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_build"
+                "localzmq+protobuf:///bfsdefault/default/some_path/my_release"
+                "?lang=python&my_param=hello#buckets/bfsdefault/default/some_path/my_release"
                 "/exaudf/exaudfclient_py3 JAVA=builtin_java "
                 "PYTHON3=builtin_python3 R=builtin_r';",
             )
