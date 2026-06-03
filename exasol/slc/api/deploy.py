@@ -80,6 +80,9 @@ def deploy(
     """
     import_build_steps(flavor_path)
     build_name = resolve_build_name(build_name, release_name)
+    # Luigi keeps the previous value if we pass None here, so normalize to
+    # an explicit empty string to clear stale build_name state from earlier calls.
+    build_name_for_config = build_name if build_name is not None else ""
     set_build_config(
         force_rebuild,
         force_rebuild_from,
@@ -88,7 +91,7 @@ def deploy(
         output_directory,
         temporary_base_directory,
         cache_directory,
-        build_name,
+        build_name_for_config,
     )
     set_docker_repository_config(
         source_docker_password,

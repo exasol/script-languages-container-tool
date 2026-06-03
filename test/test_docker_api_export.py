@@ -10,6 +10,8 @@ from exasol_integration_test_docker_environment.testing import utils  # type: ig
 from exasol.slc import api
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 from exasol.slc.models.compression_strategy import CompressionStrategy
+from exasol.slc.models.export_container_result import ExportContainerResult
+from exasol.slc.models.export_info import ExportInfo
 
 
 class ApiDockerExportTest(unittest.TestCase):
@@ -26,8 +28,8 @@ class ApiDockerExportTest(unittest.TestCase):
         utils.close_environments(self.test_environment)
 
     def _assert_single_release_export(
-        self, export_result, build_name: str | None = None
-    ):
+        self, export_result: ExportContainerResult, build_name: str | None = None
+    ) -> tuple[ExportInfo, Path]:
         flavor_path = str(exaslct_utils.get_test_flavor())
         self.assertEqual(len(export_result.export_infos), 1)
         export_infos_for_flavor = export_result.export_infos[flavor_path]
@@ -46,6 +48,10 @@ class ApiDockerExportTest(unittest.TestCase):
             self.assertNotIn(
                 export_info.hash,
                 export_info.depends_on_image.get_target_complete_name(),
+            )
+        else:
+            self.assertIn(
+                export_info.hash, export_info.depends_on_image.get_target_complete_name()
             )
 
         return export_info, export_path

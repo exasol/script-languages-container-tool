@@ -14,7 +14,8 @@ def resolve_build_name(
         return build_name
 
     warnings.warn(
-        "release_name is deprecated, use build_name instead",
+        "release_name is deprecated, use build_name instead; "
+        "build_name falls back to release_name when omitted",
         DeprecationWarning,
         stacklevel=3,
     )
