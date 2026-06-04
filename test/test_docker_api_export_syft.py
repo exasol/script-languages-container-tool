@@ -12,7 +12,6 @@ from exasol_integration_test_docker_environment.testing import utils  # type: ig
 
 from exasol.slc import api
 from exasol.slc.models.export_container_result import ExportContainerResult
-from exasol.slc.models.export_info import ExportInfo
 
 
 class ApiDockerExportSyftTest(unittest.TestCase):
@@ -31,37 +30,6 @@ class ApiDockerExportSyftTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
-    def _assert_single_release_export(
-        self, export_result: ExportContainerResult, build_name: str | None = None
-    ) -> tuple[ExportInfo, Path]:
-        flavor_path = str(exaslct_utils.get_test_flavor())
-        self.assertEqual(len(export_result.export_infos), 1)
-        export_infos_for_flavor = export_result.export_infos[flavor_path]
-        self.assertEqual(len(export_infos_for_flavor), 1)
-        export_info = export_infos_for_flavor["release"]
-
-        exported_files = os.listdir(self.export_path)
-        assert export_info.output_file is not None
-        export_path = Path(export_info.output_file)
-        self.assertIn(export_path.name, exported_files)
-
-        if build_name is not None:
-            self.assertEqual(export_path.name, f"test-flavor_release_{build_name}.tar")
-            self.assertIn(
-                build_name, export_info.depends_on_image.get_target_complete_name()
-            )
-            self.assertNotIn(
-                export_info.hash,
-                export_info.depends_on_image.get_target_complete_name(),
-            )
-        else:
-            self.assertIn(
-                export_info.hash,
-                export_info.depends_on_image.get_target_complete_name(),
-            )
-
-        return export_info, export_path
-
     def _run_export(self, **kwargs) -> tuple[ExportContainerResult, Path]:
         export_result = api.export(
             flavor_path=(str(exaslct_utils.get_test_flavor()),),
@@ -70,7 +38,9 @@ class ApiDockerExportSyftTest(unittest.TestCase):
             force_rebuild=True,
             **kwargs,
         )
-        _, export_path = self._assert_single_release_export(export_result)
+        _, export_path = exaslct_utils.assert_single_release_export(
+            self, export_result, self.export_path
+        )
         return export_result, export_path
 
     @classmethod
