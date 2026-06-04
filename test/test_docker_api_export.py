@@ -1,8 +1,8 @@
 import json
 import os
 import shutil
-import tarfile
 import subprocess
+import tarfile
 import unittest
 from pathlib import Path
 
