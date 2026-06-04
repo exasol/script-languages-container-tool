@@ -142,7 +142,7 @@ class ApiDockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertTrue(len(images) > 0, "Images for repository were not found.")
+        self.assertGreater(len(images), 0, "Images for repository were not found.")
 
     def test_docker_export_keeps_dpkg_directory(self):
         _, export_path = self._run_export()
@@ -173,7 +173,7 @@ class ApiDockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertTrue(len(images) == 0, "Images for repository were not deleted.")
+        self.assertEqual(len(images), 0, "Images for repository were not deleted.")
 
     def test_docker_export_uncompressed(self):
         export_result = api.export(
@@ -196,7 +196,7 @@ class ApiDockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertTrue(len(images) > 0, "Images for repository were not found.")
+        self.assertGreater(len(images), 0, "Images for repository were not found.")
 
     def test_docker_export_with_build_name(self):
         build_name = "TEST"
@@ -227,7 +227,7 @@ class ApiDockerExportTest(unittest.TestCase):
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertTrue(len(images) > 0, "Images for repository were not found.")
+        self.assertGreater(len(images), 0, "Images for repository were not found.")
 
 
 if __name__ == "__main__":
