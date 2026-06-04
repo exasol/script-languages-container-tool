@@ -237,7 +237,6 @@ class ExportContainerToCacheTask(
                     "etc/hosts",
                     "var/cache/apt",
                     "var/lib/apt",
-                    "var/lib/dpkg",
                 ]
             ]
         )
