@@ -149,3 +149,4 @@ TAGS
 .lint.txt
 
 *.dot
+.dependencies/

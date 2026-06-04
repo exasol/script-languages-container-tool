@@ -18,6 +18,7 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
+from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.export.export_containers import ExportContainers
 from exasol.slc.models.compression_strategy import (
     CompressionStrategy,
@@ -63,6 +64,10 @@ def export(
     :returns: ExportContainerResult
     """
     import_build_steps(flavor_path)
+    build_name = resolve_build_name(build_name, release_name)
+    # Luigi keeps the previous value if we pass None here, so normalize to
+    # an explicit empty string to clear stale build_name state from earlier calls.
+    build_name_for_config = build_name if build_name is not None else ""
     set_build_config(
         force_rebuild,
         force_rebuild_from,
@@ -71,7 +76,7 @@ def export(
         output_directory,
         temporary_base_directory,
         cache_directory,
-        build_name,
+        build_name_for_config,
     )
     set_docker_repository_config(
         source_docker_password,
@@ -94,7 +99,7 @@ def export(
             flavor_paths=list(flavor_path),
             release_goals=list(release_goal),
             export_path=export_path,
-            release_name=release_name,
+            release_name=build_name,
             cleanup_docker_images=cleanup_docker_images,
             compression_strategy=compression_strategy,
         )

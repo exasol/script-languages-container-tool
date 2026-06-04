@@ -36,8 +36,8 @@ class ApiDockerDeployTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment, self.docker_environment)
 
-    def _expected_file(self, release_name: str, extension: str = "") -> str:
-        return f"test-flavor-release-{release_name}{extension}"
+    def _expected_file(self, build_name: str, extension: str = "") -> str:
+        return f"test-flavor-release-{build_name}{extension}"
 
     def _build_bfs_path(
         self,
@@ -45,7 +45,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucketfs_name: str,
         expected_extension: str,
         path: str | None,
-        release_name: str,
+        build_name: str,
     ) -> bfs.path.PathLike:
         build_path_func = partial(
             bfs.path.infer_path,
@@ -61,12 +61,12 @@ class ApiDockerDeployTest(unittest.TestCase):
         if path:
             expected_path_in_bucket = (
                 build_path_func(path_in_bucket=path)
-                / f"test-flavor-release-{release_name}{expected_extension}"
+                / f"test-flavor-release-{build_name}{expected_extension}"
             )
         else:
             expected_path_in_bucket = (
                 build_path_func()
-                / f"test-flavor-release-{release_name}{expected_extension}"
+                / f"test-flavor-release-{build_name}{expected_extension}"
             )
         return expected_path_in_bucket
 
@@ -77,7 +77,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         compression_strategy: CompressionStrategy,
         flavor_path: Path,
         path: str | None,
-        release_name: str,
+        build_name: str,
     ) -> dict[str, dict[str, DeployResult]]:
         deploy_func = partial(
             api.deploy,
@@ -90,7 +90,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             bucketfs_use_https=False,
             bucketfs_name=bucketfs_name,
             bucket=bucket_name,
-            release_name=release_name,
+            build_name=build_name,
             compression_strategy=compression_strategy,
             workers=1,
             log_level="INFO",
@@ -107,7 +107,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         path: str | None,
         expected_extension: str,
     ):
-        release_name = "TEST"
+        build_name = "TEST"
         bucketfs_name = "bfsdefault"
         bucket_name = "default"
         flavor_path = exaslct_utils.get_test_flavor()
@@ -117,7 +117,7 @@ class ApiDockerDeployTest(unittest.TestCase):
             compression_strategy,
             flavor_path,
             path,
-            release_name,
+            build_name,
         )
 
         self.assertIn(str(flavor_path), result.keys())
@@ -132,14 +132,14 @@ class ApiDockerDeployTest(unittest.TestCase):
         )
 
         self._validate_alter_session_cmd(
-            bucket_name, bucketfs_name, deploy_result, path, release_name
+            bucket_name, bucketfs_name, deploy_result, path, build_name
         )
         self._validate_upload_path(
-            bucket_name, deploy_result, expected_extension, path, release_name
+            bucket_name, deploy_result, expected_extension, path, build_name
         )
 
         expected_path_in_bucket = self._build_bfs_path(
-            bucket_name, bucketfs_name, expected_extension, path, release_name
+            bucket_name, bucketfs_name, expected_extension, path, build_name
         )
         # Compare UDF path of `bucket_path` until bfs.path.PathLike implements comparison
         self.assertEqual(
@@ -150,7 +150,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         self.validate_file_on_bucket_fs(
             bucket_name,
             path,
-            release_name,
+            build_name,
             expected_extension,
             compression_strategy=compression_strategy,
         )
@@ -161,7 +161,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         deploy_result: DeployResult,
         expected_extension: str,
         path: str | None,
-        release_name: str,
+        build_name: str,
     ) -> None:
         upload_path = "/".join(
             [
@@ -169,7 +169,7 @@ class ApiDockerDeployTest(unittest.TestCase):
                 for part in [
                     bucket_name,
                     path,
-                    self._expected_file(release_name, expected_extension),
+                    self._expected_file(build_name, expected_extension),
                 ]
                 if part is not None
             ]
@@ -186,7 +186,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         bucketfs_name: str,
         deploy_result: DeployResult,
         path: str | None,
-        release_name: str,
+        build_name: str,
     ) -> None:
         complete_path_in_bucket = "/".join(
             [
@@ -195,7 +195,7 @@ class ApiDockerDeployTest(unittest.TestCase):
                     bucketfs_name,
                     bucket_name,
                     path,
-                    self._expected_file(release_name),
+                    self._expected_file(build_name),
                 ]
                 if part is not None
             ]
@@ -213,7 +213,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         self,
         bucket_name: str,
         path: str | None,
-        release_name: str,
+        build_name: str,
         expected_extension: str,
         compression_strategy: CompressionStrategy,
     ):
@@ -221,7 +221,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         port = self.docker_environment.ports.bucketfs
         bucketfs_username = self.docker_environment.bucketfs_username
         bucketfs_password = self.docker_environment.bucketfs_password
-        expected_file = self._expected_file(release_name, expected_extension)
+        expected_file = self._expected_file(build_name, expected_extension)
         path_in_bucket = "/".join(
             [part for part in [bucket_name, path, expected_file] if part is not None]
         )
@@ -272,7 +272,7 @@ class ApiDockerDeployTest(unittest.TestCase):
         )
 
     def test_docker_api_deploy_fail_path_in_bucket(self):
-        release_name = "TEST"
+        build_name = "TEST"
         bucketfs_name = "bfsdefault"
         bucket_name = "default"
         exception_thrown = False
@@ -286,7 +286,7 @@ class ApiDockerDeployTest(unittest.TestCase):
                 bucketfs_use_https=False,
                 bucketfs_name=bucketfs_name,
                 bucket=bucket_name,
-                release_name=release_name,
+                build_name=build_name,
             )
         except TaskRuntimeError:
             exception_thrown = True

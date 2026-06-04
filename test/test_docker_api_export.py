@@ -10,6 +10,8 @@ from exasol_integration_test_docker_environment.testing import utils  # type: ig
 from exasol.slc import api
 from exasol.slc.internal.utils.docker_utils import find_images_by_tag
 from exasol.slc.models.compression_strategy import CompressionStrategy
+from exasol.slc.models.export_container_result import ExportContainerResult
+from exasol.slc.models.export_info import ExportInfo
 
 
 class ApiDockerExportTest(unittest.TestCase):
@@ -25,21 +27,44 @@ class ApiDockerExportTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
+    def _assert_single_release_export(
+        self, export_result: ExportContainerResult, build_name: str | None = None
+    ) -> tuple[ExportInfo, Path]:
+        flavor_path = str(exaslct_utils.get_test_flavor())
+        self.assertEqual(len(export_result.export_infos), 1)
+        export_infos_for_flavor = export_result.export_infos[flavor_path]
+        self.assertEqual(len(export_infos_for_flavor), 1)
+        export_info = export_infos_for_flavor["release"]
+
+        exported_files = os.listdir(self.export_path)
+        assert export_info.output_file is not None
+        export_path = Path(export_info.output_file)
+        self.assertIn(export_path.name, exported_files)
+
+        if build_name is not None:
+            self.assertEqual(export_path.name, f"test-flavor_release_{build_name}.tar")
+            self.assertIn(
+                build_name, export_info.depends_on_image.get_target_complete_name()
+            )
+            self.assertNotIn(
+                export_info.hash,
+                export_info.depends_on_image.get_target_complete_name(),
+            )
+        else:
+            self.assertIn(
+                export_info.hash,
+                export_info.depends_on_image.get_target_complete_name(),
+            )
+
+        return export_info, export_path
+
     def test_docker_export(self):
         export_result = api.export(
             flavor_path=(str(exaslct_utils.get_test_flavor()),),
             export_path=self.export_path,
             target_docker_repository_name=self.test_environment.docker_repository_name,
         )
-        self.assertEqual(len(export_result.export_infos), 1)
-        export_infos_for_flavor = export_result.export_infos[
-            str(exaslct_utils.get_test_flavor())
-        ]
-        self.assertEqual(len(export_infos_for_flavor), 1)
-        export_info = export_infos_for_flavor["release"]
-        exported_files = os.listdir(self.export_path)
-        export_path = Path(export_info.output_file)
-        self.assertIn(export_path.name, exported_files)
+        _, export_path = self._assert_single_release_export(export_result)
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(export_path, "r:gz") as tf:
@@ -60,15 +85,7 @@ class ApiDockerExportTest(unittest.TestCase):
             target_docker_repository_name=self.test_environment.docker_repository_name,
             cleanup_docker_images=True,
         )
-        self.assertEqual(len(export_result.export_infos), 1)
-        export_infos_for_flavor = export_result.export_infos[
-            str(exaslct_utils.get_test_flavor())
-        ]
-        self.assertEqual(len(export_infos_for_flavor), 1)
-        export_info = export_infos_for_flavor["release"]
-        exported_files = os.listdir(self.export_path)
-        export_path = Path(export_info.output_file)
-        self.assertIn(export_path.name, exported_files)
+        _, export_path = self._assert_single_release_export(export_result)
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(export_path, "r:gz") as tf:
@@ -90,15 +107,7 @@ class ApiDockerExportTest(unittest.TestCase):
             target_docker_repository_name=self.test_environment.docker_repository_name,
             compression_strategy=CompressionStrategy.NONE,
         )
-        self.assertEqual(len(export_result.export_infos), 1)
-        export_infos_for_flavor = export_result.export_infos[
-            str(exaslct_utils.get_test_flavor())
-        ]
-        self.assertEqual(len(export_infos_for_flavor), 1)
-        export_info = export_infos_for_flavor["release"]
-        exported_files = os.listdir(self.export_path)
-        export_path = Path(export_info.output_file)
-        self.assertIn(export_path.name, exported_files)
+        _, export_path = self._assert_single_release_export(export_result)
         self.assertEqual(export_path.suffix, ".tar")
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
@@ -107,6 +116,36 @@ class ApiDockerExportTest(unittest.TestCase):
             last_tf_member = tf_members[-1]
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
+        images = find_images_by_tag(
+            self.docker_client,
+            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
+        )
+        self.assertTrue(len(images) > 0, "Images for repository were not found.")
+
+    def test_docker_export_with_build_name(self):
+        build_name = "TEST"
+        export_result = api.export(
+            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            export_path=self.export_path,
+            target_docker_repository_name=self.test_environment.docker_repository_name,
+            build_name=build_name,
+            compression_strategy=CompressionStrategy.NONE,
+        )
+        export_info, export_path = self._assert_single_release_export(
+            export_result, build_name=build_name
+        )
+        self.assertEqual(export_path.suffix, ".tar")
+
+        with tarfile.open(export_path, "r:") as tf:
+            tf_members = tf.getmembers()
+            last_tf_member = tf_members[-1]
+            assert last_tf_member.name == "exasol-manifest.json"
+            assert last_tf_member.path == "exasol-manifest.json"
+
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(build_name, image_complete_name)
+        self.assertNotIn(export_info.hash, image_complete_name)
+
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),

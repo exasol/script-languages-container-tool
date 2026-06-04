@@ -100,7 +100,13 @@ def secret_callback(ctx: click.Context, param: click.Option, value: Any):
     default=True,
 )
 @add_options(release_options)
-@click.option("--release-name", type=str, default=None)
+@click.option(
+    "--release-name",
+    "release_name",
+    type=str,
+    default=None,
+    help="Deprecated alias for --build-name.",
+)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -169,6 +175,7 @@ def deploy(
             saas_database_name=saas_database_name,
             saas_database_id=saas_database_id,
             release_goal=release_goal,
+            build_name=build_name,
             release_name=release_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
@@ -177,7 +184,6 @@ def deploy(
             temporary_base_directory=temporary_base_directory,
             log_build_context_content=log_build_context_content,
             cache_directory=cache_directory,
-            build_name=build_name,
             source_docker_repository_name=source_docker_repository_name,
             source_docker_tag_prefix=source_docker_tag_prefix,
             source_docker_username=source_docker_username,

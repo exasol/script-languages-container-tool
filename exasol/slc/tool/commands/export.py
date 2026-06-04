@@ -34,7 +34,13 @@ from exasol.slc.tool.options.goal_options import release_options
     help="The directory where the container file will be stored. If this parameter is omitted, only the cached"
     " file will be created.",
 )
-@click.option("--release-name", type=str, default=None)
+@click.option(
+    "--release-name",
+    "release_name",
+    type=str,
+    default=None,
+    help="Deprecated alias for --build-name.",
+)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -84,6 +90,7 @@ def export(
             flavor_path=flavor_path,
             release_goal=release_goal,
             export_path=export_path,
+            build_name=build_name,
             release_name=release_name,
             force_rebuild=force_rebuild,
             force_rebuild_from=force_rebuild_from,
@@ -92,7 +99,6 @@ def export(
             temporary_base_directory=temporary_base_directory,
             log_build_context_content=log_build_context_content,
             cache_directory=cache_directory,
-            build_name=build_name,
             source_docker_repository_name=source_docker_repository_name,
             source_docker_tag_prefix=source_docker_tag_prefix,
             source_docker_username=source_docker_username,

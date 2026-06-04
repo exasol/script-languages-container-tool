@@ -18,6 +18,7 @@ from exasol_integration_test_docker_environment.lib.utils.api_function_decorator
     cli_function,
 )
 
+from exasol.slc.api._build_name_alias import resolve_build_name
 from exasol.slc.internal.tasks.upload.deploy_containers import DeployContainers
 from exasol.slc.internal.tasks.upload.deploy_info import toDeployResult
 from exasol.slc.models.compression_strategy import (
@@ -78,6 +79,10 @@ def deploy(
     For example { "flavors/standard-flavor" : {"release" : DeployResult(...) } }
     """
     import_build_steps(flavor_path)
+    build_name = resolve_build_name(build_name, release_name)
+    # Luigi keeps the previous value if we pass None here, so normalize to
+    # an explicit empty string to clear stale build_name state from earlier calls.
+    build_name_for_config = build_name if build_name is not None else ""
     set_build_config(
         force_rebuild,
         force_rebuild_from,
@@ -86,7 +91,7 @@ def deploy(
         output_directory,
         temporary_base_directory,
         cache_directory,
-        build_name,
+        build_name_for_config,
     )
     set_docker_repository_config(
         source_docker_password,
@@ -115,7 +120,7 @@ def deploy(
             bucket_name=bucket,
             path_in_bucket=path_in_bucket,
             bucketfs_https=bucketfs_use_https,
-            release_name=release_name,
+            release_name=build_name,
             bucketfs_name=bucketfs_name,
             ssl_cert_path=ssl_cert_path,
             use_ssl_cert_validation=use_ssl_cert_validation,
