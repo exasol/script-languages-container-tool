@@ -2,6 +2,7 @@ import tarfile
 import unittest
 
 import docker
+import export_test_utils
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
@@ -30,8 +31,11 @@ class ApiDockerExportTest(unittest.TestCase):
             target_docker_repository_name=self.test_environment.docker_repository_name,
             force_rebuild=True,
         )
-        _, export_path = exaslct_utils.assert_single_release_export(
-            self, export_result, self.export_path
+        _, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
         )
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
@@ -54,8 +58,11 @@ class ApiDockerExportTest(unittest.TestCase):
             cleanup_docker_images=True,
             force_rebuild=True,
         )
-        _, export_path = exaslct_utils.assert_single_release_export(
-            self, export_result, self.export_path
+        _, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
         )
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
@@ -79,8 +86,11 @@ class ApiDockerExportTest(unittest.TestCase):
             compression_strategy=CompressionStrategy.NONE,
             force_rebuild=True,
         )
-        _, export_path = exaslct_utils.assert_single_release_export(
-            self, export_result, self.export_path
+        _, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
         )
         self.assertEqual(export_path.suffix, ".tar")
 
@@ -106,8 +116,12 @@ class ApiDockerExportTest(unittest.TestCase):
             compression_strategy=CompressionStrategy.NONE,
             force_rebuild=True,
         )
-        export_info, export_path = exaslct_utils.assert_single_release_export(
-            self, export_result, self.export_path, build_name=build_name
+        export_info, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
+            build_name=build_name,
         )
         self.assertEqual(export_path.suffix, ".tar")
 

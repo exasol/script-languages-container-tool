@@ -2,10 +2,12 @@ import json
 import shutil
 import subprocess
 import tarfile
+import tempfile
 import unittest
 from pathlib import Path
 
 import docker
+import export_test_utils
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
@@ -37,8 +39,11 @@ class ApiDockerExportSyftTest(unittest.TestCase):
             force_rebuild=True,
             **kwargs,
         )
-        _, export_path = exaslct_utils.assert_single_release_export(
-            self, export_result, self.export_path
+        _, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
         )
         return export_result, export_path
 
@@ -49,7 +54,7 @@ class ApiDockerExportSyftTest(unittest.TestCase):
 
         syft_binary = shutil.which("syft")
         if syft_binary is None:
-            syft_install_dir = Path.home() / "bin"
+            syft_install_dir = Path(tempfile.mkdtemp(prefix="syft-"))
             syft_install_dir.mkdir(parents=True, exist_ok=True)
             subprocess.run(
                 [

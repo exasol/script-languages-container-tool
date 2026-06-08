@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
@@ -19,9 +18,6 @@ from exasol_integration_test_docker_environment.testing.spawned_test_environment
 )
 
 from exasol.slc import api
-from exasol.slc.models.export_container_result import ExportContainerResult
-from exasol.slc.models.export_info import ExportInfo
-
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
 DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavor"
@@ -245,38 +241,3 @@ def get_docker_container_ids(*names) -> dict[str, str]:
         for name in names:
             result[name] = docker_client.containers.get(name).id
     return result
-
-
-def assert_single_release_export(
-    testcase,
-    export_result: ExportContainerResult,
-    export_dir: str,
-    build_name: str | None = None,
-) -> tuple[ExportInfo, Path]:
-    flavor_path = str(get_test_flavor())
-    testcase.assertEqual(len(export_result.export_infos), 1)
-    export_infos_for_flavor = export_result.export_infos[flavor_path]
-    testcase.assertEqual(len(export_infos_for_flavor), 1)
-    export_info = export_infos_for_flavor["release"]
-
-    exported_files = os.listdir(export_dir)
-    assert export_info.output_file is not None
-    export_path = Path(export_info.output_file)
-    testcase.assertIn(export_path.name, exported_files)
-
-    if build_name is not None:
-        testcase.assertEqual(export_path.name, f"test-flavor_release_{build_name}.tar")
-        testcase.assertIn(
-            build_name, export_info.depends_on_image.get_target_complete_name()
-        )
-        testcase.assertNotIn(
-            export_info.hash,
-            export_info.depends_on_image.get_target_complete_name(),
-        )
-    else:
-        testcase.assertIn(
-            export_info.hash,
-            export_info.depends_on_image.get_target_complete_name(),
-        )
-
-    return export_info, export_path
