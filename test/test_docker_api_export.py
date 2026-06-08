@@ -1,8 +1,8 @@
 import tarfile
 import unittest
-from test import export_test_utils
 
 import docker
+import export_test_utils  # type: ignore[import-not-found]
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
