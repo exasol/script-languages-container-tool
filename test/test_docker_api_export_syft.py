@@ -7,12 +7,12 @@ import unittest
 from pathlib import Path
 
 import docker
-import export_test_utils
 import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 from exasol.slc import api
 from exasol.slc.models.export_container_result import ExportContainerResult
+from test import export_test_utils
 
 
 class ApiDockerExportSyftTest(unittest.TestCase):

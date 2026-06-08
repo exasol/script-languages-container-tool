@@ -18,6 +18,7 @@ from exasol_integration_test_docker_environment.testing.spawned_test_environment
 )
 
 from exasol.slc import api
+
 RESOURCES_DIRECTORY = Path(__file__).parent / "resources"
 TEST_CONTAINER_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "test_container"
 DEFAULT_FLAVOR_ROOT_DIRECTORY = RESOURCES_DIRECTORY / "default_flavor"
