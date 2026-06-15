@@ -2,6 +2,8 @@
 
 ## Summary
 
+Use build name for docker image and archive names when specified and fix the generation of package diff.
+
 ## Bugs
 
  - #367: Fixed gen_package_diff
@@ -10,4 +12,4 @@
 
 ## Internal
 
- - Updated PTB to version 6.1.1
+ - Updated PTB to version 8.2.0
