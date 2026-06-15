@@ -12,3 +12,9 @@ exasol/slc/version.py linguist-generated=true
 /.github/workflows/merge-gate.yml linguist-generated=True
 /.github/workflows/pr-merge.yml linguist-generated=True
 /.github/workflows/report.yml linguist-generated=True
+/.github/workflows/dependency-update.yml linguist-generated=True
+/.github/workflows/fast-tests.yml linguist-generated=True
+/.github/workflows/matrix-all.yml linguist-generated=True
+/.github/workflows/matrix-exasol.yml linguist-generated=True
+/.github/workflows/periodic-validation.yml linguist-generated=True
+
