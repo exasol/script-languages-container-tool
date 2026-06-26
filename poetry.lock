@@ -1368,14 +1368,14 @@ files = [
 
 [[package]]
 name = "exasol-integration-test-docker-environment"
-version = "6.2.0"
+version = "6.4.0"
 description = "Integration Test Docker Environment for Exasol"
 optional = false
 python-versions = "<3.15,>=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "exasol_integration_test_docker_environment-6.2.0-py3-none-any.whl", hash = "sha256:6bae833b3b304f2fdb5bbbda70438840583a086b9040f380a799e322718c34bc"},
-    {file = "exasol_integration_test_docker_environment-6.2.0.tar.gz", hash = "sha256:690960ce28768c371725a394d0b03c1f768cd656c3f3670bc75bce9d10c013f0"},
+    {file = "exasol_integration_test_docker_environment-6.4.0-py3-none-any.whl", hash = "sha256:3b72b5057d30eb63cf5f408a66cb9ea8bbaa8d09a338acf5d708363d15e5d22a"},
+    {file = "exasol_integration_test_docker_environment-6.4.0.tar.gz", hash = "sha256:e1407b65bab99fe40de185a555761b5c21529a392875ef4f238b083faa58ba68"},
 ]
 
 [package.dependencies]
@@ -6007,14 +6007,14 @@ keyring = ["keyring (>=21.2.0)"]
 
 [[package]]
 name = "typer"
-version = "0.26.7"
+version = "0.26.8"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "typer-0.26.7-py3-none-any.whl", hash = "sha256:5c87cfbc5d34491c5346ebf49c23e18d56ccb863268d3a8d592b26087c2f5e58"},
-    {file = "typer-0.26.7.tar.gz", hash = "sha256:e314a34c617e419c091b2830dda3ea1f257134ff593061a8f5b9717ab8dddb3a"},
+    {file = "typer-0.26.8-py3-none-any.whl", hash = "sha256:3512ca79ac5c11113414b36e80281b872884477722440691c89d1112e321a49c"},
+    {file = "typer-0.26.8.tar.gz", hash = "sha256:c244a6bd558886fe3f8780efb6bdd28bb9aff005a94eedebaa5cb32926fe2f7e"},
 ]
 
 [package.dependencies]
