@@ -1,6 +1,17 @@
+import importlib.abc
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
+
+# Python 3.14 removed importlib.abc.Traversable (moved to importlib.resources.abc
+# in 3.9). Patch it back so exasol-integration-test-docker-environment continues
+# to work until it is updated upstream.
+# See https://github.com/exasol/integration-test-docker-environment/issues/647.
+if not hasattr(importlib.abc, "Traversable"):
+    # isort: off
+    from importlib.resources.abc import Traversable as _Traversable  # type: ignore[import-not-found] # pylint: disable=import-error,no-name-in-module # fmt: skip
+    importlib.abc.Traversable = _Traversable  # type: ignore[misc,attr-defined]
+    del _Traversable
 
 from exasol_integration_test_docker_environment.lib.docker import ContextDockerClient
 from exasol_integration_test_docker_environment.lib.models.data.test_container_content_description import (
