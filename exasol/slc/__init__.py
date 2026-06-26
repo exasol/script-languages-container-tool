@@ -6,6 +6,7 @@ from importlib.metadata import version
 # to work until it is updated upstream.
 # See https://github.com/exasol/integration-test-docker-environment/issues/647.
 if not hasattr(importlib.abc, "Traversable"):
+    # isort: off
     from importlib.resources.abc import Traversable as _Traversable  # type: ignore[import-not-found] # pylint: disable=import-error,no-name-in-module # fmt: skip
     importlib.abc.Traversable = _Traversable  # type: ignore[misc,attr-defined]
     del _Traversable
