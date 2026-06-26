@@ -34,16 +34,17 @@ jobs:
       fail-fast: false
       matrix:
         test-path: ${{fromJson(needs.prep-testbed-gpu.outputs.matrix)}}
+        python-version: ["3.10", "3.14"]
     runs-on:
       labels: int-linux-x64-4core-gpu-t4-ubuntu24.04-1
-    name: GPU Test
+    name: GPU Test (Python ${{ matrix.python-version }})
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           poetry-version: "2.3.0"
           use-cache: 'false'
 
