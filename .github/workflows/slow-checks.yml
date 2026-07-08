@@ -14,23 +14,47 @@ on:
       INTEGRATION_TEAM_SAAS_STAGING_PAT:
         required: true
 jobs:
+  build-matrix:
+    name: Build Matrix
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["minimum_python_version"]'
+    permissions:
+      contents: read
+
   integration-tests:
     name: Integrations
+    needs:
+      - build-matrix
     uses: ./.github/workflows/integration-tests.yml
     secrets:
       CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
       CI4_DOCKERHUB_USERNAME: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    with:
+      python_version: ${{ matrix.minimum_python_version }}
 
   gpu-tests:
     name: Integrations
+    needs:
+      - build-matrix
     uses: ./.github/workflows/gpu-tests.yml
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    with:
+      python_version: ${{ matrix.minimum_python_version }}
 
   saas-tests:
     name: Integrations
+    needs:
+      - build-matrix
     uses: ./.github/workflows/integration-saas-tests.yml
     secrets:
       INTEGRATION_TEAM_SAAS_STAGING_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
@@ -38,4 +62,9 @@ jobs:
       INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+    with:
+      python_version: ${{ matrix.minimum_python_version }}
 
