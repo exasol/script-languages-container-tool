@@ -7,25 +7,35 @@ on:
           required: true
       CI4_DOCKERHUB_TOKEN:
           required: true
+      INTEGRATION_TEAM_SAAS_STAGING_HOST:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_PAT:
+        required: true
 jobs:
   integration-tests:
     name: Integrations
     uses: ./.github/workflows/integration-tests.yml
-    secrets: inherit
+    secrets:
+      CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
+      CI4_DOCKERHUB_USERNAME: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
     permissions:
       contents: read
 
   gpu-tests:
     name: Integrations
     uses: ./.github/workflows/gpu-tests.yml
-    secrets: inherit
     permissions:
       contents: read
 
   saas-tests:
     name: Integrations
     uses: ./.github/workflows/integration-saas-tests.yml
-    secrets: inherit
+    secrets:
+      INTEGRATION_TEAM_SAAS_STAGING_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
+      INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
     permissions:
       contents: read
 
