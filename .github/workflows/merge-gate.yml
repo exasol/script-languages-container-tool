@@ -1,9 +1,22 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 8.2.0.
+# Last generated with exasol-toolbox version 10.2.1.
 name: Merge-Gate
 
 on:
   workflow_call:
+    secrets:
+      CI4_DOCKERHUB_TOKEN:
+        required: true
+      CI4_DOCKERHUB_USERNAME:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_HOST:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_PAT:
+        required: true
+      SONAR_TOKEN:
+        required: true
 
 jobs:
   run-fast-checks:
@@ -47,7 +60,12 @@ jobs:
     needs:
       - approve-run-slow-tests
     uses: ./.github/workflows/slow-checks.yml
-    secrets: inherit
+    secrets:
+      CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
+      CI4_DOCKERHUB_USERNAME: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
+      INTEGRATION_TEAM_SAAS_STAGING_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
+      INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
     permissions:
       contents: read
 
@@ -69,8 +87,10 @@ jobs:
     steps:
       - name: Branch Protection - failure if any ancestor failed or was cancelled
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
         run: |
-          echo '${{ toJSON(needs) }}'
+          echo "$NEEDS_JSON"
           exit 1
       - name: branch protection
         run: echo "All required checks passed. Merge allowed."
