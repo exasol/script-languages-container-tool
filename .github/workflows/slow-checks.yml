@@ -18,14 +18,33 @@ jobs:
     name: Build Matrix
     uses: ./.github/workflows/matrix.yml
     with:
-      matrix_keys_json: '["minimum_python_version"]'
+      matrix_keys_json: '["minimum_python_version", "python_versions"]'
     permissions:
       contents: read
+
+  extended-python-versions:
+    name: Determine Extended Python Versions
+    needs:
+      - build-matrix
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - id: set-matrix
+        env:
+          BASE_MATRIX: ${{ needs.build-matrix.outputs.matrix }}
+        run: |
+          MIN_VERSION=`jq -r '.minimum_python_version[0]' <<< "$BASE_MATRIX"`
+          MAX_VERSION=`jq -r '.python_versions[]' <<< "$BASE_MATRIX" | sort -V | tail -1`
+          VERSIONS=`jq -cn --arg min "$MIN_VERSION" --arg max "$MAX_VERSION" '[$min, $max] | unique'`
+          echo "matrix={\"python_version\":$VERSIONS}" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
   integration-tests:
     name: Integrations
     needs:
-      - build-matrix
+      - extended-python-versions
     uses: ./.github/workflows/integration-tests.yml
     secrets:
       CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
@@ -34,22 +53,22 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.extended-python-versions.outputs.matrix) }}
     with:
-      python_version: ${{ matrix.minimum_python_version }}
+      python_version: ${{ matrix.python_version }}
 
   gpu-tests:
     name: Integrations
     needs:
-      - build-matrix
+      - extended-python-versions
     uses: ./.github/workflows/gpu-tests.yml
     permissions:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.extended-python-versions.outputs.matrix) }}
     with:
-      python_version: ${{ matrix.minimum_python_version }}
+      python_version: ${{ matrix.python_version }}
 
   saas-tests:
     name: Integrations
