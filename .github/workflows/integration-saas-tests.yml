@@ -2,6 +2,17 @@ name: SAAS Tests
 
 on:
   workflow_call:
+    secrets:
+      INTEGRATION_TEAM_SAAS_STAGING_HOST:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID:
+        required: true
+      INTEGRATION_TEAM_SAAS_STAGING_PAT:
+        required: true
+    inputs:
+      python_version:
+        required: true
+        type: string
 
 jobs:
 
@@ -12,11 +23,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v8
+        uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: "3.10"
+          python-version: ${{ inputs.python_version }}
           poetry-version: "2.3.0"
 
       - id: set-matrix
@@ -38,11 +51,13 @@ jobs:
     name: SAAS Test
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v8
+        uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: "3.10"
+          python-version: ${{ inputs.python_version }}
           poetry-version: "2.3.0"
           use-cache: 'false'
 
