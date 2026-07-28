@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 10.2.1.
+# Last generated with exasol-toolbox version 10.4.0.
 name: Fast-Tests
 
 on:
@@ -14,12 +14,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13"]
+        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 

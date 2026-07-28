@@ -22,10 +22,18 @@ jobs:
     permissions:
       contents: read
 
+  build-extended-python-matrix:
+    name: Build Extended Python Version Matrix
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["extended_python_versions"]'
+    permissions:
+      contents: read
+
   integration-tests:
     name: Integrations
     needs:
-      - build-matrix
+      - build-extended-python-matrix
     uses: ./.github/workflows/integration-tests.yml
     secrets:
       CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
@@ -34,22 +42,22 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.build-extended-python-matrix.outputs.matrix) }}
     with:
-      python_version: ${{ matrix.minimum_python_version }}
+      python_version: ${{ matrix.extended_python_versions }}
 
   gpu-tests:
     name: Integrations
     needs:
-      - build-matrix
+      - build-extended-python-matrix
     uses: ./.github/workflows/gpu-tests.yml
     permissions:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.build-extended-python-matrix.outputs.matrix) }}
     with:
-      python_version: ${{ matrix.minimum_python_version }}
+      python_version: ${{ matrix.extended_python_versions }}
 
   saas-tests:
     name: Integrations
