@@ -131,9 +131,12 @@ class ApiDockerExportTest(unittest.TestCase):
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
 
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(build_name, image_complete_name)
-        self.assertNotIn(export_info.hash, image_complete_name)
+        image_build_name_tag = (
+            export_info.depends_on_image.get_target_build_name_complete_tag()
+        )
+        self.assertIsNotNone(image_build_name_tag)
+        self.assertIn(build_name, image_build_name_tag)
+        self.assertNotIn(export_info.hash, image_build_name_tag)
 
         images = find_images_by_tag(
             self.docker_client,
