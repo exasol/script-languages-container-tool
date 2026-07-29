@@ -40,7 +40,6 @@ class ApiDockerRunDbTestNoCompression(unittest.TestCase):
             flavor_path=(str(exaslct_utils.get_test_flavor()),),
             test_container_folder=str(exaslct_utils.get_full_test_container_folder()),
             output_directory=self.test_environment.output_dir,
-            temporary_base_directory=self.test_environment.temp_dir,
             compression_strategy=CompressionStrategy.NONE,
             external_exasol_db_host=self.docker_environment.database_host,
             external_exasol_db_port=self.docker_environment.ports.database,
