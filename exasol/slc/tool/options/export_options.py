@@ -13,5 +13,5 @@ export_options = [
         show_default=True,
         help=f"Compression strategy to be applied to compress the exported container file."
         f" Possible values are {[v.value for v in CompressionStrategy]}",
-    )
+    ),
 ]

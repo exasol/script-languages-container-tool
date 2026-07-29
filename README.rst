@@ -129,6 +129,9 @@ Create the language container and export it to the local file system
 
    exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
 
+Add ``--use-symlink-for-export-path`` to create the exported tar file as an
+absolute symlink to the cached tarball.
+
 or deploy it directly to the BucketFS (both http and https are
 supported)
 

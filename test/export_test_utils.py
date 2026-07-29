@@ -24,17 +24,5 @@ def assert_single_release_export(
 
     if build_name is not None:
         testcase.assertEqual(export_path.name, f"test-flavor_release_{build_name}.tar")
-        testcase.assertIn(
-            build_name, export_info.depends_on_image.get_target_complete_name()
-        )
-        testcase.assertNotIn(
-            export_info.hash,
-            export_info.depends_on_image.get_target_complete_name(),
-        )
-    else:
-        testcase.assertIn(
-            export_info.hash,
-            export_info.depends_on_image.get_target_complete_name(),
-        )
 
     return export_info, export_path

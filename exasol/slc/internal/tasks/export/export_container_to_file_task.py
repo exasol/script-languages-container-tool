@@ -73,8 +73,28 @@ class ExportContainerToFileTask(
             output_checksum_file = Path(
                 str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
             )
-            if not output_file.exists() or not output_checksum_file.exists() or is_new:
+            if (
+                not output_file.exists()
+                or not output_checksum_file.exists()
+                or is_new
+                or (
+                    self.use_symlink_for_export_path
+                    and (
+                        not output_file.is_symlink()
+                        or output_file.resolve() != cache_file.resolve()
+                    )
+                )
+                or (
+                    not self.use_symlink_for_export_path
+                    and output_file.is_symlink()
+                )
+            ):
                 output_file.parent.mkdir(exist_ok=True, parents=True)
+                if output_file.exists() or output_file.is_symlink():
+                    output_file.unlink()
                 shutil.copy2(checksum_file, output_checksum_file)
-                shutil.copy2(cache_file, output_file)
+                if self.use_symlink_for_export_path:
+                    output_file.symlink_to(cache_file.resolve())
+                else:
+                    shutil.copy2(cache_file, output_file)
         return output_file

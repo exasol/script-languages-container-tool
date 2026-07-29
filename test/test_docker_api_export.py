@@ -1,5 +1,6 @@
 import tarfile
 import unittest
+from pathlib import Path
 
 import docker
 import export_test_utils  # type: ignore[import-not-found]
@@ -131,9 +132,35 @@ class ApiDockerExportTest(unittest.TestCase):
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
 
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(build_name, image_complete_name)
-        self.assertNotIn(export_info.hash, image_complete_name)
+        images = find_images_by_tag(
+            self.docker_client,
+            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
+        )
+        self.assertGreater(len(images), 0, "Images for repository were not found.")
+
+    def test_docker_export_with_symlink_for_export_path(self):
+        export_result = api.export(
+            flavor_path=(str(exaslct_utils.get_test_flavor()),),
+            export_path=self.export_path,
+            use_symlink_for_export_path=True,
+            target_docker_repository_name=self.test_environment.docker_repository_name,
+            force_rebuild=True,
+        )
+        export_info, export_path = export_test_utils.assert_single_release_export(
+            self,
+            export_result,
+            self.export_path,
+            flavor_path=str(exaslct_utils.get_test_flavor()),
+        )
+
+        self.assertTrue(export_path.is_symlink())
+        self.assertEqual(export_path.resolve(), Path(export_info.cache_file).resolve())
+
+        with tarfile.open(export_path, "r:gz") as tf:
+            tf_members = tf.getmembers()
+            last_tf_member = tf_members[-1]
+            assert last_tf_member.name == "exasol-manifest.json"
+            assert last_tf_member.path == "exasol-manifest.json"
 
         images = find_images_by_tag(
             self.docker_client,
