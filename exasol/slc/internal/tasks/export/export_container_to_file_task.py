@@ -61,37 +61,61 @@ class ExportContainerToFileTask(
     def _copy_cache_file_to_output_path(
         self, cache_file: Path, checksum_file: Path, is_new: bool
     ) -> Path | None:
-        output_file = None
-        if self.export_path is not None:
-            if self.release_name is not None:
-                suffix = f"""_{self.release_name}"""
-            else:
-                suffix = ""
-            file_extension = detect_container_file_extension(cache_file.name)
-            file_name = f"""{self.get_flavor_name()}_{self.release_goal}{suffix}{file_extension}"""
-            output_file = Path(str(self.export_path), file_name)
-            output_checksum_file = Path(
-                str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
+        if self.export_path is None:
+            return None
+
+        output_file, output_checksum_file = self._get_output_files(cache_file)
+        if self._should_write_output_file(
+            cache_file, output_file, output_checksum_file, is_new
+        ):
+            self._write_output_files(
+                cache_file, checksum_file, output_file, output_checksum_file
             )
-            if (
-                not output_file.exists()
-                or not output_checksum_file.exists()
-                or is_new
-                or (
-                    self.use_symlink_for_export_path
-                    and (
-                        not output_file.is_symlink()
-                        or output_file.resolve() != cache_file.resolve()
-                    )
-                )
-                or (not self.use_symlink_for_export_path and output_file.is_symlink())
-            ):
-                output_file.parent.mkdir(exist_ok=True, parents=True)
-                if output_file.exists() or output_file.is_symlink():
-                    output_file.unlink()
-                shutil.copy2(checksum_file, output_checksum_file)
-                if self.use_symlink_for_export_path:
-                    output_file.symlink_to(cache_file.resolve())
-                else:
-                    shutil.copy2(cache_file, output_file)
         return output_file
+
+    def _get_output_files(self, cache_file: Path) -> tuple[Path, Path]:
+        if self.release_name is not None:
+            suffix = f"_{self.release_name}"
+        else:
+            suffix = ""
+        file_extension = detect_container_file_extension(cache_file.name)
+        file_name = (
+            f"{self.get_flavor_name()}_{self.release_goal}{suffix}{file_extension}"
+        )
+        output_file = Path(self.export_path, file_name)
+        output_checksum_file = Path(
+            str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
+        )
+        return output_file, output_checksum_file
+
+    def _should_write_output_file(
+        self,
+        cache_file: Path,
+        output_file: Path,
+        output_checksum_file: Path,
+        is_new: bool,
+    ) -> bool:
+        if not output_file.exists() or not output_checksum_file.exists() or is_new:
+            return True
+        if self.use_symlink_for_export_path:
+            return (
+                not output_file.is_symlink()
+                or output_file.resolve() != cache_file.resolve()
+            )
+        return output_file.is_symlink()
+
+    def _write_output_files(
+        self,
+        cache_file: Path,
+        checksum_file: Path,
+        output_file: Path,
+        output_checksum_file: Path,
+    ) -> None:
+        output_file.parent.mkdir(exist_ok=True, parents=True)
+        if output_file.exists() or output_file.is_symlink():
+            output_file.unlink()
+        shutil.copy2(checksum_file, output_checksum_file)
+        if self.use_symlink_for_export_path:
+            output_file.symlink_to(cache_file.resolve())
+        else:
+            shutil.copy2(cache_file, output_file)
