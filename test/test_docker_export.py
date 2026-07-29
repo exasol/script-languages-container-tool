@@ -87,7 +87,10 @@ class DockerExportTest(unittest.TestCase):
         self.assertTrue(exported_file.is_symlink())
         linked_target = Path(os.readlink(exported_file))
         self.assertTrue(linked_target.is_absolute())
-        self.assertEqual(linked_target.parent, Path(self.test_environment.temp_dir).joinpath("cache", "exports"))
+        self.assertEqual(
+            linked_target.parent,
+            Path(self.test_environment.temp_dir).joinpath("cache", "exports"),
+        )
         self.assertEqual(exported_file.resolve(), linked_target.resolve())
 
         with tarfile.open(exported_file, "r:*") as tf:

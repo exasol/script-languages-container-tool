@@ -84,10 +84,7 @@ class ExportContainerToFileTask(
                         or output_file.resolve() != cache_file.resolve()
                     )
                 )
-                or (
-                    not self.use_symlink_for_export_path
-                    and output_file.is_symlink()
-                )
+                or (not self.use_symlink_for_export_path and output_file.is_symlink())
             ):
                 output_file.parent.mkdir(exist_ok=True, parents=True)
                 if output_file.exists() or output_file.is_symlink():
