@@ -82,7 +82,7 @@ class ExportContainerToFileTask(
         file_name = (
             f"{self.get_flavor_name()}_{self.release_goal}{suffix}{file_extension}"
         )
-        output_file = Path(self.export_path, file_name)
+        output_file = Path(str(self.export_path), file_name)
         output_checksum_file = Path(
             str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
         )
