@@ -114,8 +114,10 @@ class ExportContainerToFileTask(
         output_file.parent.mkdir(exist_ok=True, parents=True)
         if output_file.exists() or output_file.is_symlink():
             output_file.unlink()
-        shutil.copy2(checksum_file, output_checksum_file)
         if self.use_symlink_for_export_path:
             output_file.symlink_to(cache_file.resolve())
         else:
             shutil.copy2(cache_file, output_file)
+        if output_checksum_file.exists():
+            output_checksum_file.unlink()
+        shutil.copy2(checksum_file, output_checksum_file)

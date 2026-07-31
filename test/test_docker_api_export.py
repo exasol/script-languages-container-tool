@@ -32,7 +32,7 @@ class ApiDockerExportTest(unittest.TestCase):
             target_docker_repository_name=self.test_environment.docker_repository_name,
             force_rebuild=True,
         )
-        _, export_path = export_test_utils.assert_single_release_export(
+        export_info, export_path = export_test_utils.assert_single_release_export(
             self,
             export_result,
             self.export_path,
@@ -45,6 +45,10 @@ class ApiDockerExportTest(unittest.TestCase):
             last_tf_member = tf_members[-1]
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
+
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(export_info.hash, image_complete_name)
+
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
@@ -59,7 +63,7 @@ class ApiDockerExportTest(unittest.TestCase):
             cleanup_docker_images=True,
             force_rebuild=True,
         )
-        _, export_path = export_test_utils.assert_single_release_export(
+        export_info, export_path = export_test_utils.assert_single_release_export(
             self,
             export_result,
             self.export_path,
@@ -72,6 +76,10 @@ class ApiDockerExportTest(unittest.TestCase):
             last_tf_member = tf_members[-1]
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
+
+
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(export_info.hash, image_complete_name)
 
         images = find_images_by_tag(
             self.docker_client,
@@ -87,7 +95,7 @@ class ApiDockerExportTest(unittest.TestCase):
             compression_strategy=CompressionStrategy.NONE,
             force_rebuild=True,
         )
-        _, export_path = export_test_utils.assert_single_release_export(
+        export_info, export_path = export_test_utils.assert_single_release_export(
             self,
             export_result,
             self.export_path,
@@ -101,6 +109,10 @@ class ApiDockerExportTest(unittest.TestCase):
             last_tf_member = tf_members[-1]
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
+
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(export_info.hash, image_complete_name)
+
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
@@ -132,6 +144,10 @@ class ApiDockerExportTest(unittest.TestCase):
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
 
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(build_name, image_complete_name)
+        self.assertNotIn(export_info.hash, image_complete_name)
+
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
@@ -161,6 +177,9 @@ class ApiDockerExportTest(unittest.TestCase):
             last_tf_member = tf_members[-1]
             assert last_tf_member.name == "exasol-manifest.json"
             assert last_tf_member.path == "exasol-manifest.json"
+
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(export_info.hash, image_complete_name)
 
         images = find_images_by_tag(
             self.docker_client,
