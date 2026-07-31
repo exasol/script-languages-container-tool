@@ -77,9 +77,12 @@ class ExportContainers(FlavorsBaseTask, ExportContainersParameter):
                         export_info.output_file is not None
                         and export_info.output_file != "None"
                     ):
-                        out_file.write(
-                            "Copied container to %s" % export_info.output_file
-                        )
+                        output_file = Path(export_info.output_file)
+                        if output_file.is_symlink():
+                            message = "Linked container to %s"
+                        else:
+                            message = "Copied container to %s"
+                        out_file.write(message % export_info.output_file)
                         out_file.write("\n")
                         out_file.write("\n")
                     out_file.write("=================================================")

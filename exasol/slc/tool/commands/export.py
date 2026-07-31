@@ -41,6 +41,11 @@ from exasol.slc.tool.options.goal_options import release_options
     default=None,
     help="Deprecated alias for --build-name.",
 )
+@click.option(
+    "--use-symlink-for-export-path/--no-use-symlink-for-export-path",
+    default=False,
+    help="Create a symlink at the export path that points to the cached tar file.",
+)
 @add_options(build_options)
 @add_options(docker_repository_options)
 @add_options(system_options)
@@ -57,6 +62,7 @@ def export(
     release_goal: tuple[str, ...],
     export_path: str | None,
     release_name: str | None,
+    use_symlink_for_export_path: bool,
     force_rebuild: bool,
     force_rebuild_from: tuple[str, ...],
     force_pull: bool,
@@ -90,6 +96,7 @@ def export(
             flavor_path=flavor_path,
             release_goal=release_goal,
             export_path=export_path,
+            use_symlink_for_export_path=use_symlink_for_export_path,
             build_name=build_name,
             release_name=release_name,
             force_rebuild=force_rebuild,

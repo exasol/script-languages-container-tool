@@ -36,5 +36,4 @@ def assert_single_release_export(
             export_info.hash,
             export_info.depends_on_image.get_target_complete_name(),
         )
-
     return export_info, export_path

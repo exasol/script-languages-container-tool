@@ -14,6 +14,7 @@ class ExportContainerOptionsParameter:
 
 class ExportContainerParameterBase(ExportContainerOptionsParameter):
     export_path: str | None = luigi.OptionalParameter(None)  # type: ignore
+    use_symlink_for_export_path: bool = luigi.BoolParameter(False)  # type: ignore
     release_name: str | None = luigi.OptionalParameter(None)  # type: ignore
     cleanup_docker_images: bool = luigi.BoolParameter(False)  # type: ignore
 
