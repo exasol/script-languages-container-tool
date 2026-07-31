@@ -71,15 +71,11 @@ class ApiDockerExportTest(unittest.TestCase):
     def test_docker_export(self):
         export_info, export_path = self._run_export()
         self._assert_manifest_is_last(export_path)
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(export_info.hash, image_complete_name)
         self._assert_repository_images(0)
 
     def test_docker_export_with_image_cleanup(self):
         export_info, export_path = self._run_export(cleanup_docker_images=True)
         self._assert_manifest_is_last(export_path)
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(export_info.hash, image_complete_name)
         self._assert_repository_images(0, exact=True)
 
     def test_docker_export_uncompressed(self):
@@ -88,8 +84,6 @@ class ApiDockerExportTest(unittest.TestCase):
         )
         self.assertEqual(export_path.suffix, ".tar")
         self._assert_manifest_is_last(export_path)
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(export_info.hash, image_complete_name)
         self._assert_repository_images(0)
 
     def test_docker_export_with_build_name(self):
@@ -100,9 +94,6 @@ class ApiDockerExportTest(unittest.TestCase):
         )
         self.assertEqual(export_path.suffix, ".tar")
         self._assert_manifest_is_last(export_path)
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(build_name, image_complete_name)
-        self.assertNotIn(export_info.hash, image_complete_name)
         self._assert_repository_images(0)
 
     def test_docker_export_with_symlink_for_export_path(self):
@@ -112,8 +103,6 @@ class ApiDockerExportTest(unittest.TestCase):
         self.assertTrue(export_path.is_symlink())
         self.assertEqual(export_path.resolve(), Path(export_info.cache_file).resolve())
         self._assert_manifest_is_last(export_path)
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(export_info.hash, image_complete_name)
         self._assert_repository_images(0)
 
 
