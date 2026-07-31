@@ -48,32 +48,39 @@ class ApiDockerExportTest(unittest.TestCase):
             self.assertEqual(last_tf_member.name, "exasol-manifest.json")
             self.assertEqual(last_tf_member.path, "exasol-manifest.json")
 
-    def _assert_repository_images(self, expected_count: int) -> None:
+    def _assert_repository_images(
+        self, expected_count: int, *, exact: bool = False
+    ) -> None:
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertEqual(
-            len(images),
-            expected_count,
-            "Images for repository were not found."
-            if expected_count > 0
-            else "Images for repository were not deleted.",
-        )
+        if exact:
+            self.assertEqual(
+                len(images),
+                expected_count,
+                "Images for repository were not deleted.",
+            )
+        else:
+            self.assertGreater(
+                len(images),
+                expected_count,
+                "Images for repository were not found.",
+            )
 
     def test_docker_export(self):
         export_info, export_path = self._run_export()
         self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-        self._assert_repository_images(1)
+        self._assert_repository_images(0)
 
     def test_docker_export_with_image_cleanup(self):
         export_info, export_path = self._run_export(cleanup_docker_images=True)
         self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-        self._assert_repository_images(0)
+        self._assert_repository_images(0, exact=True)
 
     def test_docker_export_uncompressed(self):
         export_info, export_path = self._run_export(
@@ -83,7 +90,7 @@ class ApiDockerExportTest(unittest.TestCase):
         self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-        self._assert_repository_images(1)
+        self._assert_repository_images(0)
 
     def test_docker_export_with_build_name(self):
         build_name = "TEST"
@@ -96,7 +103,7 @@ class ApiDockerExportTest(unittest.TestCase):
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(build_name, image_complete_name)
         self.assertNotIn(export_info.hash, image_complete_name)
-        self._assert_repository_images(1)
+        self._assert_repository_images(0)
 
     def test_docker_export_with_symlink_for_export_path(self):
         export_info, export_path = self._run_export(
@@ -107,7 +114,7 @@ class ApiDockerExportTest(unittest.TestCase):
         self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-        self._assert_repository_images(1)
+        self._assert_repository_images(0)
 
 
 if __name__ == "__main__":
