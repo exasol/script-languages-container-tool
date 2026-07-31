@@ -25,167 +25,89 @@ class ApiDockerExportTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
-    def test_docker_export(self):
+    def _run_export(self, build_name: str | None = None, **kwargs):
         export_result = api.export(
             flavor_path=(str(exaslct_utils.get_test_flavor()),),
             export_path=self.export_path,
             target_docker_repository_name=self.test_environment.docker_repository_name,
             force_rebuild=True,
+            build_name=build_name,
+            **kwargs,
         )
-        export_info, export_path = export_test_utils.assert_single_release_export(
+        return export_test_utils.assert_single_release_export(
             self,
             export_result,
             self.export_path,
             flavor_path=str(exaslct_utils.get_test_flavor()),
+            build_name=build_name,
         )
 
-        # Verify that "exasol-manifest.json" is the last file in the Tar archive
-        with tarfile.open(export_path, "r:gz") as tf:
-            tf_members = tf.getmembers()
-            last_tf_member = tf_members[-1]
-            assert last_tf_member.name == "exasol-manifest.json"
-            assert last_tf_member.path == "exasol-manifest.json"
+    def _assert_manifest_is_last(self, export_path: Path) -> None:
+        with tarfile.open(export_path, "r:*") as tf:
+            last_tf_member = tf.getmembers()[-1]
+            self.assertEqual(last_tf_member.name, "exasol-manifest.json")
+            self.assertEqual(last_tf_member.path, "exasol-manifest.json")
 
-        image_complete_name = export_info.depends_on_image.get_target_complete_name()
-        self.assertIn(export_info.hash, image_complete_name)
-
+    def _assert_repository_images(self, expected_count: int) -> None:
         images = find_images_by_tag(
             self.docker_client,
             lambda tag: tag.startswith(self.test_environment.docker_repository_name),
         )
-        self.assertGreater(len(images), 0, "Images for repository were not found.")
+        self.assertEqual(
+            len(images),
+            expected_count,
+            "Images for repository were not found."
+            if expected_count > 0
+            else "Images for repository were not deleted.",
+        )
+
+    def test_docker_export(self):
+        export_info, export_path = self._run_export()
+        self._assert_manifest_is_last(export_path)
+        image_complete_name = export_info.depends_on_image.get_target_complete_name()
+        self.assertIn(export_info.hash, image_complete_name)
+        self._assert_repository_images(1)
 
     def test_docker_export_with_image_cleanup(self):
-        export_result = api.export(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
-            export_path=self.export_path,
-            target_docker_repository_name=self.test_environment.docker_repository_name,
-            cleanup_docker_images=True,
-            force_rebuild=True,
-        )
-        export_info, export_path = export_test_utils.assert_single_release_export(
-            self,
-            export_result,
-            self.export_path,
-            flavor_path=str(exaslct_utils.get_test_flavor()),
-        )
-
-        # Verify that "exasol-manifest.json" is the last file in the Tar archive
-        with tarfile.open(export_path, "r:gz") as tf:
-            tf_members = tf.getmembers()
-            last_tf_member = tf_members[-1]
-            assert last_tf_member.name == "exasol-manifest.json"
-            assert last_tf_member.path == "exasol-manifest.json"
-
-
+        export_info, export_path = self._run_export(cleanup_docker_images=True)
+        self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-
-        images = find_images_by_tag(
-            self.docker_client,
-            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
-        )
-        self.assertEqual(len(images), 0, "Images for repository were not deleted.")
+        self._assert_repository_images(0)
 
     def test_docker_export_uncompressed(self):
-        export_result = api.export(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
-            export_path=self.export_path,
-            target_docker_repository_name=self.test_environment.docker_repository_name,
-            compression_strategy=CompressionStrategy.NONE,
-            force_rebuild=True,
-        )
-        export_info, export_path = export_test_utils.assert_single_release_export(
-            self,
-            export_result,
-            self.export_path,
-            flavor_path=str(exaslct_utils.get_test_flavor()),
+        export_info, export_path = self._run_export(
+            compression_strategy=CompressionStrategy.NONE
         )
         self.assertEqual(export_path.suffix, ".tar")
-
-        # Verify that "exasol-manifest.json" is the last file in the Tar archive
-        with tarfile.open(export_path, "r:") as tf:
-            tf_members = tf.getmembers()
-            last_tf_member = tf_members[-1]
-            assert last_tf_member.name == "exasol-manifest.json"
-            assert last_tf_member.path == "exasol-manifest.json"
-
+        self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-
-        images = find_images_by_tag(
-            self.docker_client,
-            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
-        )
-        self.assertGreater(len(images), 0, "Images for repository were not found.")
+        self._assert_repository_images(1)
 
     def test_docker_export_with_build_name(self):
         build_name = "TEST"
-        export_result = api.export(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
-            export_path=self.export_path,
-            target_docker_repository_name=self.test_environment.docker_repository_name,
+        export_info, export_path = self._run_export(
             build_name=build_name,
             compression_strategy=CompressionStrategy.NONE,
-            force_rebuild=True,
-        )
-        export_info, export_path = export_test_utils.assert_single_release_export(
-            self,
-            export_result,
-            self.export_path,
-            flavor_path=str(exaslct_utils.get_test_flavor()),
-            build_name=build_name,
         )
         self.assertEqual(export_path.suffix, ".tar")
-
-        with tarfile.open(export_path, "r:") as tf:
-            tf_members = tf.getmembers()
-            last_tf_member = tf_members[-1]
-            assert last_tf_member.name == "exasol-manifest.json"
-            assert last_tf_member.path == "exasol-manifest.json"
-
+        self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(build_name, image_complete_name)
         self.assertNotIn(export_info.hash, image_complete_name)
-
-        images = find_images_by_tag(
-            self.docker_client,
-            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
-        )
-        self.assertGreater(len(images), 0, "Images for repository were not found.")
+        self._assert_repository_images(1)
 
     def test_docker_export_with_symlink_for_export_path(self):
-        export_result = api.export(
-            flavor_path=(str(exaslct_utils.get_test_flavor()),),
-            export_path=self.export_path,
+        export_info, export_path = self._run_export(
             use_symlink_for_export_path=True,
-            target_docker_repository_name=self.test_environment.docker_repository_name,
-            force_rebuild=True,
         )
-        export_info, export_path = export_test_utils.assert_single_release_export(
-            self,
-            export_result,
-            self.export_path,
-            flavor_path=str(exaslct_utils.get_test_flavor()),
-        )
-
         self.assertTrue(export_path.is_symlink())
         self.assertEqual(export_path.resolve(), Path(export_info.cache_file).resolve())
-
-        with tarfile.open(export_path, "r:gz") as tf:
-            tf_members = tf.getmembers()
-            last_tf_member = tf_members[-1]
-            assert last_tf_member.name == "exasol-manifest.json"
-            assert last_tf_member.path == "exasol-manifest.json"
-
+        self._assert_manifest_is_last(export_path)
         image_complete_name = export_info.depends_on_image.get_target_complete_name()
         self.assertIn(export_info.hash, image_complete_name)
-
-        images = find_images_by_tag(
-            self.docker_client,
-            lambda tag: tag.startswith(self.test_environment.docker_repository_name),
-        )
-        self.assertGreater(len(images), 0, "Images for repository were not found.")
+        self._assert_repository_images(1)
 
 
 if __name__ == "__main__":
