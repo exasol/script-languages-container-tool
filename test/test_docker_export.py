@@ -30,7 +30,10 @@ class DockerExportTest(unittest.TestCase):
         self.assertEqual(
             sorted(list(exported_files)),
             sorted(
-                ["test-flavor_release.tar.gz", "test-flavor_release.tar.gz.sha512sum"]
+                [
+                    "test-flavor_release_x64.tar.gz",
+                    "test-flavor_release_x64.tar.gz.sha512sum",
+                ]
             ),
             f"Did not found saved files for repository {self.test_environment.repository_name} "
             f"in list {exported_files}",
@@ -38,7 +41,7 @@ class DockerExportTest(unittest.TestCase):
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(
-            os.path.join(self.export_path, "test-flavor_release.tar.gz"), "r:*"
+            os.path.join(self.export_path, "test-flavor_release_x64.tar.gz"), "r:*"
         ) as tf:
             tf_members = tf.getmembers()
             last_tf_member = tf_members[-1]
@@ -57,7 +60,10 @@ class DockerExportTest(unittest.TestCase):
         self.assertEqual(
             sorted(list(exported_files)),
             sorted(
-                ["test-flavor_release.tar.gz", "test-flavor_release.tar.gz.sha512sum"]
+                [
+                    "test-flavor_release_x64_.tar.gz",
+                    "test-flavor_release_x64_.tar.gz.sha512sum",
+                ]
             ),
             f"Did not found saved files for repository {self.test_environment.repository_name} "
             f"in list {exported_files}",
@@ -65,7 +71,7 @@ class DockerExportTest(unittest.TestCase):
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(
-            os.path.join(self.export_path, "test-flavor_release.tar.gz"), "r:*"
+            os.path.join(self.export_path, "test-flavor_release_x64_.tar.gz"), "r:*"
         ) as tf:
             tf_members = tf.getmembers()
             last_tf_member = tf_members[-1]
@@ -83,7 +89,7 @@ class DockerExportTest(unittest.TestCase):
             f"--use-symlink-for-export-path"
         )
         self.test_environment.run_command(command, track_task_dependencies=True)
-        exported_file = Path(self.export_path) / "test-flavor_release.tar.gz"
+        exported_file = Path(self.export_path) / "test-flavor_release_x64_.tar.gz"
         self.assertTrue(exported_file.is_symlink())
         linked_target = Path(os.readlink(exported_file))
         self.assertTrue(linked_target.is_absolute())
