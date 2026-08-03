@@ -79,9 +79,7 @@ class ExportContainerToFileTask(
         else:
             suffix = ""
         file_extension = detect_container_file_extension(cache_file.name)
-        file_name = (
-            f"{self.get_flavor_name()}_{self.release_goal}_{self.platform}_{suffix}{file_extension}"
-        )
+        file_name = f"{self.get_flavor_name()}_{self.release_goal}_{self.platform}_{suffix}{file_extension}"
         output_file = Path(str(self.export_path), file_name)
         output_checksum_file = Path(
             str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM

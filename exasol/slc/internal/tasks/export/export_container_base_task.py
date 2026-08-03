@@ -52,10 +52,8 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         assert self._release_task_future is not None
         image_info_of_release_image: ImageInfo = self._release_task_future.get_output()
         assert isinstance(image_info_of_release_image, ImageInfo)
-        cache_file, release_complete_name = (
-            self._get_cache_file_path(
-                image_info_of_release_image, self._export_directory_future
-            )
+        cache_file, release_complete_name = self._get_cache_file_path(
+            image_info_of_release_image, self._export_directory_future
         )
         checksum_file = f"{cache_file}.{CHECKSUM_ALGORITHM}"
         remove_cached_export_file_task: RemoveCachedExportTask = self.create_child_task(
