@@ -1,18 +1,7 @@
 name: SAAS Tests
 
 on:
-  workflow_call:
-    secrets:
-      INTEGRATION_TEAM_SAAS_STAGING_HOST:
-        required: true
-      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID:
-        required: true
-      INTEGRATION_TEAM_SAAS_STAGING_PAT:
-        required: true
-    inputs:
-      python_version:
-        required: true
-        type: string
+  pull_request:
 
 jobs:
 
@@ -22,14 +11,14 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v10
         with:
-          python-version: ${{ inputs.python_version }}
+          python-version: "3.12"
           poetry-version: "2.3.0"
 
       - id: set-matrix
@@ -50,7 +39,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: SAAS Test
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
