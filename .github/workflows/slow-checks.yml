@@ -58,21 +58,3 @@ jobs:
       matrix: ${{ fromJson(needs.build-extended-python-matrix.outputs.matrix) }}
     with:
       python_version: ${{ matrix.extended_python_versions }}
-
-  saas-tests:
-    name: Integrations
-    needs:
-      - build-matrix
-    uses: ./.github/workflows/integration-saas-tests.yml
-    secrets:
-      INTEGRATION_TEAM_SAAS_STAGING_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
-      INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
-      INTEGRATION_TEAM_SAAS_STAGING_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
-    with:
-      python_version: ${{ matrix.minimum_python_version }}
-

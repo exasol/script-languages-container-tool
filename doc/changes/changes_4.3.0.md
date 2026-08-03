@@ -12,7 +12,7 @@ This release updates the integration-test-docker-environment to version 6.5.0 wh
 
 ## Internal
 
-* Deactivated SaaS Tests as they are broken
+* Moved SaaS Integration Tests out of slow-checks.yml to run them independently
 
 ## Dependency Updates
 
