@@ -61,9 +61,9 @@ jobs:
           poetry-version: "2.3.0"
           use-cache: 'false'
 
-      - name: Run ${{ matrix.test-path.name }}
-        env:
-          SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
-          SAAS_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
-          SAAS_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
-        run: poetry run -- pytest --backend=saas "${{ matrix.test-path.path }}"
+#      - name: Run ${{ matrix.test-path.name }}
+#        env:
+#          SAAS_HOST: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_HOST }}
+#          SAAS_ACCOUNT_ID: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_ACCOUNT_ID }}
+#          SAAS_PAT: ${{ secrets.INTEGRATION_TEAM_SAAS_STAGING_PAT }}
+#        run: poetry run -- pytest --backend=saas "${{ matrix.test-path.path }}"

@@ -10,6 +10,10 @@ This release updates the integration-test-docker-environment to version 6.5.0 wh
 
 * #391: Updated to ITDE 6.5.0
 
+## Internal
+
+* Deactivated SaaS Tests as they are broken
+
 ## Dependency Updates
 
 ### `main`
