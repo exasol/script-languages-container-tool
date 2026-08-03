@@ -52,8 +52,10 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         assert self._release_task_future is not None
         image_info_of_release_image: ImageInfo = self._release_task_future.get_output()
         assert isinstance(image_info_of_release_image, ImageInfo)
-        cache_file, release_complete_name = self._get_cache_file_path(
-            image_info_of_release_image, self._export_directory_future
+        cache_file, release_complete_name, release_image_name = (
+            self._get_cache_file_path(
+                image_info_of_release_image, self._export_directory_future
+            )
         )
         checksum_file = f"{cache_file}.{CHECKSUM_ALGORITHM}"
         remove_cached_export_file_task: RemoveCachedExportTask = self.create_child_task(
@@ -68,6 +70,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
                 ExportContainerToFileTask,
                 cache_file_path=cache_file,
                 checksum_file_path=checksum_file,
+                release_image_name=release_image_name,
                 platform=image_info_of_release_image.platform,
             )
         )
@@ -125,10 +128,11 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
         self,
         image_info_of_release_image: ImageInfo,
         export_directory_future: AbstractTaskFuture,
-    ) -> tuple[str, str]:
+    ) -> tuple[str, str, str]:
+        release_image_name = image_info_of_release_image.get_target_complete_name()
         export_path = Path(export_directory_future.get_output()).absolute()
         release_complete_name = f"""{image_info_of_release_image.target_tag}-{image_info_of_release_image.platform}-{image_info_of_release_image.hash}"""
         cache_file = Path(
             export_path, release_complete_name + self._get_export_file_extension()
         ).absolute()
-        return str(cache_file), release_complete_name
+        return str(cache_file), release_complete_name, release_image_name

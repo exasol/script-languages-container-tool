@@ -32,6 +32,7 @@ class ExportContainerToFileInfo(Info):
 class ExportContainerToFileTask(
     FlavorBaseTask, ExportContainerParameter, CacheFileParameters
 ):
+    release_image_name: str = luigi.Parameter()  # type: ignore
     platform: str = luigi.Parameter()  # type: ignore
 
     def run_task(self) -> Generator[BaseTask, None, None]:
