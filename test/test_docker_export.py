@@ -1,4 +1,5 @@
 import os
+import platform
 import tarfile
 import unittest
 from pathlib import Path
@@ -19,6 +20,8 @@ class DockerExportTest(unittest.TestCase):
         self.export_path = self.test_environment.temp_dir + "/export_dir"
         self.docker_client = docker.from_env()
         self.test_environment.clean_images()
+        machine = platform.machine().lower()
+        self.arch = "arm64" if ("arm" in machine) or ("aarch" in machine) else "x64"
 
     def tearDown(self):
         utils.close_environments(self.test_environment)
@@ -31,8 +34,8 @@ class DockerExportTest(unittest.TestCase):
             sorted(list(exported_files)),
             sorted(
                 [
-                    "test-flavor_release_x64.tar.gz",
-                    "test-flavor_release_x64.tar.gz.sha512sum",
+                    f"test-flavor_release_{self.arch}.tar.gz",
+                    f"test-flavor_release_{self.arch}.tar.gz.sha512sum",
                 ]
             ),
             f"Did not found saved files for repository {self.test_environment.repository_name} "
@@ -41,7 +44,8 @@ class DockerExportTest(unittest.TestCase):
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(
-            os.path.join(self.export_path, "test-flavor_release_x64.tar.gz"), "r:*"
+            os.path.join(self.export_path, f"test-flavor_release_{self.arch}.tar.gz"),
+            "r:*",
         ) as tf:
             tf_members = tf.getmembers()
             last_tf_member = tf_members[-1]
@@ -61,8 +65,8 @@ class DockerExportTest(unittest.TestCase):
             sorted(list(exported_files)),
             sorted(
                 [
-                    "test-flavor_release_x64.tar.gz",
-                    "test-flavor_release_x64.tar.gz.sha512sum",
+                    f"test-flavor_release_{self.arch}.tar.gz",
+                    f"test-flavor_release_{self.arch}.tar.gz.sha512sum",
                 ]
             ),
             f"Did not found saved files for repository {self.test_environment.repository_name} "
@@ -71,7 +75,8 @@ class DockerExportTest(unittest.TestCase):
 
         # Verify that "exasol-manifest.json" is the last file in the Tar archive
         with tarfile.open(
-            os.path.join(self.export_path, "test-flavor_release_x64.tar.gz"), "r:*"
+            os.path.join(self.export_path, f"test-flavor_release_{self.arch}.tar.gz"),
+            "r:*",
         ) as tf:
             tf_members = tf.getmembers()
             last_tf_member = tf_members[-1]
@@ -89,7 +94,9 @@ class DockerExportTest(unittest.TestCase):
             f"--use-symlink-for-export-path"
         )
         self.test_environment.run_command(command, track_task_dependencies=True)
-        exported_file = Path(self.export_path) / "test-flavor_release_x64.tar.gz"
+        exported_file = (
+            Path(self.export_path) / f"test-flavor_release_{self.arch}.tar.gz"
+        )
         self.assertTrue(exported_file.is_symlink())
         linked_target = Path(os.readlink(exported_file))
         self.assertTrue(linked_target.is_absolute())
