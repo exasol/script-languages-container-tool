@@ -47,7 +47,7 @@ jobs:
       python_version: ${{ matrix.extended_python_versions }}
 
   gpu-tests:
-    name: Integrations
+    name: Integrations-GPU
     needs:
       - build-extended-python-matrix
     uses: ./.github/workflows/gpu-tests.yml

@@ -71,6 +71,7 @@ class ExportContainerBaseTask(FlavorBaseTask, ExportContainerParameter):
                 cache_file_path=cache_file,
                 checksum_file_path=checksum_file,
                 release_image_name=release_image_name,
+                platform=image_info_of_release_image.platform,
             )
         )
         export_container_to_file_result_future: AbstractTaskFuture = (

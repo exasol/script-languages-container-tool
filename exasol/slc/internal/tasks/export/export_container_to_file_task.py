@@ -33,6 +33,7 @@ class ExportContainerToFileTask(
     FlavorBaseTask, ExportContainerParameter, CacheFileParameters
 ):
     release_image_name: str = luigi.Parameter()  # type: ignore
+    platform: str = luigi.Parameter()  # type: ignore
 
     def run_task(self) -> Generator[BaseTask, None, None]:
         cache_file = Path(self.cache_file_path)
@@ -79,9 +80,7 @@ class ExportContainerToFileTask(
         else:
             suffix = ""
         file_extension = detect_container_file_extension(cache_file.name)
-        file_name = (
-            f"{self.get_flavor_name()}_{self.release_goal}{suffix}{file_extension}"
-        )
+        file_name = f"{self.get_flavor_name()}_{self.release_goal}_{self.platform}{suffix}{file_extension}"
         output_file = Path(str(self.export_path), file_name)
         output_checksum_file = Path(
             str(self.export_path), file_name + "." + CHECKSUM_ALGORITHM
