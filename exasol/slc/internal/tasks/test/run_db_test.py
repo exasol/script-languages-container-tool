@@ -174,6 +174,7 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         )
         environment["TEST_ENVIRONMENT_TYPE"] = env_type
         environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
+        environment["EXASLCT_EXECUTION_MODE"] = "pytest" if self.pytest else "unittest"
         environment["TEST_DOCKER_NETWORK_NAME"] = (
             self.test_environment_info.network_info.network_name
         )
@@ -202,9 +203,28 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         def command_line():
             host = self._database_info.host
             port = self._database_info.ports.database
+            if self.pytest:
+                yield from [
+                    "cd /tests/test/;",
+                    "python3 /tests/test_container_entrypoint.py",
+                    quote(self.test_file),
+                    "--backend=onprem",
+                    "--exasol-host",
+                    quote(host),
+                    "--exasol-port",
+                    quote(str(port)),
+                    "--exasol-username",
+                    quote(self.db_user),
+                    "--exasol-password",
+                    quote(self.db_password),
+                    "--script-languages",
+                    quote(self.language_definition),
+                ]
+                yield from self.test_restrictions  # pylint: disable=not-an-iterable
+                return
             yield from [
                 "cd /tests/test/;",
-                "python3",
+                "python3 /tests/test_container_entrypoint.py",
                 quote(self.test_file),
                 "--server",
                 quote(f"{host}:{port}"),

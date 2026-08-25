@@ -5,7 +5,7 @@ import exasol.bucketfs as bfs
 import luigi
 from docker.models.containers import Container
 
-# TODO add timeout, because sometimes the upload stucks
+# TODO add timeout, because sometimes the upload get stuck
 from exasol_integration_test_docker_environment.abstract_method_exception import (
     AbstractMethodException,
 )
@@ -170,7 +170,7 @@ class UploadFileToBucketFS(DockerBaseTask):
 
     @property
     def bucket_fs_url(self) -> str:
-        return f"http://{self._database_info.host}:{self._database_info.ports.bucketfs}"
+        return f"http://{self._database_info.host}:{self._database_info.ports.bucketfs_http}"
 
     def build_file_path_in_bucket(self, upload_target: str) -> bfs.path.PathLike:
         backend = bfs.path.StorageBackend.onprem
@@ -215,5 +215,5 @@ class UploadFileToBucketFS(DockerBaseTask):
         raise AbstractMethodException()
 
     def get_sync_time_estimation(self) -> int:
-        """Estimated time in seconds which the bucketfs needs to extract and sync a uploaded file"""
+        """Estimated time in seconds which the bucketfs needs to extract and sync an uploaded file"""
         raise AbstractMethodException()

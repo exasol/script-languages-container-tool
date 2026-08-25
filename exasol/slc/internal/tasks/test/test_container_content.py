@@ -7,6 +7,8 @@ from exasol_integration_test_docker_environment.lib.models.data.test_container_c
 )
 
 TEST_DATA_TARGET = "/tests_data"
+# FIXME
+TEST_CONTAINER_ENTRYPOINT = Path(__file__).with_name("test_container_entrypoint.py")
 
 
 def build_test_container_content(
