@@ -1,1 +1,101 @@
+#!/usr/bin/env python3
+
 # FIXME - Move to pytest-exasol-slc
+
+import os
+import pwd
+import grp
+import stat
+import subprocess
+import sys
+from typing import List
+
+
+USER_NAME = os.getenv("USER_NAME", "app")
+HOST_UID = int(os.getenv("HOST_UID", "1000"))
+HOST_GID = int(os.getenv("HOST_GID", "1000"))
+DOCKER_SOCKET = os.getenv("DOCKER_SOCKET", "/var/run/docker.sock")
+DOCKER_GROUP_NAME = os.getenv("DOCKER_GROUP_NAME", "docker")
+
+
+def run(cmd: List[str]) -> None:
+    subprocess.run(cmd, check=True)
+
+
+def get_docker_gid(default: int = 998) -> int:
+    try:
+        st = os.stat(DOCKER_SOCKET)
+        if stat.S_ISSOCK(st.st_mode):
+            return st.st_gid
+    except FileNotFoundError:
+        pass
+    return default
+
+
+def ensure_group(name: str, gid: int) -> None:
+    try:
+        grp.getgrnam(name)
+        run(["groupmod", "-g", str(gid), name])
+    except KeyError:
+        run(["groupadd", "-g", str(gid), name])
+
+
+def ensure_primary_group(name: str, gid: int) -> None:
+    try:
+        grp.getgrgid(gid)
+    except KeyError:
+        run(["groupadd", "-g", str(gid), name])
+
+
+def ensure_user(name: str, uid: int, gid: int) -> None:
+    try:
+        pwd.getpwnam(name)
+        run(["usermod", "-u", str(uid), "-g", str(gid), name])
+    except KeyError:
+        run([
+            "useradd",
+            "-m",
+            "-u", str(uid),
+            "-g", str(gid),
+            "-s", "/bin/bash",
+            name,
+        ])
+
+
+def add_user_to_group(name: str, group: str) -> None:
+    run(["usermod", "-aG", group, name])
+
+
+def fix_home_ownership(name: str, uid: int, gid: int) -> None:
+    home_dir = f"/home/{name}"
+    if os.path.isdir(home_dir):
+        run(["chown", "-R", f"{uid}:{gid}", home_dir])
+
+
+def drop_privileges(name: str) -> None:
+    pw = pwd.getpwnam(name)
+    os.initgroups(name, pw.pw_gid)
+    os.setgid(pw.pw_gid)
+    os.setuid(pw.pw_uid)
+
+
+def main() -> None:
+    docker_gid = get_docker_gid()
+
+    ensure_group(DOCKER_GROUP_NAME, docker_gid)
+    ensure_primary_group(USER_NAME, HOST_GID)
+    ensure_user(USER_NAME, HOST_UID, HOST_GID)
+
+    add_user_to_group(USER_NAME, "sudo")
+    add_user_to_group(USER_NAME, DOCKER_GROUP_NAME)
+
+    fix_home_ownership(USER_NAME, HOST_UID, HOST_GID)
+
+    drop_privileges(USER_NAME)
+
+    cmd = sys.argv[1:] or ["/bin/bash"]
+    os.execvp(cmd[0], cmd)
+
+
+if __name__ == "__main__":
+    main()
