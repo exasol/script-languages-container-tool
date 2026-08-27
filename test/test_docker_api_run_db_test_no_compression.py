@@ -45,7 +45,8 @@ class ApiDockerRunDbTestNoCompression(unittest.TestCase):
             external_exasol_db_port=self.docker_environment.ports.database,
             external_exasol_db_user=self.docker_environment.db_username,
             external_exasol_db_password=self.docker_environment.db_password,
-            external_exasol_bucketfs_port=self.docker_environment.ports.bucketfs,
+            external_exasol_bucketfs_port=self.docker_environment.ports.bucketfs_http,
+            external_exasol_bucketfs_https_port=self.docker_environment.ports.bucketfs_https,
             external_exasol_bucketfs_write_password=self.docker_environment.bucketfs_password,
             external_exasol_ssh_port=self.docker_environment.ports.ssh,
             environment_type=EnvironmentType.external_db.name,
@@ -53,18 +54,19 @@ class ApiDockerRunDbTestNoCompression(unittest.TestCase):
 
     def validate_file_on_bucket_fs(self, expected_file: str):
         host = self.docker_environment.database_host
-        port = self.docker_environment.ports.bucketfs
+        port = self.docker_environment.ports.bucketfs_https
         bucketfs_username = self.docker_environment.bucketfs_username
         bucketfs_password = self.docker_environment.bucketfs_password
         path_in_bucket = f"myudfs/{expected_file}"
         with TemporaryDirectory() as tmpdir:
-            url = f"http://{bucketfs_username}:{bucketfs_password}@{host}:{port}/{path_in_bucket}"
+            url = f"https://{bucketfs_username}:{bucketfs_password}@{host}:{port}/{path_in_bucket}"
             file_name = f"{tmpdir}/{expected_file}"
             cmd = [
                 "curl",
                 "--silent",
                 "--show-error",
                 "--fail",
+                "--insecure",
                 url,
                 "--output",
                 file_name,
