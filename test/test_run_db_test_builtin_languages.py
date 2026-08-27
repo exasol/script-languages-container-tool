@@ -29,6 +29,19 @@ class RunDBTestBuiltinLanguagesTest(unittest.TestCase):
         )
         self.test_environment.run_command(command, track_task_dependencies=True)
 
+    def test_builtin_languages_pytest(self):
+        command = " ".join(
+            [
+                str(self.test_environment.executable),
+                "run-db-test",
+                "--test-file",
+                "test_builtin_languages_pytest.py",
+                "--pytest",
+                exaslct_utils.get_full_test_container_folder_parameter(),
+            ]
+        )
+        self.test_environment.run_command(command, track_task_dependencies=True)
+
 
 if __name__ == "__main__":
     unittest.main()
