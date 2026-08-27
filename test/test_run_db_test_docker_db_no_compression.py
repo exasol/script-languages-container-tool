@@ -28,10 +28,10 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
 
     def validate_file_on_bucket_fs(self, expected_file_path: str):
         host = self.docker_environment.database_host
-        port = self.docker_environment.ports.bucketfs
+        port = self.docker_environment.ports.bucketfs_https
         bucketfs_username = self.docker_environment.bucketfs_username
         bucketfs_password = self.docker_environment.bucketfs_password
-        url = f"http://{host}:{port}"
+        url = f"https://{host}:{port}"
         udf_path = bfs.path.build_path(
             backend=bfs.path.StorageBackend.onprem,
             url=url,
@@ -39,7 +39,7 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
             service_name="bfsdefault",
             username=bucketfs_username,
             password=bucketfs_password,
-            verify=True,
+            verify=False,
         )
 
         container_files = [
@@ -53,7 +53,8 @@ class DockerRunDBTestDockerDBTestNoCompression(unittest.TestCase):
                 "--environment-type external_db",
                 f"--external-exasol-db-host {self.docker_environment.database_host}",
                 f"--external-exasol-db-port {self.docker_environment.ports.database}",
-                f"--external-exasol-bucketfs-port {self.docker_environment.ports.bucketfs}",
+                f"--external-exasol-bucketfs-port {self.docker_environment.ports.bucketfs_http}",
+                f"--external-exasol-bucketfs-https-port {self.docker_environment.ports.bucketfs_https}",
                 f"--external-exasol-ssh-port {self.docker_environment.ports.ssh}",
                 f"--external-exasol-db-user {self.docker_environment.db_username}",
                 f"--external-exasol-db-password {self.docker_environment.db_password}",
