@@ -222,7 +222,7 @@ def get_full_test_container_folder() -> Path:
 
 
 def get_mock_test_container_folder() -> Path:
-    path = TEST_CONTAINER_ROOT_DIRECTORY / "full"
+    path = TEST_CONTAINER_ROOT_DIRECTORY / "mock"
     return path
 
 
