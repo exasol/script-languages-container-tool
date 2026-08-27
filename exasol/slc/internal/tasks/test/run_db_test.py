@@ -174,7 +174,6 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         )
         environment["TEST_ENVIRONMENT_TYPE"] = env_type
         environment["TEST_ENVIRONMENT_NAME"] = self.test_environment_info.name
-        environment["EXASLCT_EXECUTION_MODE"] = "pytest" if self.pytest else "unittest"
         environment["TEST_DOCKER_NETWORK_NAME"] = (
             self.test_environment_info.network_info.network_name
         )
@@ -197,53 +196,61 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         return exit_code
 
     def generate_test_command(self, odbc_driver: str) -> str:
-        def quote(s):
-            return f"'{s}'"
-
-        def command_line():
-            host = self._database_info.host
-            port = self._database_info.ports.database
-            if self.pytest:
-                yield from [
-                    "cd /tests/test/;",
-                    "python3 /tests/test_container_entrypoint.py",
-                    quote(self.test_file),
-                    "--backend=onprem",
-                    "--exasol-host",
-                    quote(host),
-                    "--exasol-port",
-                    quote(str(port)),
-                    "--exasol-username",
-                    quote(self.db_user),
-                    "--exasol-password",
-                    quote(self.db_password),
-                    "--script-languages",
-                    quote(self.language_definition),
-                ]
-                yield from self.test_restrictions  # pylint: disable=not-an-iterable
-                return
-            yield from [
-                "cd /tests/test/;",
-                "python3 /tests/test_container_entrypoint.py",
-                quote(self.test_file),
-                "--server",
-                quote(f"{host}:{port}"),
-                "--user",
-                quote(self.db_user),
-                "--password",
-                quote(self.db_password),
-                "--script-languages",
-                quote(self.language_definition),
-                "--lang-path",
-                "/tests/lang",
-                f"--loglevel={self.test_log_level}",
-                f"--driver={odbc_driver}",
-                "--jdbc-path",
-                "/downloads/JDBC/exajdbc.jar",
-            ]
-            if self.language is not None:
-                yield from ["--lang", self.language]
-            yield from self.test_restrictions  # pylint: disable=not-an-iterable
-
-        command = " ".join([e for e in command_line()])
+        command_line = (
+            self.generate_pytest_command()
+            if self.pytest
+            else self.generate_unittest_command(odbc_driver)
+        )
+        command = " ".join(command_line)
         return f'bash -c "{command}"'
+
+    @staticmethod
+    def quote_command_argument(value: str) -> str:
+        return f"'{value}'"
+
+    def generate_pytest_command(self) -> list[str]:
+        host = self._database_info.host
+        port = self._database_info.ports.database
+        return [
+            "cd /tests/test/;",
+            "pytest",
+            self.quote_command_argument(self.test_file),
+            "--backend=onprem",
+            "--exasol-host",
+            self.quote_command_argument(host),
+            "--exasol-port",
+            self.quote_command_argument(str(port)),
+            "--exasol-username",
+            self.quote_command_argument(self.db_user),
+            "--exasol-password",
+            self.quote_command_argument(self.db_password),
+            "--script-languages",
+            self.quote_command_argument(self.language_definition),
+            *self.test_restrictions,
+        ]
+
+    def generate_unittest_command(self, odbc_driver: str) -> list[str]:
+        host = self._database_info.host
+        port = self._database_info.ports.database
+        command = [
+            "cd /tests/test/;",
+            "python3",
+            self.quote_command_argument(self.test_file),
+            "--server",
+            self.quote_command_argument(f"{host}:{port}"),
+            "--user",
+            self.quote_command_argument(self.db_user),
+            "--password",
+            self.quote_command_argument(self.db_password),
+            "--script-languages",
+            self.quote_command_argument(self.language_definition),
+            "--lang-path",
+            "/tests/lang",
+            f"--loglevel={self.test_log_level}",
+            f"--driver={odbc_driver}",
+            "--jdbc-path",
+            "/downloads/JDBC/exajdbc.jar",
+        ]
+        if self.language is not None:
+            command.extend(["--lang", self.language])
+        return [*command, *self.test_restrictions]

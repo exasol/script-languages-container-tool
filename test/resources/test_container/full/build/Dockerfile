@@ -33,3 +33,6 @@ ENV EXAPLUS=/downloads/EXAplus/exaplus
 COPY deps/requirements.txt requirements.txt
 RUN python3.10 -m pip install pip --upgrade
 RUN python3.10 -m pip install -r requirements.txt
+
+COPY deps/entrypoint.py /entrypoint.py
+ENTRYPOINT ["python3.10", "/entrypoint.py"]

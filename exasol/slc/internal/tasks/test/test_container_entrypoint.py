@@ -5,8 +5,8 @@ import os
 import subprocess
 import sys
 
-
 # TODO: Move to test container + uid/gid magic
+
 
 def build_command(arguments: list[str]) -> list[str]:
     """Build the command for the configured test framework.

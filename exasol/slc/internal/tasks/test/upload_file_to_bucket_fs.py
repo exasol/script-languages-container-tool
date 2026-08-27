@@ -170,7 +170,7 @@ class UploadFileToBucketFS(DockerBaseTask):
 
     @property
     def bucket_fs_url(self) -> str:
-        return f"http://{self._database_info.host}:{self._database_info.ports.bucketfs_http}"
+        return f"https://{self._database_info.host}:{self._database_info.ports.bucketfs_https}"
 
     def build_file_path_in_bucket(self, upload_target: str) -> bfs.path.PathLike:
         backend = bfs.path.StorageBackend.onprem

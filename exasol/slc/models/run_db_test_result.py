@@ -2,6 +2,7 @@ from pathlib import Path
 
 # FIXME: Parse/Capture pytest output
 
+
 class RunDBTestResult:
     def __init__(
         self, test_file: str, language: str, is_test_ok: bool, test_output_file: Path
