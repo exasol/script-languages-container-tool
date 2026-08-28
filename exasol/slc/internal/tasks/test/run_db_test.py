@@ -184,23 +184,6 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
                 self.test_environment_info.database_info.container_info.container_name
             )
-        if self.pytest:
-            environment.update(
-                {
-                    "ITDE_DB_VERSION": "external",
-                    "EXASOL_HOST": self._database_info.host,
-                    "EXASOL_PORT": str(self._database_info.ports.database),
-                    "EXASOL_USERNAME": self.db_user,
-                    "EXASOL_PASSWORD": self.db_password,
-                    "BUCKETFS_URL": (
-                        f"https://{self._database_info.host}:"
-                        f"{self._database_info.ports.bucketfs_https}"
-                    ),
-                    "BUCKETFS_USERNAME": "w",
-                    "BUCKETFS_PASSWORD": self.bucketfs_write_password,
-                }
-            )
-
         self.logger.info(f"Writing test-log to {test_output_file}")
         test_output = (
             "command: " + bash_cmd + "\n" + "environment: " + str(environment) + "\n"
@@ -238,6 +221,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             "pytest",
             test_file,
             "--backend=onprem",
+            "--itde-db-version",
+            "external",
             "--exasol-host",
             self.quote_command_argument(host),
             "--exasol-port",
@@ -246,6 +231,14 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             self.quote_command_argument(self.db_user),
             "--exasol-password",
             self.quote_command_argument(self.db_password),
+            "--bucketfs-url",
+            self.quote_command_argument(
+                f"https://{host}:{self._database_info.ports.bucketfs_https}"
+            ),
+            "--bucketfs-username",
+            self.quote_command_argument("w"),
+            "--bucketfs-password",
+            self.quote_command_argument(self.bucketfs_write_password),
             "--script-languages",
             self.quote_command_argument(self.language_definition),
             *self.test_restrictions,
