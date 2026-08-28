@@ -1,7 +1,5 @@
 from pathlib import Path
 
-# FIXME: Parse/Capture pytest output
-
 
 class RunDBTestResult:
     def __init__(
