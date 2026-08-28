@@ -1,9 +1,12 @@
+import textwrap
+
+
 def _execute_script(connection, language, script_name, script_body):
     connection.execute(
         f"""
         CREATE OR REPLACE {language} SCALAR SCRIPT {script_name}(i INT)
         RETURNS INT AS
-        {script_body}
+        {textwrap.dedent(script_body)}
         /
         """
     )
