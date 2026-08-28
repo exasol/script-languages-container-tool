@@ -30,8 +30,7 @@ def build_test_container_content(
         runtime_mappings=[
             TestContainerRuntimeMapping(
                 source=test_container_tests_path,
-                target="/tests_src",
-                deployment_target="/tests",
+                target="/tests",
             ),
             TestContainerRuntimeMapping(
                 source=test_container_test_data_path, target=TEST_DATA_TARGET
