@@ -96,7 +96,7 @@ def cleanup_docker_hub(session: nox.Session):
         default=10000,
         required=False,
         help=cleandoc("""Maximum number of tags do be deleted.
-        The page size is fixed at 100 (maximum from Dockerhub RestAPI).
+        The page size is fixed at 100 (maximum from DockerHub RestAPI).
         Tags newer than MIN_AGE_IN_DAYS do not count.
         Use 0 for no maximum number (risk to take very long)"""),
     )

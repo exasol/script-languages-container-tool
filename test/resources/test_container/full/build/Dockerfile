@@ -33,3 +33,10 @@ ENV EXAPLUS=/downloads/EXAplus/exaplus
 COPY deps/requirements.txt requirements.txt
 RUN python3.10 -m pip install pip --upgrade
 RUN python3.10 -m pip install -r requirements.txt
+
+RUN mkdir -p /opt/test-container/bin
+COPY deps/entrypoint.py /opt/test-container
+COPY deps/python3.sh /opt/test-container/bin/python3
+RUN chmod +x /opt/test-container/bin/python3
+# the default python3 exists in /usr/bin/ - this guarantess that the entry point script is found first
+ENV PATH="/opt/test-container/bin:${PATH}"

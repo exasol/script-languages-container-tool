@@ -78,6 +78,12 @@ from exasol.slc.tool.options.test_environment_options import docker_db_options
     "The option can be repeated with different restrictions. "
     "The test runner will run the test files with all specified restrictions.",
 )
+@click.option(
+    "--pytest",
+    is_flag=True,
+    default=False,
+    help="Execute tests through pytest instead of the legacy Exasol Python Test Framework.",
+)
 @add_options(test_environment_options)
 @add_options(docker_db_options)
 @add_options(external_db_options)
@@ -171,6 +177,7 @@ def run_db_test(
     test_folder: tuple[str, ...],
     test_file: tuple[str, ...],
     test: tuple[str, ...],
+    pytest: bool,
     environment_type: str,
     max_start_attempts: int,
     docker_db_image_version: str,
@@ -228,9 +235,9 @@ def run_db_test(
 ):
     """
     This command runs the integration tests in local docker-db.
-    The system spawns a test environment in which the test are executed.
+    The system spawns a test environment in which the tests are executed.
     After finishing the tests, the test environment gets cleaned up.
-    If the stages or the packaged container do not exists locally,
+    If the stages or the packaged container do not exist locally,
     the system will build, pull or export them before running the tests.
     """
     with TerminationHandler():
@@ -242,6 +249,7 @@ def run_db_test(
                 test_folder=test_folder,
                 test_file=test_file,
                 test=test,
+                pytest=pytest,
                 environment_type=environment_type,
                 max_start_attempts=max_start_attempts,
                 docker_db_image_version=docker_db_image_version,

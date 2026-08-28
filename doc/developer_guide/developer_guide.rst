@@ -90,7 +90,7 @@ of tasks, also known as workflow.
 Tasks that depend on each other need to run in sequence, but tasks which
 are independent of each other may run in parallel. This model also
 allows a good separation of concern, because each Task solves one
-Problem.
+problem.
 
 As workflow executor, we use
 `Luigi <https://luigi.readthedocs.io/en/stable/>`__ which was actually
@@ -252,7 +252,7 @@ Updating Drivers and ExaPlus
 ``exaslct`` uses drivers and SQL Client ExaPlus for tests:
 
 - JDBC driver
-- OBDC driver
+- ODBC driver
 - ExaPlus
 
 Instructions
@@ -295,8 +295,8 @@ Run the following nox task in order to prepare the changelog.
 Triggering the Release
 ~~~~~~~~~~~~~~~~~~~~~~
 
-In order to trigger a release a new tag must be pushed to Github. For
-further details see: ``.github/workflows/release.yml``.
+In order to trigger a release a new tag must be pushed to GitHub. For
+further details see: ``.github/workflows/cd.yml``.
 
 1. Create a local tag with the appropriate version number
 
@@ -304,7 +304,7 @@ further details see: ``.github/workflows/release.yml``.
 
        git tag x.y.z
 
-2. Push the tag to Github
+2. Push the tag to GitHub
 
    ::
 
@@ -335,12 +335,12 @@ The Release Failed During Pre-Release Checks
 One of the Release Steps Failed (Partial Release)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Check the Github action/workflow to see which steps failed
+1. Check the GitHub action/workflow to see which steps failed
 2. Finish or redo the failed release steps manually
 
 **Example**:
 
-*Scenario*: Publishing of the release on Github was successfully but
+*Scenario*: Publishing of the release on GitHub was successfully but
 during the PyPi release, the upload step got interrupted.
 
 *Solution*: Manually push the package to PyPi

@@ -4,7 +4,7 @@ import utils as exaslct_utils  # type: ignore # pylint: disable=import-error
 from exasol_integration_test_docker_environment.testing import utils  # type: ignore
 
 
-class RunDBTestBuiltinLanguagesTest(unittest.TestCase):
+class RunDBTestFileOwnershipTest(unittest.TestCase):
 
     def setUp(self):
         print(f"SetUp {self.__class__.__name__}")
@@ -16,26 +16,13 @@ class RunDBTestBuiltinLanguagesTest(unittest.TestCase):
     def tearDown(self):
         utils.close_environments(self.test_environment)
 
-    def test_builtin_languages(self):
-        # optionally add "--reuse-test-environment" here
+    def test_file_ownership_pytest(self):
         command = " ".join(
             [
                 str(self.test_environment.executable),
                 "run-db-test",
                 "--test-file",
-                "test_builtin_languages.py",
-                exaslct_utils.get_full_test_container_folder_parameter(),
-            ]
-        )
-        self.test_environment.run_command(command, track_task_dependencies=True)
-
-    def test_builtin_languages_pytest(self):
-        command = " ".join(
-            [
-                str(self.test_environment.executable),
-                "run-db-test",
-                "--test-file",
-                "test_builtin_languages_pytest.py",
+                "test_file_ownership_pytest.py",
                 "--pytest",
                 exaslct_utils.get_full_test_container_folder_parameter(),
             ]

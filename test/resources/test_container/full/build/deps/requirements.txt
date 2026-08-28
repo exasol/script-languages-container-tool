@@ -5,3 +5,6 @@ numpy
 scipy
 requests
 exasol_python_test_framework
+pyexasol
+pytest
+pytest-exasol-slc

@@ -51,6 +51,7 @@ def run_db_test(
     test_folder: tuple[str, ...] = tuple(),
     test_file: tuple[str, ...] = tuple(),
     test: tuple[str, ...] = tuple(),
+    pytest: bool = False,
     environment_type: str = "docker_db",
     max_start_attempts: int = 2,
     docker_db_image_version: str = LATEST_DB_VERSION,
@@ -108,9 +109,9 @@ def run_db_test(
 ) -> AllTestsResult:
     """
     This command runs the integration tests in local docker-db.
-    The system spawns a test environment in which the test are executed.
+    The system spawns a test environment in which the tests are executed.
     After finishing the tests, the test environment gets cleaned up.
-    If the stages or the packaged container do not exists locally,
+    If the stages or the packaged container do not exist locally,
     the system will build, pull or export them before running the tests.
     :raises api.errors.MissingArgumentError: if one or more arguments are not set.
     :raises api_errors.TaskFailureError: if operation is not successful.
@@ -178,6 +179,7 @@ def run_db_test(
             disk_size=db_disk_size,
             test_environment_vars=json.loads(test_environment_vars),
             test_log_level=test_log_level,
+            pytest=pytest,
             reuse_uploaded_container=reuse_uploaded_container,
             environment_type=EnvironmentType[environment_type],
             reuse_database_setup=reuse_database_setup,
