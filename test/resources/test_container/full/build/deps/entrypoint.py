@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 # FIXME - Move to pytest-exasol-slc
 
@@ -8,17 +8,15 @@ import grp
 import stat
 import subprocess
 import sys
-from typing import List
-
-
-USER_NAME = os.getenv("USER_NAME", "app")
+USER_NAME = os.getenv("USER_NAME", "test_runner")
 HOST_UID = int(os.getenv("HOST_UID", "1000"))
 HOST_GID = int(os.getenv("HOST_GID", "1000"))
 DOCKER_SOCKET = os.getenv("DOCKER_SOCKET", "/var/run/docker.sock")
 DOCKER_GROUP_NAME = os.getenv("DOCKER_GROUP_NAME", "docker")
+PYTHON_BINARY = "/usr/bin/python3"
 
 
-def run(cmd: List[str]) -> None:
+def run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
@@ -33,9 +31,26 @@ def get_docker_gid(default: int = 998) -> int:
 
 
 def ensure_group(name: str, gid: int) -> None:
+    """
+    Ensure a group exists with the requested name and GID.
+
+    Cases handled:
+    - group exists with same name and same GID: do nothing
+    - group exists with same name but different GID: modify it
+    - group does not exist, but another group already uses the GID: fail loudly
+    - group does not exist and GID is free: create it
+    """
     try:
-        grp.getgrnam(name)
-        run(["groupmod", "-g", str(gid), name])
+        existing = grp.getgrnam(name)
+        if existing.gr_gid != gid:
+            run(["groupmod", "-g", str(gid), name])
+        return
+    except KeyError:
+        pass
+
+    try:
+        grp.getgrgid(gid)
+        raise RuntimeError(f"GID {gid} is already in use by another group")
     except KeyError:
         run(["groupadd", "-g", str(gid), name])
 
@@ -49,8 +64,9 @@ def ensure_primary_group(name: str, gid: int) -> None:
 
 def ensure_user(name: str, uid: int, gid: int) -> None:
     try:
-        pwd.getpwnam(name)
-        run(["usermod", "-u", str(uid), "-g", str(gid), name])
+        existing = pwd.getpwnam(name)
+        if existing.pw_uid != uid or existing.pw_gid != gid:
+            run(["usermod", "-u", str(uid), "-g", str(gid), name])
     except KeyError:
         run([
             "useradd",
@@ -63,7 +79,10 @@ def ensure_user(name: str, uid: int, gid: int) -> None:
 
 
 def add_user_to_group(name: str, group: str) -> None:
-    run(["usermod", "-aG", group, name])
+    try:
+        run(["usermod", "-aG", group, name])
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"Failed to add {name} to group {group}") from exc
 
 
 def fix_home_ownership(name: str, uid: int, gid: int) -> None:
@@ -93,8 +112,7 @@ def main() -> None:
 
     drop_privileges(USER_NAME)
 
-    cmd = sys.argv[1:] or ["/bin/bash"]
-    os.execvp(cmd[0], cmd)
+    os.execv(PYTHON_BINARY, [PYTHON_BINARY, *sys.argv[1:]])
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 # pylint: disable=no-member
 
+import os
 from collections import namedtuple
 from io import StringIO
 from pathlib import Path
@@ -177,6 +178,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         environment["TEST_DOCKER_NETWORK_NAME"] = (
             self.test_environment_info.network_info.network_name
         )
+        environment["HOST_UID"] = str(os.getuid())
+        environment["HOST_GID"] = str(os.getgid())
         if self.test_environment_info.database_info.container_info is not None:
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
                 self.test_environment_info.database_info.container_info.container_name
@@ -213,6 +216,8 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
         port = self._database_info.ports.database
         return [
             "cd /tests/test/;",
+            "python3",
+            "-m",
             "pytest",
             self.quote_command_argument(self.test_file),
             "--backend=onprem",
