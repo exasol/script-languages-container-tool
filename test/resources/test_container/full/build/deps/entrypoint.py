@@ -13,7 +13,6 @@ HOST_UID = int(os.getenv("HOST_UID", "1000"))
 HOST_GID = int(os.getenv("HOST_GID", "1000"))
 DOCKER_SOCKET = os.getenv("DOCKER_SOCKET", "/var/run/docker.sock")
 DOCKER_GROUP_NAME = os.getenv("DOCKER_GROUP_NAME", "docker")
-PYTHON_BINARY = "/usr/bin/python3"
 
 
 def run(cmd: list[str]) -> None:
@@ -112,7 +111,8 @@ def main() -> None:
 
     drop_privileges(USER_NAME)
 
-    os.execv(PYTHON_BINARY, [PYTHON_BINARY, *sys.argv[1:]])
+    command_name = sys.argv[1]
+    os.execv(command_name, [command_name, *sys.argv[2:]])
 
 
 if __name__ == "__main__":
