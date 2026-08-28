@@ -2,13 +2,10 @@ import textwrap
 
 
 def _execute_script(connection, language, script_name, script_body):
+    script_body = textwrap.dedent(script_body).strip()
     connection.execute(
-        f"""
-        CREATE OR REPLACE {language} SCALAR SCRIPT {script_name}(i INT)
-        RETURNS INT AS
-        {textwrap.dedent(script_body)}
-        /
-        """
+        f"CREATE OR REPLACE {language} SCALAR SCRIPT {script_name}(i INT)\n"
+        f"RETURNS INT AS\n{script_body}\n/"
     )
     result = connection.execute(f"SELECT {script_name}(0)").fetchone()
     assert result == (0,)
