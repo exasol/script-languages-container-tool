@@ -231,6 +231,7 @@ class TestRunnerDBTestBaseTask(
             db_user=database_credentials.db_user,
             db_password=database_credentials.db_password,
             bucketfs_write_password=database_credentials.bucketfs_write_password,
+            pytest=self.pytest,
         )
         test_output_future: Any = yield from self.run_dependencies(task)
         test_output: RunDBTestsInTestConfigResult = self.get_values_from_future(

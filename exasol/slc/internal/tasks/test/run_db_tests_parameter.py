@@ -11,6 +11,7 @@ class GeneralRunDBTestParameter:
     test_restrictions: tuple[str, ...] = luigi.ListParameter([])  # type: ignore
     test_environment_vars: dict[str, str] = luigi.DictParameter({}, significant=False)  # type: ignore
     test_log_level: str = luigi.Parameter("critical", significant=False)  # type: ignore
+    pytest: bool = luigi.BoolParameter(False, significant=False)  # type: ignore
 
 
 class ActualRunDBTestParameter(GeneralRunDBTestParameter):

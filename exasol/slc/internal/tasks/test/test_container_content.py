@@ -22,13 +22,15 @@ def build_test_container_content(
         build_files_and_directories=[
             TestContainerBuildMapping(
                 source=test_container_build_deps_path, target="deps"
-            )
+            ),
+            TestContainerBuildMapping(
+                source=test_container_build_deps_path, target="entrypoint.py"
+            ),
         ],
         runtime_mappings=[
             TestContainerRuntimeMapping(
                 source=test_container_tests_path,
-                target="/tests_src",
-                deployment_target="/tests",
+                target="/tests",
             ),
             TestContainerRuntimeMapping(
                 source=test_container_test_data_path, target=TEST_DATA_TARGET

@@ -11,6 +11,7 @@ class TestSet(BaseModel):
     generic_language_tests: list[str]
     test_runners: list[str] | None = None
     accelerator: Accelerator = Accelerator.NONE
+    pytest: bool = False
 
 
 class TestConfig(BaseModel):
