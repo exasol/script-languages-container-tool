@@ -62,7 +62,15 @@ jobs:
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Run test ${{ matrix.test-path.name }}
-        run: poetry run -- python ${{ matrix.test-path.path }}
+        run: poetry run -- coverage run ${{ matrix.test-path.path }}
         env: # Set the secret as an input
           DOCKER_USER: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
           DOCKER_PASSWD: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-python${{ inputs.python_version }}-${{ matrix.test-path.name }}-integration
+          path: .coverage
+          include-hidden-files: true
+          overwrite: false
