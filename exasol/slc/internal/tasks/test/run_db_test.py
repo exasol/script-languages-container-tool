@@ -184,6 +184,22 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
             environment["TEST_DOCKER_DB_CONTAINER_NAME"] = (
                 self.test_environment_info.database_info.container_info.container_name
             )
+        if self.pytest:
+            environment.update(
+                {
+                    "ITDE_DB_VERSION": "external",
+                    "EXASOL_HOST": self._database_info.host,
+                    "EXASOL_PORT": str(self._database_info.ports.database),
+                    "EXASOL_USERNAME": self.db_user,
+                    "EXASOL_PASSWORD": self.db_password,
+                    "BUCKETFS_URL": (
+                        f"https://{self._database_info.host}:"
+                        f"{self._database_info.ports.bucketfs_https}"
+                    ),
+                    "BUCKETFS_USERNAME": "w",
+                    "BUCKETFS_PASSWORD": self.bucketfs_write_password,
+                }
+            )
 
         self.logger.info(f"Writing test-log to {test_output_file}")
         test_output = (
