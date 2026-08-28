@@ -214,12 +214,13 @@ class RunDBTest(FlavorBaseTask, RunDBTestParameter, DatabaseCredentialsParameter
     def generate_pytest_command(self) -> list[str]:
         host = self._database_info.host
         port = self._database_info.ports.database
+        test_file = self.quote_command_argument(f"/tests/test/{self.test_file}")
         return [
-            "cd /tests/test/;",
+            "cd /tmp;",
             "python3",
             "-m",
             "pytest",
-            self.quote_command_argument(self.test_file),
+            test_file,
             "--backend=onprem",
             "--exasol-host",
             self.quote_command_argument(host),
