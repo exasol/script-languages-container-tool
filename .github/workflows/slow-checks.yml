@@ -16,7 +16,7 @@ on:
 jobs:
   build-matrix:
     name: Build Matrix
-    uses: ./.github/workflows/matrix.yml
+    uses: $/.github/workflows/matrix.yml
     with:
       matrix_keys_json: '["minimum_python_version"]'
     permissions:
@@ -24,7 +24,7 @@ jobs:
 
   build-extended-python-matrix:
     name: Build Extended Python Version Matrix
-    uses: ./.github/workflows/matrix.yml
+    uses: $/.github/workflows/matrix.yml
     with:
       matrix_keys_json: '["extended_python_versions"]'
     permissions:
@@ -34,7 +34,7 @@ jobs:
     name: Integrations
     needs:
       - build-extended-python-matrix
-    uses: ./.github/workflows/integration-tests.yml
+    uses: $/.github/workflows/integration-tests.yml
     secrets:
       CI4_DOCKERHUB_TOKEN: ${{ secrets.CI4_DOCKERHUB_TOKEN }}
       CI4_DOCKERHUB_USERNAME: ${{ secrets.CI4_DOCKERHUB_USERNAME }}
@@ -50,7 +50,7 @@ jobs:
     name: Integrations-GPU
     needs:
       - build-extended-python-matrix
-    uses: ./.github/workflows/gpu-tests.yml
+    uses: $/.github/workflows/gpu-tests.yml
     permissions:
       contents: read
     strategy:
