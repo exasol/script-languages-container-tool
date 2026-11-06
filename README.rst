@@ -50,7 +50,7 @@ Prerequisites
 .. note::
 
    Since version 1.0.0 the so-called *starter scripts* are removed.  In older
-   versions of SLCT the starter scripts pulled the ``exaslct`` docker
+   versions of SLCT the starter scripts pulled the ``exaslct`` Docker
    container runtime.
 
    If you can’t use Python3, you still can use our `AI-lab
@@ -117,7 +117,7 @@ See :ref:`user_guide`.
 Features
 --------
 
-- Build a script language container as docker images
+- Build a script language container as Docker images
 - Export a script language container as an archive which can be used for
   extending Exasol UDFs
 - Upload a script language container as an archive to the Exasol DB’s

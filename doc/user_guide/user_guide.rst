@@ -21,10 +21,11 @@ Table of Contents
 1. `Building and exporting an SLC <#building-and-exporting-an-slc>`__
 2. `Activating an SLC <#activating-an-slc>`__
 3. `Forcing a rebuild <#forcing-a-rebuild>`__
-4. `Partial builds or rebuilds <#partial-builds-and-rebuilds>`__
+4. `Partial builds and rebuilds <#partial-builds-and-rebuilds>`__
 5. `Using your own remote cache <#using-your-own-remote-cache>`__
 6. `Running tests <#running-tests>`__
-7. `Deleting Temporary Images <#deleting-temporary-images>`__
+7. `Reporting package updates <#reporting-package-updates>`__
+8. `Deleting temporary images <#deleting-temporary-images>`__
 
 Building and Exporting an SLC
 -----------------------------
@@ -124,7 +125,7 @@ process to specific stages:
    * - CLI option
      - ``--goal``
      - ``--force-rebuild-from``
-   * - Initial Build
+   * - Initial build
      - yes
      - no
    * - Consecutive rebuilds
@@ -143,7 +144,7 @@ Example for ``exaslct`` command ``build`` with option ``--goal``:
 
 .. note::
 
-    * Command ``build`` only rebuilds the docker images, but does not export a
+    * Command ``build`` only rebuilds the Docker images, but does not export a
       new SLC.
     * Option ``–-goal`` is not supported for commands other than ``build`` and
       ``push`` as these require specific images.
@@ -166,16 +167,17 @@ Please note :ref:`build_steps_and_their_dependencies`.
 
 The following build-stage are currently available:
 
-* ``udfclient-deps``
-* ``language-deps``
-* ``build-deps``
-* ``build-run``
-* ``base-test-deps``
-* ``base-test-build-run``
-* ``flavor-test-build-run``
-* ``flavor-base-deps``
-* ``flavor-customization``
+* ``udfclient_deps``
+* ``language_deps``
+* ``build_deps``
+* ``build_run``
+* ``base_test_deps``
+* ``base_test_build_run``
+* ``flavor_test_build_run``
+* ``flavor_base_deps``
+* ``flavor_customization``
 * ``release``
+* ``security_scan``
 
 .. code:: shell
 
@@ -188,14 +190,14 @@ Using Your Own Remote Cache
 ---------------------------
 
 ``exaslct`` caches Docker images locally and remotely. For remote caching
-``exaslct`` can use a docker registry, which is Docker Hub by default.
+``exaslct`` can use a Docker registry, which is Docker Hub by default.
 
-CLI option ``--repository-name`` configures an alternate docker registry as
+CLI option ``--repository-name`` configures an alternate Docker registry as
 cache. You can use this option with all ``exaslct`` commands that could
 trigger a build, incl. ``build``, ``export``, ``upload``, and ``run-db-test``.
 
 Furthermore, the option can be used with command ``push`` to upload images to
-the docker registry. In this case the option specifies not only from where to
+the Docker registry. In this case the option specifies not only from where to
 pull cached images during the build, but also where to push the built images.
 
 The following command line specifies the repository name:
@@ -296,7 +298,7 @@ The report includes the package categories:
 Deleting Temporary Images
 -------------------------
 
-Building an SLC creates or downloads multiple docker images which can consume
+Building an SLC creates or downloads multiple Docker images which can consume
 a great amount of disk space. Therefore, we recommend removing the Docker
 images of a flavor after working with them.
 
@@ -317,4 +319,4 @@ The following command deletes all images of all flavors:
     ``clean-all-images`` does not delete the Linux image that is used as base
     for the images built in previous steps. Furthermore, this
     ``clean-all-images`` doesn’t delete *cached* files in the output
-    directory. The default path for the output directory is ``.build-output``.
+    directory. The default path for the output directory is ``.build_output``.
