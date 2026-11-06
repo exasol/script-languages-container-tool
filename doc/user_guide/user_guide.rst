@@ -100,7 +100,7 @@ The activation statement looks like:
 ``<language>`` is defined by the flavor in file ``language_definition``,
 e.g. for flavor `standard-EXASOL-all-python-3.12 <py312-flavor_>`_.
 
-.. _py312-flavor: https://github.com/exasol/script-languages-release/blob/main/flavors/standard-EXASOL-all-python-3.12/flavor_base/language_definition
+.. _py312-flavor: https://github.com/exasol/script-languages-release/blob/master/flavors/standard-EXASOL-all-python-3.12/flavor_base/language_definition
 
 Forcing a Rebuild
 -----------------
