@@ -112,7 +112,7 @@ installation via ``pipx``:
 Usage
 -----
 
-See :ref:`user_guide`.
+See `User Guide <https://exasol.github.io/script-languages-container-tool/main/user_guide/user_guide.html>`__.
 
 Features
 --------
