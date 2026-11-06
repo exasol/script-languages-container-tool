@@ -1,235 +1,320 @@
+.. role:: var
+
+.. _user_guide:
+
 User Guide
 ==========
+
+The User Guide explains the most important commands of the Script Languages
+Container Tool or *SLCT* for short.
+
+The examples use the script ``exaslct`` which is an alias for ``python3 -m
+exasol.slc.tool.main`` and is installed together with the SLCT Python package.
+
+The subcommands of ``exaslct`` deal with Script Languages Containers, or
+*SLCs* for short.
+
 
 Table of Contents
 -----------------
 
-1. `How to build an existing flavor? <#how-to-build-an-existing-flavor>`__
-2. `How to activate a script language container in the database <#how-to-activate-a-script-language-container-in-the-database>`__
-3. `Force a rebuild <#force-a-rebuild>`__
+1. `Building and exporting an SLC <#building-and-exporting-an-slc>`__
+2. `Activating an SLC <#activating-an-slc>`__
+3. `Forcing a rebuild <#forcing-a-rebuild>`__
 4. `Partial builds or rebuilds <#partial-builds-and-rebuilds>`__
 5. `Using your own remote cache <#using-your-own-remote-cache>`__
-6. `Testing an existing flavor <#testing-an-existing-flavor>`__
-7. `Cleaning up after your are finished <#cleaning-up-after-you-are-finished>`__
+6. `Running tests <#running-tests>`__
+7. `Deleting Temporary Images <#deleting-temporary-images>`__
 
-Starter script
---------------
+Building and Exporting an SLC
+-----------------------------
 
-For simplicity the following examples use the script version
-(``exaslct``), which will be installed together with the Python package.
-The script is just an alias for ``python3 -m exasol.slc.tool.main``.
+Build the SLC and export it to the local file system
 
-How to build an existing flavor?
---------------------------------
-
-Create the language container and export it to the local file system
-
-.. code:: bash
+.. code:: shell
 
    exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
 
-or upload it directly into the BucketFS (currently http only, https
-follows soon)
+or deploy it directly:
 
-.. code:: bash
+.. code:: shell
 
-   exaslct upload --flavor-path=flavors/<flavor-name> --database-host <hostname-or-ip> --bucketfs-port <port> \
-                      --bucketfs-username w --bucketfs-password <password>  --bucketfs-name <bucketfs-name> \
-                      --bucket-name <bucket-name> --path-in-bucket <path/in/bucket>
+   exaslct deploy \
+       --flavor-path=flavors/<flavor-name> \
+       --database-host <hostname-or-ip> \
+       --bucketfs-port <port> \
+       --bucketfs-username w \
+       --bucketfs-password <password>  \
+       --bucketfs-name <bucketfs-name> \
+       --bucket-name <bucket-name> \
+       --path-in-bucket <path/in/bucket>
 
-Once it is successfully uploaded, it will print the ALTER SESSION
-statement that can be used to activate the script language container in
-the database.
+After successful deployment, the command will display the activation
+statement, see details in the next section.
 
-How to activate a script language container in the database
------------------------------------------------------------
+Activating an SLC
+-----------------
 
-If you uploaded a container manually, you can generate the language
-activation statement with
+After deployment, the SLC needs to be *activated* by setting a *language
+alias*.  The activation can be applied to one of the following scopes:
 
-.. code:: bash
+.. list-table::
+   :header-rows: 1
+   :widths: 20 90
 
-   exaslct generate-language-activation --flavor-path=flavors/<flavor-name> --bucketfs-name <bucketfs-name> \
-                                            --bucket-name <bucket-name> --path-in-bucket <path/in/bucket> --container-name <container-name>
+   * - Scope
+     - Description
+   * - ``ALTER SESSION``
+     - Limited to the current session
+   * - ``ALTER SYSTEM``
+     - Persistent for the entire database system
 
-where <container-name> is the name of the uploaded archive without its
-file extension. To activate the language, execute the generated
-statement in your database session to activate the container for the
-current session or system wide.
+Execute the generated SQL statement in your database session to activate the
+SLC.
 
-This command will print a SQL statement to activate the language similar
-to the following one:
+If you uploaded a container manually, you can display the activation statement
+with
 
-.. code:: bash
+.. code:: shell
+
+   exaslct generate-language-activation \
+        --flavor-path=flavors/<flavor-name> \
+        --bucketfs-name <bucketfs-name> \
+        --bucket-name <bucket-name> \
+        --path-in-bucket <path/in/bucket> \
+        --container-name <container-name>
+
+``<container-name>`` is the name of the uploaded archive without its file
+extension ``.tar.gz``.
+
+Example Output
+~~~~~~~~~~~~~~
+
+The activation statement looks like:
+
+.. code:: shell
 
    ALTER SESSION SET SCRIPT_LANGUAGES='<LANGUAGE_ALIAS>=localzmq+protobuf:///<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>?lang=<language>#buckets/<bucketfs-name>/<bucket-name>/<path-in-bucket>/<container-name>/exaudf/exaudfclient[_py3]';
 
-Force a rebuild
----------------
+``<language>`` is defined by the flavor in file ``language_definition``,
+e.g. for flavor `standard-EXASOL-all-python-3.12 <py312-flavor_>`_.
 
-Sometimes it is necessary to force a rebuild of a flavor. A typical
-reason to update the dependencies is to fix bugs and security
-vulnerabilities in the installed dependencies. To force a rebuild the
-command line option ``--force-rebuild`` can be used with basically all
-commands of ``exaslct``, except the clean commands.
+.. _py312-flavor: https://github.com/exasol/script-languages-release/blob/main/flavors/standard-EXASOL-all-python-3.12/flavor_base/language_definition
 
-Partial builds and rebuilds
+Forcing a Rebuild
+-----------------
+
+You can force rebuilding the SLC with CLI option ``--force-rebuild`` for most
+commands of ``exaslct``, except ``clean``.  This is helpful for fixing bugs
+and security vulnerabilities by updating the dependencies.
+
+Partial Builds and Rebuilds
 ---------------------------
 
-In some circumstances you want to build or rebuild only some parts of
-the flavor. Most likely during development or during CI. You can specify
-for a build upper bounds (also called goals) until which the flavor
-should be build and for rebuilds you can define lower bounds from where
-the rebuild get forced.
+During development or Continous Integration you may want to limit the build
+process to specific stages:
 
-You can define upper bounds with the commandline option –goal for the
-``exaslct`` commands build and push. The build command only rebuilds the
-docker images, but does not export a new container. All other commands
-don’t support the –goal option, because they require specific images to
-be built, otherwise they would not proceed.
+.. list-table::
+   :header-rows: 1
+   :widths: 15 20 20
 
-.. code:: bash
+   * -
+     - Final stage (also called *goal*)
+     - Initial stage
+   * - CLI option
+     - ``--goal``
+     - ``--force-rebuild-from``
+   * - Initial Build
+     - yes
+     - no
+   * - Consecutive rebuilds
+     - yes
+     - yes
+   * - Includes stages
+     - The specified depends on
+     - Dependening on the specified stage
+
+Example for ``exaslct`` command ``build`` with option ``--goal``:
+
+.. code:: shell
 
    exaslct build --flavor-path=<path-to-flavor> --goal <build-stage>
 
-If you want to build several build-stages at once, you can repeat the
-``--goal`` option.
+
+.. note::
+
+    * Command ``build`` only rebuilds the docker images, but does not export a
+      new SLC.
+    * Option ``–-goal`` is not supported for commands other than ``build`` and
+      ``push`` as these require specific images.
+    * Both options ``--goal`` and ``--force-rebuild-from`` can be used
+      multiple times to specify multiple build stages.
+    * Build stages before the one specified with CLI option
+      ``--force-rebuild-from`` will use cached versions whenever possible.
+      However, if a single stage is built, it will trigger a build for all following
+      build stages.
+    * The option ``--force-rebuild-from`` only has an effect when used with
+      option ``--force-rebuild``.
+    * When specifying a final stage :var:`<Sn>` with ``--goal`` then
+      ``exaslct`` will first check if the stages :var:`<Sn>` depends on, need
+      to be updated.
+    * When specifying an initial stage :var:`<S0>` with
+      ``--force-rebuild-from`` then ``exaslct`` will also update all stages
+      depending on :var:`<S0>`.
+
+Please note :ref:`build_steps_and_their_dependencies`.
 
 The following build-stage are currently available:
 
-- udfclient-deps
-- language-deps
-- build-deps
-- build-run
-- base-test-deps
-- base-test-build-run
-- flavor-test-build-run
-- flavor-base-deps
-- flavor-customization
-- release
+* ``udfclient-deps``
+* ``language-deps``
+* ``build-deps``
+* ``build-run``
+* ``base-test-deps``
+* ``base-test-build-run``
+* ``flavor-test-build-run``
+* ``flavor-base-deps``
+* ``flavor-customization``
+* ``release``
 
-With the option ``--force-rebuild-from``, you can specify from where the
-rebuild should be forced. All previous build-stages before this wil use
-cached versions where possible. However, if a single stage is built, it
-will trigger a build for all following build-stages. The option
-``--force-rebuild-from`` only has an effect together with the option
-``--force-rebuild``, without it is ignored.
+.. code:: shell
 
-.. code:: bash
+   exaslct build \
+        --flavor-path=<path-to-flavor> \
+        --force-rebuild \
+        --force-rebuild-from <build-stage>
 
-   exaslct build --flavor-path=<path-to-flavor> --force-rebuild --force-rebuild-from <build-stage>
-
-Similar, as for the ``--goal`` option, you can specify multiple lower
-bounds by repeating the ``--force-rebuild-from`` with different
-build-stages.
-
-Using your own remote cache
+Using Your Own Remote Cache
 ---------------------------
 
-``exaslct`` caches images locally and remotely. For remote caching exaslct
-can use a docker registry. The default registry is configured to Docker
-Hub. With the command line options ``--repository-name`` you can
-configure your own docker registry as cache. The ``--repository-name``
-option can be used with all ``exaslct`` commands that could trigger a
-build, which include build, export, upload and run-db-test commands.
-Furthermore, it can be used with the push command which uploads the
-build images to the docker registry. In this case the
-``--repository-name`` option specifies not only from where to pull
-cached images during the build, but also to which cache the built images
-should be pushed.
+``exaslct`` caches Docker images locally and remotely. For remote caching
+``exaslct`` can use a docker registry, which is Docker Hub by default.
 
-You can specify the repository name, as below:
+CLI option ``--repository-name`` configures an alternate docker registry as
+cache. You can use this option with all ``exaslct`` commands that could
+trigger a build, incl. ``build``, ``export``, ``upload``, and ``run-db-test``.
 
-.. code:: bash
+Furthermore, the option can be used with command ``push`` to upload images to
+the docker registry. In this case the option specifies not only from where to
+pull cached images during the build, but also where to push the built images.
 
-   exaslct export --flavor-path=<path-to-flavor> --repository-name <hostname>[:port]/<user>/<repository-name>
+The following command line specifies the repository name:
 
-Testing an existing flavor
---------------------------
+.. code:: shell
 
-To test the script language container you can execute the following
-command:
+   exaslct export \
+       --flavor-path=<path-to-flavor> \
+       --repository-name <hostname>[:port]/<user>/<repository-name>
 
-.. code:: bash
+Running Tests
+-------------
+
+Running Tests Using a Flavor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following command runs the tests with an SLC built from the specified flavor:
+
+.. code:: shell
 
    exaslct run-db-test --flavor-path=flavors/<flavor-name>
 
 .. important::
 
-   You need docker in privileged mode to execute the tests**
+   You need to run the Docker container in `privileged <privileged_mode_>`_ mode to execute the
+   tests.
 
-Testing an existing container file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _privileged_mode: https://docs.docker.com/reference/cli/docker/container/run/#privileged
 
-You can test an existing container file (\*.tar.gz) with the following
-command:
+Running Tests Using a Pre-Built SLC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code:: bash
+You can test a pre-built SLC file (``*.tar.gz``) with the following command:
 
-   exaslct run-db-test --flavor-path=flavors/<flavor-name> --use-existing-container <path-to-file>
+.. code:: shell
 
-With this additional option, ``exaslct`` won’t build and export the
-container again, which might be a faster approach if you have access to
-the container file, but for some reason the internal cache and/or the
-docker image has been deleted.
+   exaslct run-db-test \
+        --flavor-path=flavors/<flavor-name> \
+        --use-existing-container <path-to-file>
 
-**Note**: 1. ``exaslct`` won’t check if the given container file is
-compatible with the given flavor path. If this is not the case, the
-tests probably will fail. 2. As ``exaslct`` cannot check if the file was
-changed during different executions of ``run-db-test`` with options
-``--reuse-uploaded-container`` or ``--reuse-test-environment``,
-``exaslct`` will always skip the upload if those options are set and the
-file already exists in BucketFS.
+With option ``--use-existing-container``, ``exaslct`` doesn't build and export
+the container which is significantly faster.
 
-Testing with an accelerator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. note::
 
-If your test environment fulfills the requirements, you can run tests
-with an accelerator. Currently, only ``nvidia`` is supported:
+    1. ``exaslct`` does not check if the specified SLC file is compatible to
+       the specified flavor. Incompatibilities can make the tests fail.
 
-.. code:: bash
+    2. Options ``--reuse-uploaded-container`` and ``--reuse-test-environment``
+       will still upload new files to BucketFS but ignore updated files as
+       ``exaslct`` cannot identify updates.
 
-   exaslct run-db-test --flavor-path=flavors/<flavor-name> --accelerator nvidia
+Running Tests With Hardware Acceleration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This will launch the underlying docker-db with the necessary options to
-enable the ``NVIDIA`` accelerator.
+If your test environment has a supported hardware accelerator, you can run use
+the accelerator when running the tests.  Currently, only ``nvidia`` is
+supported. This following command launches the docker-db with enabled
+``NVIDIA`` accelerator:
 
+.. code:: shell
 
-Generating a package change report
-----------------------------------
+   exaslct run-db-test \
+        --flavor-path=flavors/<flavor-name> \
+        --accelerator nvidia
 
-You can use `exaslct` to generate a report for changed packages:
-The report works on the "flavors" directory and compares the current local working copy to a specific Git commit.
-This Git commit can be given by an option, but if not set, the latest Git tag is used automatically.
+Reporting Package Updates
+-------------------------
 
-.. code:: bash
+Command ``generate-package-diffs`` reports which packages have been updated.
 
-   exaslct generate-package-diffs --current-working-copy-name "11.0.0" --compare-to-commit "10.0.0" --output-package-diff-directory docs/changes/package_diffs/11.0.0
+The report compares the flavors in directory ``flavors/`` of the current local
+working copy to the latest Git tag.
 
-The generated report lists the changed packages for each flavor found in the "flavors" directory, split by public packages (which are included in the final release Script-Languages-Container) and internal packages (which are not part of the final release Script-Languages-Container).
+Alternatively you can specify an arbitrary commit with CLI option
+``--compare-to-commit``:
 
+.. code:: shell
 
-Cleaning up after you are finished
-----------------------------------
+   exaslct generate-package-diffs \
+        --current-working-copy-name "11.0.0" \
+        --compare-to-commit "10.0.0" \
+        --output-package-diff-directory docs/changes/package_diffs/11.0.0
 
-The creation of scripting language container creates or downloads
-several docker images which can consume a lot of disk space. Therefore,
-we recommend removing the Docker images of a flavor after working with
-them.
+The report includes the package categories:
 
-This can be done as follows:
+.. list-table::
+   :header-rows: 1
+   :widths: 20 60
 
-.. code:: bash
+   * - Package category
+     - Included in the final release SLC?
+   * - public
+     - yes
+   * - internal
+     - no
+
+Deleting Temporary Images
+-------------------------
+
+Building an SLC creates or downloads multiple docker images which can consume
+a great amount of disk space. Therefore, we recommend removing the Docker
+images of a flavor after working with them.
+
+The following command deletes all images of the specified flavor:
+
+.. code:: shell
 
    exaslct clean-flavor-images --flavor-path=flavors/<flavor-name>
 
-To remove all images of all flavors you can use:
+The following command deletes all images of all flavors:
 
-.. code:: bash
+.. code:: shell
 
    exaslct clean-all-images
 
-**Please note that this script does not delete the Linux image that is
-used as basis for the images that were build in the previous steps.
-Furthermore, this command doesn’t delete cached files in the output
-directory. The default path for the output directory is .build-output.**
+.. note::
+
+    ``clean-all-images`` does not delete the Linux image that is used as base
+    for the images built in previous steps. Furthermore, this
+    ``clean-all-images`` doesn’t delete *cached* files in the output
+    directory. The default path for the output directory is ``.build-output``.
