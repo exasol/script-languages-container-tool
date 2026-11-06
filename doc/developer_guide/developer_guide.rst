@@ -130,6 +130,8 @@ base class. The StoppableTask adds profiling, recording of dependencies
 for visualization or debugging and stops if any other StoppableTask
 failed in the workflow.
 
+.. _build_steps_and_their_dependencies:
+
 Build Steps and Their Dependencies
 ----------------------------------
 
