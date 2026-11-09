@@ -14,7 +14,7 @@ Script-Languages-Container-Tool
      :alt: PyPI Version
 
 .. image:: https://img.shields.io/pypi/pyversions/exasol-script-languages-container-tool
-    :target: https://pypi.org/project/sexasol-script-languages-container-tool
+    :target: https://pypi.org/project/exasol-script-languages-container-tool
     :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
@@ -38,7 +38,7 @@ Overview
 
 The Script-Languages-Container-Tool (*SLCT* for short) provides the shell
 command ``exaslct`` to build script language containers (SLCs). You can build,
-export and upload SCLs from so-called *flavors* containg the detailed build
+export and upload SLCs from so-called *flavors* containing the detailed build
 instructions. You can find pre-defined flavors in GitHub repository
 `script-languages-release
 <https://github.com/exasol/script-languages-release>`__. The repository also
@@ -91,14 +91,14 @@ Installation
 In general, it’s good practice to install the package in a virtual
 environment, using ``venv`` or ``Poetry``.
 
-Pip via PyPi
+Pip via PyPI
 ~~~~~~~~~~~~
 
 .. code:: bash
 
    python3 -m pip install exasol-script-languages-container-tool
 
-Pipx via Pypi
+Pipx via PyPI
 ~~~~~~~~~~~~~
 
 If you plan to use ``exasol-script-languages-container-tool`` on the
@@ -126,7 +126,7 @@ Features
 - Can use Docker registries, such as Docker Hub, as a cache to avoid
   rebuilding image without changes
 - Can push Docker images to Docker registries
-- Run tests for you container against an Exasol DB (docker-db or
+- Run tests for your container against an Exasol DB (docker-db or
   external db)
 
 

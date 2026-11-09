@@ -112,7 +112,7 @@ and security vulnerabilities by updating the dependencies.
 Partial Builds and Rebuilds
 ---------------------------
 
-During development or Continous Integration you may want to limit the build
+During development or Continuous Integration you may want to limit the build
 process to specific stages:
 
 .. list-table::
@@ -133,7 +133,7 @@ process to specific stages:
      - yes
    * - Includes stages
      - The specified depends on
-     - Dependening on the specified stage
+     - Depending on the specified stage
 
 Example for ``exaslct`` command ``build`` with option ``--goal``:
 
@@ -146,7 +146,7 @@ Example for ``exaslct`` command ``build`` with option ``--goal``:
 
     * Command ``build`` only rebuilds the Docker images, but does not export a
       new SLC.
-    * Option ``–-goal`` is not supported for commands other than ``build`` and
+    * Option ``--goal`` is not supported for commands other than ``build`` and
       ``push`` as these require specific images.
     * Both options ``--goal`` and ``--force-rebuild-from`` can be used
       multiple times to specify multiple build stages.
@@ -157,7 +157,7 @@ Example for ``exaslct`` command ``build`` with option ``--goal``:
     * The option ``--force-rebuild-from`` only has an effect when used with
       option ``--force-rebuild``.
     * When specifying a final stage :var:`<Sn>` with ``--goal`` then
-      ``exaslct`` will first check if the stages :var:`<Sn>` depends on, need
+      ``exaslct`` will first check if stages :var:`<Sn>` depends on, need
       to be updated.
     * When specifying an initial stage :var:`<S0>` with
       ``--force-rebuild-from`` then ``exaslct`` will also update all stages
@@ -165,7 +165,7 @@ Example for ``exaslct`` command ``build`` with option ``--goal``:
 
 Please note :ref:`build_steps_and_their_dependencies`.
 
-The following build-stage are currently available:
+The following build stages are currently available:
 
 * ``udfclient_deps``
 * ``language_deps``
@@ -253,9 +253,9 @@ the container which is significantly faster.
 Running Tests With Hardware Acceleration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If your test environment has a supported hardware accelerator, you can run use
+If your test environment has a supported hardware accelerator, you can use
 the accelerator when running the tests.  Currently, only ``nvidia`` is
-supported. This following command launches the docker-db with enabled
+supported. The following command launches the docker-db with enabled
 ``NVIDIA`` accelerator:
 
 .. code:: shell
@@ -316,7 +316,7 @@ The following command deletes all images of all flavors:
 
 .. note::
 
-    ``clean-all-images`` does not delete the Linux image that is used as base
+    ``clean-all-images`` does not delete the Linux image that is used as the base
     for the images built in previous steps. Furthermore, this
     ``clean-all-images`` doesn’t delete *cached* files in the output
     directory. The default path for the output directory is ``.build_output``.

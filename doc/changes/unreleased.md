@@ -2,9 +2,9 @@
 
 ## Summary
 
-This release updates the README and the user guide by removing duplicate parts and shortening explanations as much as possible.
+This release updates the README and the user guide by removing duplicated parts and shortening explanations as much as possible.
 
-The update also focused on consistency regarding
+The update focused on consistency regarding:
 * Deviations from the actual implementation
 * Terminology
 * Phrasing
