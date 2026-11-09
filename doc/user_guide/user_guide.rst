@@ -14,19 +14,6 @@ exasol.slc.tool.main`` and is installed together with the SLCT Python package.
 The subcommands of ``exaslct`` deal with Script Languages Containers, or
 *SLCs* for short.
 
-
-Table of Contents
------------------
-
-1. `Building and exporting an SLC <#building-and-exporting-an-slc>`__
-2. `Activating an SLC <#activating-an-slc>`__
-3. `Forcing a rebuild <#forcing-a-rebuild>`__
-4. `Partial builds and rebuilds <#partial-builds-and-rebuilds>`__
-5. `Using your own remote cache <#using-your-own-remote-cache>`__
-6. `Running tests <#running-tests>`__
-7. `Reporting package updates <#reporting-package-updates>`__
-8. `Deleting temporary images <#deleting-temporary-images>`__
-
 Building and Exporting an SLC
 -----------------------------
 
@@ -34,20 +21,20 @@ Build the SLC and export it to the local file system
 
 .. code:: shell
 
-   exaslct export --flavor-path=flavors/<flavor-name> --export-path <export-path>
+   exaslct export --flavor-path flavors/<flavor-name> --export-path <export-path>
 
 or deploy it directly:
 
 .. code:: shell
 
    exaslct deploy \
-       --flavor-path=flavors/<flavor-name> \
-       --database-host <hostname-or-ip> \
+       --flavor-path flavors/<flavor-name> \
+       --bucketfs-host <hostname-or-ip> \
        --bucketfs-port <port> \
-       --bucketfs-username w \
+       --bucketfs-user w \
        --bucketfs-password <password>  \
        --bucketfs-name <bucketfs-name> \
-       --bucket-name <bucket-name> \
+       --bucket <bucket-name> \
        --path-in-bucket <path/in/bucket>
 
 After successful deployment, the command will display the activation
@@ -79,9 +66,9 @@ with
 .. code:: shell
 
    exaslct generate-language-activation \
-        --flavor-path=flavors/<flavor-name> \
+        --flavor-path flavors/<flavor-name> \
         --bucketfs-name <bucketfs-name> \
-        --bucket-name <bucket-name> \
+        --bucket <bucket-name> \
         --path-in-bucket <path/in/bucket> \
         --container-name <container-name>
 
@@ -139,7 +126,7 @@ Example for ``exaslct`` command ``build`` with option ``--goal``:
 
 .. code:: shell
 
-   exaslct build --flavor-path=<path-to-flavor> --goal <build-stage>
+   exaslct build --flavor-path <path-to-flavor> --goal <build-stage>
 
 
 .. note::
@@ -182,7 +169,7 @@ The following build stages are currently available:
 .. code:: shell
 
    exaslct build \
-        --flavor-path=<path-to-flavor> \
+        --flavor-path <path-to-flavor> \
         --force-rebuild \
         --force-rebuild-from <build-stage>
 
@@ -190,23 +177,33 @@ Using Your Own Remote Cache
 ---------------------------
 
 ``exaslct`` caches Docker images locally and remotely. For remote caching
-``exaslct`` can use a Docker registry, which is Docker Hub by default.
+``exaslct`` uses Docker Hub by default.
 
-CLI option ``--repository-name`` configures an alternate Docker registry as
-cache. You can use this option with all ``exaslct`` commands that could
-trigger a build, incl. ``build``, ``export``, ``upload``, and ``run-db-test``.
+With the following CLI options you can use an alternate Docker registry for
+``exaslct`` commands that could trigger a build, incl. ``build``, ``export``,
+``upload``, and ``run-db-test``:
 
-Furthermore, the option can be used with command ``push`` to upload images to
-the Docker registry. In this case the option specifies not only from where to
-pull cached images during the build, but also where to push the built images.
+* ``--source-docker-repository-name``
+* ``--source-docker-tag-prefix``
+* ``--source-docker-username``
+* ``--source-docker-password``
+
+There are corresponding options for the Docker registry to upload images with
+``exaslct push``:
+
+* ``--target-docker-repository-name``
+* ``--target-docker-tag-prefix``
+* ``--target-docker-username``
+* ``--target-docker-password``
 
 The following command line specifies the repository name:
 
 .. code:: shell
 
    exaslct export \
-       --flavor-path=<path-to-flavor> \
-       --repository-name <hostname>[:port]/<user>/<repository-name>
+       --flavor-path <path-to-flavor> \
+       --source-docker-repository-name \
+         <hostname>[:<port>]/<user>/<repository-name>
 
 Running Tests
 -------------
@@ -218,7 +215,7 @@ The following command runs the tests with an SLC built from the specified flavor
 
 .. code:: shell
 
-   exaslct run-db-test --flavor-path=flavors/<flavor-name>
+   exaslct run-db-test --flavor-path flavors/<flavor-name>
 
 .. important::
 
@@ -235,7 +232,7 @@ You can test a pre-built SLC file (``*.tar.gz``) with the following command:
 .. code:: shell
 
    exaslct run-db-test \
-        --flavor-path=flavors/<flavor-name> \
+        --flavor-path flavors/<flavor-name> \
         --use-existing-container <path-to-file>
 
 With option ``--use-existing-container``, ``exaslct`` doesn't build and export
@@ -261,7 +258,7 @@ supported. The following command launches the docker-db with enabled
 .. code:: shell
 
    exaslct run-db-test \
-        --flavor-path=flavors/<flavor-name> \
+        --flavor-path flavors/<flavor-name> \
         --accelerator nvidia
 
 Reporting Package Updates
@@ -306,7 +303,7 @@ The following command deletes all images of the specified flavor:
 
 .. code:: shell
 
-   exaslct clean-flavor-images --flavor-path=flavors/<flavor-name>
+   exaslct clean-flavor-images --flavor-path flavors/<flavor-name>
 
 The following command deletes all images of all flavors:
 
