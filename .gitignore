@@ -150,3 +150,6 @@ TAGS
 
 *.dot
 .dependencies/
+
+# Agents
+/.serena
