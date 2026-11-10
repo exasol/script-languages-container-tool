@@ -68,7 +68,7 @@ with
    exaslct generate-language-activation \
         --flavor-path flavors/<flavor-name> \
         --bucketfs-name <bucketfs-name> \
-        --bucket <bucket-name> \
+        --bucket-name <bucket-name> \
         --path-in-bucket <path/in/bucket> \
         --container-name <container-name>
 
