@@ -66,7 +66,7 @@ prerequisites:
 * Software
 
   * Linux
-  * Python3 >= 3.11
+  * Python3 >= 3.11.5
   * `Docker <https://docs.docker.com/>`__ >= 17.05
 
     * with support for `multi-stage builds

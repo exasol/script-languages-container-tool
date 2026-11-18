@@ -11,7 +11,7 @@ The update focused on consistency regarding:
 * Phrasing
 * Formatting
 
-This release also removes support for Python 3.10 and updates `exasol-script-languages-package-management` to version 2.
+This release also raises the minimum supported Python version to 3.11.5 and updates `exasol-script-languages-package-management` to version 2.
 
 ## Security Issues
 
@@ -90,7 +90,7 @@ This release fixes vulnerabilities by updating dependencies:
 
 ## Refactorings
 
-* Removed support for Python 3.10
+* Removed support for Python 3.10, the minimum supported version is now 3.11.5
 
 ## Dependency Updates
 
