@@ -14,3 +14,4 @@ The update focused on consistency regarding:
 
 * #414: Updated documentation
 * #421: Added SSL advisory to the user guide
+* #426: Updated SSL advisory in the user guide
