@@ -41,6 +41,6 @@ validating the TLS certificate, see `pyexasol documentation
    Self-signed certificates cannot be validated against public certificate
    chains.
 
-   When using Exasol with a such a certificate, (e.g. Docker DB by default),
+   When using Exasol with such a certificate, (e.g. Docker DB by default),
    you can run ``exaslct`` with option ``--no-use-ssl-cert-validation``.
    However, this should **NEVER** be used for production.
